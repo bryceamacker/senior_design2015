@@ -1,0 +1,4 @@
+YELLOW = 258 - C - Enhanced Autocorrelation - 258Hz
+green = 420 - Ab - Enhanced Autocorrelation - 420Hz
+red = 323 - E to Eb - Enhanced Autocorrelation - 971Hz
+blue = 214 - Enhanced Autocorrelation - 1076Hz
