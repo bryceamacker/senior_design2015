@@ -1,38 +1,30 @@
-A few simple frequency estimation methods in Python
+###Peak Frequency estimation in Python
 
-These are the methods that everyone recommends when someone asks about 
-frequency estimation or pitch detection.  Such as here: 
+In the file 'spectral_peak.py', I am doing 2 things:
+1. Recording audio for a specified amount of time from the system's default audio input
+2. Doing a FFT on the resulting wav file, and finding the highest magnitude frequency and seeing if they match with the known frequencies of Simon's buttons
 
-- [Music - How do you analyse the fundamental frequency of a PCM or WAV sample](http://stackoverflow.com/questions/65268/music-how-do-you-analyse-the-fundamental-frequency-of-a-pcm-or-wac-sample/)
-- [CCRMA Pitch detection methods review](https://ccrma.stanford.edu/~pdelac/154/m154paper.htm)
-- [Pitch Detection Algorithms (Middleton)](http://cnx.org/content/m11714/latest/)
+You can specify how long to record, and how many tones to expect (equal to however many buttons you need to press that round)
+This method of spectrum peak analyses works, but there is something called Enhanced Autocorrelation, a feature in the popular open source audio software Audacity.
+"Enhanced Autocorrelation" is a homegrown implementation of the Autocorrelation algorithm by the Audacity team, which produces great results when used to analyse the sounds of Simon. I will include
+some screenshots and comparisons of a spectrum analyses to the results of a enhanced autocorrelation analyses on the team website http://sites.google.com/site/msstatesecon2015/home/.
+Since Audacity is open source, I've been able to find the actual C++ code that implements this feature, and am trying to port it over to this python script. Unfortunately, its pretty confusing and complex.
+Running this on my beefy machine, the analyses is done in no time at all. I can't say for sure how times will compare when we move to a smaller platform like an RPi, but I think they will be ok.
+If the times turn out to be too long, there is a GPU accelerated FFT library for the RPi we could take advantage of: http://www.raspberrypi.org/accelerating-fourier-transforms-using-the-gpu/
 
-So these are my attempts at implementation.  Initially I was trying to measure the frequency of long sine waves with high accuracy (to indirectly measure clock frequency), then added methods for other types of signals later.
 
-None of them work well in all situations, these are "offline", not real-time, and I am sure there are much better methods "in the literature", but here is some sample code for the simple methods at least.
+###Included Sounds
+If you don't have a Simon handy, I've included sound files of all the buttons, along with a file that contains all of them, labelled. I recommend using Audacity, and taking a look at 
+'red blue yellow green red.aup' (Creative name, I know). It has each sound labelled so you know which one is which, along with their peak frequency per spectral analyses. And if you want to experiment 
+with them yourself, highlight one of the sounds, go to Analyze->Plot Spectrum, and you'll see what spectral_peak is doing behind the scenes. spectral_peak is basically implementing the functionality of 
+hovering your mouse of a peak in the Audacity window and it telling you the nearest peak at the bottom. Change 'Algorithm' to Enhanced Autocorrelation to see what that looks like and how it could benefit 
+detection. All sounds being recorded have a sample rate of 44100, and spectral_peak needs files to be in mono. 
 
-### Count zero-crossings, divide average period by time to get frequency
-* Works well for long low-noise sines, square, triangle, etc.
-* Supposedly this is how cheap guitar tuners work
-* Using interpolation to find a "truer" zero-crossing gives better accuracy
-* Pro: Fast
-* Pro: Accurate (increasing with signal length)
-* Con: Doesn't work if there are multiple zero crossings per cycle, low-frequency baseline shift, noise, etc.
+###Portability
+Since Python is such a portable language, and we're using some of the most common libraries for it, port this to either a raspberry pi or beagleboard should be a breeze. There will have to be some slight 
+modification to the record.py script, but nothing too drastic. This currently works fine under Windows 7 with a usb webcam as the main audio source. You will have to install quite a few libraries to 
+get up and running, however.
 
-### Do FFT and find the peak
-* Using parabolic interpolation to find a truer peak gives better accuracy
-* Accuracy also increases with signal/FFT length
-* Con: Doesn't find the right value if harmonics are stronger than fundamental, which is common.  Better method would try to be smarter about identifying the fundamental, like template matching using the ["two-way mismatch" (TWM) algorithm](http://ems.music.uiuc.edu/beaucham/papers/JASA.04.94.pdf).
-* Pro: Accurate, usually even more so than zero crossing counter (1000.000004 Hz for 1000 Hz, for instance).  Due to [parabolic interpolation being a very good fit](https://ccrma.stanford.edu/~jos/sasp/Quadratic_Interpolation_Spectral_Peaks.html) for windowed log FFT peaks?
 
-### Do autocorrelation and find the peak
-* Pro: Best method for finding the true fundamental of any repetitive wave, even with weak or missing fundamental (finds GCD of all harmonics present)
-* Con: Inaccurate result if waveform isn't perfectly repeating, like inharmonic musical instruments (piano, guitar, ...), however:
- * Pro: This inaccurate result more closely matches the pitch that humans perceive :)
-* Con: Not as accurate as other methods for precise measurement of sine waves
-* Con: This implementation has trouble with finding the true peak
-
-### Calculate harmonic product spectrum and find the peak
-* Pro: Good at finding the true fundamental even if weak or missing
-
-See also https://github.com/endolith/waveform-analyzer/blob/master/frequency_estimator.py, which is mostly the same thing, maybe more up-to-date.  I need to keep them both in sync with each other or delete one.
+###I would recommend looking here for ways to start improving the detection:
+https://gist.github.com/endolith/255291#file-readme-md
