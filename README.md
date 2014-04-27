@@ -12,3 +12,7 @@ This is very early work I haven't expanded on, but might be useful in the future
 This is the work done so far for playing Simon says. 
 
 Currently, we can detect all 4 buttons with the same webcam, using their different audio tones.
+
+### serial_monitor.py
+
+This is a small proof of concept of how we could communicate with an Arduino over the serial ports of the Beaglebone. This isn't up to date, and will be modified later. 
