@@ -1,15 +1,20 @@
 import numpy
-from scipy import arange, fft
+from numpy.fft import *
+import os
+from pylab import plot, subplot, show
+from scipy import arange
+from scipy import signal
 from scipy.io.wavfile import read, write
+from record import record
 
 def detectColor(y, rate):
 	"""
 	Plots a Single-Sided Amplitude Spectrum of y(t)
 	"""
 	Fs = rate;  # sampling rate
-	#Ts = 1.0 / Fs; # sampling interval
+	Ts = 1.0 / Fs; # sampling interval
 	#t = arange(0,1, 1.0 / len(data)) # time vector
-
+	y_n = numpy.array(y)
 	n = len(y) # length of the signal
 	k = arange(n)
 	T = float(n)/float(Fs)
@@ -18,24 +23,38 @@ def detectColor(y, rate):
 
 	Y = fft(y)/n # fft computing and normalization
 	Y = Y[range(n/2)]
-	max_y = max(abs(Y))
-	max_x = frq[abs(Y).argmax()]
+	Y = abs(Y)
+
+	Y[300:len(Y)].fill(0)
+	frq[300:len(frq)].fill(0)
+	max_x = frq[Y.argmax()]
 	print(max_x)
+	index_multiplier = Y.argmax() / max_x
 	color = ""
-	if (1074 - 60 <= max_x <= 1074 + 60):
+	if (1074 - 20 <= max_x <= 1074 + 20):
 		color = "Blue"
-	if (967 - 60 <= max_x <= 967 + 60):
+	if (967 - 20 <= max_x <= 967 + 20):
 		color = "Red"
-	if (1257 - 60 <= max_x <= 1257 + 60):
-		color = "Green"
-	if (777 - 60 <= max_x <= 777 + 60):
-		color = "Yellow"
+	if (1240 <= max_x <= 1320):
+		# cut out the "Green" section, check if the yellow spike is there
+		frq[index_multiplier*1200:index_multiplier*1400].fill(0)
+		Y[index_multiplier*1200:index_multiplier*1400].fill(0)
+		max_x = frq[Y.argmax()]
+		if (768 - 20 <= max_x <= 768 + 20):
+			color = "Yellow"
+		else:
+			color = "Green"
+
+	# subplot(2,1,1)
+	# plot(frq, Y, 'r')
+	# show()
 
 	return color
 
 if __name__ == '__main__':
-	rate, data = read("red blue yellow green red.wav")
-	numOfTones = 5
+	record(time=.5)
+	rate, data = read("output.wav")
+	numOfTones = 1
 	toneLengthSec = .232 # Approximate length of each tone
 	toneLengthIndex = float(rate) * toneLengthSec
 	timeBetweenTones = .165
