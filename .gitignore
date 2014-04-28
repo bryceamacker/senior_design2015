@@ -1,0 +1,10 @@
+# Mac OS X files
+.DS_Store
+.Thumbs.db
+.Trashes
+._*
+.Spotlight-V100
+
+# Sublime project files
+*.sublime-project
+*.sublime-workspace
