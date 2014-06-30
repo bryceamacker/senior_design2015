@@ -1,9 +1,14 @@
 #include <QTRSensors.h>
 #include <Servo.h>
+
+// For this example, we are using parallax continuous rotation servos
+// You can refer to this webpage for further documentation on interfacing these motors w/ Arduino
+// http://learn.parallax.com/KickStart/900-00008
+
 // This example is designed for use with eight QTR-1RC sensors or the eight sensors of a
-// QTR-8RC module.  These reflectance sensors should be connected to digital inputs 3 to 10.
+// QTR-8RC module.  These reflectance sensors should be connected to digital inputs 4 to 11.
 // The QTR-8RC's emitter control pin (LEDON) can optionally be connected to digital pin 2,
-// or you can leave it disconnected and change the EMITTER_PIN #define below from 2 to
+// or you can leave it disconnected and change the EMITTER_PIN #define below from 12 to
 // QTR_NO_EMITTER_PIN.
 
 // The setup phase of this example calibrates the sensor for ten seconds and turns on
@@ -32,7 +37,9 @@
 #define TIMEOUT        2500  // waits for 2500 microseconds for sensor outputs to go low
 #define EMITTER_PIN    12     // emitter is controlled by digital pin 2
 #define LEFT_WHEEL     2
+#define LEFT           2
 #define RIGHT_WHEEL    3
+#define LEFT           3
 
 // sensors 0 through 7 are connected to digital pins 4 through 11, respectively
 QTRSensorsRC qtrrc((unsigned char[])
@@ -53,33 +60,32 @@ int lastButtonState = 0;
 
 void setup()
 {
-    right.attach(3);
-    left.attach(2);
+    right.attach(RIGHT_WHEEL);
+    left.attach(LEFT_WHEEL);
     delay(500);
-    //pinMode(13, OUTPUT);
-    //digitalWrite(13, HIGH);    // turn on Arduino's LED to indicate we are in calibration mode
+
     for (int i = 0; i < 360; i++)  // make the calibration take about 10 seconds
     {
-        qtrrc.calibrate();       // reads all sensors 10 times at 2500 us per read (i.e. ~25 ms per call)
+        qtrrc.calibrate();
+        // Swings the bot over the line and back while calibrating 
         if (i >= 135 && i < 180)
         {
-            right.writeMicroseconds(1525);
-            left.writeMicroseconds(1525);
+            driveRev("right", 8);
+            drive("left", 8);
         }
         else if (i >= 180 && i < 270)
         {
-            left.writeMicroseconds(1475);
-            right.writeMicroseconds(1475);
+            drive("right", 8);
+            driveRev("left", 8);
         }
         else if ( i >= 270 && i < 293)
         {
-            right.writeMicroseconds(1525);
-            left.writeMicroseconds(1525);
+            driveRev("right", 8);
+            drive("left", 8);
         }
         else
         {
-            left.writeMicroseconds(1500);
-            right.writeMicroseconds(1500);
+            stopMotors();
         }
     }
     //digitalWrite(13, LOW);     // turn off Arduino's LED to indicate we are through with calibration
@@ -102,11 +108,10 @@ void setup()
     Serial.println();
     Serial.println();
     delay(1000);
-    right.writeMicroseconds(1450);
-    left.writeMicroseconds(1550);
+    drive("rigth", 10);
+    drive("left", 10);
     delay(200);
-    right.writeMicroseconds(1500);
-    left.writeMicroseconds(1500);
+    stopMotors();
 }
 
 
@@ -133,24 +138,30 @@ void loop()
         start = true;
         if (position > 4000) // 2500 is the position for 7 sensors when nothing is detected
         {
-            left.writeMicroseconds(1515);  // Move left motor forward, at a low speed ( 50 / 255)
-            right.writeMicroseconds(1500);
+            //left.writeMicroseconds(1515);  // Move left motor forward, at a low speed ( 50 / 255)
+            //right.writeMicroseconds(1500);
+            drive("left", 8);
+            stopMotor("rigth");
         }
         if (position < 2500)
         {
-            right.writeMicroseconds(1485);  // Move right motor forward
-            left.writeMicroseconds(1500);
+            //right.writeMicroseconds(1485);  // Move right motor forward
+            //left.writeMicroseconds(1500);
+            drive("right", 8);
+            stopMotor("left");
         }
         if ((position >= 2500) && (position <= 4000)) // drive straight
         {
-            left.writeMicroseconds(1515);
-            right.writeMicroseconds(1485);
+            //left.writeMicroseconds(1515);
+            //right.writeMicroseconds(1485);
+            drive("left", 8);
+            drive("right", 8);
         }
 
         if (position == 0)
         {
             foundObjective = true;
-            digitalWrite(13, HIGH);
+            //digitalWrite(13, HIGH);
         }
         else
         {
@@ -162,4 +173,35 @@ void loop()
 
     delay(250);
 }
+
+
+void drive(String motor, int spd)
+{
+  if (motor == "left")
+    left.writeMicroseconds(map(spd, 0, 100, 1500, 1700));
+  else if (motor == "right")
+    right.writeMicroseconds(map(spd, 0, 100, 1500, 1300));
 }
+
+void driveRev(String motor, int spd)
+{
+  if (motor == "left")
+    left.writeMicroseconds(map(spd, 0, 100, 1500, 1300));
+  else if (motor == "right")
+    right.writeMicroseconds(map(spd, 0, 100, 1500, 1700));
+}
+
+void stopMotor(String motor)
+{
+  if (motor == "left")
+    left.writeMicroseconds(1500);
+  else if (motor == "right")
+    right.writeMicroseconds(1500);
+}
+
+void stopMotors()
+{
+  left.writeMicroseconds(1500);
+  right.writeMicroseconds(1500);
+}
+
