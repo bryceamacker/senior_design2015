@@ -57,6 +57,8 @@ const int buttonPin(13);
 int buttonState = 0;
 int lastButtonState = 0;
 
+int potPin = 5;
+
 
 void setup()
 {
@@ -117,11 +119,13 @@ void setup()
 
 void loop()
 {
+    int spd = map(analogRead(potPin), 0, 1023, 0, 100);
+    
     // read calibrated sensor values and obtain a measure of the line position from 0 to 5000
     // To get raw sensor values, call:
     //  qtrrc.read(sensorValues); instead of unsigned int position = qtrrc.readLine(sensorValues);
     unsigned int position = qtrrc.readLine(sensorValues);
-
+    
     // print the sensor values as numbers from 0 to 1000, where 0 means maximum reflectance and
     // 1000 means minimum reflectance, followed by the line position
     for (unsigned char i = 0; i < NUM_SENSORS; i++)
@@ -131,31 +135,26 @@ void loop()
     }
     //Serial.println(); // uncomment this line if you are using raw values
     Serial.println(position); // comment this line out if you are using raw values
-
+    Serial.print('\t');
+    Serial.print(spd);
     buttonState = digitalRead(buttonPin);
     if (buttonState != lastButtonState or start == true)
     {
         start = true;
         if (position > 4000) // 2500 is the position for 7 sensors when nothing is detected
         {
-            //left.writeMicroseconds(1515);  // Move left motor forward, at a low speed ( 50 / 255)
-            //right.writeMicroseconds(1500);
-            drive("left", 8);
+            drive("left", spd);
             stopMotor("rigth");
         }
         if (position < 2500)
         {
-            //right.writeMicroseconds(1485);  // Move right motor forward
-            //left.writeMicroseconds(1500);
-            drive("right", 8);
+            drive("right", spd);
             stopMotor("left");
         }
         if ((position >= 2500) && (position <= 4000)) // drive straight
         {
-            //left.writeMicroseconds(1515);
-            //right.writeMicroseconds(1485);
-            drive("left", 8);
-            drive("right", 8);
+            drive("left", spd);
+            drive("right", spd);
         }
 
         if (position == 0)
