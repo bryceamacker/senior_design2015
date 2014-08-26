@@ -35,7 +35,7 @@
 
 #define NUM_SENSORS    8     // number of sensors used
 #define TIMEOUT        2500  // waits for 2500 microseconds for sensor outputs to go low
-#define EMITTER_PIN    12     // emitter is controlled by digital pin 2
+#define EMITTER_PIN    4     // emitter is controlled by digital pin 2
 #define LEFT_WHEEL     2
 #define LEFT           2
 #define RIGHT_WHEEL    3
@@ -44,163 +44,238 @@
 // sensors 0 through 7 are connected to digital pins 4 through 11, respectively
 QTRSensorsRC qtrrc((unsigned char[])
 {
-    4, 5, 6, 7, 8, 9, 10, 11
+	5, 6, 7, 8, 9, 10, 11, 12
 },
 NUM_SENSORS, TIMEOUT, EMITTER_PIN);
-unsigned int sensorValues[NUM_SENSORS];
-Servo right;
-Servo left;
-boolean foundObjective = false;
-boolean start = false;
+	unsigned int sensorValues[NUM_SENSORS];
+	Servo right;
+	Servo left;
+	boolean foundObjective = false;
+	boolean start = false;
+	const int lineCenter = (1000 * (NUM_SENSORS - 1)) / 2;
 
-const int buttonPin(13);
-int buttonState = 0;
-int lastButtonState = 0;
+	const int buttonPin(13);
+	int buttonState = 0;
+	int lastButtonState = 0;
 
-int potPin = 5;
-
-
-void setup()
-{
-    right.attach(RIGHT_WHEEL);
-    left.attach(LEFT_WHEEL);
-    delay(500);
-
-    for (int i = 0; i < 360; i++)  // make the calibration take about 10 seconds
-    {
-        qtrrc.calibrate();
-        // Swings the bot over the line and back while calibrating 
-        if (i >= 135 && i < 180)
-        {
-            driveRev("right", 8);
-            drive("left", 8);
-        }
-        else if (i >= 180 && i < 270)
-        {
-            drive("right", 8);
-            driveRev("left", 8);
-        }
-        else if ( i >= 270 && i < 293)
-        {
-            driveRev("right", 8);
-            drive("left", 8);
-        }
-        else
-        {
-            stopMotors();
-        }
-    }
-    //digitalWrite(13, LOW);     // turn off Arduino's LED to indicate we are through with calibration
-
-    // print the calibration minimum values measured when emitters were on
-    Serial.begin(9600);
-    for (int i = 0; i < NUM_SENSORS; i++)
-    {
-        Serial.print(qtrrc.calibratedMinimumOn[i]);
-        Serial.print(' ');
-    }
-    Serial.println();
-
-    // print the calibration maximum values measured when emitters were on
-    for (int i = 0; i < NUM_SENSORS; i++)
-    {
-        Serial.print(qtrrc.calibratedMaximumOn[i]);
-        Serial.print(' ');
-    }
-    Serial.println();
-    Serial.println();
-    delay(1000);
-    drive("rigth", 10);
-    drive("left", 10);
-    delay(200);
-    stopMotors();
-}
+	int potPin = 5;
 
 
-void loop()
-{
-    int spd = map(analogRead(potPin), 0, 1023, 0, 100);
-    
-    // read calibrated sensor values and obtain a measure of the line position from 0 to 5000
-    // To get raw sensor values, call:
-    //  qtrrc.read(sensorValues); instead of unsigned int position = qtrrc.readLine(sensorValues);
-    unsigned int position = qtrrc.readLine(sensorValues);
-    
-    // print the sensor values as numbers from 0 to 1000, where 0 means maximum reflectance and
-    // 1000 means minimum reflectance, followed by the line position
-    for (unsigned char i = 0; i < NUM_SENSORS; i++)
-    {
-        Serial.print(sensorValues[i]);
-        Serial.print('\t');
-    }
-    //Serial.println(); // uncomment this line if you are using raw values
-    Serial.println(position); // comment this line out if you are using raw values
-    Serial.print('\t');
-    Serial.print(spd);
-    buttonState = digitalRead(buttonPin);
-    if (buttonState != lastButtonState or start == true)
-    {
-        start = true;
-        if (position > 4000) // 2500 is the position for 7 sensors when nothing is detected
-        {
-            drive("left", spd);
-            stopMotor("rigth");
-        }
-        if (position < 2500)
-        {
-            drive("right", spd);
-            stopMotor("left");
-        }
-        if ((position >= 2500) && (position <= 4000)) // drive straight
-        {
-            drive("left", spd);
-            drive("right", spd);
-        }
+	void setup()
+	{
+		right.attach(RIGHT_WHEEL);
+		left.attach(LEFT_WHEEL);
+		Serial.begin(9600);
+		delay(500);
+		int spd = analogRead(potPin);
+		for (int i = 0; i < 360; i++)  // make the calibration take about 10 seconds
+		{
+			qtrrc.calibrate();
+			// Swings the bot over the line and back while calibrating 
+			if (i >= 0 && i < 40)
+			{
+				driveTankRev("right", spd);
+				driveTank("left", spd);
+				Serial.print("First turn");
+				Serial.print("\n");
+			}
+			else if (i >= 40 && i < 110)
+			{
+				driveTank("right", spd);
+				driveTankRev("left", spd);
+				Serial.print("Second Turn");
+				Serial.print("\n");
+			}
+			else if (i >= 110 && i < 150)
+			{
+				driveTankRev("right", spd);
+				driveTank("left", spd);
+				Serial.print("Third Turn");
+				Serial.print("\n");
+			}
+			else
+			{
+				Serial.print("Forth Turn");
+				Serial.print("\n");
+				stopTankMotors();
+				break;
+			}
+		}
+		//digitalWrite(13, LOW);     // turn off Arduino's LED to indicate we are through with calibration
 
-        if (position == 0)
-        {
-            foundObjective = true;
-            //digitalWrite(13, HIGH);
-        }
-        else
-        {
-            foundObjective = false;
-        }
+		// print the calibration minimum values measured when emitters were on
+		for (int i = 0; i < NUM_SENSORS; i++)
+		{
+			Serial.print(qtrrc.calibratedMinimumOn[i]);
+			Serial.print(' ');
+		}
+		Serial.println();
 
-    }
-    lastButtonState = buttonState;
+		// print the calibration maximum values measured when emitters were on
+		for (int i = 0; i < NUM_SENSORS; i++)
+		{
+			Serial.print(qtrrc.calibratedMaximumOn[i]);
+			Serial.print(' ');
+		}
+		Serial.println();
+		Serial.println();
+		driveTank("right", spd);
+		driveTank("left", spd);
+		delay(200);
+		stopTankMotors();
+	}
 
-    delay(250);
-}
+
+	void loop()
+	{
+		//int spd = map(analogRead(potPin), 0, 1023, 0, 179);
+		int spd = analogRead(potPin);
+		// read calibrated sensor values and obtain a measure of the 
+		// line position from 0 to 1000 * (NUM_SENSOR - 1)
+		// In our case, 0 - 7000
+		// To get raw sensor values, call:
+		//  qtrrc.read(sensorValues); instead of unsigned int position = qtrrc.readLine(sensorValues);
+		unsigned int position = qtrrc.readLine(sensorValues, QTR_EMITTERS_ON, 1);
+		int error = position - lineCenter;
+
+		// print the sensor values as numbers from 0 to 1000, where 0 means maximum reflectance and
+		// 1000 means minimum reflectance, followed by the line position
+		for (unsigned char i = 0; i < NUM_SENSORS; i++)
+		{
+			Serial.print('\t');
+			Serial.print(sensorValues[i]);
+			Serial.print('\t');
+		}
+		//Serial.println(); // uncomment this line if you are using raw values
+		Serial.println(position); // comment this line out if you are using raw values
+		Serial.print('\t');
+		Serial.print(spd);
+		buttonState = digitalRead(buttonPin);
+
+		// ----------------------------------------------------------------
+		// Begin line following 
+		// ----------------------------------------------------------------
+
+		if (buttonState != lastButtonState || start == true)
+		{
+			start = true;
+
+			// This is when we catch a right angle on the Left
+			//     ||
+			//  ===||  
+			//     ||  
+			if (sensorValues[0] < 75 && sensorValues[1] < 75 && sensorValues[2] < 75)
+			{
+                                Serial.print("Right angle, left turn");
+                                Serial.print("\n");
+				driveTank("left", spd);
+				driveTankRev("right", spd);
+			}
+
+			// And this is a right angle on the right
+			else if (sensorValues[7] < 75 && sensorValues[6] < 75 && sensorValues[5] < 75)
+			{                                
+                                Serial.print("Right angle, right turn");
+                                Serial.print("\n");
+				driveTank("right", spd);
+				driveTankRev("left", spd);
+			}
+
+			// This is navigating straight down the line
+			else
+			{
+				if (error > 1000)
+				{
+					driveTank("right", spd);
+					stopTankMotor("left");
+				}
+				if (error < -1000)
+				{
+					driveTank("left", spd);
+					stopTankMotor("right");
+				}
+				if ((error >= -1000) && (error <= 1000)) // drive straight
+				{
+					driveTank("left", spd);
+					driveTank("right", spd);
+				}
+			}
+
+			//if (position == 0)
+			//{
+			//	foundObjective = true;
+			//	//digitalWrite(13, HIGH);
+			//}
+			//else
+			//{
+			//	foundObjective = false;
+			//}
+
+		}
+		lastButtonState = buttonState;
+
+		delay(250);
+	}
 
 
-void drive(String motor, int spd)
-{
-  if (motor == "left")
-    left.writeMicroseconds(map(spd, 0, 100, 1500, 1700));
-  else if (motor == "right")
-    right.writeMicroseconds(map(spd, 0, 100, 1500, 1300));
-}
+	void drive(String motor, int spd)
+	{
+		if (motor == "left")
+			left.writeMicroseconds(map(spd, 0, 100, 1500, 1700));
+		else if (motor == "right")
+			right.writeMicroseconds(map(spd, 0, 100, 1500, 1300));
+	}
 
-void driveRev(String motor, int spd)
-{
-  if (motor == "left")
-    left.writeMicroseconds(map(spd, 0, 100, 1500, 1300));
-  else if (motor == "right")
-    right.writeMicroseconds(map(spd, 0, 100, 1500, 1700));
-}
+	void driveRev(String motor, int spd)
+	{
+		if (motor == "left")
+			left.writeMicroseconds(map(spd, 0, 100, 1500, 1300));
+		else if (motor == "right")
+			right.writeMicroseconds(map(spd, 0, 100, 1500, 1700));
+	}
 
-void stopMotor(String motor)
-{
-  if (motor == "left")
-    left.writeMicroseconds(1500);
-  else if (motor == "right")
-    right.writeMicroseconds(1500);
-}
+	void driveTank(String motor, int spd)
+	{
+		if (motor == "left")
+			left.write(map(spd, 0, 1023, 90, 180));
+		else if (motor == "right")
+			right.write(map(spd, 0, 1023, 90, 0));
+	}
 
-void stopMotors()
-{
-  left.writeMicroseconds(1500);
-  right.writeMicroseconds(1500);
-}
+	void driveTankRev(String motor, int spd)
+	{
+		if (motor == "left")
+			left.write(map(spd, 0, 1023, 90, 0));
+		else if (motor == "right")
+			right.write(map(spd, 0, 1023, 90, 180));
+	}
+
+	void stopMotor(String motor)
+	{
+		if (motor == "left")
+			left.writeMicroseconds(1500);
+		else if (motor == "right")
+			right.writeMicroseconds(1500);
+	}
+
+	void stopTankMotor(String motor)
+	{
+		if (motor == "left")
+			left.write(90);
+		else if (motor == "right")
+			right.write(90);
+	}
+
+	void stopMotors()
+	{
+		left.writeMicroseconds(1500);
+		right.writeMicroseconds(1500);
+	}
+
+	void stopTankMotors()
+	{
+		left.write(90);
+		right.write(90);
+	}
+
 
