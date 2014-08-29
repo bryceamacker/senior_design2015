@@ -1,0 +1,4 @@
+enum wheels {
+	left,
+	right,
+};

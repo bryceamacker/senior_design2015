@@ -1,0 +1,2 @@
+### strat.py
+I've mocked up some Python code to track how long it takes to do each task. It keeps track of whether each task succeeded and how long it took, then at the end it calculates the number of points the run recieved. Right now it's just meaningless "time.sleep()" tasks. Hopefully this might turn into a way that the Pi can talk to a couple PICs, delegate tasks, then keep track of each runs performance. Kinda like a master to two slave microcontrollers.
