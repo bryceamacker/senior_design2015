@@ -1,5 +1,6 @@
 #include <QTRSensors.h>
 #include <Servo.h>
+#include "wheels.h"
 
 // For this example, we are using parallax continuous rotation servos
 // You can refer to this webpage for further documentation on interfacing these motors w/ Arduino
@@ -41,15 +42,16 @@
 #define RIGHT_WHEEL    3
 #define LEFT           3
 
-// sensors 0 through 7 are connected to digital pins 4 through 11, respectively
+
+// sensors 0 through 7 are connected to digital pins 5 through 12, respectively
 QTRSensorsRC qtrrc((unsigned char[])
 {
 	5, 6, 7, 8, 9, 10, 11, 12
 },
 NUM_SENSORS, TIMEOUT, EMITTER_PIN);
 	unsigned int sensorValues[NUM_SENSORS];
-	Servo right;
-	Servo left;
+	Servo rightWheel;
+	Servo leftWheel;
 	boolean foundObjective = false;
 	boolean start = false;
 	const int lineCenter = (1000 * (NUM_SENSORS - 1)) / 2;
@@ -58,13 +60,17 @@ NUM_SENSORS, TIMEOUT, EMITTER_PIN);
 	int buttonState = 0;
 	int lastButtonState = 0;
 
+	// Flags for when we are in 90 degree turns
+	int leftTurn = 0;
+	int rightTurn = 0;
+
 	int potPin = 5;
 
 
 	void setup()
 	{
-		right.attach(RIGHT_WHEEL);
-		left.attach(LEFT_WHEEL);
+		rightWheel.attach(RIGHT_WHEEL);
+		leftWheel.attach(LEFT_WHEEL);
 		Serial.begin(9600);
 		delay(500);
 		int spd = analogRead(potPin);
@@ -74,22 +80,22 @@ NUM_SENSORS, TIMEOUT, EMITTER_PIN);
 			// Swings the bot over the line and back while calibrating 
 			if (i >= 0 && i < 40)
 			{
-				driveTankRev("right", spd);
-				driveTank("left", spd);
+				driveTankRev(right, spd);
+				driveTank(left, spd);
 				Serial.print("First turn");
 				Serial.print("\n");
 			}
 			else if (i >= 40 && i < 110)
 			{
-				driveTank("right", spd);
-				driveTankRev("left", spd);
+				driveTank(right, spd);
+				driveTankRev(left, spd);
 				Serial.print("Second Turn");
 				Serial.print("\n");
 			}
 			else if (i >= 110 && i < 150)
 			{
-				driveTankRev("right", spd);
-				driveTank("left", spd);
+				driveTankRev(right, spd);
+				driveTank(left, spd);
 				Serial.print("Third Turn");
 				Serial.print("\n");
 			}
@@ -119,8 +125,8 @@ NUM_SENSORS, TIMEOUT, EMITTER_PIN);
 		}
 		Serial.println();
 		Serial.println();
-		driveTank("right", spd);
-		driveTank("left", spd);
+		driveTank(right, spd);
+		driveTank(left, spd);
 		delay(200);
 		stopTankMotors();
 	}
@@ -164,40 +170,71 @@ NUM_SENSORS, TIMEOUT, EMITTER_PIN);
 			//     ||
 			//  ===||  
 			//     ||  
-			if (sensorValues[0] < 75 && sensorValues[1] < 75 && sensorValues[2] < 75)
+			if (leftTurn == 1 || rightTurn == 1)
 			{
-                                Serial.print("Right angle, left turn");
-                                Serial.print("\n");
-				driveTank("left", spd);
-				driveTankRev("right", spd);
-			}
+				if (leftTurn == 1)
+				{
+					for (int i = 0; i <= 40; i++)
+					{
+						driveTank(left, spd);
+						driveTankRev(right, spd);
+					}
+					leftTurn = 0;
+				}
 
-			// And this is a right angle on the right
-			else if (sensorValues[7] < 75 && sensorValues[6] < 75 && sensorValues[5] < 75)
-			{                                
-                                Serial.print("Right angle, right turn");
-                                Serial.print("\n");
-				driveTank("right", spd);
-				driveTankRev("left", spd);
+				if (rightTurn == 1)
+				{
+					for (int i = 0; i <= 40; i++)
+					{
+						driveTank(right, spd);
+						driveTankRev(left, spd);
+					}
+					rightTurn = 0;
+				}
 			}
-
-			// This is navigating straight down the line
 			else
 			{
-				if (error > 1000)
+				if (sensorValues[0] < 75 && sensorValues[1] < 75 && sensorValues[2] < 75)
 				{
-					driveTank("right", spd);
-					stopTankMotor("left");
+					leftTurn = 1;
+					rightTurn = 0;
+					Serial.print("Right angle, left turn");
+					Serial.print("\n");
+					driveTank(left, spd);
+					driveTankRev(right, spd);
 				}
-				if (error < -1000)
+
+				// And this is a right angle on the right
+				else if (sensorValues[7] < 75 && sensorValues[6] < 75 && sensorValues[5] < 75)
 				{
-					driveTank("left", spd);
-					stopTankMotor("right");
+					rightTurn = 1;
+					leftTurn = 0;
+					Serial.print("Right angle, right turn");
+					Serial.print("\n");
+					driveTank(right, spd);
+					driveTankRev(left, spd);
 				}
-				if ((error >= -1000) && (error <= 1000)) // drive straight
+
+				// This is navigating straight down the line
+				else
 				{
-					driveTank("left", spd);
-					driveTank("right", spd);
+					leftTurn = 0;
+					rightTurn = 0;
+					if (error > 1000)
+					{
+						driveTank(right, spd);
+						stopTankMotor(left);
+					}
+					if (error < -1000)
+					{
+						driveTank(left, spd);
+						stopTankMotor(right);
+					}
+					if ((error >= -1000) && (error <= 1000)) // drive straight
+					{
+						driveTank(left, spd);
+						driveTank(right, spd);
+					}
 				}
 			}
 
@@ -218,64 +255,62 @@ NUM_SENSORS, TIMEOUT, EMITTER_PIN);
 	}
 
 
-	void drive(String motor, int spd)
+	void drive(enum wheels motor, int spd)
 	{
-		if (motor == "left")
-			left.writeMicroseconds(map(spd, 0, 100, 1500, 1700));
-		else if (motor == "right")
-			right.writeMicroseconds(map(spd, 0, 100, 1500, 1300));
+		if (motor == left)
+			leftWheel.writeMicroseconds(map(spd, 0, 100, 1500, 1700));
+		else if (motor == right)
+			rightWheel.writeMicroseconds(map(spd, 0, 100, 1500, 1300));
 	}
 
-	void driveRev(String motor, int spd)
+	void driveRev(enum wheels motor, int spd)
 	{
-		if (motor == "left")
-			left.writeMicroseconds(map(spd, 0, 100, 1500, 1300));
-		else if (motor == "right")
-			right.writeMicroseconds(map(spd, 0, 100, 1500, 1700));
+		if (motor == left)
+			leftWheel.writeMicroseconds(map(spd, 0, 100, 1500, 1300));
+		else if (motor == right)
+			rightWheel.writeMicroseconds(map(spd, 0, 100, 1500, 1700));
 	}
 
-	void driveTank(String motor, int spd)
+	void driveTank(enum wheels motor, int spd)
 	{
-		if (motor == "left")
-			left.write(map(spd, 0, 1023, 90, 180));
-		else if (motor == "right")
-			right.write(map(spd, 0, 1023, 90, 0));
+		if (motor == left)
+			leftWheel.write(map(spd, 0, 1023, 90, 180));
+		else if (motor == right)
+			rightWheel.write(map(spd, 0, 1023, 90, 0));
 	}
 
-	void driveTankRev(String motor, int spd)
+	void driveTankRev(enum wheels motor, int spd)
 	{
-		if (motor == "left")
-			left.write(map(spd, 0, 1023, 90, 0));
-		else if (motor == "right")
-			right.write(map(spd, 0, 1023, 90, 180));
+		if (motor == left)
+			leftWheel.write(map(spd, 0, 1023, 90, 0));
+		else if (motor == right)
+			rightWheel.write(map(spd, 0, 1023, 90, 180));
 	}
 
-	void stopMotor(String motor)
+	void stopMotor(enum wheels motor)
 	{
-		if (motor == "left")
-			left.writeMicroseconds(1500);
-		else if (motor == "right")
-			right.writeMicroseconds(1500);
+		if (motor == left)
+			leftWheel.writeMicroseconds(1500);
+		else if (motor == right)
+			rightWheel.writeMicroseconds(1500);
 	}
 
-	void stopTankMotor(String motor)
+	void stopTankMotor(enum wheels motor)
 	{
-		if (motor == "left")
-			left.write(90);
-		else if (motor == "right")
-			right.write(90);
+		if (motor == left)
+			leftWheel.write(90);
+		else if (motor == right)
+			rightWheel.write(90);
 	}
 
 	void stopMotors()
 	{
-		left.writeMicroseconds(1500);
-		right.writeMicroseconds(1500);
+		leftWheel.writeMicroseconds(1500);
+		rightWheel.writeMicroseconds(1500);
 	}
 
 	void stopTankMotors()
 	{
-		left.write(90);
-		right.write(90);
+		leftWheel.write(90);
+		rightWheel.write(90);
 	}
-
-
