@@ -1,0 +1,10 @@
+#home-left {
+    @include span-columns(8);
+    float: left;
+}
+
+#home-right {
+    @include span-columns(2);
+    float: right;
+}
+
