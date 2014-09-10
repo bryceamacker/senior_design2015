@@ -10,12 +10,17 @@
 	border-style: solid;
 	border-width: 1px;
 	float: 	left;
-//	display: inline-block;
 }
 
 .bio {
 	padding: 15px 0px 0px 15px;
 	display: inline-block;
+}
+
+.resume {
+    @include span-columns(9);
+    margin-left: 30px;
+    font-size: $body-font-size;
 }
 
 #bryce {
@@ -37,7 +42,7 @@
 }
 #steven {
 	.picture {
-		@include retina-image('../images/placeholder', 250px 250px);
+		@include retina-image('../images/steven', 250px 250px);
 	}
 }
 #ryant {
