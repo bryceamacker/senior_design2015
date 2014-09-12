@@ -2,11 +2,12 @@
 #ifndef _PIC24_QTR8RC_H_
 #define _PIC24_QTR8RC_H_
 
-#define SENSOR_NUM	14
+#define SENSOR_NUM	15
 //#define MAX_VALUE	0x01F4
 #define QTR_EMITTERS_OFF 0
 #define QTR_EMITTERS_ON 1
 #define QTR_EMITTERS_ON_AND_OFF 2
+
 
 void CONFIG_OUTPUTS(void);
 void CONFIG_INPUTS(void);
