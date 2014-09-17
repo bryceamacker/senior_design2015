@@ -39,7 +39,8 @@ h6 {
 }
 
 p {
-  margin: 0 0 ($base-line-height * .5);
+  //margin: 0 0 ($base-line-height * .5);
+  margin:0;
   font: $serif;
   font-size: $body-font-size;
 }
