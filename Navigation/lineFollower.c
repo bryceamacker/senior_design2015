@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#
+
 //*****************************************************
 //  BEGIN SETUP FOR SERVO CONTROL
 //*****************************************************
@@ -31,7 +31,7 @@ void  configTimer2(void) {
 #define MAX_PW 2400            //minimum pulse width, in us
 #define SLOT_WIDTH 2800        //slot width, in us
 
-volatile uint16_t au16_servoPWidths[NUM_SERVOS];
+static volatile uint16_t au16_servoPWidths[NUM_SERVOS];
 volatile uint8_t u8_currentServo =0;
 volatile uint8_t u8_servoEdge = 1;  //1 = RISING, 0 = FALLING
 volatile uint16_t u16_slotWidthTicks = 0;
@@ -145,10 +145,84 @@ void getServoValue(void) {
   }
   //set the pulse width
   _OC1IE = 0; //disable the interrupt while changing
-  au16_servoPWidths[u16_servo-1]=usToU16Ticks(u16_pw, getTimerPrescale(T2CONbits));
+  au16_servoPWidths[u16_servo-1] = usToU16Ticks(u16_pw, getTimerPrescale(T2CONbits));
   _OC1IE = 1;
 }
+#define LEFT_WHEEL 1  // Go forward with 1000, CONNECT TO C1
+#define RIGHT_WHEEL 0  // Go forward with 2000, CONNECT TO C0
+#define LEFT_FORWARD 1000
+#define LEFT_REVERSE 2000
+#define RIGHT_FORWARD 2000
+#define RIGHT_REVERSE 1000
+#define STOP 1500
+// TODO: Figure out why this macro works but the function doesn't
+#define MOVE_SERVO(u16_servoPort, u16_val) \
+do {            \
+  _OC1IE = 0;   \
+  au16_servoPWidths[u16_servoPort-1] = usToU16Ticks(u16_val, getTimerPrescale(T2CONbits)); \
+  _OC1IE = 1;   \
+} while (0)
 
+#define DRIVE_FORWARD() \
+ do {           \
+  _OC1IE = 0;   \
+  au16_servoPWidths[LEFT_WHEEL] = usToU16Ticks(LEFT_FORWARD, getTimerPrescale(T2CONbits)); \
+  au16_servoPWidths[RIGHT_WHEEL] = usToU16Ticks(RIGHT_FORWARD, getTimerPrescale(T2CONbits)); \
+  _OC1IE = 1;   \
+  DELAY_MS(100); \
+} while (0)
+
+#define DRIVE_LEFT_HARD() \
+ do {           \
+  _OC1IE = 0;   \
+  au16_servoPWidths[LEFT_WHEEL] = usToU16Ticks(LEFT_REVERSE, getTimerPrescale(T2CONbits)); \
+  au16_servoPWidths[RIGHT_WHEEL] = usToU16Ticks(RIGHT_FORWARD, getTimerPrescale(T2CONbits)); \
+  _OC1IE = 1;   \
+  DELAY_MS(100); \
+} while (0)
+
+#define DRIVE_LEFT() \
+ do {           \
+  _OC1IE = 0;   \
+  au16_servoPWidths[LEFT_WHEEL] = usToU16Ticks(STOP, getTimerPrescale(T2CONbits)); \
+  au16_servoPWidths[RIGHT_WHEEL] = usToU16Ticks(RIGHT_FORWARD, getTimerPrescale(T2CONbits)); \
+  _OC1IE = 1;   \
+  DELAY_MS(100); \
+} while (0)
+
+#define DRIVE_RIGHT_HARD() \
+ do {           \
+  _OC1IE = 0;   \
+  au16_servoPWidths[LEFT_WHEEL] = usToU16Ticks(LEFT_FORWARD, getTimerPrescale(T2CONbits)); \
+  au16_servoPWidths[RIGHT_WHEEL] = usToU16Ticks(RIGHT_REVERSE, getTimerPrescale(T2CONbits)); \
+  _OC1IE = 1;   \
+  DELAY_MS(100); \
+} while (0)
+
+#define DRIVE_RIGHT() \
+ do {           \
+  _OC1IE = 0;   \
+  au16_servoPWidths[LEFT_WHEEL] = usToU16Ticks(LEFT_FORWARD, getTimerPrescale(T2CONbits)); \
+  au16_servoPWidths[RIGHT_WHEEL] = usToU16Ticks(STOP, getTimerPrescale(T2CONbits)); \
+  _OC1IE = 1;   \
+  DELAY_MS(100); \
+} while (0)
+
+#define STOP_MOTORS() \
+ do {           \
+  _OC1IE = 0;   \
+  au16_servoPWidths[LEFT_WHEEL] = usToU16Ticks(STOP, getTimerPrescale(T2CONbits)); \
+  au16_servoPWidths[RIGHT_WHEEL] = usToU16Ticks(STOP, getTimerPrescale(T2CONbits)); \
+  _OC1IE = 1;   \
+  DELAY_MS(100); \
+} while (0)
+
+void moveServo(uint16_t u16_servo, uint16_t u16_pw) {
+  _OC1IE = 0; //disable the interrupt while changing
+  au16_servoPWidths[u16_servo-1] = usToU16Ticks(u16_pw, getTimerPrescale(T2CONbits));
+  _OC1IE = 1;
+  DELAY_MS(100);
+}
 //</editor-fold>
 // *****************************************************
 // END SERVO SETUP
@@ -218,7 +292,7 @@ void  configTimer67(void) {
   T6CONbits.TON = 0;               //turn off the timer
 }
 
-float getLine(uint16_t* pau16_sensorValues) {
+uint16_t getLine(uint16_t* pau16_sensorValues) {
 	float f_line = 0;
 	readLine(pau16_sensorValues, QTR_EMITTERS_ON);
 	uint16_t u16_i;
@@ -232,7 +306,7 @@ float getLine(uint16_t* pau16_sensorValues) {
 	for(u16_i = 0; u16_i < SENSOR_NUM; u16_i++) {
 		u16_sum += pau16_sensorValues[u16_i];
 	}
-	f_line = f_line/u16_sum;
+	f_line = (f_line/u16_sum) * 1000;
 	return f_line;
 }
 
@@ -340,9 +414,12 @@ void outString2(const char* psz_s) {
 int main()
 {
         // Basic init
-        configBasic(HELLO_MSG);
+        configClock();
+        configDefaultUART(19200);
+        printResetCause();
+        outString(HELLO_MSG);
         configHeartbeat();
-        
+
         // Servo init
         configTimer2();
         initServos();
@@ -353,26 +430,119 @@ int main()
         kalibrate(QTR_EMITTERS_ON);
         uint16_t pau16_sensorValues[SENSOR_NUM];
         char* serial_buf[SENSOR_NUM];
-        uint8_t i;
-        float temp_line;
+        uint16_t position = 0;
+        int lineCenter = ((1000 * (SENSOR_NUM - 1)) / 2);
+        uint8_t detectingSensors = 0;
+        uint8_t foundObjective = 0;
+        // Flags while in sharp turns
+        uint8_t leftTurn = 0;
+        uint8_t rightTurn = 0;
 
+        int16_t error = 0;
+
+        int countUp = 1;
+        uint16_t temp_line;
+        int i = 0;
         while(1) {
-            // <editor-fold defaultstate="collapsed" desc="Print line follower data">
-//            temp_line = getLine(pau16_sensorValues);
-//            for (i = 0 ; i < SENSOR_NUM ; ++i)
-//            {
-//                serial_buf[i] = pau16_sensorValues[i];
-//                printf("%d-", pau16_sensorValues[i]);
-//            }
-//            printf("%f",temp_line);
-//            printf("\n");
-            // </editor-fold>
+            position = getLine(pau16_sensorValues);
+            error = position - lineCenter;
+            detectingSensors = 0;
 
             // <editor-fold defaultstate="collapsed" desc="Control servos from serial">
             // Note, you must use the "Send&\n" option if using BullyBootloader
-            getServoValue();
+            //getServoValue();
             // </editor-fold>
 
+           // <editor-fold defaultstate="collapsed" desc="Print line follower data">
+            for (i = 0 ; i < SENSOR_NUM ; ++i)
+            {
+                serial_buf[i] = pau16_sensorValues[i];
+                printf("%d-", pau16_sensorValues[i]);
+            }
+            printf("\t %u \t %i", position, error);
+            // </editor-fold>
+
+            // If we are at a 90 degree turn, stop regular line following
+            // and try to turn extactly 90 degrees
+            for (i = 0; i < SENSOR_NUM; i++)
+            {
+                detectingSensors += pau16_sensorValues[i];
+            }
+            if (detectingSensors >= SENSOR_NUM - 3)
+            {
+                foundObjective = 1;
+            }
+            if (foundObjective == 1)
+            {
+                STOP_MOTORS();
+                printf("Reached Objective");
+            }
+            else
+            {
+            if ((leftTurn == 1) || (rightTurn == 1))
+            {
+                if (leftTurn ==1)
+                {
+                    printf("\t 90 Degree Left Turn \n");
+                    DRIVE_LEFT_HARD();
+                    DELAY_MS(250);
+                    leftTurn = 0;
+                }
+
+                if (rightTurn == 1)
+                {
+                    printf("\t 90 Degree Right Turn \n");
+                    DRIVE_RIGHT_HARD();
+                    DELAY_MS(250);
+                    rightTurn = 0;
+                }
+            }
+            else
+            {
+                // Try our best to detect 90 degree turns and set a flag
+                if (pau16_sensorValues[14] == 1 && pau16_sensorValues[13] == 1
+                    && pau16_sensorValues[12] == 1 && pau16_sensorValues[11] == 1
+                    && pau16_sensorValues[10] == 1
+                   && (pau16_sensorValues[5] == 1 || pau16_sensorValues[6] == 1
+                    || pau16_sensorValues[7] == 1 || pau16_sensorValues[8] == 1
+                    || pau16_sensorValues[9] == 1))
+                {
+                    leftTurn = 1;
+                }
+
+                else if (pau16_sensorValues[0] == 1 && pau16_sensorValues[1] == 1
+                     && pau16_sensorValues[2] == 1 && pau16_sensorValues[3] == 1
+                     && pau16_sensorValues[4] == 1
+                    && (pau16_sensorValues[5] == 1 || pau16_sensorValues[6] == 1
+                     || pau16_sensorValues[7] == 1 || pau16_sensorValues[8] == 1))
+                {
+                    rightTurn = 1;
+                }
+
+                // Keep us going straight down the middle of the line
+                else
+                {
+                    leftTurn = 0;
+                    rightTurn = 0;
+
+                    if (error > 1000)
+                    {
+                        DRIVE_LEFT();
+                        printf("\t Drive Left \n");
+                    }
+                    if (error < -1000)
+                    {
+                        DRIVE_RIGHT();
+                        printf("\t Drive Right \n");
+                    }
+                    if ((error >= -1000) && (error <= 1000)) // drive straight
+                    {
+                        DRIVE_FORWARD();
+                        printf("\t Drive Forward \n");
+                    }
+                }
+            }
+            }
         }
 }
 

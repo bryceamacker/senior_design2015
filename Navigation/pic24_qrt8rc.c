@@ -71,13 +71,13 @@ void  configTimer4(void) {
 
 //dissables LED
 void emittersOff(void) {
-	_RB8 = 0;
+	_RF4 = 0;
 	DELAY_US(200);
 }
 
 //enables LED
 void emittersOn(void) {
-	_RB8 = 1;
+	_RF4 = 1;
 	DELAY_US(200);
 }
 
@@ -98,6 +98,7 @@ void readValues(uint16_t* pau16_sensor_values) {
 
         //drive outputs RB0 - RB14
         PORTB = 0x7FFF;
+        PORTF = 0x0010;
 	DELAY_US(10);
         // 0111 1111 1111 1111
         // RB0 - RB14
@@ -127,8 +128,8 @@ void readValues(uint16_t* pau16_sensor_values) {
 void read(uint16_t* pau16_sensor_values, char u8_readMode) {
 	uint16_t pau16_off_values[SENSOR_NUM];
 	uint16_t u16_i;
-	//emitter pin = RB8
-	CONFIG_RB8_AS_DIG_OUTPUT();
+	//emitter pin = RF4
+	CONFIG_RF4_AS_DIG_OUTPUT();
 	if(u8_readMode == QTR_EMITTERS_ON || u8_readMode == QTR_EMITTERS_ON_AND_OFF) {
 		emittersOn();
 	}
