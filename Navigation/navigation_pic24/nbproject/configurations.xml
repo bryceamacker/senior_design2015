@@ -29,8 +29,9 @@
         <itemPath>../../lib/include/pic24_unittest.h</itemPath>
         <itemPath>../../lib/include/pic24_util.h</itemPath>
       </logicalFolder>
-      <itemPath>../motors.h</itemPath>
       <itemPath>../pic24_qtr8rc.h</itemPath>
+      <itemPath>C:/senior_design2015/Navigation/pwm.h</itemPath>
+      <itemPath>../motor_pwm.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -50,8 +51,8 @@
         <itemPath>../../lib/src/pic24_util.c</itemPath>
       </logicalFolder>
       <itemPath>../lineFollower.c</itemPath>
-      <itemPath>../motors.c</itemPath>
       <itemPath>../pic24_qrt8rc.c</itemPath>
+      <itemPath>C:/senior_design2015/Navigation/motor_pwm.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -242,7 +243,7 @@
         <property key="OUTPUT COMPARE 8" value="true"/>
         <property key="SPI 1" value="true"/>
         <property key="SPI 2" value="true"/>
-        <property key="SecureSegment.SegmentProgramming" value="FullChipProgramming"/>
+        <property key="SecureSegment.SegmentProgramming" value="SegmentProgrammingAll"/>
         <property key="TIMER1" value="true"/>
         <property key="TIMER2" value="true"/>
         <property key="TIMER3" value="true"/>

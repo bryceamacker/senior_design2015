@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=../../lib/src/pic24_clockfreq.c ../../lib/src/pic24_configbits.c ../../lib/src/pic24_i2c.c ../../lib/src/pic24_serial.c ../../lib/src/pic24_timer.c ../../lib/src/pic24_uart.c ../../lib/src/pic24_util.c ../lineFollower.c ../motors.c ../pic24_qrt8rc.c
+SOURCEFILES_QUOTED_IF_SPACED=../../lib/src/pic24_clockfreq.c ../../lib/src/pic24_configbits.c ../../lib/src/pic24_i2c.c ../../lib/src/pic24_serial.c ../../lib/src/pic24_timer.c ../../lib/src/pic24_uart.c ../../lib/src/pic24_util.c ../lineFollower.c ../pic24_qrt8rc.c C:/senior_design2015/Navigation/motor_pwm.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/957557178/pic24_clockfreq.o ${OBJECTDIR}/_ext/957557178/pic24_configbits.o ${OBJECTDIR}/_ext/957557178/pic24_i2c.o ${OBJECTDIR}/_ext/957557178/pic24_serial.o ${OBJECTDIR}/_ext/957557178/pic24_timer.o ${OBJECTDIR}/_ext/957557178/pic24_uart.o ${OBJECTDIR}/_ext/957557178/pic24_util.o ${OBJECTDIR}/_ext/1472/lineFollower.o ${OBJECTDIR}/_ext/1472/motors.o ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/957557178/pic24_clockfreq.o.d ${OBJECTDIR}/_ext/957557178/pic24_configbits.o.d ${OBJECTDIR}/_ext/957557178/pic24_i2c.o.d ${OBJECTDIR}/_ext/957557178/pic24_serial.o.d ${OBJECTDIR}/_ext/957557178/pic24_timer.o.d ${OBJECTDIR}/_ext/957557178/pic24_uart.o.d ${OBJECTDIR}/_ext/957557178/pic24_util.o.d ${OBJECTDIR}/_ext/1472/lineFollower.o.d ${OBJECTDIR}/_ext/1472/motors.o.d ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/_ext/957557178/pic24_clockfreq.o ${OBJECTDIR}/_ext/957557178/pic24_configbits.o ${OBJECTDIR}/_ext/957557178/pic24_i2c.o ${OBJECTDIR}/_ext/957557178/pic24_serial.o ${OBJECTDIR}/_ext/957557178/pic24_timer.o ${OBJECTDIR}/_ext/957557178/pic24_uart.o ${OBJECTDIR}/_ext/957557178/pic24_util.o ${OBJECTDIR}/_ext/1472/lineFollower.o ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o ${OBJECTDIR}/_ext/546171520/motor_pwm.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/_ext/957557178/pic24_clockfreq.o.d ${OBJECTDIR}/_ext/957557178/pic24_configbits.o.d ${OBJECTDIR}/_ext/957557178/pic24_i2c.o.d ${OBJECTDIR}/_ext/957557178/pic24_serial.o.d ${OBJECTDIR}/_ext/957557178/pic24_timer.o.d ${OBJECTDIR}/_ext/957557178/pic24_uart.o.d ${OBJECTDIR}/_ext/957557178/pic24_util.o.d ${OBJECTDIR}/_ext/1472/lineFollower.o.d ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o.d ${OBJECTDIR}/_ext/546171520/motor_pwm.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/_ext/957557178/pic24_clockfreq.o ${OBJECTDIR}/_ext/957557178/pic24_configbits.o ${OBJECTDIR}/_ext/957557178/pic24_i2c.o ${OBJECTDIR}/_ext/957557178/pic24_serial.o ${OBJECTDIR}/_ext/957557178/pic24_timer.o ${OBJECTDIR}/_ext/957557178/pic24_uart.o ${OBJECTDIR}/_ext/957557178/pic24_util.o ${OBJECTDIR}/_ext/1472/lineFollower.o ${OBJECTDIR}/_ext/1472/motors.o ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o
+OBJECTFILES=${OBJECTDIR}/_ext/957557178/pic24_clockfreq.o ${OBJECTDIR}/_ext/957557178/pic24_configbits.o ${OBJECTDIR}/_ext/957557178/pic24_i2c.o ${OBJECTDIR}/_ext/957557178/pic24_serial.o ${OBJECTDIR}/_ext/957557178/pic24_timer.o ${OBJECTDIR}/_ext/957557178/pic24_uart.o ${OBJECTDIR}/_ext/957557178/pic24_util.o ${OBJECTDIR}/_ext/1472/lineFollower.o ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o ${OBJECTDIR}/_ext/546171520/motor_pwm.o
 
 # Source Files
-SOURCEFILES=../../lib/src/pic24_clockfreq.c ../../lib/src/pic24_configbits.c ../../lib/src/pic24_i2c.c ../../lib/src/pic24_serial.c ../../lib/src/pic24_timer.c ../../lib/src/pic24_uart.c ../../lib/src/pic24_util.c ../lineFollower.c ../motors.c ../pic24_qrt8rc.c
+SOURCEFILES=../../lib/src/pic24_clockfreq.c ../../lib/src/pic24_configbits.c ../../lib/src/pic24_i2c.c ../../lib/src/pic24_serial.c ../../lib/src/pic24_timer.c ../../lib/src/pic24_uart.c ../../lib/src/pic24_util.c ../lineFollower.c ../pic24_qrt8rc.c C:/senior_design2015/Navigation/motor_pwm.c
 
 
 CFLAGS=
@@ -135,19 +135,19 @@ ${OBJECTDIR}/_ext/1472/lineFollower.o: ../lineFollower.c  nbproject/Makefile-${C
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../lineFollower.c  -o ${OBJECTDIR}/_ext/1472/lineFollower.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1472/lineFollower.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1    -omf=elf -O1 -I"../../lib/include" -I".." -I"." -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/_ext/1472/lineFollower.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
-${OBJECTDIR}/_ext/1472/motors.o: ../motors.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/_ext/1472 
-	@${RM} ${OBJECTDIR}/_ext/1472/motors.o.d 
-	@${RM} ${OBJECTDIR}/_ext/1472/motors.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../motors.c  -o ${OBJECTDIR}/_ext/1472/motors.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1472/motors.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1    -omf=elf -O1 -I"../../lib/include" -I".." -I"." -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/_ext/1472/motors.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
 ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o: ../pic24_qrt8rc.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/_ext/1472 
 	@${RM} ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../pic24_qrt8rc.c  -o ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1    -omf=elf -O1 -I"../../lib/include" -I".." -I"." -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/_ext/546171520/motor_pwm.o: C:/senior_design2015/Navigation/motor_pwm.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/_ext/546171520 
+	@${RM} ${OBJECTDIR}/_ext/546171520/motor_pwm.o.d 
+	@${RM} ${OBJECTDIR}/_ext/546171520/motor_pwm.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  C:/senior_design2015/Navigation/motor_pwm.c  -o ${OBJECTDIR}/_ext/546171520/motor_pwm.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/546171520/motor_pwm.o.d"      -g -D__DEBUG -D__MPLAB_DEBUGGER_PK3=1    -omf=elf -O1 -I"../../lib/include" -I".." -I"." -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/_ext/546171520/motor_pwm.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 else
 ${OBJECTDIR}/_ext/957557178/pic24_clockfreq.o: ../../lib/src/pic24_clockfreq.c  nbproject/Makefile-${CND_CONF}.mk
@@ -206,19 +206,19 @@ ${OBJECTDIR}/_ext/1472/lineFollower.o: ../lineFollower.c  nbproject/Makefile-${C
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../lineFollower.c  -o ${OBJECTDIR}/_ext/1472/lineFollower.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1472/lineFollower.o.d"        -g -omf=elf -O1 -I"../../lib/include" -I".." -I"." -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/_ext/1472/lineFollower.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
-${OBJECTDIR}/_ext/1472/motors.o: ../motors.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/_ext/1472 
-	@${RM} ${OBJECTDIR}/_ext/1472/motors.o.d 
-	@${RM} ${OBJECTDIR}/_ext/1472/motors.o 
-	${MP_CC} $(MP_EXTRA_CC_PRE)  ../motors.c  -o ${OBJECTDIR}/_ext/1472/motors.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1472/motors.o.d"        -g -omf=elf -O1 -I"../../lib/include" -I".." -I"." -msmart-io=1 -Wall -msfr-warn=off
-	@${FIXDEPS} "${OBJECTDIR}/_ext/1472/motors.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
-	
 ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o: ../pic24_qrt8rc.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/_ext/1472 
 	@${RM} ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o.d 
 	@${RM} ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o 
 	${MP_CC} $(MP_EXTRA_CC_PRE)  ../pic24_qrt8rc.c  -o ${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o.d"        -g -omf=elf -O1 -I"../../lib/include" -I".." -I"." -msmart-io=1 -Wall -msfr-warn=off
 	@${FIXDEPS} "${OBJECTDIR}/_ext/1472/pic24_qrt8rc.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
+	
+${OBJECTDIR}/_ext/546171520/motor_pwm.o: C:/senior_design2015/Navigation/motor_pwm.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/_ext/546171520 
+	@${RM} ${OBJECTDIR}/_ext/546171520/motor_pwm.o.d 
+	@${RM} ${OBJECTDIR}/_ext/546171520/motor_pwm.o 
+	${MP_CC} $(MP_EXTRA_CC_PRE)  C:/senior_design2015/Navigation/motor_pwm.c  -o ${OBJECTDIR}/_ext/546171520/motor_pwm.o  -c -mcpu=$(MP_PROCESSOR_OPTION)  -MMD -MF "${OBJECTDIR}/_ext/546171520/motor_pwm.o.d"        -g -omf=elf -O1 -I"../../lib/include" -I".." -I"." -msmart-io=1 -Wall -msfr-warn=off
+	@${FIXDEPS} "${OBJECTDIR}/_ext/546171520/motor_pwm.o.d" $(SILENT)  -rsi ${MP_CC_DIR}../ 
 	
 endif
 

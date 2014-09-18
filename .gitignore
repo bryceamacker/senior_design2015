@@ -14,3 +14,8 @@
 *.o
 *.hex
 .sconsign.dblite
+
+# MPLAB X Stuff
+Navigation/navigation_pic24_pwm_time_slice/
+Navigation/navigation_pic24_pwm_test/
+Navigation/navigation_pic24_pwm/

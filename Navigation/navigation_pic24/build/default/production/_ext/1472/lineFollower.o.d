@@ -22,4 +22,4 @@ build/default/production/_ext/1472/lineFollower.o:  \
  ../../lib/include/pic24_flash.h  \
 ../../lib/include/pic24_comparator.h  \
  ../pic24_qtr8rc.h  \
-../motors.h 
+../motor_pwm.h 

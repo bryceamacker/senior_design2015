@@ -92,12 +92,12 @@ void readValues(uint16_t* pau16_sensor_values) {
 		pau8_sensorCheck[u16_i] = 0;
 	}
 	//drive outputs RB0 - RB7 and emitter high
-	//PORTB = 0x01FF;
+	PORTB = 0x01FF;
         // 0000 0001 1111 1111
         // RB0 - RB8
 
         //drive outputs RB0 - RB14
-        PORTB = 0x7FFF;
+        //PORTB = 0x7FFF;
         PORTF = 0x0010;
 	DELAY_US(10);
         // 0111 1111 1111 1111

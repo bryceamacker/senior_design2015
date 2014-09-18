@@ -1,5 +1,5 @@
-build/default/production/_ext/1472/motors.o:  \
-../motors.c  \
+build/default/production/_ext/546171520/motor_pwm.o:  \
+ C:/senior_design2015/Navigation/motor_pwm.c  \
  ../../lib/include/pic24_all.h  \
 ../../lib/include/pic24_chip.h  \
  ../../lib/include/pic24_libconfig.h  \
@@ -21,4 +21,5 @@ build/default/production/_ext/1472/motors.o:  \
 ../../lib/include/pic24_unions.h  \
  ../../lib/include/pic24_flash.h  \
 ../../lib/include/pic24_comparator.h  \
- ../motors.h 
+ ../../lib/include/dataXfer.h  \
+../../lib/include/dataXferImpl.h 
