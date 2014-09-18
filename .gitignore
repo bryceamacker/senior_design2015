@@ -8,3 +8,9 @@
 # Sublime project files
 *.sublime-project
 *.sublime-workspace
+
+# Scons stuff
+*.elf
+*.o
+*.hex
+.sconsign.dblite

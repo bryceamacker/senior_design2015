@@ -44,6 +44,7 @@ typedef enum  {
 
 volatile STATE e_mystate = STATE_WAIT_FOR_ADDR;
 volatile uint8_t u8_num;
+volatile uint8_t u8_flash;
 
 void _ISRFAST _SI2C1Interrupt(void) {
   // Variable to clear RBF bit
@@ -95,6 +96,9 @@ void _ISRFAST _SI2C1Interrupt(void) {
           LED1 = 0;
           LED2 = 0;
       }
+      if (u8_num == 5) {
+          u8_flash = 1;
+      }
 
       // Wait for next transaction
       e_mystate = STATE_WAIT_FOR_ADDR;
@@ -123,6 +127,8 @@ int main (void) {
   // Configure I2C for 400 KHz
   configI2C1(400);
 
+  u8_flash = 0;
+
   // Config a couple LEDs
   CONFIG_LED1();
   LED1 = 1;
@@ -138,5 +144,25 @@ int main (void) {
   _SI2C1IE = 1;
 
   // Heartbeat, let interrupts handle I2C
-  while (1) doHeartbeat();
+  while (1) {
+      if (u8_flash == 1) {
+          LED1 = 0;
+          LED2 = 0;
+          DELAY_MS(1000);
+          LED1 = 1;
+          LED2 = 0;
+          DELAY_MS(1000);
+          LED1 = 1;
+          LED2 = 1;
+          DELAY_MS(1000);
+          LED1 = 0;
+          LED2 = 1;
+          DELAY_MS(1000);
+          LED1 = 0;
+          LED2 = 0;
+          u8_num = 255;
+          u8_flash = 0;
+      }
+      doHeartbeat();
+  }
 }
