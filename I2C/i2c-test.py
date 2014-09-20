@@ -30,7 +30,6 @@ def readNum(address):
 while True:
     both = False
 
-    decision = raw_input("(T)ransmit or (R)ecieve: ")
     picChoice = raw_input("Pic (1) or Pic (2) or (b)oth: ")
     num = raw_input("Send a number 0-255: ")
 
