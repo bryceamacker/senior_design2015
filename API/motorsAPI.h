@@ -1,4 +1,4 @@
-l#include "pic24_all.h"
+#include "pic24_all.h"
 #include <stdio.h>
 #include <dataXfer.h>
 #include <stdbool.h>
@@ -23,12 +23,12 @@ void get_motor_value(void);
 // Left motor primitives
 void left_motor_fwd(float duty);
 void left_motor_reverse(float duty);
-void left_motor_stop(float duty);
+void left_motor_stop(void);
 
 // Right motor primitives
 void right_motor_fwd(float duty);
 void right_motor_reverse(float duty);
-void right_motor_stop(float duty);
+void right_motor_stop(void);
 
 // Motor usage
 void stop(void);
