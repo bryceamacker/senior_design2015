@@ -30,9 +30,9 @@
 #  #. Install the Microchip compiler. Make sure your path
 #     includes the directories in which the compiler binaries
 #     exist.
-#  #. From the command line, change to the directory in which
+#   From the command line, change to the directory in which
 #     this file lies.
-#  #. Execute ``SCons``, which builds everything. Optionally use :doc:`runscons.bat <runscons.bat>` to filter through the resulting warnings.
+#   Execute ``SCons``, which builds everything. Optionally use :doc:`runscons.bat <runscons.bat>` to filter through the resulting warnings.
 #
 #  The build process can be modified by passing options to
 #  SCons. See ``SCons --help`` for options specific
@@ -50,12 +50,14 @@ EnsureSConsVersion(2, 0)
 # ============================================
 # USER APP FILES THAT DEFINE THIS APPLICATION
 # ============================================
-UserAppSources =  [ 
+UserAppSources = [
                     'I2C/pic_code.c',
-                    'Navigation/lineFollower.c'
+                    'Navigation/lineFollower.c',
+                    'PicCode/picOne.c',
+                    'PicCode/picTwo.c'
                   ]
 
-LibSources =  [
+LibSources = [
                 'lib/src/dataXfer.c',
                 'lib/src/dataXferImpl.c',
                 'lib/src/pic24_adc.c',
@@ -70,8 +72,11 @@ LibSources =  [
                 'lib/src/pic24_timer.c',
                 'lib/src/pic24_uart.c',
                 'lib/src/pic24_util.c',
-                'Navigation/pic24_qrt8rc.c',
-                'Navigation/motors.c',
+                'API/motorsAPI.c',
+                'API/sensorArrayAPI.c',
+                'API/servosAPI.c',
+                'API/picOneConfig.c',
+                'API/picTwoConfig.c'
               ]
 
 # Create a Microchip XC16 Construction Environment
@@ -198,7 +203,8 @@ env = env.Clone(MCU='24HJ64GP506A',
                 CPPPATH=[
                   './',
                   'lib/include',
-                  'Navigation'
+                  'Navigation',
+                  'API'
                   ]
                 )
 
