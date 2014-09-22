@@ -10,6 +10,9 @@ void pic_two_init() {
     outString(HELLO_MSG);
     configHeartbeat();
 
+    // Servo init
+    //servo_init();
+
     // I2C init
     I2C1ADD = PIC_ONE_I2C_ADDR;
     _SI2C1IF = 0;
