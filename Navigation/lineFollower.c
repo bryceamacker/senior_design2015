@@ -1,6 +1,6 @@
 #include "pic24_all.h"
-#include "pic24_qtr8rc.h"
-#include "motor_pwm.h"
+#include "sensorArrayAPI.h"
+#include "motorsAPI.h"
 #include <stdio.h>
 #include <stdint.h>
 
@@ -301,7 +301,7 @@ void  configTimer67(void) {
 
 float getLine(uint16_t* pau16_sensorValues) {
 	float f_line = 0;
-	readLine(pau16_sensorValues, QTR_EMITTERS_ON);
+	read_line(pau16_sensorValues, QTR_EMITTERS_ON);
 	uint16_t u16_i;
 	for(u16_i = 0; u16_i < SENSOR_NUM; u16_i++) {
 		f_line += pau16_sensorValues[u16_i] * (u16_i+1);
@@ -451,13 +451,13 @@ int main()
 
 
 //        // Servo init
-        configTimer2();
+        config_timer2();
         motors_init();
         //configOutputCapture1();
         T2CONbits.TON = 1;
 
         // Line follower init
-        kalibrate(QTR_EMITTERS_ON);
+        calibrate(QTR_EMITTERS_ON);
         uint16_t pau16_sensorValues[SENSOR_NUM];
         char* serial_buf[SENSOR_NUM];
         uint16_t position = 0;
@@ -482,7 +482,7 @@ int main()
 
             // <editor-fold defaultstate="collapsed" desc="Control servos from serial">
             // Note, you must use the "Send&\n" option if using BullyBootloader
-            getMotorValue();
+            get_motor_value();
             // </editor-fold>
 
            // <editor-fold defaultstate="collapsed" desc="Print line follower data">
