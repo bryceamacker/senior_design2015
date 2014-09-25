@@ -11,16 +11,22 @@ int angle = 0;
 void setup() 
 { 
   verticalServo.attach(verticalPin);
-  horizontalServo.attach(horizontalPin);  // attaches the servo on pin 9 to the servo object 
+  horizontalServo.attach(horizontalPin);  
 } 
  
  
 void loop() 
 { 
   horizontalServo.write(0);
+  verticalServo.write(90);
+  delay(2000);
+  horizontalServo.write(90);
   verticalServo.write(0);
   delay(2000);
-  horizontalServo.write(170);
-  verticalServo.write(170);
+  horizontalServo.write(180);
+  verticalServo.write(90);
+  delay(2000);
+  horizontalServo.write(90);
+  verticalServo.write(180);
   delay(2000);
 } 
