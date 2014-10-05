@@ -8,14 +8,21 @@ elapsedMillis timeElapsed;
 #define BLUE   2
 #define YELLOW 3
 
-#define BLUE_PRESS  2100
-#define BLUE_AFTER_PRESS 2000
-#define GREEN_PRESS  925
-#define GREEN_AFTER_PRESS 1000
-#define RED_PRESS  2400
-#define RED_AFTER_PRESS  2325
-#define YELLOW_PRESS  800
-#define YELLOW_AFTER_PRESS 875
+#define BLUE_PRESS  1025
+#define BLUE_AFTER_PRESS 1085
+#define BLUE_BACK_OFF  2350
+
+#define GREEN_PRESS  1825
+#define GREEN_AFTER_PRESS 1750
+#define GREEN_BACK_OFF  600
+
+#define RED_PRESS  895
+#define RED_AFTER_PRESS  925
+#define RED_BACK_OFF  2350
+
+#define YELLOW_PRESS  1050
+#define YELLOW_AFTER_PRESS 1125
+#define YELLOW_BACK_OFF  2300
 
 /* Simple test of the functionality of the photo resistor
  
@@ -76,46 +83,35 @@ void setup()
   blueServo.attach(11);
   yellowServo.attach(6);
   firstRun = 1;
-  greenServo.writeMicroseconds(GREEN_AFTER_PRESS);
-  delay(250);
+  redServo.writeMicroseconds(RED_BACK_OFF);
+  greenServo.writeMicroseconds(GREEN_BACK_OFF);
+  yellowServo.writeMicroseconds(YELLOW_BACK_OFF);
+  blueServo.writeMicroseconds(BLUE_BACK_OFF);
+  delay(600);
   redServo.writeMicroseconds(RED_AFTER_PRESS);
-  blueServo.write(BLUE_AFTER_PRESS);
+  greenServo.writeMicroseconds(GREEN_AFTER_PRESS);
   yellowServo.writeMicroseconds(YELLOW_AFTER_PRESS);
+  blueServo.writeMicroseconds(BLUE_AFTER_PRESS);
   delay(100);
   Serial.println("Calibrate");
   calibrateSensors();
   Serial.println("Calibrate Done");
   delay(1000);
   Serial.println("Pressing Start");
-  yellowServo.writeMicroseconds(YELLOW_PRESS);
+  //yellowServo.writeMicroseconds(YELLOW_PRESS);
 }
 
 void loop()
 {
-  //readSensors();
-  findColor(roundNum);
-  if (firstRun == 1) {
-      delay(250);
-      yellowServo.writeMicroseconds(YELLOW_AFTER_PRESS);
-      firstRun = 0;
-    }
-  playButtons(roundNum);
-  roundNum++;
-  //delay(1000); // Time to hit buttons
-//  for (int i = 0; i < 4; i++)
-//  {
-//    Serial.println("Detecting Color");
-//    findColor(i);
-//    if (firstRun == 1) {
-//      delay(200);
+  readSensors();
+//  findColor(roundNum);
+//  if (firstRun == 1) {
+//      delay(250);
 //      yellowServo.writeMicroseconds(YELLOW_AFTER_PRESS);
 //      firstRun = 0;
 //    }
-//    Serial.println("Wait  1 sec");
-//    delay(1000);
-//    Serial.println("Play Buttons");
-//    playButtons(i);
-//  }
+//  playButtons(roundNum);
+//  roundNum++;
 }
 void playButtons(int num) {
   for(int i = 0; i < num; i++) {
