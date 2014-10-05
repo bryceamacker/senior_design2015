@@ -1,18 +1,21 @@
+#include <elapsedMillis.h>
 #include <Servo.h>
+
+elapsedMillis timeElapsed;
 
 #define RED    0
 #define GREEN  1
 #define BLUE   2
 #define YELLOW 3
 
-#define BLUE_PRESS  2050
-#define BLUE_AFTER_PRESS 1970
+#define BLUE_PRESS  2100
+#define BLUE_AFTER_PRESS 2000
 #define GREEN_PRESS  925
 #define GREEN_AFTER_PRESS 1000
 #define RED_PRESS  2400
 #define RED_AFTER_PRESS  2325
-#define YELLOW_PRESS  925
-#define YELLOW_AFTER_PRESS 1000
+#define YELLOW_PRESS  800
+#define YELLOW_AFTER_PRESS 875
 
 /* Simple test of the functionality of the photo resistor
  
@@ -33,22 +36,27 @@
 int redLightPin = 0;  //define a pin for Photo resistor
 int greenLightPin = 1;
 int blueLightPin = 2;
+int yellowLightPin = 3;
 
 int lastRedValue = 0;
 int lastGreenValue = 0;
 int lastBlueValue = 0;
+int lastYellowValue = 0;
 
 int lowestRedValue = 1024;
 int lowestGreenValue = 1024;
 int lowestBlueValue = 1024;
+int lowestYellowValue = 1024;
 
 int currentRedValue = 0;
 int currentGreenValue = 0;
 int currentBlueValue = 0;
+int currentYellowValue = 0;
 
 int redDifference = 0;
 int greenDifference = 0;
 int blueDifference = 0;
+int yellowDifference = 0;
 
 Servo redServo;  // create servo object to control a servo 
 Servo greenServo;
@@ -71,100 +79,151 @@ void setup()
   greenServo.writeMicroseconds(GREEN_AFTER_PRESS);
   delay(250);
   redServo.writeMicroseconds(RED_AFTER_PRESS);
-  blueServo.write(1950);
+  blueServo.write(BLUE_AFTER_PRESS);
   yellowServo.writeMicroseconds(YELLOW_AFTER_PRESS);
   delay(100);
+  Serial.println("Calibrate");
   calibrateSensors();
+  Serial.println("Calibrate Done");
+  delay(1000);
+  Serial.println("Pressing Start");
+  yellowServo.writeMicroseconds(YELLOW_PRESS);
 }
 
 void loop()
 {
-  if (firstRun == 1) 
-  {
-    yellowServo.writeMicroseconds(1000);
-    delay(50);
-    buttonArray[0] = findColor();
-    firstRun = 0;
-    playButtons(1);
-  }
-  
-  button = findColor();
-  Serial.print("Red: "); 
-  Serial.print(currentRedValue);
-  Serial.print("\t");
-
-  Serial.print("Green: ");
-  Serial.print(currentGreenValue); 
-  Serial.print("\t");
-
-  Serial.print("Blue: ");
-  Serial.print(currentBlueValue);
-  Serial.print("\n");
-  //with a 10k resistor divide the value by 2, for 100k resistor divide by 4.
-
+  //readSensors();
+  findColor(roundNum);
+  if (firstRun == 1) {
+      delay(250);
+      yellowServo.writeMicroseconds(YELLOW_AFTER_PRESS);
+      firstRun = 0;
+    }
+  playButtons(roundNum);
+  roundNum++;
+  //delay(1000); // Time to hit buttons
+//  for (int i = 0; i < 4; i++)
+//  {
+//    Serial.println("Detecting Color");
+//    findColor(i);
+//    if (firstRun == 1) {
+//      delay(200);
+//      yellowServo.writeMicroseconds(YELLOW_AFTER_PRESS);
+//      firstRun = 0;
+//    }
+//    Serial.println("Wait  1 sec");
+//    delay(1000);
+//    Serial.println("Play Buttons");
+//    playButtons(i);
+//  }
 }
 void playButtons(int num) {
   for(int i = 0; i < num; i++) {
+    Serial.print("Number of buttons in array: ");
+    Serial.println(num+1);
     if (buttonArray[i] == RED) {
+      Serial.println("Pressing Red");
       redServo.write(RED_PRESS);
       delay(250);
       redServo.write(RED_AFTER_PRESS);
     }
     else if (buttonArray[i] == GREEN) {
+      Serial.println("Pressing Green");
       greenServo.write(GREEN_PRESS);
       delay(250);
       greenServo.write(GREEN_AFTER_PRESS);
     } 
     else if (buttonArray[i] == BLUE) {
+      Serial.println("Pressing Blue");
       blueServo.write(BLUE_PRESS);
       delay(250);
       blueServo.write(BLUE_AFTER_PRESS);
     } 
     else if (buttonArray[i] == YELLOW) {
+      Serial.println("Pressing Yellow");
       yellowServo.write(YELLOW_PRESS);
       delay(250);
       yellowServo.write(YELLOW_AFTER_PRESS);
     } 
   }
+  delay(500);
 }
 
-int findColor(void) {
-    // Attempt to identify color for 50 milliseconds
-    for (int i = 0; i < 10; i++) {
-      currentRedValue = analogRead(redLightPin);
-      currentGreenValue = analogRead(greenLightPin);
-      currentBlueValue = analogRead(blueLightPin);
-      
-      redDifference = currentRedValue - lowestRedValue;
-      greenDifference = currentGreenValue - lowestGreenValue;
-      blueDifference = currentBlueValue - lowestBlueValue;
+int findColor(int numberOfButtons) {
+    // Attempt to identify color for 200 milliseconds each
+    timeElapsed = 0;
+      int color = YELLOW;
+      int detectedButtons = 0;
+      do {
+        currentRedValue = analogRead(redLightPin);
+        currentGreenValue = analogRead(greenLightPin);
+        currentBlueValue = analogRead(blueLightPin);  
+        currentYellowValue = analogRead(yellowLightPin);
+        
+        redDifference = currentRedValue - lowestRedValue;
+        greenDifference = currentGreenValue - lowestGreenValue;
+        blueDifference = currentBlueValue - lowestBlueValue;
+        yellowDifference = currentYellowValue - lowestYellowValue;
+  
+      if (redDifference > 250)
+      {
+        buttonArray[detectedButtons] = RED;
+        detectedButtons++;
+        Serial.println("Red");
+        color = RED;
+        delay(250);
+      }
+      else if (greenDifference > 200)
+      {
+        buttonArray[detectedButtons] = GREEN;
+        detectedButtons++;
+        Serial.println("Green");
+        color = GREEN;
+        delay(250);
+      }
+      else if (blueDifference > 200)
+      {
+        buttonArray[detectedButtons] = BLUE;
+        detectedButtons++;
+        Serial.println("Blue");
+        color = BLUE;
+        delay(250);
 
-    if (redDifference > 250)
-    {
-      return RED;
-    }
-    else if (greenDifference > 200)
-    {
-      return GREEN;
-    }
-    else if (blueDifference > 200)
-    {
-      return BLUE;
-    }
-    
-    //short delay for faster response to light.
-    delay(5); 
-    }
+      }      
+      else if (yellowDifference > 200)
+      {
+        buttonArray[detectedButtons] = YELLOW;
+        detectedButtons++;
+        Serial.println("Yellow");
+        color = YELLOW;
+        delay(250);
+      }
+      
+      //short delay for faster response to light.
+      delay(10); 
+      } while(detectedButtons < numberOfButtons);
     
     // Return yellow if we don't detect anything
-    return YELLOW;
+    printArray(numberOfButtons);    
+    // Wait for pause between button lights
+    timeElapsed = 0;
 }
 
 void calibrateSensors() {
-  for (int i = 0; i < 25; i++) {
+  for (int i = 0; i < 100; i++) {
       int tempRedValue = analogRead(redLightPin);
       int tempGreenValue = analogRead(greenLightPin);
       int tempBlueValue = analogRead(blueLightPin);
+      int tempYellowValue = analogRead(yellowLightPin);
+      
+      Serial.print("Red : ");
+      Serial.print(tempRedValue);
+      Serial.print("\tGreen: ");
+      Serial.print(tempGreenValue);
+      Serial.print("\tBlue: ");
+      Serial.print(tempBlueValue);
+      Serial.print("\tYellow: ");
+      Serial.print(tempYellowValue);
       
       if (tempRedValue < lowestRedValue) {
         lowestRedValue = tempRedValue;
@@ -175,9 +234,47 @@ void calibrateSensors() {
       if (tempBlueValue < lowestBlueValue) {
         lowestBlueValue = tempBlueValue;
       }
+      if (tempYellowValue < lowestYellowValue) {
+        lowestYellowValue = tempYellowValue;
+      }
   delay(10);
   }
 }
 
-  
+void readSensors() {
+  while(true) {
+      int tempRedValue = analogRead(redLightPin);
+      int tempGreenValue = analogRead(greenLightPin);
+      int tempBlueValue = analogRead(blueLightPin);
+      int tempYellowValue = analogRead(yellowLightPin);
+      
+      Serial.print("Red : ");
+      Serial.print(tempRedValue);
+      Serial.print("\tGreen: ");
+      Serial.print(tempGreenValue);
+      Serial.print("\tBlue: ");
+      Serial.print(tempBlueValue);
+      Serial.print("\tYellow: ");
+      Serial.println(tempYellowValue);
+      delay(10);
+  }
+}
+
+void printArray(int num) {
+  for (int i = 0; i < num; i++) {
+    Serial.print("Element ");
+    Serial.print(i);
+    Serial.print(": ");
+    if (buttonArray[i] == RED)
+      Serial.println("Red");
+    if (buttonArray[i] == GREEN)
+      Serial.println("Green");
+    if (buttonArray[i] == BLUE)
+      Serial.println("Blue");
+    if (buttonArray[i] == YELLOW)
+      Serial.println("Yellow");
+  }
+  Serial.println("Done printing array");
+}
+      
 
