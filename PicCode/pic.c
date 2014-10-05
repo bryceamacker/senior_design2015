@@ -1,4 +1,5 @@
-#include "picTwoConfig.h"
+#include "pic_config.h"
+
 
 typedef enum {
     PLAY_SIMON      = 0,
@@ -16,8 +17,54 @@ typedef enum  {
 picTwoCommands_t        u8_command;
 I2C_STATE               currentState;
 
-void main() {
-    pic_two_init();
+int main(void) {
+    uint8_t u8_c;
+
+    configBasic(HELLO_MSG);
+    pic_init();
+
+    rubik_init();
+    servo_calibration_mode();
+    serial_menu();
+
+    while(1) {
+        u8_c = inChar();
+        if (u8_c == 's') {
+            // Etch-a-sketch
+            u8_c = 0;
+            outString("Drawing 'IEEE'\n");
+            draw_IEEE();
+            underline_to_reset();
+            servo_calibration_mode();
+            serial_menu();
+        } else if (u8_c == 'r') {
+            // Rubiks cube
+            u8_c = 0;
+            outString("Spinng Rubiks\n");
+            play_rubiks();
+            rubik_init();
+            serial_menu();
+        } else if (u8_c == 'u') {
+            u8_c = 0;
+            platform_up();
+        } else if (u8_c == 'd') {
+            u8_c = 0;
+            platform_down();
+        } else if (u8_c == 't') {
+            u8_c = 0;
+            turn_servo(RUBIKS_TWIST, 2400);
+        } else if (u8_c == 'y') {
+            u8_c = 0;
+            turn_servo(RUBIKS_TWIST, 600);
+        }
+        doHeartbeat();
+    }
+}
+
+void serial_menu(void) {
+    outString("\nIn calibrate mode'\n");
+    outString("\tPress 's' to draw IEEE\n");
+    outString("\tPress 'r' to sping rubiks\n");    
 }
 
 void _ISRFAST _SI2C1Interrupt(void) {

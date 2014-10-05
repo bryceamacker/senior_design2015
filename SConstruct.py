@@ -53,8 +53,7 @@ EnsureSConsVersion(2, 0)
 UserAppSources = [
                     'I2C/pic_code.c',
                     'Navigation/lineFollower.c',
-                    'PicCode/picOne.c',
-                    'PicCode/picTwo.c'
+                    'PicCode/pic.c'
                   ]
 
 LibSources = [
@@ -75,8 +74,9 @@ LibSources = [
                 'API/motorsAPI.c',
                 'API/sensorArrayAPI.c',
                 'API/servosAPI.c',
-                'API/picOneConfig.c',
-                'API/picTwoConfig.c'
+                'API/pic_config.c',
+                'Etch/etch_code.c',
+                'Rubiks/rubiks_code.c'
               ]
 
 # Create a Microchip XC16 Construction Environment
@@ -204,7 +204,10 @@ env = env.Clone(MCU='24HJ64GP506A',
                   './',
                   'lib/include',
                   'Navigation',
-                  'API'
+                  'API',
+                  'Etch',
+                  'Rubiks',
+                  'PicCode'
                   ]
                 )
 
