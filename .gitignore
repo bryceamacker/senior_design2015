@@ -19,3 +19,9 @@
 Navigation/navigation_pic24_pwm_time_slice/
 Navigation/navigation_pic24_pwm_test/
 Navigation/navigation_pic24_pwm/
+*.o
+*.o
+*.o
+Navigation/navigation_pic24/build/default/production/_ext/957557178/pic24_util.o
+*.hex
+Navigation/test.c
