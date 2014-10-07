@@ -1,5 +1,13 @@
-#define ETCH_HORIZ_PIN      _LATD11
-#define ETCH_VERTICAL_PIN   _LATD10
-
 #define RUBIKS_PLATFORM_PIN _LATD1
 #define RUBIKS_TWIST_PIN    _LATD2
+
+#define SIMON_YELLOW_PIN    _LATD3
+#define SIMON_BLUE_PIN      _LATD4
+#define SIMON_RED_PIN       _LATD5
+#define SIMON_GREEN_PIN     _LATD6
+
+#define ARM_EXTEND_PIN      _LATD7
+#define ARM_PIVOT_PIN       _LATD8
+
+#define ETCH_VERTICAL_PIN   _LATD10
+#define ETCH_HORIZ_PIN      _LATD11

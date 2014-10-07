@@ -315,16 +315,32 @@ module.exports = function (grunt) {
         ]
       }
     },
-    'ftp-deploy': {
-      build: {
-        auth: {
-          host: 'yavin.ece.msstate.edu',
-          port: '22',
-          authKey: 'key1'
+    scp: {
+      options: {
+        host: 'yavin.ece.msstate.edu',
+        username: 'sac302',
+        password: 'tiaUp4m1720'
+      },
+      target: {
+        files:[{
+          cwd: '<%= yeoman.dist %>',
+          src: '**/*',
+          filter: 'isFile',
+          dest: '/data/www/htdocs/courses/design/2014/team_amacker/'
         },
-        src: 'dist/',
-        dest: '/data/www/htdocs/courses/design/2014/team_amacker/',
-        exclusions: ['<%= yeoman.dist %>/.DS_STORE']
+        {
+          cwd: '<%= yeoman.dist %>',
+          src: '.htaccess',
+          filter: 'isFile',
+          dest: '/data/www/htdocs/courses/design/2014/team_amacker/'
+        },
+        {
+          cwd: '<%= yeoman.dist %>',
+          src: '.htpasswd',
+          filter: 'isFile',
+          dest: '/data/www/htdocs/courses/design/2014/team_amacker/'
+        }
+        ]
       }
     },
     jshint: {
@@ -422,7 +438,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('deploy', [
     'build',
-    'ftp-deploy'
+    'scp'
   ]);
 
   grunt.registerTask('default', [

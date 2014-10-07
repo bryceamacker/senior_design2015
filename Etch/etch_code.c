@@ -8,6 +8,7 @@
 
 void turn_servo_vertical_etch_distance(float distance) {
     uint16_t u16_degrees;
+    distance = distance * VERTICAL_ADJUSTMENT;
 
     if (distance > 0) {
         // Turn clockwise to go right
@@ -22,6 +23,7 @@ void turn_servo_vertical_etch_distance(float distance) {
 
 void turn_servo_horizontal_etch_distance(float distance) {
     uint16_t u16_degrees;
+    distance = distance * HORIZ_ADJUSTMENT;
 
     if (distance > 0) {
         // Turn clockwise to go right
@@ -39,6 +41,11 @@ void turn_servo_horizontal_etch_distance(float distance) {
 // Etch Characters/words
 //
 ///////////////////////////////////////////////
+
+void etch_init() {
+    stop_servo(ETCH_VERTICAL);
+    stop_servo(ETCH_HORIZ);
+}
 
 void draw_I_character() {
     // Top

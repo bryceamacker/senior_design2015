@@ -76,7 +76,8 @@ LibSources = [
                 'API/servosAPI.c',
                 'API/pic_config.c',
                 'Etch/etch_code.c',
-                'Rubiks/rubiks_code.c'
+                'Rubiks/rubiks_code.c',
+                'Simon/simon_code.c'
               ]
 
 # Create a Microchip XC16 Construction Environment
@@ -207,6 +208,7 @@ env = env.Clone(MCU='24HJ64GP506A',
                   'API',
                   'Etch',
                   'Rubiks',
+                  'Simon',
                   'PicCode'
                   ]
                 )

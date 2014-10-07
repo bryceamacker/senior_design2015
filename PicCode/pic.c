@@ -1,70 +1,113 @@
-#include "pic_config.h"
-
-
-typedef enum {
-    PLAY_SIMON      = 0,
-    PLAY_ETCH       = 1,
-    PLAY_RUBIK      = 2,
-    PLAY_CARDS      = 3
-} picTwoCommands_t;
-
-typedef enum  {
-  STATE_WAIT_FOR_ADDR,
-  STATE_WAIT_FOR_WRITE_DATA,
-  STATE_SEND_READ_DATA
-} I2C_STATE;
-
-picTwoCommands_t        u8_command;
-I2C_STATE               currentState;
+#include "pic.h"
+#include <stdio.h>
 
 int main(void) {
-    uint8_t u8_c;
+    char u8_c, u8_servo;
+    char sz_buf[32];
+    uint16_t u16_pwm;
 
-    configBasic(HELLO_MSG);
+    // Initialize pic an dprint out serial menu
     pic_init();
-
-    rubik_init();
-    servo_calibration_mode();
+    configBasic(HELLO_MSG);
     serial_menu();
 
     while(1) {
         u8_c = inChar();
+
         if (u8_c == 's') {
-            // Etch-a-sketch
-            u8_c = 0;
-            outString("Drawing 'IEEE'\n");
+            printf("\n*** Drawing 'IEEE' ***\n");
             draw_IEEE();
-            underline_to_reset();
-            servo_calibration_mode();
-            serial_menu();
         } else if (u8_c == 'r') {
-            // Rubiks cube
-            u8_c = 0;
-            outString("Spinng Rubiks\n");
+            printf("\n*** Spinng Rubiks ***\n");
             play_rubiks();
-            rubik_init();
-            serial_menu();
         } else if (u8_c == 'u') {
-            u8_c = 0;
+            printf("\n*** Raising platform ***\n");
             platform_up();
         } else if (u8_c == 'd') {
-            u8_c = 0;
+            printf("\n*** Lowering platform ***\n");
             platform_down();
         } else if (u8_c == 't') {
-            u8_c = 0;
-            turn_servo(RUBIKS_TWIST, 2400);
+            printf("\n*** Twisting rubiks twist ***\n");
+            twist_rubiks_counter();
         } else if (u8_c == 'y') {
-            u8_c = 0;
-            turn_servo(RUBIKS_TWIST, 600);
+            printf("\n*** Twisting rubiks twist the other way ***\n");
+            twist_rubiks_clock();
+        } else if (u8_c == 'x') {
+            // Set servo
+            servo_menu();
+            u8_servo = inChar();
+
+            printf("\nEnter pulse width: ");
+            inStringEcho(sz_buf,31);
+            sscanf(sz_buf,"%d",(uint16_t *) &u16_pwm);
+            set_servo(u8_servo, u16_pwm);
+        } else {
+            printf("Invalid command");
         }
+        serial_menu();
         doHeartbeat();
     }
 }
 
 void serial_menu(void) {
-    outString("\nIn calibrate mode'\n");
-    outString("\tPress 's' to draw IEEE\n");
-    outString("\tPress 'r' to sping rubiks\n");    
+    printf("\nChoose a command\n");
+    printf("   Press 's' to draw IEEE\n");
+    printf("   Press 'r' to spin rubiks\n");
+    printf("   Press 'u' to raise platform\n");
+    printf("   Press 'd' to lower platform\n");    
+    printf("   Press 't' to spin rubks twist servo\n");
+    printf("   Press 'y' to spin rubks twist servo the other way\n");
+    printf("   Press 'x' to set a servo\n");
+}
+
+void servo_menu(void) {
+    printf("\nChoose a servo\n");
+    printf("   0) Etch vertical\n");
+    printf("   1) Etch horizontal\n");
+    printf("   2) Platform\n");
+    printf("   3) Rubiks twist\n");
+    printf("   4) Arm extender\n");
+    printf("   5) Simon yellow\n");
+    printf("   6) Simon blue\n");
+    printf("   7) Simon red\n");
+    printf("   8) Simon green\n");
+    printf("   9) Arm pivot\n");
+}
+
+void set_servo(char u8_servo, uint16_t u16_pwm) {
+    if (u8_servo == '0') {
+        turn_servo_by_pulse(ETCH_VERTICAL, u16_pwm);
+        printf("\n*** Setting etch vertical to %u ***\n", u16_pwm);
+    } else if (u8_servo == '1') {
+        turn_servo_by_pulse(ETCH_HORIZ, u16_pwm);
+        printf("\n*** Setting etch horizontal to %u ***\n", u16_pwm);
+    } else if (u8_servo == '2') {
+        turn_servo_by_pulse(RUBIKS_PLATFORM, u16_pwm);
+        printf("\n*** Setting platform to %u ***\n", u16_pwm);
+    } else if (u8_servo == '3') {
+        turn_servo_by_pulse(RUBIKS_TWIST, u16_pwm);
+        printf("\n*** Setting rubiks twist to %u ***\n", u16_pwm);
+    } else if (u8_servo == '4') {
+        turn_servo_by_pulse(ARM_EXTEND, u16_pwm);
+        printf("\n*** Setting arm extend to %u ***\n", u16_pwm);
+    } else if (u8_servo == '5') {
+        turn_servo_by_pulse(SIMON_YELLOW, u16_pwm);
+        printf("\n*** Setting simon yellow to %u ***\n", u16_pwm);
+    } else if (u8_servo == '6') {
+        turn_servo_by_pulse(SIMON_BLUE, u16_pwm);
+        printf("\n*** Setting simon blue to %u ***\n", u16_pwm);
+    } else if (u8_servo == '7') {
+        turn_servo_by_pulse(SIMON_RED, u16_pwm);
+        printf("\n*** Setting simon red to %u ***\n", u16_pwm);
+    } else if (u8_servo == '8') {
+        turn_servo_by_pulse(SIMON_GREEN, u16_pwm);
+        printf("\n*** Setting simon green to %u ***\n", u16_pwm);
+    } else if (u8_servo == '9') {
+        turn_servo_by_pulse(ARM_PIVOT, u16_pwm);
+        printf("\n*** Setting arm pivot to %u ***\n", u16_pwm);
+    } else {
+        printf("Invalid choice\n");
+    }
 }
 
 void _ISRFAST _SI2C1Interrupt(void) {
