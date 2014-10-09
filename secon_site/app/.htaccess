@@ -1,6 +1,0 @@
-ErrorDocument 404 ./404.html
-
-AuthType Basic  
-AuthName "restricted area"  
-AuthUserFile /data/www/htdocs/courses/design/2014/team_amacker/.htpasswd
-require valid-user

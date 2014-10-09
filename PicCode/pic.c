@@ -20,6 +20,9 @@ int main(void) {
         } else if (u8_c == 'r') {
             printf("\n*** Spinng Rubiks ***\n");
             play_rubiks();
+        } else if (u8_c == 'e') {
+            printf("\n*** Reseting Rubiks ***\n");
+            rubik_init();
         } else if (u8_c == 'u') {
             printf("\n*** Raising platform ***\n");
             platform_up();
@@ -32,6 +35,9 @@ int main(void) {
         } else if (u8_c == 'y') {
             printf("\n*** Twisting rubiks twist the other way ***\n");
             twist_rubiks_clock();
+        } else if (u8_c == 'h') {
+            printf("\n*** Preparing for Etch ***\n");
+            etch_prepare();
         } else if (u8_c == 'x') {
             // Set servo
             servo_menu();
@@ -53,10 +59,12 @@ void serial_menu(void) {
     printf("\nChoose a command\n");
     printf("   Press 's' to draw IEEE\n");
     printf("   Press 'r' to spin rubiks\n");
+    printf("   Press 'e' to reset rubiks platform and twist\n");
     printf("   Press 'u' to raise platform\n");
     printf("   Press 'd' to lower platform\n");    
     printf("   Press 't' to spin rubks twist servo\n");
     printf("   Press 'y' to spin rubks twist servo the other way\n");
+    printf("   Press 'h' to prepare for etch\n");
     printf("   Press 'x' to set a servo\n");
 }
 

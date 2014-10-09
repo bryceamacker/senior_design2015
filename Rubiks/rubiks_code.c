@@ -13,6 +13,11 @@ void platform_up() {
     turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_UP_PULSE);
 }
 
+void etch_prepare() {
+    turn_servo_by_pulse(RUBIKS_TWIST,TWIST_DIAG_PULSE); 
+    turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_BACK_PULSE);
+}
+
 void twist_rubiks_clock() {
     turn_servo_by_pulse(RUBIKS_TWIST, TWIST_CLOCK_PULSE);
 }

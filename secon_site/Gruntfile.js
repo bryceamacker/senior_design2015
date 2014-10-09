@@ -40,7 +40,8 @@ module.exports = function (grunt) {
           '.jekyll/**/*.html',
           '{.tmp,<%= yeoman.app %>}/styles/**/*.css',
           '{.tmp,<%= yeoman.app %>}/<%= js %>/**/*.js',
-          '<%= yeoman.app %>/images/**/*.{gif,jpg,jpeg,png,svg,webp}'
+          '<%= yeoman.app %>/images/**/*.{gif,jpg,jpeg,png,svg,webp}',
+          '<%= yeoman.app %>/scripts/galleria/themes/galleria-classicmod/*.{js,css}'
         ]
       }
     },
@@ -325,18 +326,6 @@ module.exports = function (grunt) {
         files:[{
           cwd: '<%= yeoman.dist %>',
           src: '**/*',
-          filter: 'isFile',
-          dest: '/data/www/htdocs/courses/design/2014/team_amacker/'
-        },
-        {
-          cwd: '<%= yeoman.dist %>',
-          src: '.htaccess',
-          filter: 'isFile',
-          dest: '/data/www/htdocs/courses/design/2014/team_amacker/'
-        },
-        {
-          cwd: '<%= yeoman.dist %>',
-          src: '.htpasswd',
           filter: 'isFile',
           dest: '/data/www/htdocs/courses/design/2014/team_amacker/'
         }
