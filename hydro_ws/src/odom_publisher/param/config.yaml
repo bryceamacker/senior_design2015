@@ -1,0 +1,2 @@
+motor_controller: {port: 0}
+line_sensor: {port: 1}
