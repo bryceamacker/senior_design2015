@@ -1,30 +1,37 @@
 #include "rubiks_code.h"
 
-void rubik_init(void) {
+void rubik_init() {
     platform_up();
-    turn_servo_to_degree(RUBIKS_TWIST, 0);
+    twist_rubiks_counter();
 }
 
-void platform_down(void) {
-    turn_servo(RUBIKS_PLATFORM, 600);
-//    turn_servo_to_degree(RUBIKS_PLATFORM, 0);
+void platform_down() {
+    turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_DOWN_PULSE);
 }
 
-void platform_up(void) {
-    turn_servo(RUBIKS_PLATFORM, 2400);
-//    turn_servo_to_degree(RUBIKS_PLATFORM, 180);
+void platform_up() {
+    turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_UP_PULSE);
 }
 
-void twist_rubiks(void) {
-    turn_servo(RUBIKS_TWIST, 2400);
-//    turn_servo_to_degree(RUBIKS_TWIST, 180);
+void etch_prepare() {
+    turn_servo_by_pulse(RUBIKS_TWIST,TWIST_DIAG_PULSE); 
+    turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_BACK_PULSE);
 }
 
-void play_rubiks(void) {
+void twist_rubiks_clock() {
+    turn_servo_by_pulse(RUBIKS_TWIST, TWIST_CLOCK_PULSE);
+}
+
+void twist_rubiks_counter() {
+    turn_servo_by_pulse(RUBIKS_TWIST, TWIST_COUNTER_PULSE);
+}
+
+void play_rubiks() {
     platform_down();
-    DELAY_MS(500);
-    twist_rubiks();
-    DELAY_MS(500);
+    DELAY_MS(WAIT_TIME);
+    twist_rubiks_clock();
+    DELAY_MS(WAIT_TIME);
     platform_up();
-    DELAY_MS(500);
+    DELAY_MS(WAIT_TIME);
+    twist_rubiks_counter();
 }

@@ -7,6 +7,8 @@
 #define FULL_ROTATION_HORIZ_DIST    18.5039     // in mm
 #define FULL_ROTATION_VERT_DIST     19.3421     // in mm
 #define ETCH_UNIT                   4.4         // 4.4 mm unit for simplicity of code
+#define VERTICAL_ADJUSTMENT         1.0
+#define HORIZ_ADJUSTMENT            1.0
 
 /////////////////////////////////////////////// 
 //
@@ -31,9 +33,14 @@ void turn_servo_horizontal_etch_distance(float distance);
 
 /////////////////////////////////////////////// 
 //
-// Etch Characters/words
+// Etch Usage
 //
 ///////////////////////////////////////////////
+/**
+ * @brief Initialize servos to not move at all
+ */
+void etch_init(void);
+
 /**
  * @brief I-Character on etch
  */
@@ -47,7 +54,7 @@ void draw_E_character_from_bottom(void);
 /**
  * @brief E-Character on etch from top
  */
-void drawE_character_from_top();
+void drawE_character_from_top(void);
 
 /**
  * @brief Full IEEE word

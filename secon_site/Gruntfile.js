@@ -40,7 +40,8 @@ module.exports = function (grunt) {
           '.jekyll/**/*.html',
           '{.tmp,<%= yeoman.app %>}/styles/**/*.css',
           '{.tmp,<%= yeoman.app %>}/<%= js %>/**/*.js',
-          '<%= yeoman.app %>/images/**/*.{gif,jpg,jpeg,png,svg,webp}'
+          '<%= yeoman.app %>/images/**/*.{gif,jpg,jpeg,png,svg,webp}',
+          '<%= yeoman.app %>/scripts/galleria/themes/galleria-classicmod/*.{js,css}'
         ]
       }
     },
@@ -315,16 +316,20 @@ module.exports = function (grunt) {
         ]
       }
     },
-    'ftp-deploy': {
-      build: {
-        auth: {
-          host: 'yavin.ece.msstate.edu',
-          port: '22',
-          authKey: 'key1'
-        },
-        src: 'dist/',
-        dest: '/data/www/htdocs/courses/design/2014/team_amacker/',
-        exclusions: ['<%= yeoman.dist %>/.DS_STORE']
+    scp: {
+      options: {
+        host: 'yavin.ece.msstate.edu',
+        username: 'sac302',
+        password: 'tiaUp4m1720'
+      },
+      target: {
+        files:[{
+          cwd: '<%= yeoman.dist %>',
+          src: '**/*',
+          filter: 'isFile',
+          dest: '/data/www/htdocs/courses/design/2014/team_amacker/'
+        }
+        ]
       }
     },
     jshint: {
@@ -422,7 +427,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('deploy', [
     'build',
-    'ftp-deploy'
+    'scp'
   ]);
 
   grunt.registerTask('default', [

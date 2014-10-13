@@ -10,6 +10,11 @@ void pic_init() {
     // Servo init
     servo_init();
 
+    // Games init
+    rubik_init();
+    etch_init();
+    simon_init();
+
     // I2C init
     I2C1ADD = PIC_I2C_ADDR;
     _SI2C1IF = 0;

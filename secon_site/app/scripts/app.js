@@ -33,4 +33,8 @@ $(document).ready(function () {
   $('nav ul li').eq(4).click(function () {
     updateSection(this, '#design');
   });
+
+  // Galleria.loadTheme('scripts/galleria/themes/galleria-classicmod/galleria.classicmod.js');
+  // Galleria.run('.galleria');
+
 });
