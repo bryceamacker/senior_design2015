@@ -1,3 +1,22 @@
+/*********************************************************************
+*
+* Mississippi State University
+*
+*********************************************************************
+* FileName: sensorArrayAPI.c
+* Dependenies: See INCLUDES setion below
+* Proessor: PIC24HJ64GP506A
+* Compiler: gcc-xc16
+* Company: Mississippi State University/ECE
+*
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* MODULE FUNCTION: Functions to help control sensor arrays
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Author                Date                    Comment
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Steven Calhoun        9/20/2014               SECON 2015
+*********************************************************************/
+
 #include "sensorArrayAPI.h"
 
 uint16_t u16_maxValue = 0x7FFF;

@@ -1,3 +1,23 @@
+/*********************************************************************
+*
+* Mississippi State University
+*
+*********************************************************************
+* FileName: servosAPI.h
+* Dependenies: See INCLUDES setion below
+* Proessor: PIC24HJ64GP506A
+* Compiler: gcc-xc16
+* Company: Mississippi State University/ECE
+*
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* MODULE FUNCTION: Functions declarations and constants for the 
+* servo API
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Author                Date                    Comment
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Steven Calhoun        9/20/2014               SECON 2015
+*********************************************************************/
+
 #include "pic24_all.h"
 #include "port_mapping.h"
 
@@ -9,6 +29,7 @@
 
 #define CONT_COUNTER_FULL_ROTATION_TIME  905    // Full counter rotation time for a continuous servo in seconds
 #define CONT_CLOCK_FULL_ROTATION_TIME    915    // Full clock rotation time for a continuous servo in seconds
+#define STEP_SIZE 5
 
 #define MIN_PW      600     // Minimum pulse width, in us
 #define MAX_PW      2400    // Maximum pulse width, in us
@@ -71,15 +92,7 @@ void config_output_capture2(void);
  * @param u8_servo servo number to change
  * @param u8_val new value to assign
  */
-void set_servo_output1 (uint8_t u8_servo, uint8_t u8_val);
-
-/**
- * @brief Set a new pusle width to a servo, called by the interrupt ISR
- * 
- * @param u8_servo servo number to change
- * @param u8_val new value to assign
- */
-void set_servo_output2 (uint8_t u8_servo, uint8_t u8_val);
+void set_servo_output (uint8_t u8_servo, uint8_t u8_val);
 
 /////////////////////////////////////////////// 
 //
@@ -100,6 +113,14 @@ void turn_servo_by_pulse(servoIDs id, uint16_t pulseWidth);
  * @param id the servoID of the servo to stop
  */
 void stop_servo (servoIDs id);
+
+/**
+ * @brief Stops a servo from turning
+ * 
+ * @param direction clockwise or counter
+ * @param id the servoID of the servo to step
+ */
+void step_servo (uint8_t direction, servoIDs id);
 
 /**
  * @brief Turn a servo clockwise by a certain degree amount

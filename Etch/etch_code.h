@@ -1,5 +1,26 @@
+/*********************************************************************
+*
+* Mississippi State University
+*
+*********************************************************************
+* FileName: etch_code.h
+* Dependenies: See INCLUDES setion below
+* Proessor: PIC24HJ64GP506A
+* Compiler: gcc-xc16
+* Company: Mississippi State University/ECE
+*
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* MODULE FUNCTION: Declarations for functions and constants to draw
+* IEEE on an etch-a-sketch using servos
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Author                Date                    Comment
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Steven Calhoun        9/26/2014               SECON 2015
+*********************************************************************/
+
 #include "servosAPI.h"
 #include "port_mapping.h"
+#include "platform_control.h"
 
 #ifndef ETCH_CODE_H_
 #define ETCH_CODE_H_
@@ -63,7 +84,14 @@ void draw_IEEE(void);
 
 /**
  * @brief Underlines IEEE and goes back to beginning
+ * 
+ * @description Sort of test code, probably won't ever use this
  */
 void underline_to_reset(void);
+
+/**
+ * @brief Lower etch knobs on to the etch and draw IEEE
+ */
+void play_etch(void);
 
 #endif

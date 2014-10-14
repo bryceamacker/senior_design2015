@@ -1,3 +1,22 @@
+/*********************************************************************
+*
+* Mississippi State University
+*
+*********************************************************************
+* FileName: servosAPI.c
+* Dependenies: See INCLUDES setion below
+* Proessor: PIC24HJ64GP506A
+* Compiler: gcc-xc16
+* Company: Mississippi State University/ECE
+*
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* MODULE FUNCTION: Functions to help setup and control servos
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Author                Date                    Comment
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Steven Calhoun        9/20/2014               SECON 2015
+*********************************************************************/
+
 #include "servosAPI.h"
 
 static volatile uint16_t    au16_servoPWidths1[NUM_SERVOS1];      // Array to hold a servo pulse widths
@@ -23,11 +42,13 @@ void servo_init() {
     // Configure timers and output comparators
     config_servo_timer3();
     config_output_capture1();
-    // config_servo_timer2();
-    // config_output_capture2();
+
+    config_servo_timer2();
+    config_output_capture2();
+
+    u16_slotWidthTicks = usToU16Ticks(SLOT_WIDTH, getTimerPrescale(T3CONbits));
 
     // Config all the servo outputs
-    CONFIG_RD1_AS_DIG_OUTPUT();
     CONFIG_RD2_AS_DIG_OUTPUT();
     CONFIG_RD3_AS_DIG_OUTPUT();
     CONFIG_RD4_AS_DIG_OUTPUT();
@@ -35,12 +56,13 @@ void servo_init() {
     CONFIG_RD6_AS_DIG_OUTPUT();
     CONFIG_RD7_AS_DIG_OUTPUT();
     CONFIG_RD8_AS_DIG_OUTPUT();
+    CONFIG_RD9_AS_DIG_OUTPUT();
     CONFIG_RD10_AS_DIG_OUTPUT();
     CONFIG_RD11_AS_DIG_OUTPUT();
 
     // Turn on the timers
     T3CONbits.TON = 1;
-    // T2CONbits.TON = 1;
+    T2CONbits.TON = 1;
 
     // All servo outputs low initially
     RUBIKS_PLATFORM_PIN = 0;
@@ -56,8 +78,6 @@ void servo_init() {
 
     ETCH_VERTICAL_PIN = 0;
     ETCH_HORIZ_PIN = 0;
-
-    u16_slotWidthTicks = usToU16Ticks(SLOT_WIDTH, getTimerPrescale(T3CONbits));
 }
 
 void config_servo_timer3(void) {
@@ -76,8 +96,8 @@ void _ISR _OC1Interrupt(void) {
     _OC1IF = 0;
 
     // Change the servo's value
-    set_servo_output1(u8_currentServo1, u8_servoEdge1);
-
+    set_servo_output(u8_currentServo1, u8_servoEdge1);
+    
     // Schedule next interrupt
     if (u8_servoEdge1 == 1) {  // Rising edge
        // Next interrupt occurs after pulse width has elapsed
@@ -100,16 +120,11 @@ void _ISR _OC1Interrupt(void) {
 
 void config_output_capture1(void) {
     T3CONbits.TON = 0;       //disable Timer when configuring Output compare
+    OC1RS = 0;  //clear both registers
     OC1R  =  0;  //initialize to 0
     //turn on the compare toggle mode using Timer3
-#ifdef OC1CON1
-    OC1CON1 =   OC_TIMER3_SRC |      //Timer3 source
-                OC_TOGGLE_PULSE;     //single compare toggle, just care about compare event
-    OC1CON2 =   OC_SYNCSEL_TIMER3;   //synchronize to timer2
-#else
     OC1CON =    OC_TIMER3_SRC |      //Timer3 source
                 OC_TOGGLE_PULSE;     //single compare toggle, just care about compare event
-#endif
     _OC1IF = 0;
     _OC1IP = 1;
     _OC1IE = 1;    //enable the OC1 interrupt
@@ -132,8 +147,8 @@ void _ISR _OC2Interrupt(void) {
     _OC2IF = 0;
 
     // Change the servo's value
-    set_servo_output2(u8_currentServo2, u8_servoEdge2);
-
+    set_servo_output(u8_currentServo2 + 5, u8_servoEdge2);
+    
     // Schedule next interrupt
     if (u8_servoEdge2 == 1) {  // Rising edge
        // Next interrupt occurs after pulse width has elapsed
@@ -149,23 +164,19 @@ void _ISR _OC2Interrupt(void) {
         }
         u8_servoEdge2 = 1;     // Change to rising edge
         u8_currentServo2++;
-        if (u8_currentServo2 == NUM_SERVOS2) 
+        if (u8_currentServo2 == NUM_SERVOS2)
             u8_currentServo2 = 0;
     }
 }
 
 void config_output_capture2(void) {
     T2CONbits.TON = 0;       //disable Timer when configuring Output compare
+    OC2RS = 0;  //clear both registers
     OC2R  =  0;  //initialize to 0
+
     //turn on the compare toggle mode using Timer2
-#ifdef OC2CON2
-    OC2CON2 =   OC_TIMER2_SRC |      //Timer2 source
-                OC_TOGGLE_PULSE;     //single compare toggle, just care about compare event
-    OC2CON2 =   OC_SYNCSEL_TIMER2;   //synchronize to timer2
-#else
     OC2CON =    OC_TIMER2_SRC |      //Timer2 source
                 OC_TOGGLE_PULSE;     //single compare toggle, just care about compare event
-#endif
     _OC2IF = 0;
     _OC2IP = 1;
     _OC2IE = 1;    //enable the OC2 interrupt
@@ -177,7 +188,7 @@ void config_output_capture2(void) {
 //
 ///////////////////////////////////////////////
 
-void set_servo_output1 (uint8_t u8_servo, uint8_t u8_val) {
+void set_servo_output (uint8_t u8_servo, uint8_t u8_val) {
     switch (u8_servo) {
         case 0:
             ETCH_VERTICAL_PIN = u8_val;
@@ -194,13 +205,6 @@ void set_servo_output1 (uint8_t u8_servo, uint8_t u8_val) {
         case 4:
             ARM_EXTEND_PIN = u8_val;
             break;
-        default:
-            break;
-    }
-}
-
-void set_servo_output2 (uint8_t u8_servo, uint8_t u8_val) {
-    switch (u8_servo) {
         case 5:
             SIMON_YELLOW_PIN = u8_val;
             break;
@@ -229,13 +233,29 @@ void set_servo_output2 (uint8_t u8_servo, uint8_t u8_val) {
 
 void turn_servo_by_pulse(servoIDs id, uint16_t pulseWidth) {
     _OC1IE = 0; //disable the interrupt while changing
-    au16_servoPWidths1[id] = usToU16Ticks(pulseWidth, getTimerPrescale(T3CONbits));
+    _OC2IE = 0;
+
+    if (id == ETCH_VERTICAL || id == ETCH_HORIZ || id == RUBIKS_PLATFORM || id == RUBIKS_TWIST || id == ARM_EXTEND) {
+        au16_servoPWidths1[id] = usToU16Ticks(pulseWidth, getTimerPrescale(T3CONbits));
+    } else {
+        au16_servoPWidths2[id-5] = usToU16Ticks(pulseWidth, getTimerPrescale(T2CONbits));
+    }
+
     _OC1IE = 1;
+    _OC2IE = 1;
     DELAY_MS(100);
 }
 
 void stop_servo (servoIDs id) {
     turn_servo_by_pulse(id, 1500);
+}
+
+void step_servo (uint8_t direction, servoIDs id) {
+    if (direction == 0) {
+        turn_servo_clockwise(id, STEP_SIZE);
+    } else {
+        turn_servo_counterwise(id, STEP_SIZE);
+    }
 }
 
 void turn_servo_clockwise(servoIDs id, float degrees) {

@@ -1,34 +1,28 @@
 import time
 import math
 
-RUN_TIME = 300
-SIMON_TIME = 15
-ETCH_TIME = 30
-RUBIK_TIME = 7
-CARD_TIME = 3
-FOLLOW_TIME = 10
+ROBOT_NAME = "Preston"
 
-START_POINTS = 100
-TO_GAME_POINTS = 10
-SIMON_POINTS = 150
-ETCH_POINTS = 200
-RUBIKS_POINTS = 50
-CARD_POINTS = 50
+MAX_TIME =          300
+MAX_POINTS =        890
+
+START_POINTS =      100
+TO_GAME_POINTS =    10
+SIMON_POINTS =      150
+ETCH_POINTS =       200
+RUBIKS_POINTS =     50
+CARD_POINTS =       50
 
 elapsedTime = 0
 totalFollowTime = 0
 totalPoints = 0
 
 
-def initializePics():
-    print("Initializing PIC communication")
-    return
-
-
 def waitForStart():
     global totalPoints
 
     print("Waiting for start signal")
+    print (raw_input('Hit enter when Preston starts'))
     print("Starting")
 
     totalPoints += START_POINTS
@@ -40,9 +34,8 @@ def followToGame():
 
     startFollowTime = time.time()
     print("Following to game")
-    time.sleep(FOLLOW_TIME)
+    print (raw_input('Hit enter when ' + ROBOT_NAME + ' arrives at the next game'))
 
-    success = True
     totalPoints += TO_GAME_POINTS
     return time.time() - startFollowTime
 
@@ -52,11 +45,10 @@ def playSimon():
 
     startSimonTime = time.time()
     print("Playing Simon")
-    time.sleep(SIMON_TIME)
+    print (raw_input('Hit enter when ' + ROBOT_NAME + ' finishes Simon'))
 
-    success = True
     totalPoints += SIMON_POINTS
-    return success, time.time() - startSimonTime
+    return time.time() - startSimonTime
 
 
 def playEtchASketch():
@@ -64,11 +56,10 @@ def playEtchASketch():
 
     startEtchTime = time.time()
     print("Playing Etch-a-Sketch")
-    time.sleep(ETCH_TIME)
+    print (raw_input('Hit enter when ' + ROBOT_NAME + ' finishes with the Etch'))
 
-    success = True
     totalPoints += ETCH_POINTS
-    return success, time.time() - startEtchTime
+    return time.time() - startEtchTime
 
 
 def playRubik():
@@ -76,11 +67,10 @@ def playRubik():
 
     startRubikTime = time.time()
     print("Playing Rubik's Cube")
-    time.sleep(RUBIK_TIME)
+    print (raw_input('Hit enter when ' + ROBOT_NAME + ' twists the cube'))
 
-    success = True
     totalPoints += RUBIKS_POINTS
-    return success, time.time() - startRubikTime
+    return time.time() - startRubikTime
 
 
 def playCards():
@@ -88,27 +78,22 @@ def playCards():
 
     startCardsTime = time.time()
     print("Playing Cards")
-    time.sleep(CARD_TIME)
+    print (raw_input('Hit enter when ' + ROBOT_NAME + ' twists the cube'))
 
     totalPoints += CARD_POINTS
-    success = True
-    return success, time.time() - startCardsTime
+    return time.time() - startCardsTime
 
 
 def goToFinish():
     global totalPoints
 
     startTime = time.time()
-    print("Bringing it home")
+    print(raw_input('Hit enter when ' + ROBOT_NAME + ' crosses the finish line'))
 
-    time.sleep(FOLLOW_TIME)
     return time.time() - startTime
 
 
 if __name__ == "__main__":
-    # Initialize pics
-    initializePics()
-
     # Wait for start
     waitForStart()
 
@@ -118,32 +103,36 @@ if __name__ == "__main__":
     totalFollowTime += followToGame()
 
     # Play Simon
-    simonSuccess, simonTime = playSimon()
+    simonTime = playSimon()
 
     # Follow line to game
     totalFollowTime += followToGame()
 
     # Play Etch-a-Sketch
-    etchSuccess, etchTime = playEtchASketch()
+    etchTime = playEtchASketch()
 
     # Follow line to game
     totalFollowTime += followToGame()
 
     # Play Rubik's Cube
-    rubikSuccess, rubikTime = playRubik()
+    rubikTime = playRubik()
 
     # Follow line to game
     totalFollowTime += followToGame()
 
     # Play Cards
-    cardSuccess, cardTime = playCards()
+    cardTime = playCards()
 
     # Follow line to finish
     goToFinishTime = goToFinish()
 
     # Time points
     elapsedTime = totalFollowTime + goToFinishTime + simonTime + etchTime + rubikTime + cardTime
-    totalPoints += RUN_TIME - elapsedTime
+    totalPoints += MAX_TIME - elapsedTime
 
-    print("Total run time: " + str(elapsedTime))
-    print("Total points: " + str(math.trunc(totalPoints)))
+    print("Total run time: " + str(elapsedTime) + "/" + str(MAX_TIME))
+    print("Total points: " + str(math.trunc(totalPoints)) + "/" + str(MAX_POINTS))
+
+
+
+
