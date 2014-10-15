@@ -36,18 +36,6 @@ volatile uint16_t           u16_slotWidthTicks = 0;             // Slot width in
 ///////////////////////////////////////////////
 
 void servo_init() {
-    u8_currentServo1 = 0;
-    u8_currentServo2 = 0;
-    
-    // Configure timers and output comparators
-    config_servo_timer3();
-    config_output_capture1();
-
-    config_servo_timer2();
-    config_output_capture2();
-
-    u16_slotWidthTicks = usToU16Ticks(SLOT_WIDTH, getTimerPrescale(T3CONbits));
-
     // Config all the servo outputs
     CONFIG_RD2_AS_DIG_OUTPUT();
     CONFIG_RD3_AS_DIG_OUTPUT();
@@ -59,6 +47,15 @@ void servo_init() {
     CONFIG_RD9_AS_DIG_OUTPUT();
     CONFIG_RD10_AS_DIG_OUTPUT();
     CONFIG_RD11_AS_DIG_OUTPUT();
+
+    // Configure timers and output comparators
+    config_servo_timer3();
+    config_output_capture1();
+
+    config_servo_timer2();
+    config_output_capture2();
+
+    u16_slotWidthTicks = usToU16Ticks(SLOT_WIDTH, getTimerPrescale(T3CONbits));
 
     // Turn on the timers
     T3CONbits.TON = 1;
@@ -252,13 +249,13 @@ void stop_servo (servoIDs id) {
 
 void step_servo (uint8_t direction, servoIDs id) {
     if (direction == 0) {
-        turn_servo_clockwise(id, STEP_SIZE);
+        turn_servo_CW_degrees(id, STEP_SIZE);
     } else {
-        turn_servo_counterwise(id, STEP_SIZE);
+        turn_servo_CCW_degrees(id, STEP_SIZE);
     }
 }
 
-void turn_servo_clockwise(servoIDs id, float degrees) {
+void turn_servo_CW_degrees(servoIDs id, float degrees) {
     uint16_t u16_delayTime = (degrees/360) * CONT_CLOCK_FULL_ROTATION_TIME;
 
     turn_servo_by_pulse(id, 2000);
@@ -266,7 +263,7 @@ void turn_servo_clockwise(servoIDs id, float degrees) {
     turn_servo_by_pulse(id, 1500);
 }
 
-void turn_servo_counterwise(servoIDs id, float degrees) {
+void turn_servo_CCW_degrees(servoIDs id, float degrees) {
     uint16_t u16_delayTime = (degrees/360) * CONT_COUNTER_FULL_ROTATION_TIME;
 
     turn_servo_by_pulse(id, 1000);

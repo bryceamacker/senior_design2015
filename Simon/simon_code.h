@@ -26,7 +26,7 @@
 #define SIMON_CODE_H_
 
 // Retract pulse width constants
-#define YELLOW_RETRACT  1500
+#define YELLOW_RETRACT  2400
 #define BLUE_RETRACT    1500
 #define RED_RETRACT     1500
 #define GREEN_RETRACT   1500

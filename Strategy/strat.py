@@ -1,7 +1,7 @@
 import time
 import math
 
-ROBOT_NAME = "Preston"
+ROBOT_NAME = "Clyde"
 
 MAX_TIME =          300
 MAX_POINTS =        890
@@ -22,7 +22,7 @@ def waitForStart():
     global totalPoints
 
     print("Waiting for start signal")
-    print (raw_input('Hit enter when Preston starts'))
+    print (raw_input('Hit enter when ' + ROBOT_NAME + ' starts'))
     print("Starting")
 
     totalPoints += START_POINTS

@@ -75,7 +75,7 @@ void draw_E_character_from_bottom(void);
 /**
  * @brief E-Character on etch from top
  */
-void drawE_character_from_top(void);
+void draw_E_character_from_top(void);
 
 /**
  * @brief Full IEEE word

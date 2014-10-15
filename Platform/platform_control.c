@@ -22,10 +22,10 @@
 
 void platform_init() {
     platform_up();
+    turn_servo_by_pulse(RUBIKS_TWIST, TWIST_COUNTER_PULSE);
 }
 
 void platform_up() {
-    turn_servo_by_pulse(RUBIKS_TWIST, TWIST_COUNTER_PULSE);
     turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_UP_PULSE);
 }
 

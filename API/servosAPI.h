@@ -29,7 +29,7 @@
 
 #define CONT_COUNTER_FULL_ROTATION_TIME  905    // Full counter rotation time for a continuous servo in seconds
 #define CONT_CLOCK_FULL_ROTATION_TIME    915    // Full clock rotation time for a continuous servo in seconds
-#define STEP_SIZE 5
+#define STEP_SIZE 1
 
 #define MIN_PW      600     // Minimum pulse width, in us
 #define MAX_PW      2400    // Maximum pulse width, in us
@@ -130,7 +130,7 @@ void step_servo (uint8_t direction, servoIDs id);
  * @param id the servoID of the servo to turn
  * @param degrees number of degrees to turn the servo
  */
-void turn_servo_clockwise_degrees(servoIDs id, float degrees);
+void turn_servo_CW_degrees(servoIDs id, float degrees);
 
 /**
  * @brief Turn a servo counter-clockwise by a certain degree amount
@@ -140,7 +140,7 @@ void turn_servo_clockwise_degrees(servoIDs id, float degrees);
  * @param id the servoID of the servo to turn
  * @param degrees number of degrees to turn the servo
  */
-void turn_servo_counterwise_degrees(servoIDs id, float degrees);
+void turn_servo_CCW_degrees(servoIDs id, float degrees);
 
 /**
  * @brief Turn a servo to a certain degree

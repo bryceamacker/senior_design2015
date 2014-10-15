@@ -69,10 +69,10 @@ void serial_command(uint8_t u8_c) {
         printf("\n*** Twisting rubiks twist ***\n");
         if (u8_twistPos == 0) {
             u8_twistPos = 1;
-            twist_rubiks_counter();
+            twist_rubiks_clock();
         } else {                
             u8_twistPos = 0;
-            twist_rubiks_clock();
+            twist_rubiks_counter();
         }
     } else if (u8_c == 'f') {
         if (u8_platformFlipped == 0) {
@@ -82,7 +82,7 @@ void serial_command(uint8_t u8_c) {
         } else {
             u8_platformFlipped = 0;
             printf("\n*** Reseting platform to original position ***\n");
-            rubik_init();
+            platform_init();
         }
     } else if (u8_c == 'r') {
         simon_menu();
@@ -258,11 +258,9 @@ void set_servo(char u8_servo) {
         while (u8_c != 'q') {
             u8_c = inChar();
             if (u8_c == 'a') {
-                // step_servo(0, ETCH_VERTICAL);
-                turn_servo_by_pulse(ETCH_VERTICAL, 1800);
+                step_servo(0, ETCH_VERTICAL);
             } else if (u8_c == 'd') {
-                // step_servo(1, ETCH_VERTICAL);
-                turn_servo_by_pulse(ETCH_VERTICAL, 1200);
+                step_servo(1, ETCH_VERTICAL);
             } else {
                 stop_servo(ETCH_VERTICAL);
             }
@@ -272,11 +270,9 @@ void set_servo(char u8_servo) {
         while (u8_c != 'q') {
             u8_c = inChar();
             if (u8_c == 'a') {
-                // step_servo(0, ETCH_HORIZ);
-                turn_servo_by_pulse(ETCH_HORIZ, 1800);
+                step_servo(0, ETCH_HORIZ);
             } else if (u8_c == 'd') {
-                // step_servo(1, ETCH_HORIZ);
-                turn_servo_by_pulse(ETCH_HORIZ, 1200);
+                step_servo(1, ETCH_HORIZ);
             } else {
                 stop_servo(ETCH_HORIZ);
             }
