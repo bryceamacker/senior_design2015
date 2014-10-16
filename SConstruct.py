@@ -52,7 +52,6 @@ EnsureSConsVersion(2, 0)
 # ============================================
 UserAppSources = [
                     'I2C/pic_code.c',
-                    'Navigation/lineFollower.c',
                     'PicCode/pic.c'
                   ]
 
@@ -71,13 +70,14 @@ LibSources = [
                 'lib/src/pic24_timer.c',
                 'lib/src/pic24_uart.c',
                 'lib/src/pic24_util.c',
-                'API/motorsAPI.c',
                 'API/sensorArrayAPI.c',
                 'API/servosAPI.c',
+                'API/photoCellAPI.c',
                 'API/pic_config.c',
                 'Etch/etch_code.c',
                 'Rubiks/rubiks_code.c',
-                'Simon/simon_code.c'
+                'Simon/simon_code.c',
+                'Platform/platform_control.c'
               ]
 
 # Create a Microchip XC16 Construction Environment
@@ -209,7 +209,8 @@ env = env.Clone(MCU='24HJ64GP506A',
                   'Etch',
                   'Rubiks',
                   'Simon',
-                  'PicCode'
+                  'PicCode',
+                  'Platform'
                   ]
                 )
 

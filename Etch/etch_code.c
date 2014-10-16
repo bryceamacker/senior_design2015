@@ -1,38 +1,56 @@
+/*********************************************************************
+*
+* Mississippi State University
+*
+*********************************************************************
+* FileName: etch_code.c
+* Dependenies: See INCLUDES setion below
+* Proessor: PIC24HJ64GP506A
+* Compiler: gcc-xc16
+* Company: Mississippi State University/ECE
+*
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* MODULE FUNCTION: Functions and constants to draw IEEE on an 
+* etch-a-sketch using servos
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Author                Date                    Comment
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Steven Calhoun        9/26/2014               SECON 2015
+*********************************************************************/
+
 #include "etch_code.h"
 
 /////////////////////////////////////////////// 
 //
-// Etch Characters/wrods
+// Etch Primitives
 //
 ///////////////////////////////////////////////
 
 void turn_servo_vertical_etch_distance(float distance) {
     uint16_t u16_degrees;
-    distance = distance * VERTICAL_ADJUSTMENT;
 
     if (distance > 0) {
         // Turn clockwise to go right
-        u16_degrees = (distance/FULL_ROTATION_VERT_DIST) * 360;
-        turn_servo_clockwise(ETCH_VERTICAL, u16_degrees);
+        u16_degrees = ((distance * VERTICAL_ADJUSTMENT)/FULL_ROTATION_VERT_DIST) * 360;
+        turn_servo_CW_degrees(ETCH_VERTICAL, u16_degrees);
     } else {
         // Turn counter to go left
-        u16_degrees = (distance/FULL_ROTATION_VERT_DIST) * -360;
-        turn_servo_counterwise(ETCH_VERTICAL, u16_degrees);
+        u16_degrees = ((distance * VERTICAL_ADJUSTMENT)/FULL_ROTATION_VERT_DIST) * -360;
+        turn_servo_CCW_degrees(ETCH_VERTICAL, u16_degrees);
     }
 }
 
 void turn_servo_horizontal_etch_distance(float distance) {
     uint16_t u16_degrees;
-    distance = distance * HORIZ_ADJUSTMENT;
 
     if (distance > 0) {
         // Turn clockwise to go right
-        u16_degrees = (distance/FULL_ROTATION_HORIZ_DIST) * 360;
-        turn_servo_clockwise(ETCH_HORIZ, u16_degrees);
+        u16_degrees = ((distance * HORIZ_ADJUSTMENT)/FULL_ROTATION_HORIZ_DIST) * 360;
+        turn_servo_CW_degrees(ETCH_HORIZ, u16_degrees);
     } else {
         // Turn counter to go left
-        u16_degrees = (distance/FULL_ROTATION_HORIZ_DIST) * -360;
-        turn_servo_counterwise(ETCH_HORIZ, u16_degrees);
+        u16_degrees = ((distance * HORIZ_ADJUSTMENT)/FULL_ROTATION_HORIZ_DIST) * -360;
+        turn_servo_CCW_degrees(ETCH_HORIZ, u16_degrees);
     }
 }
 
@@ -41,11 +59,6 @@ void turn_servo_horizontal_etch_distance(float distance) {
 // Etch Characters/words
 //
 ///////////////////////////////////////////////
-
-void etch_init() {
-    stop_servo(ETCH_VERTICAL);
-    stop_servo(ETCH_HORIZ);
-}
 
 void draw_I_character() {
     // Top
@@ -75,7 +88,7 @@ void draw_E_character_from_bottom() {
     turn_servo_horizontal_etch_distance(3 * ETCH_UNIT);
 }
 
-void drawE_character_from_top() {
+void draw_E_character_from_top() {
     // Top
     turn_servo_horizontal_etch_distance(3 * ETCH_UNIT); 
     turn_servo_horizontal_etch_distance(-3 * ETCH_UNIT);
@@ -91,6 +104,17 @@ void drawE_character_from_top() {
 
 }
 
+/////////////////////////////////////////////// 
+//
+// Etch Usage
+//
+///////////////////////////////////////////////
+
+void etch_init() {
+    stop_servo(ETCH_VERTICAL);
+    stop_servo(ETCH_HORIZ);
+}
+
 void draw_IEEE() {
     draw_I_character();
     turn_servo_horizontal_etch_distance(2.5);
@@ -98,7 +122,7 @@ void draw_IEEE() {
     draw_E_character_from_bottom();
     turn_servo_horizontal_etch_distance(2.5);
 
-    drawE_character_from_top();
+    draw_E_character_from_top();
     turn_servo_horizontal_etch_distance(2.5);
 
     draw_E_character_from_bottom();    
@@ -118,4 +142,12 @@ void underline_to_reset() {
 
     // Move back up to starting point
     turn_servo_vertical_etch_distance(5 * ETCH_UNIT);
+}
+
+void play_etch() {
+    platform_etch();
+    DELAY_MS(1000);
+    draw_IEEE();
+    DELAY_MS(250);
+    platform_init();
 }

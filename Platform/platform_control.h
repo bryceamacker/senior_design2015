@@ -3,50 +3,53 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: rubiks_code.h
+* FileName: platform_control.h
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
 * Company: Mississippi State University/ECE
 *
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* MODULE FUNCTION: Functions and declarations to control the 
-* mechanisms that twist the rubiks cube
+* MODULE FUNCTION: Declarations and constants for controlling the
+* platform which holds the rubiks twisting servo and the etch drawing
+* servos.
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Author                Date                    Comment
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* Steven Calhoun        9/26/2014               SECON 2015
+* Steven Calhoun        10/13/2014              SECON 2015
 *********************************************************************/
 
 #include "servosAPI.h"
 #include "port_mapping.h"
-#include "platform_control.h"
 
-#ifndef RUBIKS_CODE_H_
-#define RUBIKS_CODE_H_
+#ifndef PLATFORM_CONTROL_H_
+#define PLATFORM_CONTROL_H_
 
-#define TWIST_CLOCK_PULSE       950
+#define PLATFORM_UP_PULSE       2050
+#define PLATFORM_RUBIK_PULSE    1550
+#define PLATFORM_ETCH_PULSE     1000
+
 #define TWIST_COUNTER_PULSE     2050
-#define WAIT_TIME               1500
+#define TWIST_DIAG_PULSE        1225
 
 /**
- * @brief Intialize platform up and twist to untwisted
+ * @brief Initialize the platform
  */
-void rubik_init(void);
+void platform_init(void);
 
 /**
- * @brief Twist the rubiks cube
+ * @brief Raise the platform to it's intial position
  */
-void twist_rubiks_clock(void);
+void platform_up(void);
 
 /**
- * @brief Twist the rubiks cube
+ * @brief Lower the platform to twist the cube
  */
-void twist_rubiks_counter(void);
+void platform_rubiks(void);
 
 /**
- * @brief Lower platform, twist cube, and then raise platform
+ * @brief Move twist and platform to position etch servos
  */
-void play_rubiks(void);
+void platform_etch(void);
 
 #endif
