@@ -1,0 +1,2 @@
+set(rosserial_msgs_MESSAGE_FILES "/home/dexter/senior_design2015/hydro_ws/src/rosserial/rosserial_msgs/msg/Log.msg;/home/dexter/senior_design2015/hydro_ws/src/rosserial/rosserial_msgs/msg/TopicInfo.msg")
+set(rosserial_msgs_SERVICE_FILES "/home/dexter/senior_design2015/hydro_ws/src/rosserial/rosserial_msgs/srv/RequestParam.srv;/home/dexter/senior_design2015/hydro_ws/src/rosserial/rosserial_msgs/srv/RequestMessageInfo.srv;/home/dexter/senior_design2015/hydro_ws/src/rosserial/rosserial_msgs/srv/RequestServiceInfo.srv")

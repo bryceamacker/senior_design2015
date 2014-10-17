@@ -1,0 +1,8 @@
+prefix=/home/dexter/senior_design2015/hydro_ws/install
+
+Name: rosserial_server
+Description: Description of rosserial_server
+Version: 0.6.2
+Cflags: -I/home/dexter/senior_design2015/hydro_ws/install/include
+Libs: -L/home/dexter/senior_design2015/hydro_ws/install/lib 
+Requires: roscpp rosserial_msgs topic_tools

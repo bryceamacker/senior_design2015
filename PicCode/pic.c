@@ -1,70 +1,218 @@
+/*********************************************************************
+*
+* Mississippi State University
+*
+*********************************************************************
+* FileName: pic.c
+* Dependenies: See INCLUDES setion below
+* Proessor: PIC24HJ64GP506A
+* Compiler: gcc-xc16
+* Company: Mississippi State University/ECE
+*
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* MODULE FUNCTION: Controls all the game playing mechanisms for the
+* SECON 2015 robot.
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Author                Date                    Comment
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Steven Calhoun        9/20/2014               SECON 2015
+*********************************************************************/
+
 #include "pic.h"
 #include <stdio.h>
 
-int main(void) {
-    char u8_c, u8_servo;
-    char sz_buf[32];
-    uint16_t u16_pwm;
+uint8_t u8_platformPos;
+uint8_t u8_twistPos;
+uint8_t u8_platformFlipped;
+uint16_t u16_pwm;
 
-    // Initialize pic an dprint out serial menu
+int main(void) {
+    char u8_c;
+    u8_twistPos = 0;
+    u8_platformPos = 0;
+    u8_platformFlipped = 0;
+
+    // Initialize pic and print out serial menu
     pic_init();
     configBasic(HELLO_MSG);
     serial_menu();
 
     while(1) {
+        // Handle serial command
         u8_c = inChar();
+        serial_command(u8_c);
 
-        if (u8_c == 's') {
-            printf("\n*** Drawing 'IEEE' ***\n");
-            draw_IEEE();
-        } else if (u8_c == 'r') {
-            printf("\n*** Spinng Rubiks ***\n");
-            play_rubiks();
-        } else if (u8_c == 'e') {
-            printf("\n*** Reseting Rubiks ***\n");
-            rubik_init();
-        } else if (u8_c == 'u') {
-            printf("\n*** Raising platform ***\n");
-            platform_up();
-        } else if (u8_c == 'd') {
-            printf("\n*** Lowering platform ***\n");
-            platform_down();
-        } else if (u8_c == 't') {
-            printf("\n*** Twisting rubiks twist ***\n");
-            twist_rubiks_counter();
-        } else if (u8_c == 'y') {
-            printf("\n*** Twisting rubiks twist the other way ***\n");
-            twist_rubiks_clock();
-        } else if (u8_c == 'h') {
-            printf("\n*** Preparing for Etch ***\n");
-            etch_prepare();
-        } else if (u8_c == 'x') {
-            // Set servo
-            servo_menu();
-            u8_servo = inChar();
-
-            printf("\nEnter pulse width: ");
-            inStringEcho(sz_buf,31);
-            sscanf(sz_buf,"%d",(uint16_t *) &u16_pwm);
-            set_servo(u8_servo, u16_pwm);
-        } else {
-            printf("Invalid command");
-        }
         serial_menu();
         doHeartbeat();
     }
 }
 
+void serial_command(uint8_t u8_c) {
+    char u8_servo;
+    if (u8_c == 'e') {
+        printf("\n*** Drawing 'IEEE' ***\n");
+        play_etch();
+    } else if (u8_c == 'c') {
+        printf("\n*** Spinng Rubiks ***\n");
+        play_rubiks();
+    } else if (u8_c == 'p') {
+        if (u8_platformPos == 0) { 
+            u8_platformPos = 1;
+            printf("\n*** Lowering platform ***\n");
+            platform_rubiks();
+        } else {
+            u8_platformPos = 0;
+            printf("\n*** Raising platform ***\n");
+            platform_up();
+        }
+    } else if (u8_c == 't') {
+        printf("\n*** Twisting rubiks twist ***\n");
+        if (u8_twistPos == 0) {
+            u8_twistPos = 1;
+            twist_rubiks_clock();
+        } else {                
+            u8_twistPos = 0;
+            twist_rubiks_counter();
+        }
+    } else if (u8_c == 'f') {
+        if (u8_platformFlipped == 0) {
+            u8_platformFlipped = 1;
+            printf("\n*** Flipping back platform for Etch ***\n");
+            platform_etch();
+        } else {
+            u8_platformFlipped = 0;
+            printf("\n*** Reseting platform to original position ***\n");
+            platform_init();
+        }
+    } else if (u8_c == 'r') {
+        simon_menu();
+        u8_servo = inChar();
+
+        if (u8_servo == 'a') {
+            printf("\n*** Retracting all buttons ***\n");
+            simon_retract_buttons();
+        } else if (u8_servo == 'y') {
+            printf("\n*** Retracting yellow button ***\n");
+            simon_retract_button(YELLOW_BUTTON);
+        } else if (u8_servo == 'b') {
+            printf("\n*** Retracting blue button ***\n");
+            simon_retract_button(BLUE_BUTTON);
+        } else if (u8_servo == 'r') {
+            printf("\n*** Retracting red button ***\n");
+            simon_retract_button(RED_BUTTON);
+        } else if (u8_servo == 'g') {
+            printf("\n*** Retracting green button ***\n");
+            simon_retract_button(GREEN_BUTTON);
+        } else if (u8_servo == 's') {
+            printf("\n*** Retracting start button ***\n");
+            simon_retract_button(START_BUTTON);
+        } else {
+            printf("Invalid command");
+        }
+    } else if (u8_c == 'h') {
+        simon_menu();
+        u8_servo = inChar();
+
+        if (u8_servo == 'a') {
+            printf("\n*** Hovering all buttons ***\n");
+            simon_hover_buttons();
+        } else if (u8_servo == 'y') {
+            printf("\n*** Hovering yellow button ***\n");
+            simon_hover_button(YELLOW_BUTTON);
+        } else if (u8_servo == 'b') {
+            printf("\n*** Hovering blue button ***\n");
+            simon_hover_button(BLUE_BUTTON);
+        } else if (u8_servo == 'r') {
+            printf("\n*** Hovering red button ***\n");
+            simon_hover_button(RED_BUTTON);
+        } else if (u8_servo == 'g') {
+            printf("\n*** Hovering green button ***\n");
+            simon_hover_button(GREEN_BUTTON);
+        } else if (u8_servo == 's') {
+            printf("\n*** Hovering start button ***\n");
+            simon_hover_button(START_BUTTON);
+        } else {
+            printf("Invalid command");
+        }
+    } else if (u8_c == 'b') {
+        simon_menu();
+        u8_servo = inChar();
+
+        if (u8_servo == 'a') {
+            printf("\n*** Pushing all buttons ***\n");
+            simon_push_buttons();
+        } else if (u8_servo == 'y') {
+            printf("\n*** Pushing yellow button ***\n");
+            simon_push_button(YELLOW_BUTTON);
+        } else if (u8_servo == 'b') {
+            printf("\n*** Pushing blue button ***\n");
+            simon_push_button(BLUE_BUTTON);
+        } else if (u8_servo == 'r') {
+            printf("\n*** Pushing red button ***\n");
+            simon_push_button(RED_BUTTON);
+        } else if (u8_servo == 'g') {
+            printf("\n*** Pushing green button ***\n");
+            simon_push_button(GREEN_BUTTON);
+        } else if (u8_servo == 's') {
+            printf("\n*** Pushing start button ***\n");
+            simon_push_button(START_BUTTON);
+        } else {
+            printf("Invalid command");
+        }
+    } else if (u8_c == 'n') {
+        simon_menu();
+        u8_servo = inChar();
+
+        if (u8_servo == 'a') {
+            printf("\n*** Pushing and hover all buttons ***\n");
+            simon_push_and_hover_buttons();
+        } else if (u8_servo == 'y') {
+            printf("\n*** Pushing and hover yellow button ***\n");
+            simon_push_and_hover_button(YELLOW_BUTTON);
+        } else if (u8_servo == 'b') {
+            printf("\n*** Pushing and hover blue button ***\n");
+            simon_push_and_hover_button(BLUE_BUTTON);
+        } else if (u8_servo == 'r') {
+            printf("\n*** Pushing and hover red button ***\n");
+            simon_push_and_hover_button(RED_BUTTON);
+        } else if (u8_servo == 'g') {
+            printf("\n*** Pushing and hover green button ***\n");
+            simon_push_and_hover_button(GREEN_BUTTON);
+        } else if (u8_servo == 's') {
+            printf("\n*** Pushing and hover start button ***\n");
+            simon_push_and_hover_button(START_BUTTON);
+        } else {
+            printf("Invalid command");            
+        }
+    } else if (u8_c == 'x') {
+        // Set a sepcific servo
+        servo_menu();
+        u8_servo = inChar();
+        set_servo(u8_servo);
+    } else {
+        printf("Invalid command");
+    }
+}
+
 void serial_menu(void) {
     printf("\nChoose a command\n");
-    printf("   Press 's' to draw IEEE\n");
-    printf("   Press 'r' to spin rubiks\n");
-    printf("   Press 'e' to reset rubiks platform and twist\n");
-    printf("   Press 'u' to raise platform\n");
-    printf("   Press 'd' to lower platform\n");    
-    printf("   Press 't' to spin rubks twist servo\n");
-    printf("   Press 'y' to spin rubks twist servo the other way\n");
-    printf("   Press 'h' to prepare for etch\n");
+    printf("   Press 'e' to play Etch-a-Sketch\n");
+    printf("   Press 'c' to spin rubiks\n");
+    if (u8_platformPos == 0) {
+        printf("   Press 'p' to raise platform\n");
+    } else {
+        printf("   Press 'p' to lower platform\n");    
+    }
+    printf("   Press 't' to spin rubiks twist servo\n");
+    if (u8_platformFlipped == 0) {
+        printf("   Press 'f' to prepare for etch\n");
+    } else {
+        printf("   Press 'f' to reset platform to init\n");
+    }
+    printf("   Press 'r' to retract Simon arms\n");
+    printf("   Press 'h' to hover Simon arms\n");
+    printf("   Press 'b' to push Simon buttons\n");
+    printf("   Press 'n' to push and hover Simon buttons\n");
     printf("   Press 'x' to set a servo\n");
 }
 
@@ -82,13 +230,53 @@ void servo_menu(void) {
     printf("   9) Arm pivot\n");
 }
 
-void set_servo(char u8_servo, uint16_t u16_pwm) {
+void simon_menu(void) {
+    printf("\nChoose Simon arm\n");
+    printf("   a) All arms\n");
+    printf("   y) Yellow arm\n");
+    printf("   b) Blue arm\n");
+    printf("   r) Red arm\n");
+    printf("   g) Green arm\n");
+    printf("   s) Start arm\n");
+}
+
+void set_servo(char u8_servo) {
+    uint16_t u16_pwm;
+    char sz_buf[32];
+    char u8_c;
+
+    // Get pulse width for non-continuous servos
+    if (u8_servo != '0' && u8_servo != '1') {
+        printf("\nEnter pulse width: ");
+        inStringEcho(sz_buf,31);
+        sscanf(sz_buf,"%d",(uint16_t *) &u16_pwm);
+    }
+
+    // Set servo appropriately
     if (u8_servo == '0') {
-        turn_servo_by_pulse(ETCH_VERTICAL, u16_pwm);
-        printf("\n*** Setting etch vertical to %u ***\n", u16_pwm);
+        printf("\nUse 'a' and 'd' to move servo clockwise and counter clockwise and 'q' to quit");  
+        while (u8_c != 'q') {
+            u8_c = inChar();
+            if (u8_c == 'a') {
+                step_servo(0, ETCH_VERTICAL);
+            } else if (u8_c == 'd') {
+                step_servo(1, ETCH_VERTICAL);
+            } else {
+                stop_servo(ETCH_VERTICAL);
+            }
+        }
     } else if (u8_servo == '1') {
-        turn_servo_by_pulse(ETCH_HORIZ, u16_pwm);
-        printf("\n*** Setting etch horizontal to %u ***\n", u16_pwm);
+        printf("\nUse 'a' and 'd' to move servo and 'q' to quit");  
+        while (u8_c != 'q') {
+            u8_c = inChar();
+            if (u8_c == 'a') {
+                step_servo(0, ETCH_HORIZ);
+            } else if (u8_c == 'd') {
+                step_servo(1, ETCH_HORIZ);
+            } else {
+                stop_servo(ETCH_HORIZ);
+            }
+        }
     } else if (u8_servo == '2') {
         turn_servo_by_pulse(RUBIKS_PLATFORM, u16_pwm);
         printf("\n*** Setting platform to %u ***\n", u16_pwm);

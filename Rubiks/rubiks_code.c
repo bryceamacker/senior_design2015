@@ -1,21 +1,27 @@
+/*********************************************************************
+*
+* Mississippi State University
+*
+*********************************************************************
+* FileName: rubiks_code.c
+* Dependenies: See INCLUDES setion below
+* Proessor: PIC24HJ64GP506A
+* Compiler: gcc-xc16
+* Company: Mississippi State University/ECE
+*
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* MODULE FUNCTION: Controls the twisting of the rubiks cube
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Author                Date                    Comment
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Steven Calhoun        9/26/2014               SECON 2015
+*********************************************************************/
+
 #include "rubiks_code.h"
 
 void rubik_init() {
     platform_up();
     twist_rubiks_counter();
-}
-
-void platform_down() {
-    turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_DOWN_PULSE);
-}
-
-void platform_up() {
-    turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_UP_PULSE);
-}
-
-void etch_prepare() {
-    turn_servo_by_pulse(RUBIKS_TWIST,TWIST_DIAG_PULSE); 
-    turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_BACK_PULSE);
 }
 
 void twist_rubiks_clock() {
@@ -27,7 +33,7 @@ void twist_rubiks_counter() {
 }
 
 void play_rubiks() {
-    platform_down();
+    platform_rubiks();
     DELAY_MS(WAIT_TIME);
     twist_rubiks_clock();
     DELAY_MS(WAIT_TIME);

@@ -1,23 +1,47 @@
+/*********************************************************************
+*
+* Mississippi State University
+*
+*********************************************************************
+* FileName: simon_code.h
+* Dependenies: See INCLUDES setion below
+* Proessor: PIC24HJ64GP506A
+* Compiler: gcc-xc16
+* Company: Mississippi State University/ECE
+*
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* MODULE FUNCTION:Declarations of funcitons and constants for playing
+* the simons
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Author                Date                    Comment
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Steven Calhoun        10/5/2014               SECON 2015
+*********************************************************************/
+
 #include "servosAPI.h"
+#include "photoCellAPI.h"
 #include "port_mapping.h"
 
 #ifndef SIMON_CODE_H_
 #define SIMON_CODE_H_
 
-#define YELLOW_PUSH     1050
-#define BLUE_PUSH       1025
-#define RED_PUSH        895
-#define GREEN_PUSH      1825
+// Retract pulse width constants
+#define YELLOW_RETRACT  2400
+#define BLUE_RETRACT    1500
+#define RED_RETRACT     1500
+#define GREEN_RETRACT   1500
 
+// Hover pulse width constants
 #define YELLOW_HOVER    1125
 #define BLUE_HOVER      1085
 #define RED_HOVER       925
 #define GREEN_HOVER     1750
 
-#define YELLOW_RETRACT  2300
-#define BLUE_RETRACT    2350
-#define RED_RETRACT     2350
-#define GREEN_RETRACT   600
+// Push pulse width constants
+#define YELLOW_PUSH     1050
+#define BLUE_PUSH       1025
+#define RED_PUSH        895
+#define GREEN_PUSH      1825
 
 #define PUSH_WAIT       250
 
@@ -35,29 +59,6 @@ typedef enum {
 //
 ///////////////////////////////////////////////
 
-/**
- * Functions for ALL of the different simon push positions
- */
-void simon_push_yellow_button(void);
-void simon_push_blue_button(void);
-void simon_push_red_button(void);
-void simon_push_green_button(void);
-
-/**
- * Functions for ALL of the different simon hover positions
- */
-void simon_hover_yellow_button(void);
-void simon_hover_blue_button(void);
-void simon_hover_red_button(void);
-void simon_hover_green_button(void);
-
-/**
- * Functions for ALL of the different simon retract positions
- */
-void simon_retract_yellow(void);
-void simon_retract_blue(void);
-void simon_retract_red(void);
-void simon_retract_green(void);
 
 /////////////////////////////////////////////// 
 //
@@ -66,16 +67,42 @@ void simon_retract_green(void);
 ///////////////////////////////////////////////
 
 /**
+ * Retract the arm for the given button
+ * 
+ * @param button arm to be retracted
+ */
+void simon_retract_button(buttonID button);
+
+/**
+ * Hover the arm for the given button
+ * 
+ * @param button arm to be hovered
+ */
+void simon_hover_button(buttonID button);
+
+/**
+ * Push the given Simon button
+ * 
+ * @param button to be pushed
+ */
+void simon_push_button(buttonID button);
+
+/**
+ * Push the given Simon button then return to hover position
+ * 
+ * @param button to be pushed then hovered
+ */
+void simon_push_and_hover_button(buttonID button);
+
+/**
  * @brief Initialize simon arms to the retracted postion
  */
 void simon_init(void);
 
 /**
- * @brief Push a simon button
- * 
- * @param button buttonID of the button to be pushed
+ * @brief Push all simon buttons
  */
-void simon_push_button(buttonID button);
+void simon_push_buttons(void);
 
 /**
  * @brief Position all servo arms to the hover position
@@ -86,5 +113,10 @@ void simon_hover_buttons(void);
  * @brief Position all servo arms in the retract position
  */
 void simon_retract_buttons(void);
+
+/**
+ * @brief Push and hover all simon buttons
+ */
+void simon_push_and_hover_buttons();
 
 #endif

@@ -1,0 +1,8 @@
+prefix=/home/dexter/senior_design2015/hydro_ws/install
+
+Name: odom_publisher
+Description: Description of odom_publisher
+Version: 0.0.0
+Cflags: -I/home/dexter/senior_design2015/hydro_ws/install/include
+Libs: -L/home/dexter/senior_design2015/hydro_ws/install/lib 
+Requires: geometry_msgs nav_msgs roscpp rospy sensor_msgs std_msgs tf

@@ -1,0 +1,5 @@
+<launch>
+	<include file="$(find odom_publisher)/launch/bringup.launch" />
+	<node pkg="joy" name="joy_node" type="joy_node" />
+	<node pkg="odom_publisher" name="robot_teleop" type="robot_teleop.py" output="screen"/>
+</launch>

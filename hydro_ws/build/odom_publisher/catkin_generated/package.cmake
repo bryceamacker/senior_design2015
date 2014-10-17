@@ -1,0 +1,7 @@
+set(_CATKIN_CURRENT_PACKAGE "odom_publisher")
+set(odom_publisher_MAINTAINER "dexter <dexter@todo.todo>")
+set(odom_publisher_DEPRECATED "")
+set(odom_publisher_VERSION "0.0.0")
+set(odom_publisher_BUILD_DEPENDS "geometry_msgs" "nav_msgs" "roscpp" "rospy" "sensor_msgs" "std_msgs" "tf" "message_generation")
+set(odom_publisher_RUN_DEPENDS "geometry_msgs" "nav_msgs" "roscpp" "rospy" "sensor_msgs" "std_msgs" "tf" "message_runtime")
+set(odom_publisher_BUILDTOOL_DEPENDS "catkin")
