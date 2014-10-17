@@ -8,20 +8,20 @@ elapsedMillis timeElapsed;
 #define BLUE   2
 #define YELLOW 3
 
-#define BLUE_PRESS  1025
-#define BLUE_AFTER_PRESS 1100
+#define BLUE_PRESS  990
+#define BLUE_AFTER_PRESS 1025
 #define BLUE_BACK_OFF  2350
 
-#define GREEN_PRESS  1825
-#define GREEN_AFTER_PRESS 1750
+#define GREEN_PRESS  1875
+#define GREEN_AFTER_PRESS 1825
 #define GREEN_BACK_OFF  600
 
-#define RED_PRESS  895
-#define RED_AFTER_PRESS  950
+#define RED_PRESS  950
+#define RED_AFTER_PRESS  990
 #define RED_BACK_OFF  2350
 
-#define YELLOW_PRESS  1050
-#define YELLOW_AFTER_PRESS 1125
+#define YELLOW_PRESS  1075
+#define YELLOW_AFTER_PRESS 1115
 #define YELLOW_BACK_OFF  2300
 
 /* Simple test of the functionality of the photo resistor
@@ -108,22 +108,22 @@ void setup()
 
 void loop()
 {
-//  readSensors();
-  if (firstRun == 1) {
-      yellowServo.writeMicroseconds(YELLOW_PRESS);
-      delay(250);
-      findColor(roundNum);
-      yellowServo.writeMicroseconds(YELLOW_AFTER_PRESS);
-      delay(250);
-      playButtons(roundNum);
-      roundNum++;
-      firstRun = 0;
-    }
-  else {
-    findColor(roundNum);
-    playButtons(roundNum);
-    roundNum++;
-  }
+  readSensors();
+//  if (firstRun == 1) {
+//      yellowServo.writeMicroseconds(YELLOW_PRESS);
+//      delay(250);
+//      findColor(roundNum);
+//      yellowServo.writeMicroseconds(YELLOW_AFTER_PRESS);
+//      delay(250);
+//      playButtons(roundNum);
+//      roundNum++;
+//      firstRun = 0;
+//    }
+//  else {
+//    findColor(roundNum);
+//    playButtons(roundNum);
+//    roundNum++;
+//  }
 }
 void playButtons(int num) {
   delay(500);
