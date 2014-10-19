@@ -73,6 +73,7 @@ LibSources = [
                 'API/sensorArrayAPI.c',
                 'API/servosAPI.c',
                 'API/photoCellAPI.c',
+                'API/ADCAPI.c',
                 'API/pic_config.c',
                 'Etch/etch_code.c',
                 'Rubiks/rubiks_code.c',

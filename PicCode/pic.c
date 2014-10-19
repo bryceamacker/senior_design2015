@@ -33,9 +33,16 @@ int main(void) {
     u8_platformFlipped = 0;
 
     // Initialize pic and print out serial menu
-    pic_init();
     configBasic(HELLO_MSG);
-    serial_menu();
+    pic_init();
+    // serial_menu();
+    
+    while (1) {
+        while (!u8_gotData) {
+            doHeartbeat();
+        }
+        u8_gotData = 0;
+    }
 
     while(1) {
         // Handle serial command

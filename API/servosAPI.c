@@ -48,19 +48,6 @@ void servo_init() {
     CONFIG_RD10_AS_DIG_OUTPUT();
     CONFIG_RD11_AS_DIG_OUTPUT();
 
-    // Configure timers and output comparators
-    config_servo_timer3();
-    config_output_capture1();
-
-    config_servo_timer2();
-    config_output_capture2();
-
-    u16_slotWidthTicks = usToU16Ticks(SLOT_WIDTH, getTimerPrescale(T3CONbits));
-
-    // Turn on the timers
-    T3CONbits.TON = 1;
-    T2CONbits.TON = 1;
-
     // All servo outputs low initially
     RUBIKS_PLATFORM_PIN = 0;
     RUBIKS_TWIST_PIN = 0;
@@ -75,6 +62,23 @@ void servo_init() {
 
     ETCH_VERTICAL_PIN = 0;
     ETCH_HORIZ_PIN = 0;
+
+    DELAY_MS(500);
+
+    // Configure timers and output comparators
+    config_servo_timer3();
+    config_output_capture1();
+
+    config_servo_timer2();
+    config_output_capture2();
+
+    u16_slotWidthTicks = usToU16Ticks(SLOT_WIDTH, getTimerPrescale(T3CONbits));
+
+    DELAY_MS(500);
+
+    // Turn on the timers
+    T3CONbits.TON = 1;
+    T2CONbits.TON = 1;
 }
 
 void config_servo_timer3(void) {

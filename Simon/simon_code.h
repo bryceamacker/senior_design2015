@@ -26,22 +26,22 @@
 #define SIMON_CODE_H_
 
 // Retract pulse width constants
-#define YELLOW_RETRACT  2400
-#define BLUE_RETRACT    1500
-#define RED_RETRACT     1500
-#define GREEN_RETRACT   1500
+#define YELLOW_RETRACT  2300
+#define BLUE_RETRACT    2350
+#define RED_RETRACT     2350
+#define GREEN_RETRACT   600
 
 // Hover pulse width constants
-#define YELLOW_HOVER    1125
-#define BLUE_HOVER      1085
-#define RED_HOVER       925
-#define GREEN_HOVER     1750
+#define YELLOW_HOVER    1115
+#define BLUE_HOVER      1025
+#define RED_HOVER       990
+#define GREEN_HOVER     600
 
 // Push pulse width constants
-#define YELLOW_PUSH     1050
-#define BLUE_PUSH       1025
-#define RED_PUSH        895
-#define GREEN_PUSH      1825
+#define YELLOW_PUSH     1075
+#define BLUE_PUSH       990
+#define RED_PUSH        950
+#define GREEN_PUSH      1875
 
 #define PUSH_WAIT       250
 
@@ -59,12 +59,11 @@ typedef enum {
 //
 ///////////////////////////////////////////////
 
-
-/////////////////////////////////////////////// 
-//
-// Simon Usage
-//
-///////////////////////////////////////////////
+void calibrate_sensors();
+uint8_t find_color(uint8_t u8_numberOfButtons);
+void play_buttons(uint8_t u8_num);
+uint8_t confirmColor(uint8_t u8_color);
+uint8_t confirmColorOff(uint8_t u8_color, uint16_t u16_onValue);
 
 /**
  * Retract the arm for the given button
@@ -118,5 +117,12 @@ void simon_retract_buttons(void);
  * @brief Push and hover all simon buttons
  */
 void simon_push_and_hover_buttons();
+
+/////////////////////////////////////////////// 
+//
+// Simon Usage
+//
+///////////////////////////////////////////////
+
 
 #endif
