@@ -21,35 +21,30 @@
 #include "simon_code.h"
 #include <stdio.h>
 
-uint8_t u8_redLightPin = 0;  //define a pin for Photo resistor
-uint8_t u8_greenLightPin = 1;
-uint8_t u8_blueLightPin = 2;
 uint8_t u8_yellowLightPin = 3;
+uint8_t u8_blueLightPin = 2;
+uint8_t u8_redLightPin = 0;
+uint8_t u8_greenLightPin = 1;
 
-uint8_t u8_lastRedValue = 0;
-uint8_t u8_lastGreenValue = 0;
-uint8_t u8_lastBlueValue = 0;
-uint8_t u8_lastYellowValue = 0;
+int16_t i16_lowestYellowValue = 0;
+int16_t i16_lowestBlueValue = 0;
+int16_t i16_lowestRedValue = 0;
+int16_t i16_lowestGreenValue = 0;
 
-uint16_t u16_lowestRedValue = 1024;
-uint16_t u16_lowestGreenValue = 1024;
-uint16_t u16_lowestBlueValue = 1024;
-uint16_t u16_lowestYellowValue = 1024;
+int16_t i16_currentYellowValue = 0;
+int16_t i16_currentBlueValue = 0;
+int16_t i16_currentRedValue = 0;
+int16_t i16_currentGreenValue = 0;
 
-uint16_t u16_currentRedValue = 0;
-uint16_t u16_currentGreenValue = 0;
-uint16_t u16_currentBlueValue = 0;
-uint16_t u16_currentYellowValue = 0;
+int16_t i16_yellowDifference = 0;
+int16_t i16_blueDifference = 0;
+int16_t i16_redDifference = 0;
+int16_t i16_greenDifference = 0;
 
-uint16_t u16_redDifference = 0;
-uint16_t u16_greenDifference = 0;
-uint16_t u16_blueDifference = 0;
-uint16_t u16_yellowDifference = 0;
-
-uint16_t u16_redOnValue = 0;
-uint16_t u16_greenOnValue = 0;
-uint16_t u16_blueOnValue = 0;
-uint16_t u16_yellowOnValue = 0;
+int16_t i16_yellowOnValue = 0;
+int16_t i16_blueOnValue = 0;
+int16_t i16_redOnValue = 0;
+int16_t i16_greenOnValue = 0;
 
 uint8_t au8_buttonArray[8];
 uint8_t u8_roundNum = 1;
@@ -69,13 +64,29 @@ void simon_init() {
 
 void prepare_to_play() {
     simon_hover_buttons();
-    calibrate_sensors();
+    // calibrate_sensors(); I don't think we need calibration with the new changes, but this it where it goes if needed
+    DELAY_MS(1000);
 }
 
 void play_simon() {
-    if (u8_firstRun == 1) {
-        simon_push_and_hover_button(YELLOW_BUTTON);
-        find_color(u8_roundNum);
+    prepare_to_play();
+    while (u8_roundNum < 8) {
+        #ifdef DEBUG
+        printf("\nROUND %i\n", u8_roundNum);
+        #endif DEBUG
+
+        if (u8_firstRun == 1) {
+            simon_push_button(YELLOW_BUTTON);
+            find_color(u8_roundNum);
+            simon_hover_button(YELLOW_BUTTON);
+            DELAY_MS(250);
+            play_buttons(u8_roundNum);
+            u8_firstRun = 0;
+        } else {
+            find_color(u8_roundNum);
+            play_buttons(u8_roundNum);
+        }
+        u8_roundNum++;
     }
 }
 
@@ -87,170 +98,228 @@ void play_simon() {
 
 void calibrate_sensors() {
     uint8_t i;
-    uint16_t u16_tempYellowValue; // NEED A VALUE = analogRead(yellowLightPin);
-    uint16_t u16_tempBlueValue; // NEED A VALUE = analogRead(blueLightPin);
-    uint16_t u16_tempRedValue; // NEED A VALUE = analogRead(redLightPin);
-    uint16_t u16_tempGreenValue; // NEED A VALUE = analogRead(greenLightPin);
-
-    u16_tempYellowValue = 0;
-    u16_tempBlueValue = 0;
-    u16_tempRedValue = 0;
-    u16_tempGreenValue = 0;
+    int16_t i16_tempYellowValue = read_photo_transistor(YELLOW_TRANS);
+    int16_t i16_tempBlueValue = read_photo_transistor(BLUE_TRANS);
+    int16_t i16_tempRedValue = read_photo_transistor(RED_TRANS);
+    int16_t i16_tempGreenValue = adc_read(GREEN_LIGHT); 
 
     for (i = 0; i < 100; i++) {
-        u16_tempYellowValue = 0; // NEED A VALUE = analogRead(yellowLightPin);
-        u16_tempBlueValue = 0; // NEED A VALUE = analogRead(blueLightPin);
-        u16_tempRedValue = 0; // NEED A VALUE = analogRead(redLightPin);
-        u16_tempGreenValue = 0; // NEED A VALUE = analogRead(greenLightPin);
+        i16_tempYellowValue = read_photo_transistor(YELLOW_TRANS);
+        i16_tempBlueValue = read_photo_transistor(BLUE_TRANS);
+        i16_tempRedValue = read_photo_transistor(RED_TRANS);
+        i16_tempGreenValue = read_photo_transistor(GREEN_TRANS);
 
-        printf("Yellow: %i", u16_tempYellowValue);
-        printf("\tBlue: %i", u16_tempBlueValue);
-        printf("\tRed : %i", u16_tempRedValue);
-        printf("\tGreen: %i", u16_tempGreenValue);
-
-        if (u16_tempYellowValue < u16_lowestYellowValue) {
-            u16_lowestYellowValue = u16_tempYellowValue;
+        if (i16_tempYellowValue < i16_lowestYellowValue) {
+            i16_lowestYellowValue = i16_tempYellowValue;
         }
-        if (u16_tempBlueValue < u16_lowestBlueValue) {
-            u16_lowestBlueValue = u16_tempBlueValue;
+        if (i16_tempBlueValue < i16_lowestBlueValue) {
+            i16_lowestBlueValue = i16_tempBlueValue;
         }
-        if (u16_tempRedValue < u16_lowestRedValue) {
-            u16_lowestRedValue = u16_tempRedValue;
+        if (i16_tempRedValue < i16_lowestRedValue) {
+            i16_lowestRedValue = i16_tempRedValue;
         }
-        if (u16_tempGreenValue < u16_lowestGreenValue) {
-            u16_lowestGreenValue = u16_tempGreenValue;
+        if (i16_tempGreenValue < i16_lowestGreenValue) {
+            i16_lowestGreenValue = i16_tempGreenValue;
         }
         DELAY_MS(10);
     }
+    #ifdef DEBUG
+    printf("Calibrated\n");
+    printf("Yellow: %i\n", i16_lowestYellowValue);
+    printf("Blue: %i\n", i16_lowestBlueValue);
+    printf("Red: %i\n", i16_lowestRedValue);
+    printf("Green: %i\n", i16_lowestGreenValue);
+    printf("\n");
+    #endif
 }
 
 void play_buttons(uint8_t u8_num) {
     uint8_t i;
 
     DELAY_MS(500);
-    printf("Number of buttons in array: %i", u8_num);
 
     for(i = 0; i < u8_num; i++) {
+        printf ("Button: %i\n", i+1);
         if (au8_buttonArray[i] == YELLOW_BUTTON) {
+            #ifdef DEBUG
+            printf("Pressing Yellow\n");
+            #endif
+
             DELAY_MS(500);
-            printf("Pressing Yello\n");
             simon_push_button(YELLOW_BUTTON);
-            DELAY_MS(250);
-            u16_yellowOnValue = confirmColor(YELLOW_BUTTON);
+            i16_yellowOnValue = confirm_color(YELLOW_BUTTON);
             simon_hover_button(YELLOW_BUTTON);
-            confirmColorOff(YELLOW_BUTTON, u16_yellowOnValue);
+            confirm_color_off(YELLOW_BUTTON, i16_yellowOnValue);
         } 
         else if (au8_buttonArray[i] == BLUE_BUTTON) {
-            DELAY_MS(500);
+            #ifdef DEBUG
             printf("Pressing Blue\n");
+            #endif
+
+            DELAY_MS(500);
             simon_push_button(BLUE_BUTTON);
-            DELAY_MS(250);
-            u16_blueOnValue = confirmColor(BLUE_BUTTON);
+            i16_blueOnValue = confirm_color(BLUE_BUTTON);
             simon_hover_button(BLUE_BUTTON);
-            confirmColorOff(BLUE_BUTTON, u16_blueOnValue);
+            confirm_color_off(BLUE_BUTTON, i16_blueOnValue);
         } 
         else if (au8_buttonArray[i] == RED_BUTTON) {
-            DELAY_MS(500);
+            #ifdef DEBUG
             printf("Pressing Red\n");
+            #endif
+
+            DELAY_MS(500);
             simon_push_button(RED_BUTTON);
-            DELAY_MS(250);
-            u16_redOnValue = confirmColor(RED_BUTTON);
+            i16_redOnValue = confirm_color(RED_BUTTON);
             simon_hover_button(RED_BUTTON);
-            confirmColorOff(RED_BUTTON, u16_redOnValue);
+            confirm_color_off(RED_BUTTON, i16_redOnValue);
         }
         else if (au8_buttonArray[i] == GREEN_BUTTON) {
-            DELAY_MS(500);
+            #ifdef DEBUG
             printf("Pressing Green\n");
+            #endif
+
+            DELAY_MS(500);
             simon_push_button(GREEN_BUTTON);
-            DELAY_MS(250);
-            u16_greenOnValue = confirmColor(GREEN_BUTTON);
+            i16_greenOnValue = confirm_color(GREEN_BUTTON);
             simon_hover_button(GREEN_BUTTON);
-            confirmColorOff(GREEN_BUTTON, u16_greenOnValue);
+            confirm_color_off(GREEN_BUTTON, i16_greenOnValue);
         } 
     }
 }
 
 
-uint8_t find_color(uint8_t u8_numberOfButtons) {
+void find_color(uint8_t u8_numberOfButtons) {
     // Attempt to identify color for 200 milliseconds each
-    uint8_t u8_color = YELLOW_BUTTON;
-    uint8_t u8_detectedButtons = 0;
-    do {
-        u16_currentRedValue = 0; // NEED A VALUE = analogRead(redLightPin);
-        u16_currentGreenValue = 0; // NEED A VALUE = analogRead(greenLightPin);
-        u16_currentBlueValue = 0; // NEED A VALUE = analogRead(blueLightPin);  
-        u16_currentYellowValue = 0; // NEED A VALUE = analogRead(yellowLightPin);
+    uint8_t i;
+    uint8_t u8_color;
+    uint8_t u8_detectedButtons;
 
-        u16_redDifference = u16_currentRedValue - u16_lowestRedValue;
-        u16_greenDifference = u16_currentGreenValue - u16_lowestGreenValue;
-        u16_blueDifference = u16_currentBlueValue - u16_lowestBlueValue;
-        u16_yellowDifference = u16_currentYellowValue - u16_lowestYellowValue;
-  
-        if (u16_yellowDifference > 200)
+    u8_color = YELLOW_BUTTON;
+    u8_detectedButtons = 0;
+    do {
+        i16_currentYellowValue = read_photo_transistor(YELLOW_TRANS);
+        i16_currentBlueValue = read_photo_transistor(BLUE_TRANS);
+        i16_currentRedValue = read_photo_transistor(RED_TRANS);
+        i16_currentGreenValue = read_photo_transistor(GREEN_TRANS);
+
+        i16_yellowDifference = i16_currentYellowValue - i16_lowestYellowValue;
+        i16_blueDifference = i16_currentBlueValue - i16_lowestBlueValue;
+        i16_redDifference = i16_currentRedValue - i16_lowestRedValue;
+        i16_greenDifference = i16_currentGreenValue - i16_lowestGreenValue;
+
+        if (i16_yellowDifference > YELLOW_LIGHT_THRESH_HOLD)
         {
+            #ifdef DEBUG
+            printf("Detected Yellow: %i\n", i16_currentYellowValue);
+            #endif
+
             au8_buttonArray[u8_detectedButtons] = YELLOW_BUTTON;
             u8_detectedButtons++;
-            printf("Detected Yellow\n");
+            DELAY_MS(50);
             u8_color = YELLOW_BUTTON;
-            confirmColorOff(YELLOW_BUTTON, u16_currentYellowValue);
+            confirm_color_off(YELLOW_BUTTON, read_photo_transistor(YELLOW_TRANS));
         }
-        else if (u16_blueDifference > 200)
+        else if (i16_blueDifference > BLUE_LIGHT_THRESH_HOLD)
         {
+            #ifdef DEBUG
+            printf("Detected Blue: %i\n", i16_currentBlueValue);
+            #endif
+
             au8_buttonArray[u8_detectedButtons] = BLUE_BUTTON;
-            u8_detectedButtons++;
-            printf("Detected Blue\n");
+            u8_detectedButtons++;            
+            DELAY_MS(50);
             u8_color = BLUE_BUTTON;
-            confirmColorOff(BLUE_BUTTON, u16_currentBlueValue);
+            confirm_color_off(BLUE_BUTTON, read_photo_transistor(BLUE_TRANS));
         }
-        else if (u16_redDifference > 250)
+        else if (i16_redDifference > RED_LIGHT_THRESH_HOLD)
         {
+            #ifdef DEBUG
+            printf("Detected Red: %i\n", i16_currentRedValue);
+            #endif
+
             au8_buttonArray[u8_detectedButtons] = RED_BUTTON;
             u8_detectedButtons++;
-            printf("Detected Red\n");
+            DELAY_MS(50);
             u8_color = RED_BUTTON;
-            confirmColorOff(RED_BUTTON, u16_currentRedValue);
+            confirm_color_off(RED_BUTTON, read_photo_transistor(RED_TRANS));
         }
-        else if (u16_greenDifference > 200)
+        else if (i16_greenDifference > GREEN_LIGHT_THRESH_HOLD)
         {
+            #ifdef DEBUG
+            printf("Detected Green: %i\n", i16_currentGreenValue);
+            #endif
+
             au8_buttonArray[u8_detectedButtons] = GREEN_BUTTON;
             u8_detectedButtons++;
-            printf("Detected Green\n");
+            DELAY_MS(50);
             u8_color = GREEN_BUTTON;
-            confirmColorOff(GREEN_BUTTON, u16_currentGreenValue);
+            confirm_color_off(GREEN_BUTTON, read_photo_transistor(GREEN_TRANS));
         }
         //short DELAY_MS for faster response to light.
         DELAY_MS(10); 
     } while(u8_detectedButtons < u8_numberOfButtons);
+
+    printf ("\nOur buttons\n");
+
+    #ifdef DEBUG
+    for (i = 0; i < u8_numberOfButtons; i++) {
+        if (au8_buttonArray[i] == YELLOW_BUTTON){
+            printf("Button %i: Yellow\n", i+1);
+        }
+        else if (au8_buttonArray[i] == BLUE_BUTTON){
+            printf("Button %i: Blue\n", i+1);
+        }
+        else if (au8_buttonArray[i] == RED_BUTTON){
+            printf("Button %i: Red\n", i+1);
+        }
+        else if (au8_buttonArray[i] == GREEN_BUTTON){
+            printf("Button %i: Green\n", i+1);
+        }
+    }
+    printf("\n");
+    #endif
 }
 
-uint8_t confirmColor(uint8_t u8_color) {
+uint8_t confirm_color(uint8_t u8_color) {
     // Attempt to identify color for 200 milliseconds each
     while(1) {
-        u16_currentRedValue = 0; // NEED A VALUE = analogRead(redLightPin);
-        u16_currentGreenValue = 0; // NEED A VALUE = analogRead(greenLightPin);
-        u16_currentBlueValue = 0; // NEED A VALUE = analogRead(blueLightPin);  
-        u16_currentYellowValue = 0; // NEED A VALUE = analogRead(yellowLightPin);
+        i16_currentYellowValue = read_photo_transistor(YELLOW_TRANS);
+        i16_currentBlueValue = read_photo_transistor(BLUE_TRANS);
+        i16_currentRedValue = read_photo_transistor(RED_TRANS);
+        i16_currentGreenValue = read_photo_transistor(GREEN_TRANS);
         
-        u16_redDifference = u16_currentRedValue - u16_lowestRedValue;
-        u16_greenDifference = u16_currentGreenValue - u16_lowestGreenValue;
-        u16_blueDifference = u16_currentBlueValue - u16_lowestBlueValue;
-        u16_yellowDifference = u16_currentYellowValue - u16_lowestYellowValue;
+        i16_yellowDifference = i16_currentYellowValue - i16_lowestYellowValue;
+        i16_blueDifference = i16_currentBlueValue - i16_lowestBlueValue;
+        i16_redDifference = i16_currentRedValue - i16_lowestRedValue;
+        i16_greenDifference = i16_currentGreenValue - i16_lowestGreenValue;
   
-        if (u16_redDifference > 250 && u8_color == RED_BUTTON)
+        if (i16_yellowDifference > YELLOW_LIGHT_THRESH_HOLD && u8_color == YELLOW_BUTTON)
         {
-            return u16_currentRedValue;
+            #ifdef DEBUG
+            printf("Yellow on: %i\n", i16_currentYellowValue);
+            #endif
+            return i16_currentYellowValue;
         }
-        else if (u16_greenDifference > 200 && u8_color == GREEN_BUTTON)
+        else if (i16_blueDifference > BLUE_LIGHT_THRESH_HOLD && u8_color == BLUE_BUTTON)
         {
-            return u16_currentGreenValue;
-        }
-        else if (u16_blueDifference > 200 && u8_color == BLUE_BUTTON)
-        {
-            return u16_currentBlueValue;
+            #ifdef DEBUG
+            printf("Blue on: %i\n", i16_currentBlueValue);
+            #endif
+            return i16_currentBlueValue;
         }      
-        else if (u16_yellowDifference > 200 && u8_color == YELLOW_BUTTON)
+        else if (i16_redDifference > RED_LIGHT_THRESH_HOLD && u8_color == RED_BUTTON)
         {
-            return u16_currentYellowValue;
+            #ifdef DEBUG
+            printf("Red on: %i\n", i16_currentRedValue);
+            #endif
+            return i16_currentRedValue;
+        }
+        else if (i16_greenDifference > GREEN_LIGHT_THRESH_HOLD && u8_color == GREEN_BUTTON)
+        {
+            #ifdef DEBUG
+            printf("Green on: %i\n", i16_currentGreenValue);
+            #endif
+            return i16_currentGreenValue;
         }
 
         // Short DELAY_MS for faster response to light.
@@ -258,37 +327,52 @@ uint8_t confirmColor(uint8_t u8_color) {
     }
 }
 
-uint8_t confirmColorOff(uint8_t u8_color, uint16_t u16_onValue) {
+uint8_t confirm_color_off(uint8_t u8_color, int16_t i16_onValue) {
     // Attempt to identify color for 200 milliseconds each
+    #ifdef DEBUG
+    printf("Waiting to turn off\n");
+    #endif
     while(1) {
-        printf("Waiting to turn off\n");
-        u16_currentRedValue = 0; // NEED A VALUE = analogRead(redLightPin);
-        u16_currentGreenValue = 0; // NEED A VALUE = analogRead(greenLightPin);
-        u16_currentBlueValue = 0; // NEED A VALUE = analogRead(blueLightPin);  
-        u16_currentYellowValue = 0; // NEED A VALUE = analogRead(yellowLightPin);
+        i16_currentYellowValue = read_photo_transistor(YELLOW_TRANS);
+        i16_currentBlueValue = read_photo_transistor(BLUE_TRANS);
+        i16_currentRedValue = read_photo_transistor(RED_TRANS);
+        i16_currentGreenValue = read_photo_transistor(GREEN_TRANS);
 
-        u16_redDifference = u16_onValue - u16_currentRedValue;
-        u16_greenDifference = u16_onValue - u16_currentGreenValue;
-        u16_blueDifference = u16_onValue - u16_currentBlueValue;
-        u16_yellowDifference = u16_onValue - u16_currentYellowValue;
-  
-        if (u16_redDifference > 180 && u8_color == RED_BUTTON)
+        i16_yellowDifference = i16_onValue - i16_currentYellowValue;
+        i16_blueDifference = i16_onValue - i16_currentBlueValue;
+        i16_redDifference = i16_onValue - i16_currentRedValue;
+        i16_greenDifference = i16_onValue - i16_currentGreenValue;
+
+
+        if (i16_currentYellowValue < (i16_lowestYellowValue + 20) && u8_color == YELLOW_BUTTON)
         {
+            #ifdef DEBUG
+            printf("Yellow off: %i\n", i16_currentYellowValue);
+            #endif
             return 1;
         }
-        else if (u16_greenDifference > 150 && u8_color == GREEN_BUTTON)
+        else if (i16_currentBlueValue < (i16_lowestBlueValue + 20) && u8_color == BLUE_BUTTON)
         {
-            return 1;
-        }
-        else if (u16_blueDifference > 150 && u8_color == BLUE_BUTTON)
-        {
+            #ifdef DEBUG
+            printf("Blue off: %i\n", i16_currentBlueValue);
+            #endif
             return 1;
         }      
-        else if (u16_yellowDifference > 150 && u8_color == YELLOW_BUTTON)
+        else if (i16_currentRedValue < (i16_lowestRedValue + 20) && u8_color == RED_BUTTON)
         {
+            #ifdef DEBUG
+            printf("Red off: %i\n", i16_currentRedValue);
+            #endif
             return 1;
         }
-      
+        else if (i16_currentGreenValue < (i16_lowestGreenValue + 20) && u8_color == GREEN_BUTTON)
+        {
+            #ifdef DEBUG
+            printf("Green off: %i\n", i16_currentGreenValue);
+            #endif
+            return 1;
+        }
+
         // Short DELAY_MS for faster response to light.
         DELAY_MS(10);
     }

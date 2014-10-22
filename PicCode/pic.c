@@ -25,9 +25,10 @@ uint8_t u8_platformPos;
 uint8_t u8_twistPos;
 uint8_t u8_platformFlipped;
 uint16_t u16_pwm;
+char u8_c;
 
 int main(void) {
-    char u8_c;
+    u8_c = 0;
     u8_twistPos = 0;
     u8_platformPos = 0;
     u8_platformFlipped = 0;
@@ -35,14 +36,7 @@ int main(void) {
     // Initialize pic and print out serial menu
     configBasic(HELLO_MSG);
     pic_init();
-    // serial_menu();
-    
-    while (1) {
-        while (!u8_gotData) {
-            doHeartbeat();
-        }
-        u8_gotData = 0;
-    }
+    serial_menu();
 
     while(1) {
         // Handle serial command
@@ -62,6 +56,9 @@ void serial_command(uint8_t u8_c) {
     } else if (u8_c == 'c') {
         printf("\n*** Spinng Rubiks ***\n");
         play_rubiks();
+    } else if (u8_c == 's') {
+        printf("\n*** Playing Simon ***\n");
+        play_simon();
     } else if (u8_c == 'p') {
         if (u8_platformPos == 0) { 
             u8_platformPos = 1;
@@ -191,6 +188,8 @@ void serial_command(uint8_t u8_c) {
         } else {
             printf("Invalid command");            
         }
+    } else if (u8_c == 'z') {
+        photo_trans_print();
     } else if (u8_c == 'x') {
         // Set a sepcific servo
         servo_menu();
@@ -204,7 +203,8 @@ void serial_command(uint8_t u8_c) {
 void serial_menu(void) {
     printf("\nChoose a command\n");
     printf("   Press 'e' to play Etch-a-Sketch\n");
-    printf("   Press 'c' to spin rubiks\n");
+    printf("   Press 'c' to spin Rubiks\n");
+    printf("   Press 's' to play Simon\n");
     if (u8_platformPos == 0) {
         printf("   Press 'p' to raise platform\n");
     } else {
@@ -251,7 +251,8 @@ void set_servo(char u8_servo) {
     uint16_t u16_pwm;
     char sz_buf[32];
     char u8_c;
-
+    u8_c = 0;
+    
     // Get pulse width for non-continuous servos
     if (u8_servo != '0' && u8_servo != '1') {
         printf("\nEnter pulse width: ");

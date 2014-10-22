@@ -25,12 +25,31 @@
 #ifndef PHOTO_CELL_API_H_
 #define PHOTO_CELL_API_H_
 
+typedef enum {
+    YELLOW_TRANS = 0,
+    BLUE_TRANS = 1,
+    RED_TRANS = 2,
+    GREEN_TRANS = 3
+} photoTrans;
+
 /////////////////////////////////////////////// 
 //
 // Photocell config
 //
 ///////////////////////////////////////////////
 
+/**
+ * @brief Configure the analog channels and ADC
+ */
+
 void  photo_cell_init();
 
+/**
+ * @brief Read the value from a photo transistor
+ * 
+ * @param color Photo transistor to be read
+ * @return the value of the photo transistor
+ */
+int16_t read_photo_transistor(photoTrans color);
+void photo_trans_print();
 #endif

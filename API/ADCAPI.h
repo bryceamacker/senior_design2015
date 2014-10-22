@@ -19,14 +19,16 @@
 
 #include "pic24_all.h"
 #include "port_mapping.h"
+#include <stdio.h>
 
 #ifndef ADC_API_H_
 #define ADC_API_H_
 
-#define LED2    _LATB10
-static uint16_t              au16_buffer[8];
-static volatile  uint16_t    au16_sum[8];
-static volatile  uint8_t     u8_gotData;
+#define YELLOW_LIGHT    1
+#define BLUE_LIGHT      0
+#define RED_LIGHT       3
+#define GREEN_LIGHT     2
+
 
 /////////////////////////////////////////////// 
 //
@@ -34,6 +36,12 @@ static volatile  uint8_t     u8_gotData;
 //
 ///////////////////////////////////////////////
 
-void adc_init(uint8_t u8_ch0Select, uint16_t u16_ch123SelectMask, uint16_t u16_numTcyMask );
+void adc_init(uint8_t u8_channel);
+
+void adc_change_channel(uint8_t u8_channel);
+
+int16_t adc_read(uint8_t u8_channel);
+
+void adc_print();
 
 #endif

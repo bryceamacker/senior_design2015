@@ -109,21 +109,21 @@ void setup()
 void loop()
 {
   readSensors();
-//  if (firstRun == 1) {
-//      yellowServo.writeMicroseconds(YELLOW_PRESS);
-//      delay(250);
-//      findColor(roundNum);
-//      yellowServo.writeMicroseconds(YELLOW_AFTER_PRESS);
-//      delay(250);
-//      playButtons(roundNum);
-//      roundNum++;
-//      firstRun = 0;
-//    }
-//  else {
-//    findColor(roundNum);
-//    playButtons(roundNum);
-//    roundNum++;
-//  }
+ if (firstRun == 1) {
+     yellowServo.writeMicroseconds(YELLOW_PRESS);
+     delay(250);
+     findColor(roundNum);
+     yellowServo.writeMicroseconds(YELLOW_AFTER_PRESS);
+     delay(250);
+     playButtons(roundNum);
+     roundNum++;
+     firstRun = 0;
+   }
+ else {
+   findColor(roundNum);
+   playButtons(roundNum);
+   roundNum++;
+ }
 }
 void playButtons(int num) {
   delay(500);

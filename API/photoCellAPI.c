@@ -20,27 +20,41 @@
 #include "photoCellAPI.h"
 
 void  photo_cell_init() {  
-    printf("Photo cell init\n");
     CONFIG_RB0_AS_ANALOG();
     CONFIG_RB1_AS_ANALOG();
+    CONFIG_RB2_AS_ANALOG();
     CONFIG_RB3_AS_ANALOG();
-    CONFIG_RB4_AS_ANALOG();
 
-    uint32_t  u32_ticks;
+    adc_init(0);
+}
 
-    T3CONbits.TON = 0;
-    T2CONbits.TON = 0;
-    T2CON = T2_32BIT_MODE_ON | T2_PS_1_1 | T2_SOURCE_INT;
-    TMR3 = 0;
-    TMR2 = 0;
-    u32_ticks = usToU32Ticks(15625, getTimerPrescale(T2CONbits)) - 1;     // # of ticks for 1/64 seconds
-    PR3 = u32_ticks>>16;
-    PR2 = u32_ticks & 0xFFFF;
-    T2CONbits.TON = 1;
 
-    adc_init(RB3_AN, ADC_CH123_POS_SAMPLEB_AN0AN1AN2, ADC_CONV_CLK_10Tcy);
-    SET_SAMP_BIT_ADC1();
-    
-    // CONFIG_RC3_AS_ANALOG();
-    // CONFIG_RC4_AS_ANALOG();
+int16_t read_photo_transistor(photoTrans color) {
+    switch (color) {
+        case YELLOW_TRANS:
+            return adc_read(1);
+            break;
+        case BLUE_TRANS:
+            return adc_read(0);
+            break;
+        case RED_TRANS:
+            return adc_read(3);
+            break;
+        case GREEN_TRANS:
+            return adc_read(2);
+            break;
+        default: 
+            return 0;
+            break;
+    }
+}
+
+void photo_trans_print() {
+    while (1)  {
+        printf("\nYellow %i", read_photo_transistor(YELLOW_TRANS));
+        printf("    Blue %i", read_photo_transistor(BLUE_TRANS));
+        printf("    Red %i", read_photo_transistor(RED_TRANS));
+        printf("    Green %i", read_photo_transistor(GREEN_TRANS));
+        doHeartbeat();
+    } 
 }

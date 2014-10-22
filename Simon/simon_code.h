@@ -35,15 +35,23 @@
 #define YELLOW_HOVER    1115
 #define BLUE_HOVER      1025
 #define RED_HOVER       990
-#define GREEN_HOVER     600
+#define GREEN_HOVER     1825
 
 // Push pulse width constants
-#define YELLOW_PUSH     1075
-#define BLUE_PUSH       990
-#define RED_PUSH        950
-#define GREEN_PUSH      1875
+#define YELLOW_PUSH     1060
+#define BLUE_PUSH       975
+#define RED_PUSH        935
+#define GREEN_PUSH      1890
+
+// Light thresholds
+#define YELLOW_LIGHT_THRESH_HOLD    90
+#define BLUE_LIGHT_THRESH_HOLD      150
+#define RED_LIGHT_THRESH_HOLD       150
+#define GREEN_LIGHT_THRESH_HOLD     150
 
 #define PUSH_WAIT       250
+
+#define DEBUG 0
 
 typedef enum {
     YELLOW_BUTTON = 0,
@@ -59,11 +67,45 @@ typedef enum {
 //
 ///////////////////////////////////////////////
 
-void calibrate_sensors();
-uint8_t find_color(uint8_t u8_numberOfButtons);
+/**
+ * @brief Calibrates the photo transistors for the Simon.
+ * Stores the readings whene there is only ambient light
+ * as the lowest value for that sensor/
+ */
+void calibrate_sensors(void);
+
+/**
+ * @brief Detects the Simon colors using the photo transistors
+ * 
+ * @param u8_numberOfButtons The number of buttons to expect
+ */
+void find_color(uint8_t u8_numberOfButtons);
+
+/**
+ * @brief Using the servo arms and an array of recorded buttons,
+ * Simon buttons are pushed
+ * 
+ * @param u8_num The number of buttons to push
+ */
 void play_buttons(uint8_t u8_num);
-uint8_t confirmColor(uint8_t u8_color);
-uint8_t confirmColorOff(uint8_t u8_color, uint16_t u16_onValue);
+
+/**
+ * @brief Confirms that a certain Simon light is lit
+ * 
+ * @param u8_color The color to look for
+ * @return The value that the photo transistor sees
+ */
+uint8_t confirm_color(uint8_t u8_color);
+
+/**
+ * @brief Confirms that a certain Simon light is off
+ * 
+ * @param u8_color The color to confirm that is off
+ * @param u16_onValue The value of the photo transistor the light was on
+ * 
+ * @return True or false whether or not the light is off
+ */
+uint8_t confirm_color_off(uint8_t u8_color, int16_t u16_onValue);
 
 /**
  * Retract the arm for the given button
@@ -116,7 +158,7 @@ void simon_retract_buttons(void);
 /**
  * @brief Push and hover all simon buttons
  */
-void simon_push_and_hover_buttons();
+void simon_push_and_hover_buttons(void);
 
 /////////////////////////////////////////////// 
 //
@@ -124,5 +166,9 @@ void simon_push_and_hover_buttons();
 //
 ///////////////////////////////////////////////
 
+/**
+ * @brief Plays simon using servos and photo transistors
+ */
+void play_simon(void);
 
 #endif

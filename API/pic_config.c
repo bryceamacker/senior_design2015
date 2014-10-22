@@ -28,21 +28,17 @@ void pic_init() {
     configDefaultUART(DEFAULT_BAUDRATE);
 
     // Initialize all the timers and comparators for the servos
-    // servo_init();
+    servo_init();
 
     // Delay to let the configurations to take place
     DELAY_MS(500);
 
     // Initialize all the servos to their starting position
-    // rubik_init();
-    // etch_init();
-    // simon_init();
+    rubik_init();
+    etch_init();
+    simon_init();
 
-    CONFIG_RB10_AS_DIG_OUTPUT();
-
-    LED2 = 1;
-
-    // ADC init
+    // Photo cell init
     photo_cell_init();
     
     // I2C init

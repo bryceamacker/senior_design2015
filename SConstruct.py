@@ -51,7 +51,6 @@ EnsureSConsVersion(2, 0)
 # USER APP FILES THAT DEFINE THIS APPLICATION
 # ============================================
 UserAppSources = [
-                    'I2C/pic_code.c',
                     'PicCode/pic.c'
                   ]
 
@@ -70,7 +69,6 @@ LibSources = [
                 'lib/src/pic24_timer.c',
                 'lib/src/pic24_uart.c',
                 'lib/src/pic24_util.c',
-                'API/sensorArrayAPI.c',
                 'API/servosAPI.c',
                 'API/photoCellAPI.c',
                 'API/ADCAPI.c',
