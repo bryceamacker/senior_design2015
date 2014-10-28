@@ -225,16 +225,16 @@ void serial_menu(void) {
 
 void servo_menu(void) {
     printf("\nChoose a servo\n");
-    printf("   0) Etch vertical\n");
-    printf("   1) Etch horizontal\n");
-    printf("   2) Platform\n");
-    printf("   3) Rubiks twist\n");
-    printf("   4) Arm extender\n");
-    printf("   5) Simon yellow\n");
-    printf("   6) Simon blue\n");
-    printf("   7) Simon red\n");
-    printf("   8) Simon green\n");
-    printf("   9) Arm pivot\n");
+    printf("   v) Etch vertical\n");
+    printf("   h) Etch horizontal\n");
+    printf("   p) Platform\n");
+    printf("   t) Rubiks twist\n");
+    printf("   y) Simon yellow\n");
+    printf("   b) Simon blue\n");
+    printf("   r) Simon red\n");
+    printf("   g) Simon green\n");
+    printf("   e) Arm extender\n");
+    printf("   i) Arm pivot\n");
 }
 
 void simon_menu(void) {
@@ -261,7 +261,7 @@ void set_servo(char u8_servo) {
     }
 
     // Set servo appropriately
-    if (u8_servo == '0') {
+    if (u8_servo == 'v') {
         printf("\nUse 'a' and 'd' to move servo clockwise and counter clockwise and 'q' to quit");  
         while (u8_c != 'q') {
             u8_c = inChar();
@@ -273,7 +273,7 @@ void set_servo(char u8_servo) {
                 stop_servo(ETCH_VERTICAL);
             }
         }
-    } else if (u8_servo == '1') {
+    } else if (u8_servo == 'h') {
         printf("\nUse 'a' and 'd' to move servo and 'q' to quit");  
         while (u8_c != 'q') {
             u8_c = inChar();
@@ -285,28 +285,28 @@ void set_servo(char u8_servo) {
                 stop_servo(ETCH_HORIZ);
             }
         }
-    } else if (u8_servo == '2') {
+    } else if (u8_servo == 'p') {
         turn_servo_by_pulse(RUBIKS_PLATFORM, u16_pwm);
         printf("\n*** Setting platform to %u ***\n", u16_pwm);
-    } else if (u8_servo == '3') {
+    } else if (u8_servo == 't') {
         turn_servo_by_pulse(RUBIKS_TWIST, u16_pwm);
         printf("\n*** Setting rubiks twist to %u ***\n", u16_pwm);
-    } else if (u8_servo == '4') {
-        turn_servo_by_pulse(ARM_EXTEND, u16_pwm);
-        printf("\n*** Setting arm extend to %u ***\n", u16_pwm);
-    } else if (u8_servo == '5') {
+    } else if (u8_servo == 'y') {
         turn_servo_by_pulse(SIMON_YELLOW, u16_pwm);
         printf("\n*** Setting simon yellow to %u ***\n", u16_pwm);
-    } else if (u8_servo == '6') {
+    } else if (u8_servo == 'b') {
         turn_servo_by_pulse(SIMON_BLUE, u16_pwm);
         printf("\n*** Setting simon blue to %u ***\n", u16_pwm);
-    } else if (u8_servo == '7') {
+    } else if (u8_servo == 'r') {
         turn_servo_by_pulse(SIMON_RED, u16_pwm);
         printf("\n*** Setting simon red to %u ***\n", u16_pwm);
-    } else if (u8_servo == '8') {
+    } else if (u8_servo == 'g') {
         turn_servo_by_pulse(SIMON_GREEN, u16_pwm);
         printf("\n*** Setting simon green to %u ***\n", u16_pwm);
-    } else if (u8_servo == '9') {
+    } else if (u8_servo == 'e') {
+        turn_servo_by_pulse(ARM_EXTEND, u16_pwm);
+        printf("\n*** Setting arm extend to %u ***\n", u16_pwm);
+    } else if (u8_servo == 'i') {
         turn_servo_by_pulse(ARM_PIVOT, u16_pwm);
         printf("\n*** Setting arm pivot to %u ***\n", u16_pwm);
     } else {

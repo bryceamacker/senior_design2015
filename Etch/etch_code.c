@@ -20,6 +20,26 @@
 
 #include "etch_code.h"
 
+
+/////////////////////////////////////////////// 
+//
+// Etch Usage
+//
+///////////////////////////////////////////////
+
+void etch_init() {
+    stop_servo(ETCH_VERTICAL);
+    stop_servo(ETCH_HORIZ);
+}
+
+void play_etch() {
+    platform_etch();
+    DELAY_MS(1000);
+    draw_IEEE();
+    DELAY_MS(250);
+    platform_init();
+}
+
 /////////////////////////////////////////////// 
 //
 // Etch Primitives
@@ -104,17 +124,6 @@ void draw_E_character_from_top() {
 
 }
 
-/////////////////////////////////////////////// 
-//
-// Etch Usage
-//
-///////////////////////////////////////////////
-
-void etch_init() {
-    stop_servo(ETCH_VERTICAL);
-    stop_servo(ETCH_HORIZ);
-}
-
 void draw_IEEE() {
     draw_I_character();
     turn_servo_horizontal_etch_distance(2.5);
@@ -142,12 +151,4 @@ void underline_to_reset() {
 
     // Move back up to starting point
     turn_servo_vertical_etch_distance(5 * ETCH_UNIT);
-}
-
-void play_etch() {
-    platform_etch();
-    DELAY_MS(1000);
-    draw_IEEE();
-    DELAY_MS(250);
-    platform_init();
 }

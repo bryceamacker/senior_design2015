@@ -19,6 +19,11 @@
 
 #include "ADCAPI.h"
 
+/////////////////////////////////////////////// 
+//
+// ADC usage
+//
+///////////////////////////////////////////////
 
 void adc_init(uint8_t u8_channel) {
     // Turn off ADC while configing
@@ -47,6 +52,29 @@ void adc_init(uint8_t u8_channel) {
 
 }
 
+uint16_t adc_read(uint8_t u8_channel) {
+    static uint8_t u8_wdState;
+    uint16_t u16_data;
+
+    adc_change_channel(u8_channel);
+
+    DELAY_MS(10);
+
+    u8_wdState = _SWDTEN;
+    _SWDTEN = 1;
+    AD1CON1bits.SAMP=1;
+    while (!IS_CONVERSION_COMPLETE_ADC1());
+    _SWDTEN = u8_wdState;
+    u16_data = ADC1BUF0;
+    return u16_data;
+}
+
+/////////////////////////////////////////////// 
+//
+// ADC primitives
+//
+///////////////////////////////////////////////
+
 void adc_change_channel(uint8_t u8_channel) {
     // Turn off ADC while configing
     AD1CON1bits.ADON = 0;
@@ -66,21 +94,4 @@ void adc_change_channel(uint8_t u8_channel) {
     }
 */
     AD1CON1bits.ADON = 1;
-}
-
-int16_t adc_read(uint8_t u8_channel) {
-    static uint8_t u8_wdState;
-    int16_t i16_data;
-
-    adc_change_channel(u8_channel);
-
-    DELAY_MS(10);
-
-    u8_wdState = _SWDTEN;
-    _SWDTEN = 1;
-    AD1CON1bits.SAMP=1;
-    while (!IS_CONVERSION_COMPLETE_ADC1());
-    _SWDTEN = u8_wdState;
-    i16_data = ADC1BUF0;
-    return i16_data;
 }

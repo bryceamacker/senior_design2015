@@ -34,14 +34,13 @@ typedef enum {
 
 /////////////////////////////////////////////// 
 //
-// Photocell config
+// Photocell usage
 //
 ///////////////////////////////////////////////
 
 /**
  * @brief Configure the analog channels and ADC
  */
-
 void  photo_cell_init();
 
 /**
@@ -50,6 +49,12 @@ void  photo_cell_init();
  * @param color Photo transistor to be read
  * @return the value of the photo transistor
  */
-int16_t read_photo_transistor(photoTrans color);
+uint16_t read_photo_transistor(photoTrans color);
+
+/**
+ * @brief Continuously print out all the the photo transistors
+ * @details THIS REQUIRES A PIC RESET, WOULDN'T RECCOMMEND
+ */
 void photo_trans_print();
+
 #endif

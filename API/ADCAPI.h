@@ -29,19 +29,39 @@
 #define RED_LIGHT       3
 #define GREEN_LIGHT     2
 
-
 /////////////////////////////////////////////// 
 //
-// ADC config
+// ADC usage
 //
 ///////////////////////////////////////////////
 
+/**
+ * @brief Initialize ADC1
+ * @details 12 Bit mode, auto clock, auto-sampling off, internal clock, internal reference
+ * 
+ * @param u8_channel Pin to start the ADC on
+ */
 void adc_init(uint8_t u8_channel);
 
+/**
+ * @brief Read the ADC on the given pin
+ * 
+ * @param u8_channel The pin to be read
+ * @return The ADC value
+ */
+uint16_t adc_read(uint8_t u8_channel);
+
+/////////////////////////////////////////////// 
+//
+// ADC primitives
+//
+///////////////////////////////////////////////
+
+/**
+ * @brief Change the ADC to read on the given pin
+ * 
+ * @param u8_channel Pin to be read
+ */
 void adc_change_channel(uint8_t u8_channel);
-
-int16_t adc_read(uint8_t u8_channel);
-
-void adc_print();
 
 #endif
