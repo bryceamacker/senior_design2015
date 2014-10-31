@@ -49,7 +49,12 @@ int16_t i16_blueOnValue = 0;
 int16_t i16_redOnValue = 0;
 int16_t i16_greenOnValue = 0;
 
-uint8_t au8_buttonArray[8];
+uint16_t u16_currentYellowPushPulse = 0;
+uint16_t u16_currentBluePushPulse = 0;
+uint16_t u16_currentRedPushPulse = 0;
+uint16_t u16_currentGreenPushPulse = 0;
+
+uint8_t au8_buttonArray[50];
 uint8_t u8_roundNum = 1;
 uint8_t u8_firstRun = 0;
 uint8_t u8_button;
@@ -63,13 +68,17 @@ uint8_t u8_button;
 void simon_init() {
     u8_firstRun = 1;
     simon_retract_buttons();
+
+    u16_currentYellowPushPulse = YELLOW_PUSH;
+    u16_currentBluePushPulse = BLUE_PUSH;
+    u16_currentRedPushPulse = RED_PUSH;
+    u16_currentGreenPushPulse = GREEN_PUSH;
 }
 
 void play_simon() {
     simon_hover_buttons();
-    // calibrate_sensors(); I don't think we need calibration with the new changes, but this it where it goes if needed
-    DELAY_MS(1000);
-    while (u8_roundNum < 8) {
+    calibrate_sensors(); // I don't think we need calibration with the new transistors
+    while (u8_roundNum < 50) {
         #ifdef DEBUG
         printf("\nROUND %i\n", u8_roundNum);
         #endif
@@ -82,6 +91,7 @@ void play_simon() {
         } else {
             record_colors(u8_roundNum);
         }
+        DELAY_MS(500);
         play_buttons(u8_roundNum);
         u8_roundNum++;
     }
@@ -147,6 +157,7 @@ void play_buttons(uint8_t u8_numRounds) {
 
             simon_push_button(YELLOW_BUTTON);
             confirm_color(YELLOW_BUTTON);
+            DELAY_MS(120);
             simon_hover_button(YELLOW_BUTTON);
             confirm_color_off(YELLOW_BUTTON);
         } 
@@ -157,6 +168,7 @@ void play_buttons(uint8_t u8_numRounds) {
 
             simon_push_button(BLUE_BUTTON);
             confirm_color(BLUE_BUTTON);
+            DELAY_MS(120);
             simon_hover_button(BLUE_BUTTON);
             confirm_color_off(BLUE_BUTTON);
         } 
@@ -167,6 +179,7 @@ void play_buttons(uint8_t u8_numRounds) {
 
             simon_push_button(RED_BUTTON);
             confirm_color(RED_BUTTON);
+            DELAY_MS(120);
             simon_hover_button(RED_BUTTON);
             confirm_color_off(RED_BUTTON);
         }
@@ -177,6 +190,7 @@ void play_buttons(uint8_t u8_numRounds) {
 
             simon_push_button(GREEN_BUTTON);
             confirm_color(GREEN_BUTTON);
+            DELAY_MS(120);
             simon_hover_button(GREEN_BUTTON);
             confirm_color_off(GREEN_BUTTON);
         } 
@@ -292,6 +306,11 @@ void confirm_color(uint8_t u8_color) {
 
                 return;
             }
+
+            // Try and push harder
+            u16_currentYellowPushPulse -= PULSE_INCREASE;
+            simon_push_button(YELLOW_BUTTON);
+
             // Short DELAY_MS for faster response to light.
             DELAY_MS(10);
         }
@@ -307,6 +326,11 @@ void confirm_color(uint8_t u8_color) {
 
                 return;
             }
+
+            // Try and push harder
+            u16_currentBluePushPulse -= PULSE_INCREASE;
+            simon_push_button(BLUE_BUTTON);
+
             // Short DELAY_MS for faster response to light.
             DELAY_MS(10);
         }
@@ -322,6 +346,11 @@ void confirm_color(uint8_t u8_color) {
 
                 return;
             }
+
+            // Try and push harder
+            u16_currentRedPushPulse -= PULSE_INCREASE;
+            simon_push_button(RED_BUTTON);
+
             // Short DELAY_MS for faster response to light.
             DELAY_MS(10);
         }
@@ -337,6 +366,11 @@ void confirm_color(uint8_t u8_color) {
 
                 return;
             }
+
+            // Try and push harder
+            u16_currentGreenPushPulse += PULSE_INCREASE;
+            simon_push_button(GREEN_BUTTON);
+
             // Short DELAY_MS for faster response to light.
             DELAY_MS(10);
         }
@@ -460,19 +494,24 @@ void simon_hover_button(buttonID button) {
 void simon_push_button(buttonID button) {
     switch (button) {
         case YELLOW_BUTTON:
-            turn_servo_by_pulse(SIMON_YELLOW, YELLOW_PUSH);
+            turn_servo_by_pulse(SIMON_YELLOW, u16_currentYellowPushPulse);
+            // turn_servo_by_pulse(SIMON_YELLOW, YELLOW_PUSH);
             break;
         case BLUE_BUTTON:
-            turn_servo_by_pulse(SIMON_BLUE, BLUE_PUSH);
+            turn_servo_by_pulse(SIMON_BLUE, u16_currentBluePushPulse);
+            // turn_servo_by_pulse(SIMON_BLUE, BLUE_PUSH);
             break;
         case RED_BUTTON:
-            turn_servo_by_pulse(SIMON_RED, RED_PUSH);
+            turn_servo_by_pulse(SIMON_RED, u16_currentRedPushPulse);
+            // turn_servo_by_pulse(SIMON_RED, RED_PUSH);
             break;
         case GREEN_BUTTON:
-            turn_servo_by_pulse(SIMON_GREEN, GREEN_PUSH);
+            turn_servo_by_pulse(SIMON_GREEN, u16_currentGreenPushPulse);
+            // turn_servo_by_pulse(SIMON_GREEN, GREEN_PUSH);
             break;
         case START_BUTTON:
-            turn_servo_by_pulse(SIMON_YELLOW, YELLOW_PUSH);
+            turn_servo_by_pulse(SIMON_YELLOW, u16_currentYellowPushPulse);
+            // turn_servo_by_pulse(SIMON_YELLOW, YELLOW_PUSH);
             break;
         default:
             break;

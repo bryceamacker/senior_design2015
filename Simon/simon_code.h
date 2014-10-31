@@ -39,8 +39,8 @@
 
 // Push pulse width constants
 #define YELLOW_PUSH     1060
-#define BLUE_PUSH       975
-#define RED_PUSH        935
+#define BLUE_PUSH       975 
+#define RED_PUSH        935 
 #define GREEN_PUSH      1890
 
 // Light thresholds
@@ -50,6 +50,7 @@
 #define GREEN_LIGHT_THRESH_HOLD     150
 
 #define PUSH_WAIT       250
+#define PULSE_INCREASE  25
 
 #define DEBUG 0
 
