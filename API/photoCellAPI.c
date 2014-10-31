@@ -19,6 +19,13 @@
 
 #include "photoCellAPI.h"
 
+/////////////////////////////////////////////// 
+//
+// Photocell usage
+//
+///////////////////////////////////////////////
+
+// Inititalize analog pins
 void  photo_cell_init() {  
     CONFIG_RB0_AS_ANALOG();
     CONFIG_RB1_AS_ANALOG();
@@ -28,8 +35,8 @@ void  photo_cell_init() {
     adc_init(0);
 }
 
-
-int16_t read_photo_transistor(photoTrans color) {
+// Read a given color's phototransistor
+uint16_t read_photo_transistor(photoTrans color) {
     switch (color) {
         case YELLOW_TRANS:
             return adc_read(1);
@@ -49,6 +56,7 @@ int16_t read_photo_transistor(photoTrans color) {
     }
 }
 
+// Continuously print out phototransistor values REQUIRES PIC RESET
 void photo_trans_print() {
     while (1)  {
         printf("\nYellow %i", read_photo_transistor(YELLOW_TRANS));

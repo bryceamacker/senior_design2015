@@ -61,6 +61,23 @@ typedef enum {
     START_BUTTON =  4
 } buttonID;
 
+
+/////////////////////////////////////////////// 
+//
+// Simon Usage
+//
+///////////////////////////////////////////////
+
+/**
+ * @brief Initialize simon arms to the retracted postion
+ */
+void simon_init(void);
+
+/**
+ * @brief Plays simon using servos and photo transistors
+ */
+void play_simon(void);
+
 /////////////////////////////////////////////// 
 //
 // Simon primitives
@@ -79,33 +96,29 @@ void calibrate_sensors(void);
  * 
  * @param u8_numberOfButtons The number of buttons to expect
  */
-void find_color(uint8_t u8_numberOfButtons);
+void record_colors(uint8_t u8_numberOfButtons);
 
 /**
  * @brief Using the servo arms and an array of recorded buttons,
  * Simon buttons are pushed
  * 
- * @param u8_num The number of buttons to push
+ * @param u8_numRounds The number of buttons to push
  */
-void play_buttons(uint8_t u8_num);
+void play_buttons(uint8_t u8_numRounds);
 
 /**
- * @brief Confirms that a certain Simon light is lit
+ * @brief Blocking function that blocks until the passed color turns on
  * 
  * @param u8_color The color to look for
- * @return The value that the photo transistor sees
  */
-uint8_t confirm_color(uint8_t u8_color);
+void confirm_color(uint8_t u8_color);
 
 /**
- * @brief Confirms that a certain Simon light is off
+ * @brief Blocking function that blocks until the passed color turns off
  * 
  * @param u8_color The color to confirm that is off
- * @param u16_onValue The value of the photo transistor the light was on
- * 
- * @return True or false whether or not the light is off
  */
-uint8_t confirm_color_off(uint8_t u8_color, int16_t u16_onValue);
+void confirm_color_off(uint8_t u8_color);
 
 /**
  * Retract the arm for the given button
@@ -136,11 +149,6 @@ void simon_push_button(buttonID button);
 void simon_push_and_hover_button(buttonID button);
 
 /**
- * @brief Initialize simon arms to the retracted postion
- */
-void simon_init(void);
-
-/**
  * @brief Push all simon buttons
  */
 void simon_push_buttons(void);
@@ -159,16 +167,5 @@ void simon_retract_buttons(void);
  * @brief Push and hover all simon buttons
  */
 void simon_push_and_hover_buttons(void);
-
-/////////////////////////////////////////////// 
-//
-// Simon Usage
-//
-///////////////////////////////////////////////
-
-/**
- * @brief Plays simon using servos and photo transistors
- */
-void play_simon(void);
 
 #endif

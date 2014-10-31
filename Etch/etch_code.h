@@ -33,6 +33,21 @@
 
 /////////////////////////////////////////////// 
 //
+// Etch Usage
+//
+///////////////////////////////////////////////
+/**
+ * @brief Initialize servos to not move at all
+ */
+void etch_init(void);
+
+/**
+ * @brief Lower etch knobs on to the etch and draw IEEE
+ */
+void play_etch(void);
+
+/////////////////////////////////////////////// 
+//
 // Etch primitives
 //
 ///////////////////////////////////////////////
@@ -51,16 +66,6 @@ void turn_servo_vertical_etch_distance(float distance);
  * @param distance Distance in millimeters to move the cursor in the horizontal direction
  */
 void turn_servo_horizontal_etch_distance(float distance);
-
-/////////////////////////////////////////////// 
-//
-// Etch Usage
-//
-///////////////////////////////////////////////
-/**
- * @brief Initialize servos to not move at all
- */
-void etch_init(void);
 
 /**
  * @brief I-Character on etch
@@ -88,10 +93,5 @@ void draw_IEEE(void);
  * @description Sort of test code, probably won't ever use this
  */
 void underline_to_reset(void);
-
-/**
- * @brief Lower etch knobs on to the etch and draw IEEE
- */
-void play_etch(void);
 
 #endif

@@ -29,10 +29,27 @@
 #define TWIST_COUNTER_PULSE     2050
 #define WAIT_TIME               1500
 
+/////////////////////////////////////////////// 
+//
+// Rubiks Usage
+//
+///////////////////////////////////////////////
+
 /**
  * @brief Intialize platform up and twist to untwisted
  */
 void rubik_init(void);
+
+/**
+ * @brief Lower platform, twist cube, and then raise platform
+ */
+void play_rubiks(void);
+
+/////////////////////////////////////////////// 
+//
+// Rubiks primitives
+//
+///////////////////////////////////////////////
 
 /**
  * @brief Twist the rubiks cube
@@ -43,10 +60,5 @@ void twist_rubiks_clock(void);
  * @brief Twist the rubiks cube
  */
 void twist_rubiks_counter(void);
-
-/**
- * @brief Lower platform, twist cube, and then raise platform
- */
-void play_rubiks(void);
 
 #endif
