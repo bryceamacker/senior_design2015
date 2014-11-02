@@ -18,10 +18,19 @@
 * Steven Calhoun        9/20/2014               SECON 2015
 *********************************************************************/
 
-#include "pic_config.h"
+#include "pic_gamePlayerConfig.h"
+#include <stdio.h>
+#include <string.h>
 
 #ifndef PIC_H_
 #define PIC_H_
+
+
+#define BUFSIZE 64
+
+volatile char  sz_1[BUFSIZE+1];
+volatile char  sz_2[BUFSIZE+1];
+volatile uint16_t u16_index;
 
 typedef enum {
     PLAY_SIMON      = 0,
@@ -33,11 +42,11 @@ typedef enum {
 typedef enum  {
   STATE_WAIT_FOR_ADDR,
   STATE_WAIT_FOR_WRITE_DATA,
-  STATE_SEND_READ_DATA
-} I2C_STATE;
+  STATE_SEND_READ_DATA,
+  STATE_SEND_READ_LAST
+} STATE;
 
-picTwoCommands_t        u8_command;
-I2C_STATE               currentState;
+volatile STATE e_mystate = STATE_WAIT_FOR_ADDR;
 
 /**
  * @brief Handles serial commands
@@ -45,6 +54,13 @@ I2C_STATE               currentState;
  * @param  u8_c command to be run
  */
 void serial_command(uint8_t u8_c);
+
+/**
+ * @brief Handles I2C commands
+ * 
+ * @param  psz_s1 I2C in string
+ */
+void I2C_check_command(volatile char *psz_s1);
 
 /**
  * @brief Print out serial menu

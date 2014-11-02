@@ -18,13 +18,16 @@
 * Steven Calhoun        9/20/2014               SECON 2015
 *********************************************************************/
 
-#include "pic.h"
-#include <stdio.h>
+#include "picGamePlayer.h"
 
 uint8_t u8_platformPos;
 uint8_t u8_twistPos;
 uint8_t u8_platformFlipped;
+uint8_t u8_motor;
+uint8_t u8_motorFunction;
 uint16_t u16_pwm;
+uint16_t u16_motorPwm;
+char sz_motorBuf[32];
 char u8_c;
 
 int main(void) {
@@ -35,7 +38,7 @@ int main(void) {
 
     // Initialize pic and print out serial menu
     configBasic(HELLO_MSG);
-    pic_init();
+    pic_game_player_init();
     serial_menu();
 
     while(1) {
@@ -220,6 +223,8 @@ void serial_menu(void) {
     printf("   Press 'h' to hover Simon arms\n");
     printf("   Press 'b' to push Simon buttons\n");
     printf("   Press 'n' to push and hover Simon buttons\n");
+    printf("   Press 'm' motor control\n");
+    printf("   Press 'z' to read photo transistors\n");
     printf("   Press 'x' to set a servo\n");
 }
 
@@ -314,65 +319,60 @@ void set_servo(char u8_servo) {
     }
 }
 
-void _ISRFAST _SI2C1Interrupt(void) {
-    // Variable to clear RBF bit
-    uint8_t u8_c;
-    _SI2C1IF = 0;
-
-    // No longer controlled by master's clock
-    I2C1CONbits.SCLREL = 0;
-
-    switch (currentState) {
-        case STATE_WAIT_FOR_ADDR:
-            //clear RBF bit for address
-            u8_c = I2C1RCV;
-
-            // Check the R/W bit and see if read or write transaction
-            if (I2C1STATbits.R_W) { 
-                // Send number
-                I2C1TRN = u8_command;
-                
-                // Release clock line so MASTER can drive it
-                I2C1CONbits.SCLREL = 1;
-
-                // Change to send data
-                currentState = STATE_SEND_READ_DATA;
-            } 
-            else {
-                currentState = STATE_WAIT_FOR_WRITE_DATA;
-            }
-        break;
-
-    case STATE_WAIT_FOR_WRITE_DATA:
-        // Read the byte
-        u8_command = I2C1RCV;
-
-        printf("Recieved Command: %u\n", u8_command);
-
-        //////////////////////////////////////////////////////
-        // I2C commands go here
-
-
-        //////////////////////////////////////////////////////
-
-        // Wait for next transaction
-        currentState = STATE_WAIT_FOR_ADDR;
-        break;
-      
-    case STATE_SEND_READ_DATA:
-        // Send number
-        I2C1TRN = u8_command;
-
-        printf("Transmitted number: %u\n", u8_command);
-
-        // Release clock line so MASTER can drive it
-        I2C1CONbits.SCLREL = 1;
-
-        // Wait for next transaction
-        currentState = STATE_WAIT_FOR_ADDR;
-        break;
-      
-    default:
-        currentState = STATE_WAIT_FOR_ADDR;
+void I2C_check_command(volatile char *psz_s1) {
+    if (strcmp(psz_s1, "Etch") == 0) {
+        printf("\n*** Drawing 'IEEE' ***\n");
+        play_etch();
+    } else if(strcmp(psz_s1, "Rubiks") == 0) {  
+        printf("\n*** Spinng Rubiks ***\n");
+        play_rubiks();
+    } else if(strcmp(psz_s1, "Simon") == 0) {
+        printf("\n*** Playing Simon ***\n");
+        play_simon();
+    } else if(strcmp(psz_s1, "Card") == 0) {
+        printf("\n*** Playing Card ***\n");
+    } else {
+        printf("\nInvalid commmand\n");
+        printf("%s\n", psz_s1);
     }
+    serial_menu();
 }
+
+void _ISRFAST _SI2C1Interrupt(void) {
+  uint8_t u8_c;
+  _SI2C1IF = 0;
+  switch (e_mystate) {
+    case STATE_WAIT_FOR_ADDR:
+      u8_c = I2C1RCV; //clear RBF bit for address
+      u16_index = 0;
+      //check the R/W bit and see if read or write transaction
+      if (I2C1STATbits.R_W) {
+        I2C1TRN = sz_2[u16_index++];  //get first data byte
+        I2C1CONbits.SCLREL = 1;     //release clock line so MASTER can drive it
+        e_mystate = STATE_SEND_READ_DATA; //read transaction
+      } else e_mystate = STATE_WAIT_FOR_WRITE_DATA;
+      break;
+    case STATE_WAIT_FOR_WRITE_DATA:
+      //character arrived, place in buffer
+      sz_1[u16_index++] = I2C1RCV;  //read the byte
+      if (sz_1[u16_index-1] == 0) {
+        //have a complete string, check the command
+        I2C_check_command(sz_1);
+        e_mystate = STATE_WAIT_FOR_ADDR; //wait for next transaction
+      }
+      break;
+    case STATE_SEND_READ_DATA:
+      I2C1TRN = sz_2[u16_index++];
+      I2C1CONbits.SCLREL = 1;     //release clock line so MASTER can drive it
+      if (sz_2[u16_index-1] == 0) e_mystate = STATE_SEND_READ_LAST;
+      //this is the last character, after byte is shifted out, release the clock line again
+      break;
+    case STATE_SEND_READ_LAST:  //this is interrupt for last character finished shifting out
+      e_mystate = STATE_WAIT_FOR_ADDR;
+      break;
+    default:
+      e_mystate = STATE_WAIT_FOR_ADDR;
+
+  }
+}
+

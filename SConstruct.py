@@ -51,7 +51,8 @@ EnsureSConsVersion(2, 0)
 # USER APP FILES THAT DEFINE THIS APPLICATION
 # ============================================
 UserAppSources = [
-                    'PicCode/pic.c'
+                    'PicCode/picGamePlayer.c',
+                    'PicCode/picMotorController.c'
                   ]
 
 LibSources = [
@@ -72,7 +73,9 @@ LibSources = [
                 'API/servosAPI.c',
                 'API/photoCellAPI.c',
                 'API/ADCAPI.c',
-                'API/pic_config.c',
+                'API/pic_gamePlayerConfig.c',
+                'API/pic_motorControllerConfig.c',
+                'API/motorsAPI.c',
                 'Etch/etch_code.c',
                 'Rubiks/rubiks_code.c',
                 'Simon/simon_code.c',

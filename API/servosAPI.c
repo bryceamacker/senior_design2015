@@ -131,7 +131,6 @@ void config_output_capture1(void) {
     _OC1IE = 1;    //enable the OC1 interrupt
 }
 
-
 void config_servo_timer2(void) {
     // Config bits
     T2CON = T2_OFF 

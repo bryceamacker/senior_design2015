@@ -17,16 +17,11 @@
 * Steven Calhoun        9/20/204                SECON 2015
 *********************************************************************/
 
-#include "pic_config.h"
+#include "pic_gamePlayerConfig.h"
 
 #define PIC_I2C_ADDR 0x20
 
-
-void pic_init() {
-    // Basic init
-    configClock();
-    configDefaultUART(DEFAULT_BAUDRATE);
-
+void pic_game_player_init() {
     // Initialize all the timers and comparators for the servos
     servo_init();
 
@@ -42,7 +37,8 @@ void pic_init() {
     photo_cell_init();
     
     // I2C init
-    I2C1ADD = PIC_I2C_ADDR;
+    configI2C1(400);
+    I2C1ADD = PIC_I2C_ADDR >> 1;
     _SI2C1IF = 0;
     _SI2C1IP = 1;
     _SI2C1IE = 1;

@@ -28,8 +28,8 @@
 
 // Motor config
 void motors_init();
-void config_timer2(void);
-void config_timer3(void);
+void config_timer6(void);
+void config_timer7(void);
 void config_output_compare2(void);
 void config_output_compare3(void);
 void config_output_compare4(void);
