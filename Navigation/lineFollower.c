@@ -219,11 +219,6 @@ int main()
         motors_init();
         printf("\n Made it past motors_init()... \n");
 
-
-//        // Servo init
-        // configTimer2();
-        // motors_init();
-        //configOutputCapture1();
         T2CONbits.TON = 1;
 
         // Line follower init
@@ -231,13 +226,15 @@ int main()
         for (i = 0; i < 100; i++) {
           kalibrate(QTR_EMITTERS_ON);
         }
+
         uint16_t pau16_sensorValues[SENSOR_NUM];
         char* serial_buf[SENSOR_NUM];
         uint16_t position = 0;
-        //int lineCenter = ((1000 * (SENSOR_NUM - 1)) / 2);
-        int lineCenter = 8000;
+        int lineCenter = ((1000 * (SENSOR_NUM - 1)) / 2);
+
         uint8_t detectingSensors = 0;
         uint8_t foundObjective = 0;
+
         // Flags while in sharp turns
         uint8_t leftTurn = 0;
         uint8_t rightTurn = 0;
@@ -246,48 +243,39 @@ int main()
 
         int countUp = 1;
         uint16_t temp_line;
+
         while(1) {
-            // printf("alive\n");
-            // forward(.3);
-            position = getLine(pau16_sensorValues);
+           position = 1000 * getLine(pau16_sensorValues);
            error = position - lineCenter;
-           // detectingSensors = 0;
-            followLine(pau16_sensorValues, 0.5);
+           detectingSensors = 0;
 
-            // <editor-fold defaultstate="collapsed" desc="Control servos from serial">
-            // Note, you must use the "Send&\n" option if using BullyBootloader
-            // getMotorValue();
-            // </editor-fold>
 
-           // <editor-fold defaultstate="collapsed" desc="Print line follower data">
+           // Print line follower data
            // for (i = 0 ; i < SENSOR_NUM ; ++i)
            // {
            //     serial_buf[i] = pau16_sensorValues[i];
            //     printf("%d-", pau16_sensorValues[i]);
            // }
-           // printf("\t %u \t %i \n", position, error);
-           // DELAY_MS(250);
-//            followLine(pau16_sensorValues, 0.5);
-              //right_motor_fwd(.3);
 
-//            stop();
-//            // </editor-fold>
-//
-//            // If we are at a 90 degree turn, stop regular line following
-//            // and try to turn extactly 90 degrees
-           // for (i = 0; i < SENSOR_NUM; i++)
-           // {
-           //     detectingSensors += pau16_sensorValues[i];
-           // }
-           // if (detectingSensors >= SENSOR_NUM - 3)
-           // {
-           //     foundObjective = 1;
-           // }
-           // if (foundObjective == 1)
-           // {
-           //     stop();
-           //     printf("\t Reached Objective \n");
-           // }
+
+           // If we are at a 90 degree turn, stop regular line following
+           // and try to turn extactly 90 degrees
+           for (i = 0; i < SENSOR_NUM; i++)
+           {
+               detectingSensors += pau16_sensorValues[i];
+           }
+           if (detectingSensors >= SENSOR_NUM - 2)
+           {
+               foundObjective = 1;
+           }
+
+           // Stop when we reach a box
+           if (foundObjective == 1)
+           {
+               stop();
+               printf("\t Reached Objective \n");
+           }
+
            // else
            // {
            // if ((leftTurn == 1) || (rightTurn == 1))
@@ -310,48 +298,49 @@ int main()
            // }
            // else
            // {
-               // Try our best to detect 90 degree turns and set a flag
-               // if (pau16_sensorValues[14] == 1 && pau16_sensorValues[13] == 1
-               //     && pau16_sensorValues[12] == 1 && pau16_sensorValues[11] == 1
-               //     && pau16_sensorValues[10] == 1
-               //    && (pau16_sensorValues[5] == 1 || pau16_sensorValues[6] == 1
-               //     || pau16_sensorValues[7] == 1 || pau16_sensorValues[8] == 1
-               //     || pau16_sensorValues[9] == 1))
-               // {
-               //     leftTurn = 1;
-               // }
+           //     // Try our best to detect 90 degree turns and set a flag
+           //     if (pau16_sensorValues[14] == 1 && pau16_sensorValues[13] == 1
+           //         && pau16_sensorValues[12] == 1 && pau16_sensorValues[11] == 1
+           //         && pau16_sensorValues[10] == 1
+           //        && (pau16_sensorValues[5] == 1 || pau16_sensorValues[6] == 1
+           //         || pau16_sensorValues[7] == 1 || pau16_sensorValues[8] == 1
+           //         || pau16_sensorValues[9] == 1))
+           //     {
+           //         leftTurn = 1;
+           //     }
 
-               // else if (pau16_sensorValues[0] == 1 && pau16_sensorValues[1] == 1
-               //      && pau16_sensorValues[2] == 1 && pau16_sensorValues[3] == 1
-               //      && pau16_sensorValues[4] == 1
-               //     && (pau16_sensorValues[5] == 1 || pau16_sensorValues[6] == 1
-               //      || pau16_sensorValues[7] == 1 || pau16_sensorValues[8] == 1))
-               // {
-               //     rightTurn = 1;
-               // }
+           //     else if (pau16_sensorValues[0] == 1 && pau16_sensorValues[1] == 1
+           //          && pau16_sensorValues[2] == 1 && pau16_sensorValues[3] == 1
+           //          && pau16_sensorValues[4] == 1
+           //         && (pau16_sensorValues[5] == 1 || pau16_sensorValues[6] == 1
+           //          || pau16_sensorValues[7] == 1 || pau16_sensorValues[8] == 1))
+           //     {
+           //         rightTurn = 1;
+           //     }
 
-               // Keep us going straight down the middle of the line
-               // else
-               // {
-               //     leftTurn = 0;
-               //     rightTurn = 0;
-
-               //     if (error > 1000)
-               //     {
-               //         turn_left(.3);
-               //         printf("\t Drive Left \n");
-               //     }
-               //     if (error < -1000)
-               //     {
-               //         turn_right(.3);
-               //         printf("\t Drive Right \n");
-               //     }
-               //     if ((error >= -1000) && (error <= 1000)) // drive straight
-               //     {
-               //         forward(.3);
-               //         printf("\t Drive Forward \n");
-               //     }
-               // }
+           //     // Keep us going straight down the middle of the line
+           //     else
+           //     {
+           //         leftTurn = 0;
+           //         rightTurn = 0;
+           else { 
+                   if (error > 1000)
+                   {
+                       turn_left(.15);
+                       printf("\t Drive Left \n");
+                   }
+                   if (error < -1000)
+                   {
+                       turn_right(.15);
+                       printf("\t Drive Right \n");
+                   }
+                   if ((error >= -1000) && (error <= 1000)) // drive straight
+                   {
+                       forward(.15);
+                       printf("\t Drive Forward \n");
+                   }
+                 }
+           //     }
            // }
            // }
         }

@@ -8,15 +8,15 @@
 #define CONFIG_LEFT_MOTOR_IN1()         CONFIG_RD3_AS_DIG_OUTPUT()
 #define CONFIG_LEFT_MOTOR_IN2()         CONFIG_RD4_AS_DIG_OUTPUT()
 
-#define RIN1_PIN                       _LATD1
-#define RIN2_PIN                       _LATD2
-#define LIN1_PIN                       _LATD3
-#define LIN2_PIN                       _LATD4
+#define LIN1_PIN                       _LATD1
+#define LIN2_PIN                       _LATD2
+#define RIN1_PIN                       _LATD3
+#define RIN2_PIN                       _LATD4
 
-#define RIN1_PULSE                      OC2RS
-#define RIN2_PULSE                      OC3RS
-#define LIN1_PULSE                      OC4RS
-#define LIN2_PULSE                      OC5RS
+#define LIN1_PULSE                      OC2RS
+#define LIN2_PULSE                      OC3RS
+#define RIN1_PULSE                      OC4RS
+#define RIN2_PULSE                      OC5RS
 
 
 #define PULSEWIDTH1 0xFFFF
@@ -192,26 +192,26 @@ void motors_init(void)
 
 void left_motor_fwd(float duty)
 	{
-        LIN1_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits));
-        LIN2_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1 - duty);
+        LIN1_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits));
+        LIN2_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1 - duty);
 	}
 
 void left_motor_reverse(float duty)
 	{
-        LIN1_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1 - duty);
-        LIN2_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits));
+        LIN1_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1 - duty);
+        LIN2_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits));
 	}
 
 void right_motor_reverse(float duty)
 	{
-        RIN1_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits));
-        RIN2_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1 - duty);
+        RIN1_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits));
+        RIN2_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1 - duty);
 	}
 
 void right_motor_fwd(float duty)
 	{
-        RIN1_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1 - duty);
-        RIN2_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits));
+        RIN1_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1 - duty);
+        RIN2_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits));
 	}
 
 void turn_left(float duty)
