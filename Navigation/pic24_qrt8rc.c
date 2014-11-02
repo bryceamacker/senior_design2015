@@ -14,13 +14,13 @@ void CONFIG_OUTPUTS(void) {
 	CONFIG_RB5_AS_DIG_OUTPUT();
 	CONFIG_RB6_AS_DIG_OUTPUT();
 	CONFIG_RB7_AS_DIG_OUTPUT();
-	CONFIG_RB8_AS_DIG_OUTPUT();
-	CONFIG_RB9_AS_DIG_OUTPUT();
-	CONFIG_RB10_AS_DIG_OUTPUT();
-        CONFIG_RB11_AS_DIG_OUTPUT();
-	CONFIG_RB12_AS_DIG_OUTPUT();
-	CONFIG_RB13_AS_DIG_OUTPUT();
-	CONFIG_RB14_AS_DIG_OUTPUT();
+	// CONFIG_RB8_AS_DIG_OUTPUT();
+	// CONFIG_RB9_AS_DIG_OUTPUT();
+	// CONFIG_RB10_AS_DIG_OUTPUT();
+ //        CONFIG_RB11_AS_DIG_OUTPUT();
+	// CONFIG_RB12_AS_DIG_OUTPUT();
+	// CONFIG_RB13_AS_DIG_OUTPUT();
+	// CONFIG_RB14_AS_DIG_OUTPUT();
 }
 
 //configures pins as dig inpts
@@ -41,20 +41,20 @@ void CONFIG_INPUTS(void) {
 	DISABLE_RB6_PULLUP();
 	CONFIG_RB7_AS_DIG_INPUT();
 	DISABLE_RB7_PULLUP();
-	CONFIG_RB8_AS_DIG_INPUT();
-	DISABLE_RB8_PULLUP();
-	CONFIG_RB9_AS_DIG_INPUT();
-	DISABLE_RB9_PULLUP();
-	CONFIG_RB10_AS_DIG_INPUT();
-	DISABLE_RB10_PULLUP();
-        CONFIG_RB11_AS_DIG_INPUT();
-	DISABLE_RB11_PULLUP();
-	CONFIG_RB12_AS_DIG_INPUT();
-	DISABLE_RB12_PULLUP();
-	CONFIG_RB13_AS_DIG_INPUT();
-	DISABLE_RB13_PULLUP();
-	CONFIG_RB14_AS_DIG_INPUT();
-	DISABLE_RB14_PULLUP();
+	// CONFIG_RB8_AS_DIG_INPUT();
+	// DISABLE_RB8_PULLUP();
+	// CONFIG_RB9_AS_DIG_INPUT();
+	// DISABLE_RB9_PULLUP();
+	// CONFIG_RB10_AS_DIG_INPUT();
+	// DISABLE_RB10_PULLUP();
+ //        CONFIG_RB11_AS_DIG_INPUT();
+	// DISABLE_RB11_PULLUP();
+	// CONFIG_RB12_AS_DIG_INPUT();
+	// DISABLE_RB12_PULLUP();
+	// CONFIG_RB13_AS_DIG_INPUT();
+	// DISABLE_RB13_PULLUP();
+	// CONFIG_RB14_AS_DIG_INPUT();
+	// DISABLE_RB14_PULLUP();
 }
 
 //configures timer to measure discharge time of the capacitor
@@ -71,13 +71,13 @@ void  configTimer4(void) {
 
 //dissables LED
 void emittersOff(void) {
-	_RF4 = 0;
+	_RB8 = 0;
 	DELAY_US(200);
 }
 
 //enables LED
 void emittersOn(void) {
-	_RF4 = 1;
+	_RB8 = 1;
 	DELAY_US(200);
 }
 
@@ -93,15 +93,7 @@ void readValues(uint16_t* pau16_sensor_values) {
 	}
 	//drive outputs RB0 - RB7 and emitter high
 	PORTB = 0x01FF;
-        // 0000 0001 1111 1111
-        // RB0 - RB8
-
-        //drive outputs RB0 - RB14
-        //PORTB = 0x7FFF;
-        PORTF = 0x0010;
 	DELAY_US(10);
-        // 0111 1111 1111 1111
-        // RB0 - RB14
 	
 	//change outputs to inputs
 	//dissable internal pullups
@@ -128,8 +120,8 @@ void readValues(uint16_t* pau16_sensor_values) {
 void read(uint16_t* pau16_sensor_values, char u8_readMode) {
 	uint16_t pau16_off_values[SENSOR_NUM];
 	uint16_t u16_i;
-	//emitter pin = RF4
-	CONFIG_RF4_AS_DIG_OUTPUT();
+	//emitter pin = RB8
+	CONFIG_RB8_AS_DIG_OUTPUT();
 	if(u8_readMode == QTR_EMITTERS_ON || u8_readMode == QTR_EMITTERS_ON_AND_OFF) {
 		emittersOn();
 	}
