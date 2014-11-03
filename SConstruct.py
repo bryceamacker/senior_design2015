@@ -52,8 +52,7 @@ EnsureSConsVersion(2, 0)
 # ============================================
 UserAppSources = [
                     'PicCode/picGamePlayer.c',
-                    'PicCode/picMotorController.c',
-                    'Navigation/lineFollower.c'
+                    'PicCode/picMotorController.c'
                   ]
 
 LibSources = [
@@ -78,6 +77,7 @@ LibSources = [
                 'API/pic_motorControllerConfig.c',
                 'API/motorsAPI.c',
                 'API/sensorArrayAPI.c',
+                'API/lineFollowerAPI.c',
                 'Etch/etch_code.c',
                 'Rubiks/rubiks_code.c',
                 'Simon/simon_code.c',
