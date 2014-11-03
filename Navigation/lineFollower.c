@@ -1,5 +1,4 @@
 #include "pic24_all.h"
-// #include "pic24_qtr8rc.h"
 #include "sensorArrayAPI.h"
 #include "motorsAPI.h"
 #include <stdio.h>
@@ -246,10 +245,10 @@ int main()
         uint16_t temp_line;
 
         while(1) {
-          move_forward(.3);
-           // position = 1000 * getLine(pau16_sensorValues);
-           // error = position - lineCenter;
-           // detectingSensors = 0;
+          // move_forward(.15);
+           position = 1000 * getLine(pau16_sensorValues);
+           error = position - lineCenter;
+           detectingSensors = 0;
 
 
            // Print line follower data
@@ -262,21 +261,21 @@ int main()
 
            // If we are at a 90 degree turn, stop regular line following
            // and try to turn extactly 90 degrees
-           // for (i = 0; i < SENSOR_NUM; i++)
-           // {
-           //     detectingSensors += pau16_sensorValues[i];
-           // }
-           // if (detectingSensors >= SENSOR_NUM - 2)
-           // {
-           //     foundObjective = 1;
-           // }
+           for (i = 0; i < SENSOR_NUM; i++)
+           {
+               detectingSensors += pau16_sensorValues[i];
+           }
+           if (detectingSensors >= SENSOR_NUM - 2)
+           {
+               foundObjective = 1;
+           }
 
-           // // Stop when we reach a box
-           // if (foundObjective == 1)
-           // {
-           //     stop();
-           //     printf("\t Reached Objective \n");
-           // }
+           // Stop when we reach a box
+           if (foundObjective == 1)
+           {
+               stop();
+               printf("\t Reached Objective \n");
+           }
 
            // else
            // {
@@ -325,23 +324,23 @@ int main()
            //     {
            //         leftTurn = 0;
            //         rightTurn = 0;
-           // else { 
-           //         if (error > 1000)
-           //         {
-           //             turn_left(.15);
-           //             printf("\t Drive Left \n");
-           //         }
-           //         if (error < -1000)
-           //         {
-           //             turn_right(.15);
-           //             printf("\t Drive Right \n");
-           //         }
-           //         if ((error >= -1000) && (error <= 1000)) // drive straight
-           //         {
-           //             move_forward(.15);
-           //             printf("\t Drive Forward \n");
-           //         }
-           //       }
+           else { 
+                   if (error > 1000)
+                   {
+                       turn_left(.15);
+                       printf("\t Drive Left \n");
+                   }
+                   if (error < -1000)
+                   {
+                       turn_right(.15);
+                       printf("\t Drive Right \n");
+                   }
+                   if ((error >= -1000) && (error <= 1000)) // drive straight
+                   {
+                       move_forward(.15);
+                       printf("\t Drive Forward \n");
+                   }
+                 }
            //     }
            // }
            // }
