@@ -21,8 +21,8 @@
 
 #define PULSEWIDTH1 0xFFFF
 
-#ifndef PWM_PERIOD
-#define PWM_PERIOD 20000  // desired period, in us
+#ifndef MOTOR_PWM_PERIOD
+#define MOTOR_PWM_PERIOD 20000  // desired period, in us
 #endif
 
 void  configTimer2(void) {
@@ -30,7 +30,7 @@ void  configTimer2(void) {
           | T2_32BIT_MODE_OFF
           | T2_SOURCE_INT
           | T2_PS_1_64;
-  PR2 = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits)) - 1;
+  PR2 = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)) - 1;
   //PR2 = PULSEWIDTH1;
   TMR2  = 0;       //clear timer2 value
   _T2IF = 0;
@@ -43,7 +43,7 @@ void  configTimer3(void) {
           | T2_32BIT_MODE_OFF
           | T3_SOURCE_INT
           | T3_PS_1_64;
-  PR3 = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits)) - 1;
+  PR3 = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits)) - 1;
   //PR3 = PULSEWIDTH1;
   TMR3  = 0;       //clear timer3 value
   _T3IF = 0;
@@ -160,8 +160,8 @@ void getMotorValue(void) {
 
   if (u16_servo == 1)
   {
-      printf("\n OC2RS = %u, OC3RS = %u , PWM_PER = %u \n", OC2RS, OC3RS, usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits)));
-      printf("%u = %u * duty \n", OC2RS, PWM_PERIOD);
+      printf("\n OC2RS = %u, OC3RS = %u , PWM_PER = %u \n", OC2RS, OC3RS, usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)));
+      printf("%u = %u * duty \n", OC2RS, MOTOR_PWM_PERIOD);
       right_motor_fwd(u16_pw / 100.0);
       left_motor_fwd(u16_pw / 100.0);
   }
@@ -192,26 +192,26 @@ void motors_init(void)
 
 void left_motor_fwd(float duty)
 	{
-        LIN1_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits));
-        LIN2_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1 - duty);
+        LIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits));
+        LIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1 - duty);
 	}
 
 void left_motor_reverse(float duty)
 	{
-        LIN1_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1 - duty);
-        LIN2_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits));
+        LIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1 - duty);
+        LIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits));
 	}
 
 void right_motor_reverse(float duty)
 	{
-        RIN1_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits));
-        RIN2_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1 - duty);
+        RIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits));
+        RIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1 - duty);
 	}
 
 void right_motor_fwd(float duty)
 	{
-        RIN1_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1 - duty);
-        RIN2_PULSE = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits));
+        RIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1 - duty);
+        RIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits));
 	}
 
 void turn_left(float duty)

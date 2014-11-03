@@ -89,7 +89,7 @@ void config_servo_timer3(void) {
             | T3_GATE_OFF
             | T3_SOURCE_INT
             | T3_PS_1_256 ;  //1 tick = 1.6 us at FCY=40 MHz
-    PR3 = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T3CONbits)) - 1;
+    PR3 = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits)) - 1;
     TMR3  = 0;       //clear timer3 value
 }
 
@@ -139,7 +139,7 @@ void config_servo_timer2(void) {
             | T2_GATE_OFF
             | T2_SOURCE_INT
             | T2_PS_1_256 ;  //1 tick = 1.6 us at FCY=40 MHz
-    PR2 = usToU16Ticks(PWM_PERIOD, getTimerPrescale(T2CONbits)) - 1;
+    PR2 = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)) - 1;
     TMR2 = 0;       //clear timer2 value
 }
 

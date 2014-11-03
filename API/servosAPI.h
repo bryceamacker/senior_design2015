@@ -34,7 +34,7 @@
 #define MIN_PW      600     // Minimum pulse width, in us
 #define MAX_PW      2400    // Maximum pulse width, in us
 #define SLOT_WIDTH  2800    // Slot width, in us
-#define PWM_PERIOD  20000   // Full pulse width in ms
+#define MOTOR_PWM_PERIOD  20000   // Full pulse width in ms
 
 typedef enum {
     ETCH_VERTICAL =     0,
