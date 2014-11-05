@@ -22,6 +22,7 @@
 
 void platform_init() {
     platform_up();
+    DELAY_MS(500);
     turn_servo_by_pulse(RUBIKS_TWIST, TWIST_COUNTER_PULSE);
 }
 

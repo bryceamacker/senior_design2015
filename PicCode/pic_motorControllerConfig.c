@@ -3,44 +3,26 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: pic_config.c
+* FileName:
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
 * Company: Mississippi State University/ECE
 *
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* MODULE FUNCTION: Setup for the SECON 2015 PIC 
+* MODULE FUNCTION: Configuration for the PIC that controls navigation
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Author                Date                    Comment
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* Steven Calhoun        9/20/204                SECON 2015
+* Steven Calhoun        10/01/2014              SECON 2015
 *********************************************************************/
 
-#include "pic_gamePlayerConfig.h"
+#include "pic_motorControllerConfig.h"
 
-#define PIC_I2C_ADDR 0x20
+void pic_motor_controller_init() {
+    // Initialize everything to follow a line
+    line_follower_init();
 
-void pic_game_player_init() {
-    // Initialize all the timers and comparators for the servos
-    servo_init();
-
-    // Delay to let the configurations to take place
-    DELAY_MS(500);
-
-    // Initialize all the servos to their starting position
-    rubik_init();
-    etch_init();
-    simon_init();
-
-    // Photo cell init
-    photo_cell_init();
-    
-    // I2C init
+    // I2C Config
     configI2C1(400);
-    I2C1ADD = PIC_I2C_ADDR >> 1;
-    _SI2C1IF = 0;
-    _SI2C1IP = 1;
-    _SI2C1IE = 1;
 }
-

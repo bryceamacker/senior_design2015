@@ -25,35 +25,29 @@
 #ifndef PIC_H_
 #define PIC_H_
 
-
-#define BUFSIZE 64
-
-volatile char  sz_1[BUFSIZE+1];
-volatile char  sz_2[BUFSIZE+1];
-volatile uint16_t u16_index;
+#define BUFFSIZE 64
 
 typedef enum {
-    PLAY_SIMON      = 0,
-    PLAY_ETCH       = 1,
-    PLAY_RUBIK      = 2,
-    PLAY_CARDS      = 3
-} picTwoCommands_t;
+    PLAY_SIMON,
+    PLAY_ETCH,
+    PLAY_RUBIK,
+    PLAY_CARDS,
+    IDLE
+} picGamePlayerState;
 
 typedef enum  {
-  STATE_WAIT_FOR_ADDR,
-  STATE_WAIT_FOR_WRITE_DATA,
-  STATE_SEND_READ_DATA,
-  STATE_SEND_READ_LAST
+    STATE_WAIT_FOR_ADDR,
+    STATE_WAIT_FOR_WRITE_DATA,
+    STATE_SEND_READ_DATA,
+    STATE_SEND_READ_LAST
 } STATE;
 
-volatile STATE e_mystate = STATE_WAIT_FOR_ADDR;
 
-/**
- * @brief Handles serial commands
- * 
- * @param  u8_c command to be run
- */
-void serial_command(uint8_t u8_c);
+volatile char  sz_i2cInString[BUFFSIZE+1];
+volatile char sz_currentStateString[BUFFSIZE];
+volatile uint16_t u16_index;
+volatile picGamePlayerState st_picState;
+volatile STATE e_mystate = STATE_WAIT_FOR_ADDR;
 
 /**
  * @brief Handles I2C commands
@@ -63,25 +57,11 @@ void serial_command(uint8_t u8_c);
 void I2C_check_command(volatile char *psz_s1);
 
 /**
- * @brief Print out serial menu
- */
-void serial_menu(void);
-
-/**
- * @brief Print out list of servos for indvidual control
- */
-void servo_menu(void);
-
-/**
- * @brief Print out list of Simon arms
- */
-void simon_menu(void);
-
-/**
- * @brief Control a specific servo 
+ * @brief Determines the size of a given string
  * 
- * @param u8_servo Servo to be controlled
+ * @param psz_1 The string to be measured
+ * @return the length of the string
  */
-void set_servo(char u8_servo);
+int16_t getStringLength(char* psz_1);
 
 #endif

@@ -33,6 +33,7 @@ void etch_init() {
 }
 
 void play_etch() {
+    printf("\n*** Drawing 'IEEE' ***\n");
     platform_etch();
     DELAY_MS(1000);
     draw_IEEE();

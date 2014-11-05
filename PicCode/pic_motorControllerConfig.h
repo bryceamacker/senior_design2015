@@ -10,7 +10,7 @@
 * Company: Mississippi State University/ECE
 *
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* MODULE FUNCTION: 
+* MODULE FUNCTION: Configuration for the PIC that controls navigation
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Author                Date                    Comment
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,5 +18,9 @@
 *********************************************************************/
 
 #include "pic24_all.h"
+#include "lineFollowerAPI.h"
 
+/**
+ * @brief Initialize the motor controller pic
+ */
 void pic_motor_controller_init();
