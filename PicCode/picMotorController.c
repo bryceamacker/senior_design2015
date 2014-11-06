@@ -26,6 +26,7 @@ char sz_playEtchString[BUFFSIZE] = "Etch.";
 char sz_playSimonString[BUFFSIZE] = "Simon";
 char sz_playCardsString[BUFFSIZE] = "Cards";
 char sz_idleString[BUFFSIZE] = "Idle.";
+uint8_t u8_c;
 
 int main (void) {
     // Configure the motor controller PIC
@@ -36,6 +37,7 @@ int main (void) {
     u8_currentGame = 0;
 
     // Wait for the game player PIC to detect the start light to turn off
+    printf("Waiting for start signal\n");
     while (strcmp((char*) sz_recieveString, "Idle.") != 0) {
         DELAY_MS(1000);
         readNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *) sz_recieveString, 6);
@@ -44,14 +46,15 @@ int main (void) {
 
     // Play Rubiks, Etch, and Simon then stop
     while(u8_currentGame < 3) {
+        printf("Following line to box\n");
         // Find a box
-        follow_line_to_box(.15);
+        follow_line_to_box(0.15);
 
         // Tell the game player to play a game
         play_game(u8_currentGame);
 
         // Back up for a few seconds, increment the current game, and start over
-        motors_move_reverse(.15);
+        motors_move_reverse(0.15);
         DELAY_MS(2500);
         motors_stop();
         u8_currentGame++;
@@ -67,12 +70,16 @@ void play_game(gameID game) {
     
     // Copy the correct string to send
     if (game == RUBIKS) {
+        printf("Playing Rubiks\n");
         strncpy(sz_sendString, sz_playRubiksString, BUFFSIZE);
     } else if (game == ETCH) {
+        printf("Playing Etch\n");
         strncpy(sz_sendString, sz_playEtchString, BUFFSIZE);
     } else if (game == SIMON) {
+        printf("Playing Simon\n");
         strncpy(sz_sendString, sz_playSimonString, BUFFSIZE);
     } else if (game == CARD) {
+        printf("Playing Cards\n");
         strncpy(sz_sendString, sz_playCardsString, BUFFSIZE);
     }
 

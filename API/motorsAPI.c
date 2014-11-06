@@ -46,6 +46,9 @@ void motors_init(void)
     CONFIG_RIGHT_MOTOR_IN2();
     CONFIG_LEFT_MOTOR_IN1();
     CONFIG_LEFT_MOTOR_IN2();
+
+    // Stop both motors
+    motors_stop();
 }
 
 void config_motor_timer2(void) {

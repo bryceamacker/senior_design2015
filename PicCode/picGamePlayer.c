@@ -50,11 +50,15 @@ int main(void) {
     }
 
     // Wait until the start light turns off
+    printf("Waiting for start signal\n");
     u16_tempLedValue = read_photo_cell(START_CELL);
     while(u16_tempLedValue >= (u16_ledOnValue - LED_MARGIN)) {
         u16_tempLedValue = read_photo_cell(START_CELL);
         doHeartbeat();
+        break;  /// DEBUG 
     }
+
+    printf("Start signal detected\n");
 
     // Move to the idle string, letting the motor controller it's time to move
     strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
@@ -74,17 +78,21 @@ int main(void) {
             play_etch();
             st_picState = IDLE;
             strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
+            printf("Waiting new game command\n");
         } else if (st_picState == PLAY_RUBIK) {
             play_rubiks();
             st_picState = IDLE;
             strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
+            printf("Waiting new game command\n");
         } else if (st_picState == PLAY_SIMON) {
             play_simon();
             st_picState = IDLE;
             strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
+            printf("Waiting new game command\n");
         } else if (st_picState == PLAY_CARDS) {
             st_picState = IDLE;
             strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
+            printf("Waiting new game command\n");
         }
         doHeartbeat();
     }
