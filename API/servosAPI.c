@@ -36,18 +36,6 @@ volatile uint16_t           u16_slotWidthTicks = 0;             // Slot width in
 ///////////////////////////////////////////////
 
 void servo_init() {
-    // Config all the servo outputs
-    CONFIG_RD2_AS_DIG_OUTPUT();
-    CONFIG_RD3_AS_DIG_OUTPUT();
-    CONFIG_RD4_AS_DIG_OUTPUT();
-    CONFIG_RD5_AS_DIG_OUTPUT();
-    CONFIG_RD6_AS_DIG_OUTPUT();
-    CONFIG_RD7_AS_DIG_OUTPUT();
-    CONFIG_RD8_AS_DIG_OUTPUT();
-    CONFIG_RD9_AS_DIG_OUTPUT();
-    CONFIG_RD10_AS_DIG_OUTPUT();
-    CONFIG_RD11_AS_DIG_OUTPUT();
-
     // All servo outputs low initially
     RUBIKS_PLATFORM_PIN = 0;
     RUBIKS_TWIST_PIN = 0;
@@ -57,13 +45,11 @@ void servo_init() {
     SIMON_RED_PIN = 0;
     SIMON_GREEN_PIN = 0;
     
-    ARM_EXTEND_PIN = 0;
-    ARM_PIVOT_PIN = 0;
+    ARM_POSITION_PIN = 0;
+    ARM_SLIDE_PIN = 0;
 
     ETCH_VERTICAL_PIN = 0;
     ETCH_HORIZ_PIN = 0;
-
-    DELAY_MS(500);
 
     // Configure timers and output comparators
     config_servo_timer3();
@@ -75,6 +61,18 @@ void servo_init() {
     u16_slotWidthTicks = usToU16Ticks(SLOT_WIDTH, getTimerPrescale(T3CONbits));
 
     DELAY_MS(500);
+
+    // Config all the servo outputs
+    CONFIG_RD2_AS_DIG_OUTPUT();
+    CONFIG_RD3_AS_DIG_OUTPUT();
+    CONFIG_RD4_AS_DIG_OUTPUT();
+    CONFIG_RD5_AS_DIG_OUTPUT();
+    CONFIG_RD6_AS_DIG_OUTPUT();
+    CONFIG_RD7_AS_DIG_OUTPUT();
+    CONFIG_RD8_AS_DIG_OUTPUT();
+    CONFIG_RD9_AS_DIG_OUTPUT();
+    CONFIG_RD10_AS_DIG_OUTPUT();
+    CONFIG_RD11_AS_DIG_OUTPUT();
 
     // Turn on the timers
     T3CONbits.TON = 1;
@@ -203,7 +201,7 @@ void set_servo_output (uint8_t u8_servo, uint8_t u8_val) {
             RUBIKS_TWIST_PIN = u8_val;
             break;
         case 4:
-            ARM_EXTEND_PIN = u8_val;
+            ARM_POSITION_PIN = u8_val;
             break;
         case 5:
             SIMON_YELLOW_PIN = u8_val;
@@ -218,7 +216,7 @@ void set_servo_output (uint8_t u8_servo, uint8_t u8_val) {
             SIMON_GREEN_PIN = u8_val;
             break;
         case 9:
-            ARM_PIVOT_PIN = u8_val;
+            ARM_SLIDE_PIN = u8_val;
             break;
         default:
             break;
@@ -235,7 +233,7 @@ void turn_servo_by_pulse(servoIDs id, uint16_t pulseWidth) {
     _OC1IE = 0; //disable the interrupt while changing
     _OC2IE = 0;
 
-    if (id == ETCH_VERTICAL || id == ETCH_HORIZ || id == RUBIKS_PLATFORM || id == RUBIKS_TWIST || id == ARM_EXTEND) {
+    if (id == ETCH_VERTICAL || id == ETCH_HORIZ || id == RUBIKS_PLATFORM || id == RUBIKS_TWIST || id == ARM_POSITION) {
         au16_servoPWidths1[id] = usToU16Ticks(pulseWidth, getTimerPrescale(T3CONbits));
     } else {
         au16_servoPWidths2[id-5] = usToU16Ticks(pulseWidth, getTimerPrescale(T2CONbits));

@@ -41,6 +41,13 @@ void line_follower_init(void);
 float get_line(uint16_t* pau16_sensorValues);
 
 /**
+ * @brief Follow  line until the line sensor sees a box
+ * 
+ * @param f_maxSpeed the max speed the robot will move at, specified by duty cycle
+ */
+void follow_line_to_box(float f_maxSpeed);
+
+/**
  * @brief Follow a line
  * 
  * @param pau16_sensorValues The current sensor array values

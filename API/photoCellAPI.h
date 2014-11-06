@@ -26,10 +26,11 @@
 #define PHOTO_CELL_API_H_
 
 typedef enum {
-    YELLOW_TRANS = 0,
-    BLUE_TRANS = 1,
-    RED_TRANS = 2,
-    GREEN_TRANS = 3
+    YELLOW_TRANS =  0,
+    BLUE_TRANS =    1,
+    RED_TRANS =     2,
+    GREEN_TRANS =   3,
+    START_CELL =    4
 } photoTrans;
 
 /////////////////////////////////////////////// 
@@ -49,7 +50,7 @@ void  photo_cell_init();
  * @param color Photo transistor to be read
  * @return the value of the photo transistor
  */
-uint16_t read_photo_transistor(photoTrans color);
+uint16_t read_photo_cell(photoTrans color);
 
 /**
  * @brief Continuously print out all the the photo transistors

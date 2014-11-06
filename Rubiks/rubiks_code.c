@@ -32,6 +32,7 @@ void rubik_init() {
 
 void play_rubiks() {
     printf("\n*** Spinng Rubiks ***\n");
+    game_arm_pull_rubiks();
     platform_rubiks();
     DELAY_MS(WAIT_TIME);
     twist_rubiks_clock();

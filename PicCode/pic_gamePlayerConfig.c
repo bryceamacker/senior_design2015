@@ -33,6 +33,9 @@ void pic_game_player_init() {
     // Delay to let the configurations to take place
     DELAY_MS(500);
 
+    // Initialize the game arm
+    game_arm_init();
+
     // Initialize all the servos to their starting position
     rubik_init();
     etch_init();
@@ -237,8 +240,8 @@ void servo_menu(void) {
     printf("   b) Simon blue\n");
     printf("   r) Simon red\n");
     printf("   g) Simon green\n");
-    printf("   e) Arm extender\n");
-    printf("   i) Arm pivot\n");
+    printf("   s) Arm slide\n");
+    printf("   a) Arm positions\n");
 }
 
 void simon_menu(void) {
@@ -307,11 +310,11 @@ void set_servo(char u8_servo) {
     } else if (u8_servo == 'g') {
         turn_servo_by_pulse(SIMON_GREEN, u16_pwm);
         printf("\n*** Setting simon green to %u ***\n", u16_pwm);
-    } else if (u8_servo == 'e') {
-        turn_servo_by_pulse(ARM_EXTEND, u16_pwm);
+    } else if (u8_servo == 's') {
+        turn_servo_by_pulse(ARM_SLIDE, u16_pwm);
         printf("\n*** Setting arm extend to %u ***\n", u16_pwm);
-    } else if (u8_servo == 'i') {
-        turn_servo_by_pulse(ARM_PIVOT, u16_pwm);
+    } else if (u8_servo == 'a') {
+        turn_servo_by_pulse(ARM_POSITION, u16_pwm);
         printf("\n*** Setting arm pivot to %u ***\n", u16_pwm);
     } else {
         printf("Invalid choice\n");

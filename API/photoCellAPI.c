@@ -36,7 +36,7 @@ void  photo_cell_init() {
 }
 
 // Read a given color's phototransistor
-uint16_t read_photo_transistor(photoTrans color) {
+uint16_t read_photo_cell(photoTrans color) {
     switch (color) {
         case YELLOW_TRANS:
             return adc_read(1);
@@ -50,6 +50,9 @@ uint16_t read_photo_transistor(photoTrans color) {
         case GREEN_TRANS:
             return adc_read(2);
             break;
+        case START_CELL:
+            return adc_read(4);
+            break;
         default: 
             return 0;
             break;
@@ -59,10 +62,10 @@ uint16_t read_photo_transistor(photoTrans color) {
 // Continuously print out phototransistor values REQUIRES PIC RESET
 void photo_trans_print() {
     while (1)  {
-        printf("\nYellow %i", read_photo_transistor(YELLOW_TRANS));
-        printf("    Blue %i", read_photo_transistor(BLUE_TRANS));
-        printf("    Red %i", read_photo_transistor(RED_TRANS));
-        printf("    Green %i", read_photo_transistor(GREEN_TRANS));
+        printf("\nYellow %i", read_photo_cell(YELLOW_TRANS));
+        printf("    Blue %i", read_photo_cell(BLUE_TRANS));
+        printf("    Red %i", read_photo_cell(RED_TRANS));
+        printf("    Green %i", read_photo_cell(GREEN_TRANS));
         doHeartbeat();
     } 
 }

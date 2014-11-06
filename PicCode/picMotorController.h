@@ -26,33 +26,27 @@
 #define _PIC_MOTOR_CONTROLLER_H_
 
 #define PIC_GAME_PLAYER_ADDR 0x20
-
 #define BUFFSIZE 64
-char sz_sendString[BUFFSIZE];
+
+typedef enum {
+    RUBIKS =    0,
+    ETCH =      1,
+    SIMON =     2,
+    CARD =      3
+} gameID;
+
 char sz_recieveString[BUFFSIZE];
 
-uint16_t pau16_sensorValues[SENSOR_NUM];
-uint16_t u16_position;
-
-int16_t i16_error;
-int16_t i16_lineCenter;
-
-uint8_t u8_detectingSensors;
-uint8_t u8_foundObjective;
-
-uint8_t u8_leftTurn;
-uint8_t u8_rightTurn;
-
-uint8_t u8_gameNumber;
-
-uint8_t i;
+uint8_t u8_currentGame;
 
 /**
- * @brief Determines the size of a given string
+ * @brief Tells the game player to play a game
+ * @details Sends a command over I2C to the game player PIC
+ * then waits until the game has been played and prints out
+ * a success message
  * 
- * @param psz_1 The string to be measured
- * @return the length of the string
+ * @param game The game to be played
  */
-int16_t getStringLength(char* psz_1);
+void play_game(gameID game);
 
 #endif

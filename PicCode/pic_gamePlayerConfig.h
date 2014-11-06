@@ -23,6 +23,7 @@
 #include "rubiks_code.h"
 #include "simon_code.h"
 #include "platform_control.h"
+#include "game_arm_control.h"
 
 /**
  * @brief Initialize the game player pic

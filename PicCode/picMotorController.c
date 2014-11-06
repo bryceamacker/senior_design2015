@@ -28,96 +28,72 @@ char sz_playCardsString[BUFFSIZE] = "Cards";
 char sz_idleString[BUFFSIZE] = "Idle.";
 
 int main (void) {
+    // Configure the motor controller PIC
     configBasic(HELLO_MSG);
     pic_motor_controller_init();
 
-    u16_position = 0;
-    i16_error = 0;
-    u8_detectingSensors = 0;
-    u8_foundObjective = 0;
-
-    // Flags while in sharp turns
-    u8_leftTurn = 0;
-    u8_rightTurn = 0;
-
-    // Find the center of the line we are constantly trying to stay at
-    i16_lineCenter = ((1000 * (SENSOR_NUM - 1)) / 2);
-
     // Start with the first game
-    strncpy(sz_sendString, sz_playRubiksString, BUFFSIZE);
+    u8_currentGame = 0;
 
-    while(1) {
-        // Get the average position of the line
-        u16_position = 1000 * get_line(pau16_sensorValues);
-        i16_error = u16_position - i16_lineCenter;
-        u8_detectingSensors = 0;
-
-        strncpy(sz_recieveString, sz_sendString, BUFFSIZE);
-
-        // Sum up the array
-        for (i = 0; i < SENSOR_NUM; i++) {
-            u8_detectingSensors += pau16_sensorValues[i];
-        }
-
-        // If enough sensors are detecting, what appears to be a wide line is most likely the edge of a box
-        if (u8_detectingSensors >= SENSOR_NUM - 2) {
-            u8_foundObjective = 1;
-        }
-
-        // Stop when we reach a box
-        if (u8_foundObjective == 1) {
-            printf("Found box\n");
-            // Stop at the box and tell the game player to play a game
-            motors_stop();
-            writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, getStringLength(sz_sendString));
-
-            // Wait until the game is done being played
-            while (strcmp((char*) sz_recieveString, "Idle.") != 0) {
-                DELAY_MS(1000);
-                readNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *) sz_recieveString, 6);
-            }
-
-            // Print out success message and go to the next game
-            if (strcmp((char*) sz_sendString, "Rubik") == 0) {
-                // Go to the next game
-                printf("Rubiks played\n");
-                strncpy(sz_sendString, sz_playEtchString, BUFFSIZE);
-            } else if (strcmp((char*) sz_sendString, "Etch.") == 0) {
-                // Go to the next game
-                printf("Etch played\n");
-                strncpy(sz_sendString, sz_playSimonString, BUFFSIZE);
-            } else if (strcmp((char*) sz_sendString, "Simon") == 0) {
-                // Go to the next game
-                printf("Simon played\n");
-                strncpy(sz_sendString, sz_playRubiksString, BUFFSIZE);
-            }
-
-            u8_foundObjective = 0;
-            motors_move_reverse(.15);
-            DELAY_MS(2500);
-            motors_stop();
-
-        } else { 
-            if (i16_error > 1000) {
-                motors_turn_left(.15);
-            }
-            if (i16_error < -1000) {
-                motors_turn_right(.15);
-            }
-            if ((i16_error >= -1000) && (i16_error <= 1000)) {
-                motors_move_forward(.15);
-            }
-        }
+    // Wait for the game player PIC to detect the start light to turn off
+    while (strcmp((char*) sz_recieveString, "Idle.") != 0) {
+        DELAY_MS(1000);
+        readNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *) sz_recieveString, 6);
+        doHeartbeat();
     }
+
+    // Play Rubiks, Etch, and Simon then stop
+    while(u8_currentGame < 3) {
+        // Find a box
+        follow_line_to_box(.15);
+
+        // Tell the game player to play a game
+        play_game(u8_currentGame);
+
+        // Back up for a few seconds, increment the current game, and start over
+        motors_move_reverse(.15);
+        DELAY_MS(2500);
+        motors_stop();
+        u8_currentGame++;
+    }
+
+    // After all games have been played just sit
+    while(1) doHeartbeat();
 }
 
-int16_t getStringLength(char* psz_1) {
-    uint16_t u16_len;
-    u16_len = 0;
-    while (*psz_1) {
-        psz_1++;
-        u16_len++;
+void play_game(gameID game) {
+    char sz_sendString[BUFFSIZE];
+    char sz_recieveString[BUFFSIZE];
+    
+    // Copy the correct string to send
+    if (game == RUBIKS) {
+        strncpy(sz_sendString, sz_playRubiksString, BUFFSIZE);
+    } else if (game == ETCH) {
+        strncpy(sz_sendString, sz_playEtchString, BUFFSIZE);
+    } else if (game == SIMON) {
+        strncpy(sz_sendString, sz_playSimonString, BUFFSIZE);
+    } else if (game == CARD) {
+        strncpy(sz_sendString, sz_playCardsString, BUFFSIZE);
     }
-    u16_len++;
-    return u16_len;
+
+    // Send the game player the game to play
+    writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
+
+    // Wait until the game is done being played
+    do {
+        DELAY_MS(1000);
+        readNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *) sz_recieveString, 6);
+        doHeartbeat();
+    } while (strcmp((char*) sz_recieveString, "Idle.") != 0);
+
+    // Print out a success message
+    if (game == RUBIKS) {
+        printf("Rubiks played\n");
+    } else if (game == ETCH) {
+        printf("Etch played\n");
+    } else if (game == SIMON) {
+        printf("Simon played\n");
+    } else if (game == CARD) {
+        printf("Cards played\n");
+    }
 }

@@ -20,11 +20,23 @@
 
 #include "platform_control.h"
 
+/////////////////////////////////////////////// 
+//
+// Platform config
+//
+///////////////////////////////////////////////
+
 void platform_init() {
     platform_up();
     DELAY_MS(500);
     turn_servo_by_pulse(RUBIKS_TWIST, TWIST_COUNTER_PULSE);
 }
+
+/////////////////////////////////////////////// 
+//
+// Platform usage
+//
+///////////////////////////////////////////////
 
 void platform_up() {
     turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_UP_PULSE);

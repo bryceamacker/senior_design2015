@@ -46,6 +46,48 @@ float get_line(uint16_t* pau16_sensorValues) {
     return f_line;
 }
 
+void follow_line_to_box(float f_maxSpeed) {
+    uint16_t pau16_sensorValues[SENSOR_NUM];
+    uint16_t u16_position;
+
+    int16_t i16_error;
+    int16_t i16_lineCenter;
+    
+    uint8_t u8_detectingSensors;
+    uint8_t i;
+
+    // Find the center of the line we are constantly trying to stay at
+    i16_lineCenter = ((1000 * (SENSOR_NUM - 1)) / 2);
+
+    while(1) {
+        // Get the average position of the line
+        u16_position = 1000 * get_line(pau16_sensorValues);
+        i16_error = u16_position - i16_lineCenter;
+        u8_detectingSensors = 0;
+
+        // Sum up the array
+        for (i = 0; i < SENSOR_NUM; i++) {
+            u8_detectingSensors += pau16_sensorValues[i];
+        }
+
+        // If enough sensors are detecting, what appears to be a wide line is most likely the edge of a box
+        if (u8_detectingSensors >= SENSOR_NUM - 2) {
+            motors_stop();
+            return;
+        } else { 
+            if (i16_error > 1000) {
+                motors_turn_left(f_maxSpeed);
+            }
+            if (i16_error < -1000) {
+                motors_turn_right(f_maxSpeed);
+            }
+            if ((i16_error >= -1000) && (i16_error <= 1000)) {
+                motors_move_forward(f_maxSpeed);
+            }
+        }
+    }
+}
+
 void follow_line(uint16_t* pau16_sensorValues, float f_maxSpeed) {
     float f_line, f_lineToSpeedFactor, f_rightDuty, f_leftDuty;
 
@@ -66,7 +108,6 @@ void follow_line(uint16_t* pau16_sensorValues, float f_maxSpeed) {
     }
     right_motor_fwd(f_rightDuty);
     left_motor_fwd(f_leftDuty);
-    printf("line: %f left: %f right: %f \n",f_line, f_leftDuty, f_rightDuty);
 }
 
 void follow_line_back(uint16_t* pau16_sensorValues, float f_maxSpeed) {

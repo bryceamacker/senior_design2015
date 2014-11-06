@@ -20,6 +20,7 @@
 
 #include "servosAPI.h"
 #include "photoCellAPI.h"
+#include "game_arm_control.h"
 #include "port_mapping.h"
 
 #ifndef SIMON_CODE_H_

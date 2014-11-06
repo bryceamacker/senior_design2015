@@ -77,6 +77,7 @@ void simon_init() {
 
 void play_simon() {
     printf("\n*** Playing Simon ***\n");
+    game_arm_pull_simon();
     simon_hover_buttons();
     calibrate_sensors(); // I don't think we need calibration with the new transistors
     while (u8_roundNum < 8) {
@@ -106,16 +107,16 @@ void play_simon() {
 
 void calibrate_sensors() {
     uint8_t i;
-    int16_t i16_tempYellowValue = read_photo_transistor(YELLOW_TRANS);
-    int16_t i16_tempBlueValue = read_photo_transistor(BLUE_TRANS);
-    int16_t i16_tempRedValue = read_photo_transistor(RED_TRANS);
+    int16_t i16_tempYellowValue = read_photo_cell(YELLOW_TRANS);
+    int16_t i16_tempBlueValue = read_photo_cell(BLUE_TRANS);
+    int16_t i16_tempRedValue = read_photo_cell(RED_TRANS);
     int16_t i16_tempGreenValue = adc_read(GREEN_LIGHT); 
 
     for (i = 0; i < 100; i++) {
-        i16_tempYellowValue = read_photo_transistor(YELLOW_TRANS);
-        i16_tempBlueValue = read_photo_transistor(BLUE_TRANS);
-        i16_tempRedValue = read_photo_transistor(RED_TRANS);
-        i16_tempGreenValue = read_photo_transistor(GREEN_TRANS);
+        i16_tempYellowValue = read_photo_cell(YELLOW_TRANS);
+        i16_tempBlueValue = read_photo_cell(BLUE_TRANS);
+        i16_tempRedValue = read_photo_cell(RED_TRANS);
+        i16_tempGreenValue = read_photo_cell(GREEN_TRANS);
 
         if (i16_tempYellowValue < i16_lowestYellowValue) {
             i16_lowestYellowValue = i16_tempYellowValue;
@@ -208,10 +209,10 @@ void record_colors(uint8_t u8_numberOfButtons) {
     // Keep looking for lights until we've seen enough
     while(u8_detectedButtons < u8_numberOfButtons) {
         // For each light, get the transistor value, and compare it to the light threshold
-        i16_currentYellowValue = read_photo_transistor(YELLOW_TRANS);
-        i16_currentBlueValue = read_photo_transistor(BLUE_TRANS);
-        i16_currentRedValue = read_photo_transistor(RED_TRANS);
-        i16_currentGreenValue = read_photo_transistor(GREEN_TRANS);
+        i16_currentYellowValue = read_photo_cell(YELLOW_TRANS);
+        i16_currentBlueValue = read_photo_cell(BLUE_TRANS);
+        i16_currentRedValue = read_photo_cell(RED_TRANS);
+        i16_currentGreenValue = read_photo_cell(GREEN_TRANS);
 
         i16_yellowDifference = i16_currentYellowValue - i16_lowestYellowValue;
         i16_blueDifference = i16_currentBlueValue - i16_lowestBlueValue;
@@ -297,7 +298,7 @@ void confirm_color(uint8_t u8_color) {
     // Depending on which color we're looking for, enter a loop, where we continue to read adc until the threshold is exceeded
     if (u8_color == YELLOW_BUTTON) {
         while (1) {
-            i16_currentYellowValue = read_photo_transistor(YELLOW_TRANS);
+            i16_currentYellowValue = read_photo_cell(YELLOW_TRANS);
             i16_yellowDifference = i16_currentYellowValue - i16_lowestYellowValue;
 
             if (i16_yellowDifference > YELLOW_LIGHT_THRESH_HOLD) {
@@ -317,7 +318,7 @@ void confirm_color(uint8_t u8_color) {
         }
     } else if (u8_color == BLUE_BUTTON) {
         while (1) {
-            i16_currentBlueValue = read_photo_transistor(BLUE_TRANS);
+            i16_currentBlueValue = read_photo_cell(BLUE_TRANS);
             i16_blueDifference = i16_currentBlueValue - i16_lowestBlueValue;
 
             if (i16_blueDifference > BLUE_LIGHT_THRESH_HOLD) {
@@ -337,7 +338,7 @@ void confirm_color(uint8_t u8_color) {
         }
     } else if (u8_color == RED_BUTTON) {
         while (1) {
-            i16_currentRedValue = read_photo_transistor(RED_TRANS);
+            i16_currentRedValue = read_photo_cell(RED_TRANS);
             i16_redDifference = i16_currentRedValue - i16_lowestRedValue;
 
             if (i16_redDifference > RED_LIGHT_THRESH_HOLD) {
@@ -357,7 +358,7 @@ void confirm_color(uint8_t u8_color) {
         }
     } else if (u8_color == GREEN_BUTTON) {
         while (1) {
-            i16_currentGreenValue = read_photo_transistor(GREEN_TRANS);
+            i16_currentGreenValue = read_photo_cell(GREEN_TRANS);
             i16_greenDifference = i16_currentGreenValue - i16_lowestGreenValue;
 
             if (i16_greenDifference > GREEN_LIGHT_THRESH_HOLD) {
@@ -388,7 +389,7 @@ void confirm_color_off(uint8_t u8_color) {
     // Depending on which color we're looking for, enter a loop, where we continue to read adc until the adc reads below the lowest level
     if (u8_color == YELLOW_BUTTON) {
         while (1) {
-            i16_currentYellowValue = read_photo_transistor(YELLOW_TRANS);
+            i16_currentYellowValue = read_photo_cell(YELLOW_TRANS);
             
             if (i16_currentYellowValue < (i16_lowestYellowValue + 20)) {
                 #ifdef DEBUG
@@ -402,7 +403,7 @@ void confirm_color_off(uint8_t u8_color) {
         }
     } else if (u8_color == BLUE_BUTTON) {
         while (1) {
-            i16_currentBlueValue = read_photo_transistor(BLUE_TRANS);
+            i16_currentBlueValue = read_photo_cell(BLUE_TRANS);
 
             if (i16_currentBlueValue < (i16_lowestBlueValue + 20)) {
                 #ifdef DEBUG
@@ -416,7 +417,7 @@ void confirm_color_off(uint8_t u8_color) {
         }
     } else if (u8_color == RED_BUTTON) {
         while (1) {
-            i16_currentRedValue = read_photo_transistor(RED_TRANS);
+            i16_currentRedValue = read_photo_cell(RED_TRANS);
 
             if (i16_currentRedValue < (i16_lowestRedValue + 20)) {
                 #ifdef DEBUG
@@ -430,7 +431,7 @@ void confirm_color_off(uint8_t u8_color) {
         }
     } else if (u8_color == GREEN_BUTTON) {
         while (1) {
-            i16_currentGreenValue = read_photo_transistor(GREEN_TRANS);
+            i16_currentGreenValue = read_photo_cell(GREEN_TRANS);
 
             if (i16_currentGreenValue < (i16_lowestGreenValue + 20)) {
                 #ifdef DEBUG

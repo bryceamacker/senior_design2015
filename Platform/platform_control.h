@@ -32,13 +32,22 @@
 #define TWIST_COUNTER_PULSE     2050
 #define TWIST_DIAG_PULSE        1225
 
+/////////////////////////////////////////////// 
+//
+// Platform config
+//
+///////////////////////////////////////////////
 /**
  * @brief Initialize the platform
  */
 void platform_init(void);
 
-/**
- * @brief Raise the platform to it's intial position
+/////////////////////////////////////////////// 
+//
+// Platform usage
+//
+///////////////////////////////////////////////
+/** * @brief Raise the platform to it's intial position
  */
 void platform_up(void);
 

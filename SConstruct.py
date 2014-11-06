@@ -81,7 +81,8 @@ LibSources = [
                 'Etch/etch_code.c',
                 'Rubiks/rubiks_code.c',
                 'Simon/simon_code.c',
-                'Platform/platform_control.c'
+                'Platform/platform_control.c',
+                'GameArm/game_arm_control.c'
               ]
 
 # Create a Microchip XC16 Construction Environment
@@ -214,7 +215,8 @@ env = env.Clone(MCU='24HJ64GP506A',
                   'Rubiks',
                   'Simon',
                   'PicCode',
-                  'Platform'
+                  'Platform',
+                  'GameArm'
                   ]
                 )
 

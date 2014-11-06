@@ -41,12 +41,12 @@ typedef enum {
     ETCH_HORIZ =        1,
     RUBIKS_PLATFORM =   2,
     RUBIKS_TWIST =      3,
-    ARM_EXTEND =        4,
+    ARM_POSITION =      4,
     SIMON_YELLOW =      5,
     SIMON_BLUE =        6,
     SIMON_RED =         7,
     SIMON_GREEN =       8,
-    ARM_PIVOT =         9
+    ARM_SLIDE =         9
 } servoIDs;
 
 /////////////////////////////////////////////// 

@@ -26,15 +26,41 @@ char sz_playRubiksString[BUFFSIZE] = "Rubik";
 char sz_playCardsString[BUFFSIZE] = "Cards";
 char sz_playEtchString[BUFFSIZE] = "Etch.";
 char sz_idleString[BUFFSIZE] = "Idle.";
+char sz_waitString[BUFFSIZE] = "Wait.";
 
 int main(void) {
-    // Start off in idle state
-    strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
+    u16_ledOnValue = 65535;
+    u16_tempLedValue = 0;
+
+    // Start off in wait state, waiting for the LED to turn off
+    strncpy(sz_currentStateString, sz_waitString, BUFFSIZE);
     st_picState = IDLE;
 
     // Initialize pic and print out serial menu
     configBasic(HELLO_MSG);
     pic_game_player_init();
+
+    // Sample a few values from the on LED
+    for (i = 0; i < 100; ++i) {
+        u16_tempLedValue = read_photo_cell(START_CELL);
+        if (u16_tempLedValue < u16_ledOnValue) {
+            u16_ledOnValue = u16_tempLedValue;
+        }
+        DELAY_MS(10);
+    }
+
+    // Wait until the start light turns off
+    u16_tempLedValue = read_photo_cell(START_CELL);
+    while(u16_tempLedValue >= (u16_ledOnValue - LED_MARGIN)) {
+        u16_tempLedValue = read_photo_cell(START_CELL);
+        doHeartbeat();
+    }
+
+    // Move to the idle string, letting the motor controller it's time to move
+    strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
+    st_picState = IDLE;
+
+    // Print out the first serial menu
     serial_menu();
 
     // Game playing loop to check serial commands and I2C commands
