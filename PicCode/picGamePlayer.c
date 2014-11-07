@@ -29,10 +29,10 @@ char sz_idleString[BUFFSIZE] = "Idle.";
 char sz_waitString[BUFFSIZE] = "Wait.";
 
 int main(void) {
-    u16_ledMaxOnValue = 0;
-    u16_ledMinOnValue = 65535;
+    i16_ledMaxOnValue = 0;
+    i16_ledMinOnValue = 65535;
+    i16_ledThreshold = 0;
     u16_tempLedValue = 0;
-    u16_ledThreshold = 0;
     
     // Start off in wait state, waiting for the LED to turn off
     strncpy(sz_currentStateString, sz_waitString, BUFFSIZE);
@@ -45,32 +45,21 @@ int main(void) {
     // Sample a few values from the on LED
     for (i = 0; i < 100; ++i) {
         u16_tempLedValue = read_photo_cell(START_CELL);
-        if (u16_tempLedValue < u16_ledMinOnValue) {
-            u16_ledMinOnValue = u16_tempLedValue;
+        if (u16_tempLedValue < i16_ledMinOnValue) {
+            i16_ledMinOnValue = u16_tempLedValue;
         }
-        if (u16_tempLedValue > u16_ledMaxOnValue) {
-            u16_ledMaxOnValue = u16_tempLedValue;
+        if (u16_tempLedValue > i16_ledMaxOnValue) {
+            i16_ledMaxOnValue = u16_tempLedValue;
         }
         DELAY_MS(10);
     }
 
-    u16_ledThreshold = u16_ledMaxOnValue - u16_ledMinOnValue;
+    i16_ledThreshold = i16_ledMaxOnValue - i16_ledMinOnValue;
 
-    /*
-    while(1) {
-        u16_tempLedValue = read_photo_cell(START_CELL);
-        if (u16_tempLedValue >= (u16_ledMinOnValue - u16_ledThreshold)) {
-            printf("ON Min: %i Max: %i Threshold: %i Current: %i\n", u16_ledMinOnValue, u16_ledMaxOnValue, u16_ledThreshold, u16_tempLedValue);
-        } else {
-            printf("OF Min: %i Max: %i Threshold: %i Current: %i\n", u16_ledMinOnValue, u16_ledMaxOnValue, u16_ledThreshold, u16_tempLedValue);            
-        }
-    }
-    */
-    
     // Wait until the start light turns off
     printf("Waiting for start signal\n");
     u16_tempLedValue = read_photo_cell(START_CELL);
-    while(u16_tempLedValue >= (u16_ledMinOnValue - u16_ledThreshold)) {
+    while(u16_tempLedValue >= (i16_ledMinOnValue - i16_ledThreshold)) {
         u16_tempLedValue = read_photo_cell(START_CELL);
         doHeartbeat();
     }

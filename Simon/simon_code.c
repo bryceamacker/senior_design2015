@@ -97,6 +97,8 @@ void play_simon() {
         play_buttons(u8_roundNum);
         u8_roundNum++;
     }
+
+    simon_hover_buttons();
 }
 
 /////////////////////////////////////////////// 

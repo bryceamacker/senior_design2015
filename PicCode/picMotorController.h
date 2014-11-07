@@ -29,9 +29,9 @@
 #define BUFFSIZE 64
 
 typedef enum {
-    RUBIKS =    0,
-    ETCH =      1,
-    SIMON =     2,
+    SIMON =     0,
+    RUBIKS =    1,
+    ETCH =      2,
     CARD =      3
 } gameID;
 

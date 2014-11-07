@@ -50,9 +50,9 @@ volatile char sz_currentStateString[BUFFSIZE];
 volatile uint16_t u16_index;
 volatile picGamePlayerState st_picState;
 volatile STATE e_mystate = STATE_WAIT_FOR_ADDR;
-uint16_t u16_ledMinOnValue;
-uint16_t u16_ledMaxOnValue;
-uint16_t u16_ledThreshold;
+uint16_t i16_ledMaxOnValue;
+uint16_t i16_ledMinOnValue;
+uint16_t i16_ledThreshold;
 uint16_t u16_tempLedValue;
 uint8_t i;
 
