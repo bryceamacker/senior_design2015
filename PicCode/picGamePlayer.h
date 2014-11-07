@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: pic.h
+* FileName: picGamePlayer.h
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -26,7 +26,7 @@
 #define PIC_H_
 
 #define BUFFSIZE    64
-#define LED_MARGIN  300
+#define LED_MARGIN  100
 
 typedef enum {
     PLAY_SIMON,
@@ -50,8 +50,9 @@ volatile char sz_currentStateString[BUFFSIZE];
 volatile uint16_t u16_index;
 volatile picGamePlayerState st_picState;
 volatile STATE e_mystate = STATE_WAIT_FOR_ADDR;
-uint16_t u16_ledOnValue;
-uint16_t u16_ledOnValue;
+uint16_t u16_ledMinOnValue;
+uint16_t u16_ledMaxOnValue;
+uint16_t u16_ledThreshold;
 uint16_t u16_tempLedValue;
 uint8_t i;
 

@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName:
+* FileName: picMotorController.c
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -43,6 +43,10 @@ int main (void) {
         readNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *) sz_recieveString, 6);
         doHeartbeat();
     }
+
+    motors_move_forward(0.15);
+    DELAY_MS(2000);
+    motors_stop();
 
     // Play Rubiks, Etch, and Simon then stop
     while(u8_currentGame < 3) {

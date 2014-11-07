@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: pic.c
+* FileName: picGamePlayer.c
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -29,9 +29,11 @@ char sz_idleString[BUFFSIZE] = "Idle.";
 char sz_waitString[BUFFSIZE] = "Wait.";
 
 int main(void) {
-    u16_ledOnValue = 65535;
+    u16_ledMaxOnValue = 0;
+    u16_ledMinOnValue = 65535;
     u16_tempLedValue = 0;
-
+    u16_ledThreshold = 0;
+    
     // Start off in wait state, waiting for the LED to turn off
     strncpy(sz_currentStateString, sz_waitString, BUFFSIZE);
     st_picState = IDLE;
@@ -43,19 +45,34 @@ int main(void) {
     // Sample a few values from the on LED
     for (i = 0; i < 100; ++i) {
         u16_tempLedValue = read_photo_cell(START_CELL);
-        if (u16_tempLedValue < u16_ledOnValue) {
-            u16_ledOnValue = u16_tempLedValue;
+        if (u16_tempLedValue < u16_ledMinOnValue) {
+            u16_ledMinOnValue = u16_tempLedValue;
+        }
+        if (u16_tempLedValue > u16_ledMaxOnValue) {
+            u16_ledMaxOnValue = u16_tempLedValue;
         }
         DELAY_MS(10);
     }
 
+    u16_ledThreshold = u16_ledMaxOnValue - u16_ledMinOnValue;
+
+    /*
+    while(1) {
+        u16_tempLedValue = read_photo_cell(START_CELL);
+        if (u16_tempLedValue >= (u16_ledMinOnValue - u16_ledThreshold)) {
+            printf("ON Min: %i Max: %i Threshold: %i Current: %i\n", u16_ledMinOnValue, u16_ledMaxOnValue, u16_ledThreshold, u16_tempLedValue);
+        } else {
+            printf("OF Min: %i Max: %i Threshold: %i Current: %i\n", u16_ledMinOnValue, u16_ledMaxOnValue, u16_ledThreshold, u16_tempLedValue);            
+        }
+    }
+    */
+    
     // Wait until the start light turns off
     printf("Waiting for start signal\n");
     u16_tempLedValue = read_photo_cell(START_CELL);
-    while(u16_tempLedValue >= (u16_ledOnValue - LED_MARGIN)) {
+    while(u16_tempLedValue >= (u16_ledMinOnValue - u16_ledThreshold)) {
         u16_tempLedValue = read_photo_cell(START_CELL);
         doHeartbeat();
-        break;  /// DEBUG 
     }
 
     printf("Start signal detected\n");

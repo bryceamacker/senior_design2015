@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName:
+* FileName: pic_motorControllerConfig.c
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
