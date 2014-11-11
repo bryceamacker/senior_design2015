@@ -42,19 +42,14 @@ typedef enum  {
     STATE_WAIT_FOR_WRITE_DATA,
     STATE_SEND_READ_DATA,
     STATE_SEND_READ_LAST
-} STATE;
+} I2C_STATE;
 
 
 volatile char  sz_i2cInString[BUFFSIZE+1];
 volatile char sz_currentStateString[BUFFSIZE];
 volatile uint16_t u16_index;
-volatile picGamePlayerState st_picState;
-volatile STATE e_mystate = STATE_WAIT_FOR_ADDR;
-uint16_t i16_ledMaxOnValue;
-uint16_t i16_ledMinOnValue;
-uint16_t i16_ledThreshold;
-uint16_t u16_tempLedValue;
-uint8_t i;
+volatile picGamePlayerState e_picState;
+volatile I2C_STATE e_mystate = STATE_WAIT_FOR_ADDR;
 
 /**
  * @brief Handles I2C commands
@@ -62,5 +57,11 @@ uint8_t i;
  * @param  psz_s1 I2C in string
  */
 void I2C_check_command(volatile char *psz_s1);
+
+/**
+ * @brief Block until the start light turns off
+ */
+
+void wait_for_start_signal(void);
 
 #endif

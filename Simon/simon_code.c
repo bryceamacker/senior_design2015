@@ -29,10 +29,10 @@ uint8_t u8_blueLightPin = 2;
 uint8_t u8_redLightPin = 0;
 uint8_t u8_greenLightPin = 1;
 
-int16_t i16_lowestYellowValue = 0;
-int16_t i16_lowestBlueValue = 0;
-int16_t i16_lowestRedValue = 0;
-int16_t i16_lowestGreenValue = 0;
+int16_t i16_lowestYellowValue = 32767;
+int16_t i16_lowestBlueValue = 32767;
+int16_t i16_lowestRedValue = 32767;
+int16_t i16_lowestGreenValue = 32767;
 
 int16_t i16_currentYellowValue = 0;
 int16_t i16_currentBlueValue = 0;
@@ -53,6 +53,7 @@ uint16_t u16_currentYellowPushPulse = 0;
 uint16_t u16_currentBluePushPulse = 0;
 uint16_t u16_currentRedPushPulse = 0;
 uint16_t u16_currentGreenPushPulse = 0;
+uint16_t u16_currentStartPushPulse = 0;
 
 uint8_t au8_buttonArray[50];
 uint8_t u8_roundNum = 1;
@@ -73,6 +74,7 @@ void simon_init() {
     u16_currentBluePushPulse = BLUE_PUSH;
     u16_currentRedPushPulse = RED_PUSH;
     u16_currentGreenPushPulse = GREEN_PUSH;
+    u16_currentStartPushPulse = START_PUSH;
 }
 
 void play_simon() {
@@ -98,7 +100,7 @@ void play_simon() {
         u8_roundNum++;
     }
 
-    simon_hover_buttons();
+    simon_retract_buttons();
 }
 
 /////////////////////////////////////////////// 
@@ -268,6 +270,10 @@ void record_colors(uint8_t u8_numberOfButtons) {
         }
         //short DELAY_MS for faster response to light.
         DELAY_MS(10); 
+        if (u8_roundNum == 1) {
+            u16_currentStartPushPulse -= PULSE_INCREASE;
+            simon_push_button(START_BUTTON);
+        }
     }
 
     #ifdef DEBUG
@@ -499,23 +505,18 @@ void simon_push_button(buttonID button) {
     switch (button) {
         case YELLOW_BUTTON:
             turn_servo_by_pulse(SIMON_YELLOW, u16_currentYellowPushPulse);
-            // turn_servo_by_pulse(SIMON_YELLOW, YELLOW_PUSH);
             break;
         case BLUE_BUTTON:
             turn_servo_by_pulse(SIMON_BLUE, u16_currentBluePushPulse);
-            // turn_servo_by_pulse(SIMON_BLUE, BLUE_PUSH);
             break;
         case RED_BUTTON:
             turn_servo_by_pulse(SIMON_RED, u16_currentRedPushPulse);
-            // turn_servo_by_pulse(SIMON_RED, RED_PUSH);
             break;
         case GREEN_BUTTON:
             turn_servo_by_pulse(SIMON_GREEN, u16_currentGreenPushPulse);
-            // turn_servo_by_pulse(SIMON_GREEN, GREEN_PUSH);
             break;
         case START_BUTTON:
-            turn_servo_by_pulse(SIMON_YELLOW, u16_currentYellowPushPulse);
-            // turn_servo_by_pulse(SIMON_YELLOW, YELLOW_PUSH);
+            turn_servo_by_pulse(SIMON_YELLOW, u16_currentStartPushPulse);
             break;
         default:
             break;

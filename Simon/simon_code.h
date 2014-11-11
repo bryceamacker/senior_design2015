@@ -33,16 +33,18 @@
 #define GREEN_RETRACT   600
 
 // Hover pulse width constants
-#define YELLOW_HOVER    1390
+#define YELLOW_HOVER    1075
 #define BLUE_HOVER      1000
 #define RED_HOVER       980
-#define GREEN_HOVER     1550
+#define GREEN_HOVER     2000
+#define START_HOVER     1075
 
 // Push pulse width constants
-#define YELLOW_PUSH     1060
+#define YELLOW_PUSH     1020
 #define BLUE_PUSH       975 
 #define RED_PUSH        935 
-#define GREEN_PUSH      1575
+#define GREEN_PUSH      2050
+#define START_PUSH      1020
 
 // Light thresholds
 #define YELLOW_LIGHT_THRESH_HOLD    90

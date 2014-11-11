@@ -29,18 +29,78 @@ char sz_idleString[BUFFSIZE] = "Idle.";
 char sz_waitString[BUFFSIZE] = "Wait.";
 
 int main(void) {
-    i16_ledMaxOnValue = 0;
-    i16_ledMinOnValue = 65535;
-    i16_ledThreshold = 0;
-    u16_tempLedValue = 0;
-    
     // Start off in wait state, waiting for the LED to turn off
     strncpy(sz_currentStateString, sz_waitString, BUFFSIZE);
-    st_picState = IDLE;
+    e_picState = IDLE;
 
     // Initialize pic and print out serial menu
     configBasic(HELLO_MSG);
     pic_game_player_init();
+
+    // Wait for the start signal
+    wait_for_start_signal();
+
+    // Move to the idle string, letting the motor controller it's time to move
+    strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
+    e_picState = IDLE;
+
+    // Print out the first serial menu
+    serial_menu();
+
+    // Game playing loop to check serial commands and I2C commands
+    while(1) {
+        if(isCharReady()) {
+            // Handle serial command
+            u8_c = inChar();
+            serial_command(u8_c);
+            serial_menu();
+        } else if (e_picState != IDLE) {
+            if (e_picState == PLAY_ETCH) {
+                play_etch();
+            } else if (e_picState == PLAY_RUBIK) {
+                play_rubiks();
+            } else if (e_picState == PLAY_SIMON) {
+                play_simon();
+            } else if (e_picState == PLAY_CARDS) {
+                continue;
+            }
+            e_picState = IDLE;
+            strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
+            printf("Waiting for a new game command\n");
+        }
+        doHeartbeat();
+    }
+}
+
+void I2C_check_command(volatile char *psz_s1) {
+    if (strcmp((char*) psz_s1, sz_playEtchString) == 0) {
+        e_picState = PLAY_ETCH;
+    } else if(strcmp((char*) psz_s1, sz_playRubiksString) == 0) {  
+        e_picState = PLAY_RUBIK;
+    } else if(strcmp((char*) psz_s1, sz_playSimonString) == 0) {
+        e_picState = PLAY_SIMON;
+    } else if(strcmp((char*) psz_s1, sz_playCardsString) == 0) {
+        e_picState = PLAY_CARDS;
+    } else {
+        e_picState = IDLE;
+    }
+    strncpy(sz_currentStateString, psz_s1, BUFFSIZE);
+    serial_menu();
+}
+
+void wait_for_start_signal(void) {
+    uint16_t i16_ledMaxOnValue;
+    uint16_t i16_ledMinOnValue;
+    uint16_t i16_ledThreshold;
+    uint16_t u16_tempLedValue;
+    uint8_t i;
+
+    i16_ledMaxOnValue = 0;
+    i16_ledMinOnValue = 65535;
+    i16_ledThreshold = 0;
+    u16_tempLedValue = 0;
+
+    printf("Waiting for start signal\n");
 
     // Sample a few values from the on LED
     for (i = 0; i < 100; ++i) {
@@ -54,10 +114,10 @@ int main(void) {
         DELAY_MS(10);
     }
 
+    // Calculate the threshold
     i16_ledThreshold = i16_ledMaxOnValue - i16_ledMinOnValue;
 
     // Wait until the start light turns off
-    printf("Waiting for start signal\n");
     u16_tempLedValue = read_photo_cell(START_CELL);
     while(u16_tempLedValue >= (i16_ledMinOnValue - i16_ledThreshold)) {
         u16_tempLedValue = read_photo_cell(START_CELL);
@@ -65,65 +125,9 @@ int main(void) {
     }
 
     printf("Start signal detected\n");
-
-    // Move to the idle string, letting the motor controller it's time to move
-    strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
-    st_picState = IDLE;
-
-    // Print out the first serial menu
-    serial_menu();
-
-    // Game playing loop to check serial commands and I2C commands
-    while(1) {
-        if(isCharReady()) {
-            // Handle serial command
-            u8_c = inChar();
-            serial_command(u8_c);
-            serial_menu();
-        } else if (st_picState == PLAY_ETCH) {
-            play_etch();
-            st_picState = IDLE;
-            strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
-            printf("Waiting new game command\n");
-        } else if (st_picState == PLAY_RUBIK) {
-            play_rubiks();
-            st_picState = IDLE;
-            strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
-            printf("Waiting new game command\n");
-        } else if (st_picState == PLAY_SIMON) {
-            play_simon();
-            st_picState = IDLE;
-            strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
-            printf("Waiting new game command\n");
-        } else if (st_picState == PLAY_CARDS) {
-            st_picState = IDLE;
-            strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
-            printf("Waiting new game command\n");
-        }
-        doHeartbeat();
-    }
 }
 
-void I2C_check_command(volatile char *psz_s1) {
-    if (strcmp((char*) psz_s1, "Etch.") == 0) {
-        st_picState = PLAY_ETCH;
-        strncpy(sz_currentStateString, sz_playEtchString, BUFFSIZE);
-    } else if(strcmp((char*) psz_s1, "Rubik") == 0) {  
-        st_picState = PLAY_RUBIK;
-        strncpy(sz_currentStateString, sz_playRubiksString, BUFFSIZE);
-    } else if(strcmp((char*) psz_s1, "Simon") == 0) {
-        st_picState = PLAY_SIMON;
-        strncpy(sz_currentStateString, sz_playSimonString, BUFFSIZE);
-    } else if(strcmp((char*) psz_s1, "Cards") == 0) {
-        st_picState = PLAY_CARDS;
-        strncpy(sz_currentStateString, sz_playCardsString, BUFFSIZE);
-    } else {
-        st_picState = IDLE;
-        strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
-    }
-    serial_menu();
-}
-
+// I2C intterrupt handler
 void _ISRFAST _SI2C1Interrupt(void) {
     uint8_t u8_c;
     _SI2C1IF = 0;

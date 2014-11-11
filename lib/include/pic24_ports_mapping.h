@@ -3061,7 +3061,8 @@
       defined(__PIC24HJ256GP206__) || \
       defined(__PIC24HJ64GP206__) || \
       defined(__PIC24HJ64GP506__) || \
-      defined(__PIC24HJ64GP506A__)
+      defined(__PIC24HJ64GP506A__)|| \
+      defined(__PIC24HJ128GP506A__)
 # define RB0_AN 0
 # define RB0_CN 2
 # define RB1_AN 1

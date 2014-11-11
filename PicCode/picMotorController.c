@@ -44,6 +44,7 @@ int main (void) {
         doHeartbeat();
     }
 
+    // Get out of the starting box
     motors_move_forward(0.15);
     DELAY_MS(2000);
     motors_stop();
