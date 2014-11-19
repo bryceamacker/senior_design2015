@@ -32,7 +32,7 @@
 #define ARM_SLIDE_FORWARD       2100
 #define ARM_SLIDE_SIMON         1350
 #define ARM_SLIDE_RUBIKS        1300
-#define ARM_SLIDE_ETCH          1300
+#define ARM_SLIDE_ETCH          2000
 
 #define ARM_GRAB_WAIT           500
 
@@ -69,9 +69,14 @@ void game_arm_pull_simon(void);
 void game_arm_pull_rubiks(void);
 
 /**
- * @brief Pulls in the Etch-a-Sketch
+ * @brief Pulls in the Etch-a-Sketch before the platform is lowered
  */
 void game_arm_pull_etch(void);
+
+/**
+ * @brief Holds in the Etch-a-Sketch after the platform is lowered
+ */
+void game_arm_hold_etch(void);
 
 /**
  * @brief Lower the arm to the ground safely

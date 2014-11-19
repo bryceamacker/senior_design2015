@@ -19,8 +19,11 @@
 *********************************************************************/
 
 #include "pic24_all.h"
-#include <stdio.h>
 #include <stdbool.h>
+
+#ifdef DEBUG_BUILD
+#include <stdio.h>
+#endif
 
 #ifndef _MOTORS_API_H_
 #define _MOTORS_API_H_

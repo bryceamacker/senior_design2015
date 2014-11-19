@@ -19,8 +19,11 @@
 *********************************************************************/
 
 #include "pic_gamePlayerConfig.h"
-#include <stdio.h>
 #include <string.h>
+
+#ifdef DEBUG_BUILD
+#include <stdio.h>
+#endif
 
 #ifndef PIC_H_
 #define PIC_H_

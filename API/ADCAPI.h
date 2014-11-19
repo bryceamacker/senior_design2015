@@ -19,7 +19,10 @@
 
 #include "pic24_all.h"
 #include "port_mapping.h"
+
+#ifdef DEBUG_BUILD
 #include <stdio.h>
+#endif
 
 #ifndef ADC_API_H_
 #define ADC_API_H_

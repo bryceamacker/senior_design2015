@@ -45,16 +45,13 @@ int main(void) {
     e_picState = IDLE;
 
     // Print out the first serial menu
+    #ifdef DEBUG_BUILD
     serial_menu();
+    #endif
 
     // Game playing loop to check serial commands and I2C commands
     while(1) {
-        if(isCharReady()) {
-            // Handle serial command
-            u8_c = inChar();
-            serial_command(u8_c);
-            serial_menu();
-        } else if (e_picState != IDLE) {
+        if (e_picState != IDLE) {
             if (e_picState == PLAY_ETCH) {
                 play_etch();
             } else if (e_picState == PLAY_RUBIK) {
@@ -66,8 +63,18 @@ int main(void) {
             }
             e_picState = IDLE;
             strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
+            #ifdef DEBUG_BUILD
             printf("Waiting for a new game command\n");
-        }
+            #endif
+        } 
+        #ifdef DEBUG_BUILD
+        else if(isCharReady()) {
+            // Handle serial command
+            u8_c = inChar();
+            serial_command(u8_c);
+            serial_menu();
+        } 
+        #endif
         doHeartbeat();
     }
 }
@@ -85,7 +92,10 @@ void I2C_check_command(volatile char *psz_s1) {
         e_picState = IDLE;
     }
     strncpy(sz_currentStateString, psz_s1, BUFFSIZE);
+
+    #ifdef DEBUG_BUILD
     serial_menu();
+    #endif
 }
 
 void wait_for_start_signal(void) {
@@ -100,7 +110,9 @@ void wait_for_start_signal(void) {
     i16_ledThreshold = 0;
     u16_tempLedValue = 0;
 
+    #ifdef DEBUG_BUILD
     printf("Waiting for start signal\n");
+    #endif
 
     // Sample a few values from the on LED
     for (i = 0; i < 100; ++i) {
@@ -124,7 +136,9 @@ void wait_for_start_signal(void) {
         doHeartbeat();
     }
 
+    #ifdef DEBUG_BUILD
     printf("Start signal detected\n");
+    #endif
 }
 
 // I2C intterrupt handler

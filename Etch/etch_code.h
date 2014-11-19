@@ -21,6 +21,11 @@
 #include "servosAPI.h"
 #include "port_mapping.h"
 #include "platform_control.h"
+#include "game_arm_control.h"
+
+#ifdef DEBUG_BUILD
+#include <stdio.h>
+#endif
 
 #ifndef ETCH_CODE_H_
 #define ETCH_CODE_H_

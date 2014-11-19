@@ -31,7 +31,9 @@ void rubik_init() {
 }
 
 void play_rubiks() {
+    #ifdef DEBUG_BUILD
     printf("\n*** Spinng Rubiks ***\n");
+    #endif
     game_arm_pull_rubiks();
     platform_rubiks();
     DELAY_MS(WAIT_TIME);

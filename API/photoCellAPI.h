@@ -22,6 +22,10 @@
 #include "port_mapping.h"
 #include "ADCAPI.h"
 
+#ifdef DEBUG_BUILD
+#include <stdio.h>
+#endif
+
 #ifndef PHOTO_CELL_API_H_
 #define PHOTO_CELL_API_H_
 

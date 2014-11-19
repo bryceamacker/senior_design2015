@@ -86,10 +86,41 @@ void game_arm_pull_rubiks() {
 }
 
 void game_arm_pull_etch() {
+    // Slide forward
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
     DELAY_MS(250);
+
+    // Step the arm down
     game_arm_lower();
     DELAY_MS(250);
+
+    // Jostle it in
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_ETCH);
+    DELAY_MS(ARM_GRAB_WAIT);
+
+    // Slide forward
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
+    DELAY_MS(250);
+
+    // Raise the arm
+    turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_UP);
+    DELAY_MS(250);
+
+    // Slide it back
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
+    DELAY_MS(ARM_GRAB_WAIT);
+}
+
+void game_arm_hold_etch() {    
+    // Slide forward
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
+    DELAY_MS(250);
+
+    // Step the arm down
+    game_arm_lower();
+    DELAY_MS(250);
+
+    // Hold the etch
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_ETCH);
     DELAY_MS(ARM_GRAB_WAIT);
 }

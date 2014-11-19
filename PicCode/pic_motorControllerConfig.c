@@ -30,6 +30,7 @@ void pic_motor_controller_init() {
     configI2C1(400);
 }
 
+#ifdef DEBUG_BUILD
 void motor_controller_serial_command(uint8_t u8_motor) {
     uint8_t u8_function;
     uint8_t u8_percentage;
@@ -117,3 +118,4 @@ void double_motor_function_menu() {
     printf("   Press 'l' for left turn\n");
     printf("   Press 's' for stop\n");
 }
+#endif

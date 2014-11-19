@@ -37,7 +37,9 @@ int main (void) {
     u8_currentGame = 0;
 
     // Wait for the game player PIC to detect the start light to turn off
+    #ifdef DEBUG_BUILD
     printf("Waiting for start signal\n");
+    #endif
     while (strcmp((char*) sz_recieveString, "Idle.") != 0) {
         DELAY_MS(1000);
         readNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *) sz_recieveString, 6);
@@ -51,7 +53,10 @@ int main (void) {
 
     // Play Rubiks, Etch, and Simon then stop
     while(u8_currentGame < 3) {
+        #ifdef DEBUG_BUILD
         printf("Following line to box\n");
+        #endif
+
         // Find a box
         follow_line_to_box(0.15);
 
@@ -75,16 +80,24 @@ void play_game(gameID game) {
     
     // Copy the correct string to send
     if (game == RUBIKS) {
+        #ifdef DEBUG_BUILD
         printf("Playing Rubiks\n");
+        #endif
         strncpy(sz_sendString, sz_playRubiksString, BUFFSIZE);
     } else if (game == ETCH) {
+        #ifdef DEBUG_BUILD
         printf("Playing Etch\n");
+        #endif
         strncpy(sz_sendString, sz_playEtchString, BUFFSIZE);
     } else if (game == SIMON) {
+        #ifdef DEBUG_BUILD
         printf("Playing Simon\n");
+        #endif
         strncpy(sz_sendString, sz_playSimonString, BUFFSIZE);
     } else if (game == CARD) {
+        #ifdef DEBUG_BUILD
         printf("Playing Cards\n");
+        #endif
         strncpy(sz_sendString, sz_playCardsString, BUFFSIZE);
     }
 
@@ -99,6 +112,7 @@ void play_game(gameID game) {
     } while (strcmp((char*) sz_recieveString, "Idle.") != 0);
 
     // Print out a success message
+    #ifdef DEBUG_BUILD
     if (game == RUBIKS) {
         printf("Rubiks played\n");
     } else if (game == ETCH) {
@@ -108,4 +122,5 @@ void play_game(gameID game) {
     } else if (game == CARD) {
         printf("Cards played\n");
     }
+    #endif
 }

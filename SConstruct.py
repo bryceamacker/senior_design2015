@@ -196,6 +196,17 @@ Help(opts.GenerateHelpText(env))
 Help("""Additional targets:
   template-build: Build all .c/.h files which are produced by templates.""")
 
+
+cppdefines = ['HARDWARE_PLATFORM=HARDMAPPED_UART']
+debug_build = False
+
+for key, value in ARGLIST:
+  if key == 'define':
+    cppdefines.append(value)
+    if value == "DEBUG_BUILD":
+      debug_build = True
+
+
 # A DEBUG STATEMENT to see what the scons build envrionment (env) has defined
 #print   env.Dump()
 #
@@ -205,7 +216,7 @@ Help("""Additional targets:
 # First, set up for defining targets.
 #
 env = env.Clone(MCU='24HJ128GP506A',
-                CPPDEFINES=['HARDWARE_PLATFORM=HARDMAPPED_UART'],
+                CPPDEFINES=cppdefines,
                 CPPPATH=[
                   './',
                   'lib/include',
@@ -225,9 +236,10 @@ env = env.Clone(MCU='24HJ128GP506A',
 # Inform SCons about the dependencies in the template-based files
 # SConscript('templates/SConscript.py', 'env')
 
-
 for srcFile in UserAppSources:
   env.Program([srcFile, LibSources])
   # Convert it to a .hex
   bin2hex(srcFile, env, 'esos')
 
+if debug_build:
+  print "DEBUG BUILD"

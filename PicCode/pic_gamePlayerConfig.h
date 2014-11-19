@@ -25,6 +25,11 @@
 #include "platform_control.h"
 #include "game_arm_control.h"
 
+#ifdef DEBUG_BUILD
+#include <stdio.h>
+#warning "Game Player Controlller: DEBUG BUILD"
+#endif
+
 /**
  * @brief Initialize the game player pic
  */

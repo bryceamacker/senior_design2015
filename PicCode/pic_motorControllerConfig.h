@@ -20,6 +20,11 @@
 #include "pic24_all.h"
 #include "lineFollowerAPI.h"
 
+#ifdef DEBUG_BUILD
+#include <stdio.h>
+#warning "Motor Controlller: DEBUG BUILD"
+#endif
+
 /**
  * @brief Initialize the motor controller pic
  */

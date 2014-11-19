@@ -131,6 +131,7 @@ void follow_line_back(uint16_t* pau16_sensorValues, float f_maxSpeed) {
     right_motor_reverse(f_leftDuty);
 }
 
+#ifdef DEBUG_BUILD
 // Print line follower data
 void print_line_data(uint16_t* pau16_sensorValues) { 
     int i;
@@ -139,3 +140,4 @@ void print_line_data(uint16_t* pau16_sensorValues) {
         printf("%d-", pau16_sensorValues[i]);
     }
 }
+#endif

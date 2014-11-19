@@ -20,7 +20,7 @@
 
 #include "simon_code.h"
 
-#ifdef DEBUG
+#ifdef DEBUG_BUILD 
 #include <stdio.h>
 #endif
 
@@ -78,12 +78,14 @@ void simon_init() {
 }
 
 void play_simon() {
+    #ifdef DEBUG_BUILD
     printf("\n*** Playing Simon ***\n");
+    #endif
     game_arm_pull_simon();
     simon_hover_buttons();
     calibrate_sensors(); // I don't think we need calibration with the new transistors
     while (u8_roundNum < 5) {
-        #ifdef DEBUG
+        #ifdef DEBUG_BUILD
         printf("\nROUND %i\n", u8_roundNum);
         #endif
 
@@ -137,7 +139,7 @@ void calibrate_sensors() {
         }
         DELAY_MS(10);
     }
-    #ifdef DEBUG
+    #ifdef DEBUG_BUILD
     printf("Calibrated\n");
     printf("Yellow: %i\n", i16_lowestYellowValue);
     printf("Blue: %i\n", i16_lowestBlueValue);
@@ -153,12 +155,14 @@ void play_buttons(uint8_t u8_numRounds) {
 
     // Push buttons until we've pushed enough buttons
     for(i = 0; i < u8_numRounds; i++) {
+        #ifdef DEBUG_BUILD
         printf ("Button: %i\n", i+1);
+        #endif
         DELAY_MS(500);
 
         // For each  button, push -> confirm on -> hover -> confirm off
         if (au8_buttonArray[i] == YELLOW_BUTTON) {
-            #ifdef DEBUG
+            #ifdef DEBUG_BUILD
             printf("Pressing Yellow\n");
             #endif
 
@@ -169,7 +173,7 @@ void play_buttons(uint8_t u8_numRounds) {
             confirm_color_off(YELLOW_BUTTON);
         } 
         else if (au8_buttonArray[i] == BLUE_BUTTON) {
-            #ifdef DEBUG
+            #ifdef DEBUG_BUILD
             printf("Pressing Blue\n");
             #endif
 
@@ -180,7 +184,7 @@ void play_buttons(uint8_t u8_numRounds) {
             confirm_color_off(BLUE_BUTTON);
         } 
         else if (au8_buttonArray[i] == RED_BUTTON) {
-            #ifdef DEBUG
+            #ifdef DEBUG_BUILD
             printf("Pressing Red\n");
             #endif
 
@@ -191,7 +195,7 @@ void play_buttons(uint8_t u8_numRounds) {
             confirm_color_off(RED_BUTTON);
         }
         else if (au8_buttonArray[i] == GREEN_BUTTON) {
-            #ifdef DEBUG
+            #ifdef DEBUG_BUILD
             printf("Pressing Green\n");
             #endif
 
@@ -227,7 +231,7 @@ void record_colors(uint8_t u8_numberOfButtons) {
         // If we encounter a difference larger than the threshold, add the button to our array and wait until it's off
         if (i16_yellowDifference > YELLOW_LIGHT_THRESH_HOLD)
         {
-            #ifdef DEBUG
+            #ifdef DEBUG_BUILD
             printf("Detected Yellow: %i\n", i16_currentYellowValue);
             #endif
 
@@ -238,7 +242,7 @@ void record_colors(uint8_t u8_numberOfButtons) {
         }
         else if (i16_blueDifference > BLUE_LIGHT_THRESH_HOLD)
         {
-            #ifdef DEBUG
+            #ifdef DEBUG_BUILD
             printf("Detected Blue: %i\n", i16_currentBlueValue);
             #endif
 
@@ -249,7 +253,7 @@ void record_colors(uint8_t u8_numberOfButtons) {
         }
         else if (i16_redDifference > RED_LIGHT_THRESH_HOLD)
         {
-            #ifdef DEBUG
+            #ifdef DEBUG_BUILD
             printf("Detected Red: %i\n", i16_currentRedValue);
             #endif
 
@@ -260,7 +264,7 @@ void record_colors(uint8_t u8_numberOfButtons) {
         }
         else if (i16_greenDifference > GREEN_LIGHT_THRESH_HOLD)
         {
-            #ifdef DEBUG
+            #ifdef DEBUG_BUILD
             printf("Detected Green: %i\n", i16_currentGreenValue);
             #endif
 
@@ -277,7 +281,7 @@ void record_colors(uint8_t u8_numberOfButtons) {
         }
     }
 
-    #ifdef DEBUG
+    #ifdef DEBUG_BUILD
     printf ("\nOur buttons\n");
     for (i = 0; i < u8_numberOfButtons; i++) {
         if (au8_buttonArray[i] == YELLOW_BUTTON){
@@ -300,7 +304,7 @@ void record_colors(uint8_t u8_numberOfButtons) {
 // Blocking function until color comes on
 void confirm_color(uint8_t u8_color) {
     // Confirm that the given color turns on
-    #ifdef DEBUG
+    #ifdef DEBUG_BUILD
     printf("Waiting to turn on\n");
     #endif
 
@@ -311,7 +315,7 @@ void confirm_color(uint8_t u8_color) {
             i16_yellowDifference = i16_currentYellowValue - i16_lowestYellowValue;
 
             if (i16_yellowDifference > YELLOW_LIGHT_THRESH_HOLD) {
-                #ifdef DEBUG
+                #ifdef DEBUG_BUILD
                 printf("Yellow confirmed on: %i\n", i16_currentYellowValue);
                 #endif
 
@@ -331,7 +335,7 @@ void confirm_color(uint8_t u8_color) {
             i16_blueDifference = i16_currentBlueValue - i16_lowestBlueValue;
 
             if (i16_blueDifference > BLUE_LIGHT_THRESH_HOLD) {
-                #ifdef DEBUG
+                #ifdef DEBUG_BUILD
                 printf("Blue confirmed on: %i\n", i16_currentBlueValue);
                 #endif
 
@@ -351,7 +355,7 @@ void confirm_color(uint8_t u8_color) {
             i16_redDifference = i16_currentRedValue - i16_lowestRedValue;
 
             if (i16_redDifference > RED_LIGHT_THRESH_HOLD) {
-                #ifdef DEBUG
+                #ifdef DEBUG_BUILD
                 printf("Red confirmed on: %i\n", i16_currentRedValue);
                 #endif
 
@@ -371,7 +375,7 @@ void confirm_color(uint8_t u8_color) {
             i16_greenDifference = i16_currentGreenValue - i16_lowestGreenValue;
 
             if (i16_greenDifference > GREEN_LIGHT_THRESH_HOLD) {
-                #ifdef DEBUG
+                #ifdef DEBUG_BUILD
                 printf("Green confirmed on: %i\n", i16_currentGreenValue);
                 #endif
 
@@ -391,7 +395,7 @@ void confirm_color(uint8_t u8_color) {
 // Blocking function until color confirmed off
 void confirm_color_off(uint8_t u8_color) {
     // Confirm that the given color turns on
-    #ifdef DEBUG
+    #ifdef DEBUG_BUILD
     printf("Waiting to turn off\n");
     #endif
 
@@ -401,7 +405,7 @@ void confirm_color_off(uint8_t u8_color) {
             i16_currentYellowValue = read_photo_cell(YELLOW_TRANS);
             
             if (i16_currentYellowValue < (i16_lowestYellowValue + 20)) {
-                #ifdef DEBUG
+                #ifdef DEBUG_BUILD
                 printf("Yellow confirmed off: %i\n", i16_currentYellowValue);
                 #endif
 
@@ -415,7 +419,7 @@ void confirm_color_off(uint8_t u8_color) {
             i16_currentBlueValue = read_photo_cell(BLUE_TRANS);
 
             if (i16_currentBlueValue < (i16_lowestBlueValue + 20)) {
-                #ifdef DEBUG
+                #ifdef DEBUG_BUILD
                 printf("Blue confirmed off: %i\n", i16_currentBlueValue);
                 #endif
 
@@ -429,7 +433,7 @@ void confirm_color_off(uint8_t u8_color) {
             i16_currentRedValue = read_photo_cell(RED_TRANS);
 
             if (i16_currentRedValue < (i16_lowestRedValue + 20)) {
-                #ifdef DEBUG
+                #ifdef DEBUG_BUILD
                 printf("Red confirmed off: %i\n", i16_currentBlueValue);
                 #endif
 
@@ -443,7 +447,7 @@ void confirm_color_off(uint8_t u8_color) {
             i16_currentGreenValue = read_photo_cell(GREEN_TRANS);
 
             if (i16_currentGreenValue < (i16_lowestGreenValue + 20)) {
-                #ifdef DEBUG
+                #ifdef DEBUG_BUILD
                 printf("Green confirmed off: %i\n", i16_currentGreenValue);
                 #endif
 

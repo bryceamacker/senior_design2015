@@ -33,11 +33,18 @@ void etch_init() {
 }
 
 void play_etch() {
+    #ifdef DEBUG_BUILD
     printf("\n*** Drawing 'IEEE' ***\n");
-    // game_arm_pull_etch();
+    #endif
+    game_arm_pull_etch();
+    DELAY_MS(5000); //Testy test
     platform_etch();
+    DELAY_MS(5000); //Testy test
     DELAY_MS(1000);
+    game_arm_hold_etch();
+    DELAY_MS(5000); //Testy test
     draw_IEEE();
+    DELAY_MS(5000); //Testy test
     DELAY_MS(250);
     platform_init();
 }

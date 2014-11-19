@@ -55,8 +55,6 @@
 #define PUSH_WAIT       250
 #define PULSE_INCREASE  25
 
-#define DEBUG 0
-
 typedef enum {
     YELLOW_BUTTON = 0,
     BLUE_BUTTON =   1,

@@ -56,6 +56,7 @@ void pic_game_player_init() {
     u8_platformFlipped = 0;
 }
 
+#ifdef DEBUG_BUILD
 void serial_command(uint8_t u8_c) {
     char u8_servo;
     if (u8_c == 'e') {
@@ -320,3 +321,5 @@ void set_servo(char u8_servo) {
         printf("Invalid choice\n");
     }
 }
+
+#endif

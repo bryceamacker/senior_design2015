@@ -21,8 +21,11 @@
 #include "pic24_all.h"
 #include "sensorArrayAPI.h"
 #include "motorsAPI.h"
-#include <stdio.h>
 #include <stdint.h>
+
+#ifdef DEBUG_BUILD
+#include <stdio.h>
+#endif
 
 #ifndef _LINE_FOLLOWER_API_H_
 #define _LINE_FOLLOWER_API_H_

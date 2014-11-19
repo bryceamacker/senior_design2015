@@ -59,6 +59,7 @@ uint16_t read_photo_cell(photoTrans color) {
     }
 }
 
+#ifdef DEBUG_BUILD
 // Continuously print out phototransistor values REQUIRES PIC RESET
 void photo_trans_print() {
     while (1)  {
@@ -69,3 +70,4 @@ void photo_trans_print() {
         doHeartbeat();
     } 
 }
+#endif
