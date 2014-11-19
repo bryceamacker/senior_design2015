@@ -60,6 +60,9 @@ uint8_t u8_roundNum = 1;
 uint8_t u8_firstRun = 0;
 uint8_t u8_button;
 
+volatile uint8_t u8_simonFinished = 0;
+volatile uint16_t u16_seconds = 0;
+
 /////////////////////////////////////////////// 
 //
 // Simon usage
@@ -69,6 +72,7 @@ uint8_t u8_button;
 void simon_init() {
     u8_firstRun = 1;
     simon_retract_buttons();
+    configTimer5();
 
     u16_currentYellowPushPulse = YELLOW_PUSH;
     u16_currentBluePushPulse = BLUE_PUSH;
@@ -84,7 +88,7 @@ void play_simon() {
     game_arm_pull_simon();
     simon_hover_buttons();
     calibrate_sensors(); // I don't think we need calibration with the new transistors
-    while (u8_roundNum < 5) {
+    while (!u8_simonFinished) {
         #ifdef DEBUG_BUILD
         printf("\nROUND %i\n", u8_roundNum);
         #endif
@@ -92,16 +96,22 @@ void play_simon() {
         if (u8_firstRun == 1) {
             simon_push_button(YELLOW_BUTTON);
             record_colors(u8_roundNum);
+            u16_seconds = 0;
             simon_hover_button(YELLOW_BUTTON);
             u8_firstRun = 0;
         } else {
             record_colors(u8_roundNum);
         }
+        // If we've surpassed 15 seconds, leave Simon
+        if (u8_simonFinished)
+            break;
         DELAY_MS(500);
         play_buttons(u8_roundNum);
         u8_roundNum++;
     }
+
     u8_roundNum = 1;
+    u8_simonFinished = 0;
     game_arm_release();
     simon_retract_buttons();
 }
@@ -155,6 +165,10 @@ void play_buttons(uint8_t u8_numRounds) {
 
     // Push buttons until we've pushed enough buttons
     for(i = 0; i < u8_numRounds; i++) {
+        // If we've surpassed 15 seconds, leave Simon
+        if (u8_simonFinished)
+            return;
+
         #ifdef DEBUG_BUILD
         printf ("Button: %i\n", i+1);
         #endif
@@ -217,6 +231,10 @@ void record_colors(uint8_t u8_numberOfButtons) {
 
     // Keep looking for lights until we've seen enough
     while(u8_detectedButtons < u8_numberOfButtons) {
+        // If we've surpassed 15 seconds, leave Simon
+        if (u8_simonFinished)
+            return;
+
         // For each light, get the transistor value, and compare it to the light threshold
         i16_currentYellowValue = read_photo_cell(YELLOW_TRANS);
         i16_currentBlueValue = read_photo_cell(BLUE_TRANS);
@@ -311,6 +329,10 @@ void confirm_color(uint8_t u8_color) {
     // Depending on which color we're looking for, enter a loop, where we continue to read adc until the threshold is exceeded
     if (u8_color == YELLOW_BUTTON) {
         while (1) {
+            // If we've surpassed 15 seconds, leave Simon
+            if (u8_simonFinished)
+                return;
+
             i16_currentYellowValue = read_photo_cell(YELLOW_TRANS);
             i16_yellowDifference = i16_currentYellowValue - i16_lowestYellowValue;
 
@@ -331,6 +353,10 @@ void confirm_color(uint8_t u8_color) {
         }
     } else if (u8_color == BLUE_BUTTON) {
         while (1) {
+            // If we've surpassed 15 seconds, leave Simon
+            if (u8_simonFinished)
+                return;
+
             i16_currentBlueValue = read_photo_cell(BLUE_TRANS);
             i16_blueDifference = i16_currentBlueValue - i16_lowestBlueValue;
 
@@ -351,6 +377,10 @@ void confirm_color(uint8_t u8_color) {
         }
     } else if (u8_color == RED_BUTTON) {
         while (1) {
+            // If we've surpassed 15 seconds, leave Simon
+            if (u8_simonFinished)
+                return;
+
             i16_currentRedValue = read_photo_cell(RED_TRANS);
             i16_redDifference = i16_currentRedValue - i16_lowestRedValue;
 
@@ -371,6 +401,10 @@ void confirm_color(uint8_t u8_color) {
         }
     } else if (u8_color == GREEN_BUTTON) {
         while (1) {
+            // If we've surpassed 15 seconds, leave Simon
+            if (u8_simonFinished)
+                return;
+
             i16_currentGreenValue = read_photo_cell(GREEN_TRANS);
             i16_greenDifference = i16_currentGreenValue - i16_lowestGreenValue;
 
@@ -402,6 +436,10 @@ void confirm_color_off(uint8_t u8_color) {
     // Depending on which color we're looking for, enter a loop, where we continue to read adc until the adc reads below the lowest level
     if (u8_color == YELLOW_BUTTON) {
         while (1) {
+            // If we've surpassed 15 seconds, leave Simon
+            if (u8_simonFinished)
+                return;
+
             i16_currentYellowValue = read_photo_cell(YELLOW_TRANS);
             
             if (i16_currentYellowValue < (i16_lowestYellowValue + 20)) {
@@ -416,6 +454,10 @@ void confirm_color_off(uint8_t u8_color) {
         }
     } else if (u8_color == BLUE_BUTTON) {
         while (1) {
+            // If we've surpassed 15 seconds, leave Simon
+            if (u8_simonFinished)
+                return;
+
             i16_currentBlueValue = read_photo_cell(BLUE_TRANS);
 
             if (i16_currentBlueValue < (i16_lowestBlueValue + 20)) {
@@ -430,6 +472,10 @@ void confirm_color_off(uint8_t u8_color) {
         }
     } else if (u8_color == RED_BUTTON) {
         while (1) {
+            // If we've surpassed 15 seconds, leave Simon
+            if (u8_simonFinished)
+                return;
+
             i16_currentRedValue = read_photo_cell(RED_TRANS);
 
             if (i16_currentRedValue < (i16_lowestRedValue + 20)) {
@@ -444,6 +490,10 @@ void confirm_color_off(uint8_t u8_color) {
         }
     } else if (u8_color == GREEN_BUTTON) {
         while (1) {
+            // If we've surpassed 15 seconds, leave Simon
+            if (u8_simonFinished)
+                return;
+
             i16_currentGreenValue = read_photo_cell(GREEN_TRANS);
 
             if (i16_currentGreenValue < (i16_lowestGreenValue + 20)) {
@@ -567,3 +617,23 @@ void simon_push_and_hover_buttons() {
     simon_push_and_hover_button(GREEN_BUTTON);
 }
 
+// Count seconds for detrmining when to leave Simon
+void _ISRFAST _T5Interrupt (void) {
+  u16_seconds++;
+  if (u16_seconds == 15) {
+    u8_simonFinished = 1;
+  }
+  _T5IF = 0;  //clear interrupt flag
+}
+
+// Configure a timer for detrmining when to leave Simon
+void configTimer5() {
+  T5CON = T5_OFF | T5_IDLE_CON | T5_GATE_OFF
+          | T5_SOURCE_EXT //ext clock
+          | T5_PS_1_1 ;  // prescaler of 1
+  PR5 = 0x7FFF;          //period is 1 second
+  _T5IF = 0;             //clear interrupt flag
+  _T5IP = 1;             //choose a priority
+  _T5IE = 1;             //enable the interrupt
+  T5CONbits.TON = 1;     //turn on the timer
+}

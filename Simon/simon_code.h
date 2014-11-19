@@ -170,4 +170,9 @@ void simon_retract_buttons(void);
  */
 void simon_push_and_hover_buttons(void);
 
+/**
+ * @brief Config a timer to count to 15 seconds
+ */
+void  configTimer5(void);
+
 #endif
