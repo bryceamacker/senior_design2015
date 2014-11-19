@@ -49,4 +49,5 @@ void platform_rubiks() {
 void platform_etch() {
     turn_servo_by_pulse(RUBIKS_TWIST,TWIST_DIAG_PULSE);
     turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_ETCH_PULSE);
+    DELAY_MS(1000);
 }

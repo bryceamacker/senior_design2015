@@ -36,16 +36,22 @@ void play_etch() {
     #ifdef DEBUG_BUILD
     printf("\n*** Drawing 'IEEE' ***\n");
     #endif
+    // Pull in etch/get arm out of the way
     game_arm_pull_etch();
-    DELAY_MS(5000); //Testy test
+
+    // Lower knobs on etch
     platform_etch();
-    DELAY_MS(5000); //Testy test
-    DELAY_MS(1000);
+
+    // Hold in the etch
     game_arm_hold_etch();
-    DELAY_MS(5000); //Testy test
+
+    // Draw 
     draw_IEEE();
-    DELAY_MS(5000); //Testy test
-    DELAY_MS(250);
+
+    // Release the etch
+    game_arm_release();
+
+    // Reset the platform
     platform_init();
 }
 
