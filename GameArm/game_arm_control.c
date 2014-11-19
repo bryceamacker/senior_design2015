@@ -52,7 +52,9 @@ void game_arm_pull_simon() {
     DELAY_MS(250);
     game_arm_lower();
     DELAY_MS(250);
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_SIMON);
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_SIMON_PULL_IN);
+    DELAY_MS(250);
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_SIMON_HOLD);
     DELAY_MS(ARM_GRAB_WAIT);
 }
 

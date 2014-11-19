@@ -35,8 +35,8 @@
 // Hover pulse width constants
 #define YELLOW_HOVER    925
 #define BLUE_HOVER      980
-#define RED_HOVER       960
-#define GREEN_HOVER     2215
+#define RED_HOVER       980
+#define GREEN_HOVER     2185
 #define START_HOVER     1075
 
 // Push pulse width constants
