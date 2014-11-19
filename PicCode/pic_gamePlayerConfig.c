@@ -65,6 +65,8 @@ void serial_command(uint8_t u8_c) {
         play_rubiks();
     } else if (u8_c == 's') {
         play_simon();
+    } else if (u8_c == 'd') {
+        play_card();
     } else if (u8_c == 'p') {
         if (u8_platformPos == 0) { 
             u8_platformPos = 1;
@@ -211,6 +213,7 @@ void serial_menu(void) {
     printf("   Press 'e' to play Etch-a-Sketch\n");
     printf("   Press 'c' to spin Rubiks\n");
     printf("   Press 's' to play Simon\n");
+    printf("   Press 'd' to pick up a card from the deck\n");
     if (u8_platformPos == 0) {
         printf("   Press 'p' to raise platform\n");
     } else {

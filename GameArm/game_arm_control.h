@@ -83,5 +83,20 @@ void game_arm_hold_etch(void);
  */
 void game_arm_lower(void);
 
+/**
+ * @brief Raise the arm up
+ */
+void game_arm_raise(void);
+
+/**
+ * @brief Slide game arm all the way forward
+ */
+void game_arm_slide_forward(void);
+
+/**
+ * @brief Slide game arm all the way back
+ */
+void game_arm_slide_back(void);
+
 
 #endif

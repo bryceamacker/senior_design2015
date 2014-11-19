@@ -132,3 +132,15 @@ void game_arm_lower() {
     DELAY_MS(250);
     turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_DOWN_STEP_3);
 }
+
+void game_arm_raise() {
+    turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_UP);
+}
+
+void game_arm_slide_forward() {
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
+}
+
+void game_arm_slide_back() {
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
+}

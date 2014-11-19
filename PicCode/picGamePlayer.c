@@ -59,7 +59,7 @@ int main(void) {
             } else if (e_picState == PLAY_SIMON) {
                 play_simon();
             } else if (e_picState == PLAY_CARDS) {
-                continue;
+                play_card();
             }
             e_picState = IDLE;
             strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);

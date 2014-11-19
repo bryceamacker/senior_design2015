@@ -81,6 +81,7 @@ LibSources = [
                 'Etch/etch_code.c',
                 'Rubiks/rubiks_code.c',
                 'Simon/simon_code.c',
+                'Card/card_code.c',
                 'Platform/platform_control.c',
                 'GameArm/game_arm_control.c'
               ]
@@ -225,6 +226,7 @@ env = env.Clone(MCU='24HJ128GP506A',
                   'Etch',
                   'Rubiks',
                   'Simon',
+                  'Card',
                   'PicCode',
                   'Platform',
                   'GameArm'

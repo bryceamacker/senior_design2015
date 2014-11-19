@@ -22,6 +22,7 @@
 #include "etch_code.h"
 #include "rubiks_code.h"
 #include "simon_code.h"
+#include "card_code.h"
 #include "platform_control.h"
 #include "game_arm_control.h"
 
