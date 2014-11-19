@@ -22,8 +22,8 @@
 
 #define SIMON_YELLOW_PIN            _LATD3
 #define SIMON_BLUE_PIN              _LATD4
-#define SIMON_RED_PIN               _LATD6
 #define SIMON_GREEN_PIN             _LATD5
+#define SIMON_RED_PIN               _LATD6
 
 #define ARM_POSITION_PIN            _LATD7
 #define ARM_SLIDE_PIN               _LATD8

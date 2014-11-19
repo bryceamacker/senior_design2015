@@ -204,7 +204,7 @@ Help("""Additional targets:
 # =====================
 # First, set up for defining targets.
 #
-env = env.Clone(MCU='24HJ64GP506A',
+env = env.Clone(MCU='24HJ128GP506A',
                 CPPDEFINES=['HARDWARE_PLATFORM=HARDMAPPED_UART'],
                 CPPPATH=[
                   './',

@@ -34,7 +34,7 @@ void etch_init() {
 
 void play_etch() {
     printf("\n*** Drawing 'IEEE' ***\n");
-    game_arm_pull_etch();
+    // game_arm_pull_etch();
     platform_etch();
     DELAY_MS(1000);
     draw_IEEE();

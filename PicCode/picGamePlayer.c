@@ -38,7 +38,7 @@ int main(void) {
     pic_game_player_init();
 
     // Wait for the start signal
-    wait_for_start_signal();
+    // wait_for_start_signal();
 
     // Move to the idle string, letting the motor controller it's time to move
     strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);

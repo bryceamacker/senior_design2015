@@ -27,30 +27,30 @@
 #define SIMON_CODE_H_
 
 // Retract pulse width constants
-#define YELLOW_RETRACT  2300
-#define BLUE_RETRACT    2350
+#define YELLOW_RETRACT  2520
+#define BLUE_RETRACT    2450
 #define RED_RETRACT     2350
 #define GREEN_RETRACT   600
 
 // Hover pulse width constants
-#define YELLOW_HOVER    1075
-#define BLUE_HOVER      1000
-#define RED_HOVER       980
-#define GREEN_HOVER     2000
+#define YELLOW_HOVER    925
+#define BLUE_HOVER      980
+#define RED_HOVER       960
+#define GREEN_HOVER     2215
 #define START_HOVER     1075
 
 // Push pulse width constants
-#define YELLOW_PUSH     1020
-#define BLUE_PUSH       975 
-#define RED_PUSH        935 
-#define GREEN_PUSH      2050
+#define YELLOW_PUSH     850
+#define BLUE_PUSH       925 
+#define RED_PUSH        920 
+#define GREEN_PUSH      2285
 #define START_PUSH      1020
 
 // Light thresholds
 #define YELLOW_LIGHT_THRESH_HOLD    90
 #define BLUE_LIGHT_THRESH_HOLD      150
 #define RED_LIGHT_THRESH_HOLD       150
-#define GREEN_LIGHT_THRESH_HOLD     150
+#define GREEN_LIGHT_THRESH_HOLD     90
 
 #define PUSH_WAIT       250
 #define PULSE_INCREASE  25
