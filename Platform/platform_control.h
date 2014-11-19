@@ -30,7 +30,7 @@
 #define PLATFORM_ETCH_PULSE     1000
 
 #define TWIST_COUNTER_PULSE     2050
-#define TWIST_DIAG_PULSE        1225
+#define TWIST_DIAG_PULSE        1350
 
 /////////////////////////////////////////////// 
 //

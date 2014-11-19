@@ -28,8 +28,8 @@
 #define ARM_POSITION_PIN            _LATD7
 #define ARM_SLIDE_PIN               _LATD8
 
-#define ETCH_VERTICAL_PIN           _LATD9
-#define ETCH_HORIZ_PIN              _LATD10
+#define ETCH_VERTICAL_PIN           _LATD10
+#define ETCH_HORIZ_PIN              _LATD9
 
 #define YELLOW_DETECTOR_PIN         _RB0
 #define BLUE_DETECTOR_PIN           _RB1
