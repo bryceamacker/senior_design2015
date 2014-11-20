@@ -64,6 +64,7 @@
 }
 #ben {
 	.picture {
-		@include retina-image('../images/ben', 250px 250px);
+		@include size(188px 250px);
+		@include retina-image('../images/ben',  150px 200px);
 	}
 }
