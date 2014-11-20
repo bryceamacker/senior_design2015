@@ -88,7 +88,7 @@ void play_simon() {
     game_arm_pull_simon();
     simon_hover_buttons();
     calibrate_sensors(); // I don't think we need calibration with the new transistors
-    while (!u8_simonFinished) {
+    while (u8_roundNum < 5) {
         #ifdef DEBUG_BUILD
         printf("\nROUND %i\n", u8_roundNum);
         #endif
