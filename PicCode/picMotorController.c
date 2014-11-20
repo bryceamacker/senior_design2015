@@ -52,7 +52,7 @@ int main (void) {
     motors_stop();
 
     // Play Rubiks, Etch, and Simon then stop
-    while(u8_currentGame < 3) {
+    while(u8_currentGame <= 3) {
         #ifdef DEBUG_BUILD
         printf("Following line to box\n");
         #endif

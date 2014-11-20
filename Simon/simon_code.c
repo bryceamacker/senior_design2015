@@ -113,6 +113,7 @@ void play_simon() {
     u8_roundNum = 1;
     u8_simonFinished = 0;
     game_arm_release();
+    DELAY_MS(1000);
     simon_retract_buttons();
 }
 

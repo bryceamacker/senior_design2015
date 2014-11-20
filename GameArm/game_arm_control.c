@@ -40,9 +40,9 @@ void game_arm_init() {
 
 void game_arm_release() {
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
-    DELAY_MS(250);
+    DELAY_MS(1000);
     turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_UP);
-    DELAY_MS(250);
+    DELAY_MS(1000);
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
     DELAY_MS(ARM_GRAB_WAIT);
 }
@@ -77,10 +77,10 @@ void game_arm_pull_rubiks() {
 
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_RUBIKS);
     DELAY_MS(500);
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
-    DELAY_MS(500);
+    turn_servo_by_pulse(ARM_SLIDE, 2200);
+    DELAY_MS(600);
     turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_UP);
-    DELAY_MS(250);
+    DELAY_MS(500);
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
     DELAY_MS(ARM_GRAB_WAIT);
 }
