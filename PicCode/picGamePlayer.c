@@ -21,12 +21,12 @@
 #include "picGamePlayer.h"
 
 char u8_c;
-char sz_playSimonString[BUFFSIZE] = "Simon";
-char sz_playRubiksString[BUFFSIZE] = "Rubik";
-char sz_playCardsString[BUFFSIZE] = "Cards";
-char sz_playEtchString[BUFFSIZE] = "Etch.";
-char sz_idleString[BUFFSIZE] = "Idle.";
-char sz_waitString[BUFFSIZE] = "Wait.";
+char sz_playSimonString[BUFFSIZE] =     "Simon";
+char sz_playRubiksString[BUFFSIZE] =    "Rubik";
+char sz_playCardsString[BUFFSIZE] =     "Cards";
+char sz_playEtchString[BUFFSIZE] =      "Etch.";
+char sz_idleString[BUFFSIZE] =          "Idle.";
+char sz_waitString[BUFFSIZE] =          "Wait.";
 
 int main(void) {
     // Start off in wait state, waiting for the LED to turn off

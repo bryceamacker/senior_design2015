@@ -53,6 +53,8 @@
 #define GREEN_LIGHT_THRESH_HOLD     90
 
 #define PUSH_WAIT       250
+#define RESPONSE_WAIT   10
+
 #define PULSE_INCREASE  25
 
 typedef enum {

@@ -29,7 +29,6 @@
 #define PIC_H_
 
 #define BUFFSIZE    64
-#define LED_MARGIN  100
 
 typedef enum {
     PLAY_SIMON,

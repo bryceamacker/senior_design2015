@@ -147,7 +147,7 @@ void calibrate_sensors() {
         if (i16_tempGreenValue < i16_lowestGreenValue) {
             i16_lowestGreenValue = i16_tempGreenValue;
         }
-        DELAY_MS(10);
+        DELAY_MS(RESPONSE_WAIT);
     }
     #ifdef DEBUG_BUILD
     printf("Calibrated\n");
@@ -292,7 +292,7 @@ void record_colors(uint8_t u8_numberOfButtons) {
             confirm_color_off(GREEN_BUTTON);
         }
         //short DELAY_MS for faster response to light.
-        DELAY_MS(10); 
+        DELAY_MS(RESPONSE_WAIT); 
         if (u8_roundNum == 1) {
             u16_currentStartPushPulse -= PULSE_INCREASE;
             simon_push_button(START_BUTTON);
@@ -349,7 +349,7 @@ void confirm_color(uint8_t u8_color) {
             simon_push_button(YELLOW_BUTTON);
 
             // Short DELAY_MS for faster response to light.
-            DELAY_MS(10);
+            DELAY_MS(RESPONSE_WAIT);
         }
     } else if (u8_color == BLUE_BUTTON) {
         while (1) {
@@ -373,7 +373,7 @@ void confirm_color(uint8_t u8_color) {
             simon_push_button(BLUE_BUTTON);
 
             // Short DELAY_MS for faster response to light.
-            DELAY_MS(10);
+            DELAY_MS(RESPONSE_WAIT);
         }
     } else if (u8_color == RED_BUTTON) {
         while (1) {
@@ -397,7 +397,7 @@ void confirm_color(uint8_t u8_color) {
             simon_push_button(RED_BUTTON);
 
             // Short DELAY_MS for faster response to light.
-            DELAY_MS(10);
+            DELAY_MS(RESPONSE_WAIT);
         }
     } else if (u8_color == GREEN_BUTTON) {
         while (1) {
@@ -421,7 +421,7 @@ void confirm_color(uint8_t u8_color) {
             simon_push_button(GREEN_BUTTON);
 
             // Short DELAY_MS for faster response to light.
-            DELAY_MS(10);
+            DELAY_MS(RESPONSE_WAIT);
         }
     }
 }
@@ -450,7 +450,7 @@ void confirm_color_off(uint8_t u8_color) {
                 return;
             }
             // Short DELAY_MS for faster response to light.
-            DELAY_MS(10);
+            DELAY_MS(RESPONSE_WAIT);
         }
     } else if (u8_color == BLUE_BUTTON) {
         while (1) {
@@ -468,7 +468,7 @@ void confirm_color_off(uint8_t u8_color) {
                 return;
             }
             // Short DELAY_MS for faster response to light.
-            DELAY_MS(10);
+            DELAY_MS(RESPONSE_WAIT);
         }
     } else if (u8_color == RED_BUTTON) {
         while (1) {
@@ -486,7 +486,7 @@ void confirm_color_off(uint8_t u8_color) {
                 return;
             }
             // Short DELAY_MS for faster response to light.
-            DELAY_MS(10);
+            DELAY_MS(RESPONSE_WAIT);
         }
     } else if (u8_color == GREEN_BUTTON) {
         while (1) {
@@ -504,7 +504,7 @@ void confirm_color_off(uint8_t u8_color) {
                 return;
             }
             // Short DELAY_MS for faster response to light.
-            DELAY_MS(10);
+            DELAY_MS(RESPONSE_WAIT);
         }
     }
 }
@@ -620,7 +620,7 @@ void simon_push_and_hover_buttons() {
 // Count seconds for detrmining when to leave Simon
 void _ISRFAST _T5Interrupt (void) {
   u16_seconds++;
-  if (u16_seconds == 15) {
+  if (u16_seconds >= 15) {
     u8_simonFinished = 1;
   }
   _T5IF = 0;  //clear interrupt flag
@@ -628,8 +628,10 @@ void _ISRFAST _T5Interrupt (void) {
 
 // Configure a timer for detrmining when to leave Simon
 void configTimer5() {
-  T5CON = T5_OFF | T5_IDLE_CON | T5_GATE_OFF
-          | T5_SOURCE_EXT //ext clock
+  T5CON = T5_OFF 
+          | T5_IDLE_CON 
+          | T5_SOURCE_INT
+          | T5_GATE_OFF
           | T5_PS_1_1 ;  // prescaler of 1
   PR5 = 0x7FFF;          //period is 1 second
   _T5IF = 0;             //clear interrupt flag

@@ -34,13 +34,17 @@ void play_rubiks() {
     #ifdef DEBUG_BUILD
     printf("\n*** Spinng Rubiks ***\n");
     #endif
+    // Pull in Rubiks
     game_arm_pull_rubiks();
+
+    // Lower platform
     platform_rubiks();
-    DELAY_MS(WAIT_TIME);
+
+    // Twist Rubiks
     twist_rubiks_clock();
-    DELAY_MS(WAIT_TIME);
+
+    // Reset platform
     platform_up();
-    DELAY_MS(WAIT_TIME);
     twist_rubiks_counter();
 }
 

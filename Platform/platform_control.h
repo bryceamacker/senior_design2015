@@ -32,6 +32,8 @@
 #define TWIST_COUNTER_PULSE     2050
 #define TWIST_DIAG_PULSE        1350
 
+#define PLATFORM_WAIT           1000
+
 /////////////////////////////////////////////// 
 //
 // Platform config

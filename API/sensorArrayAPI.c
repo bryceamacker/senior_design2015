@@ -86,13 +86,13 @@ void  configTimer4() {
 // Disables LED
 void emittersOff() {
     _RB8 = 0;
-    DELAY_US(200);
+    DELAY_US(EMITTER_DELAY);
 }
 
 // Enables LED
 void emittersOn() {
     _RB8 = 1;
-    DELAY_US(200);
+    DELAY_US(EMITTER_DELAY);
 }
 
 /////////////////////////////////////////////// 

@@ -245,7 +245,7 @@ void turn_servo_by_pulse(servoIDs id, uint16_t pulseWidth) {
 }
 
 void stop_servo (servoIDs id) {
-    turn_servo_by_pulse(id, 1500);
+    turn_servo_by_pulse(id, NEUTRAL_PULSE);
 }
 
 void step_servo (uint8_t direction, servoIDs id) {
@@ -259,17 +259,17 @@ void step_servo (uint8_t direction, servoIDs id) {
 void turn_servo_CW_degrees(servoIDs id, float degrees) {
     uint16_t u16_delayTime = (degrees/360) * CONT_CLOCK_FULL_ROTATION_TIME;
 
-    turn_servo_by_pulse(id, 2000);
+    turn_servo_by_pulse(id, CLOCKWISE_PULSE);
     DELAY_MS(u16_delayTime);
-    turn_servo_by_pulse(id, 1500);
+    turn_servo_by_pulse(id, NEUTRAL_PULSE);
 }
 
 void turn_servo_CCW_degrees(servoIDs id, float degrees) {
     uint16_t u16_delayTime = (degrees/360) * CONT_COUNTER_FULL_ROTATION_TIME;
 
-    turn_servo_by_pulse(id, 1000);
+    turn_servo_by_pulse(id, COUNTER_PULSE);
     DELAY_MS(u16_delayTime);
-    turn_servo_by_pulse(id, 1500);
+    turn_servo_by_pulse(id, NEUTRAL_PULSE);
 }
 
 void turn_servo_to_degree(servoIDs id, float degree) {

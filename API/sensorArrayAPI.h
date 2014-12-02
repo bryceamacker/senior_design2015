@@ -28,6 +28,8 @@
 #define QTR_EMITTERS_ON         1
 #define QTR_EMITTERS_ON_AND_OFF 2
 
+#define EMITTER_DELAY           200
+
 /////////////////////////////////////////////// 
 //
 // Sensor config

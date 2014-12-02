@@ -21,12 +21,13 @@
 
 #include "picMotorController.h"
 
-char sz_playRubiksString[BUFFSIZE] = "Rubik";
-char sz_playEtchString[BUFFSIZE] = "Etch.";
-char sz_playSimonString[BUFFSIZE] = "Simon";
-char sz_playCardsString[BUFFSIZE] = "Cards";
-char sz_idleString[BUFFSIZE] = "Idle.";
 uint8_t u8_c;
+char sz_playSimonString[BUFFSIZE] =     "Simon";
+char sz_playRubiksString[BUFFSIZE] =    "Rubik";
+char sz_playCardsString[BUFFSIZE] =     "Cards";
+char sz_playEtchString[BUFFSIZE] =      "Etch.";
+char sz_idleString[BUFFSIZE] =          "Idle.";
+char sz_waitString[BUFFSIZE] =          "Wait.";
 
 int main (void) {
     // Configure the motor controller PIC

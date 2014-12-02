@@ -28,7 +28,6 @@
 
 void platform_init() {
     platform_up();
-    DELAY_MS(500);
     turn_servo_by_pulse(RUBIKS_TWIST, TWIST_COUNTER_PULSE);
 }
 
@@ -40,14 +39,16 @@ void platform_init() {
 
 void platform_up() {
     turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_UP_PULSE);
+    DELAY_MS(PLATFORM_WAIT);
 }
 
 void platform_rubiks() {
     turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_RUBIK_PULSE);
+    DELAY_MS(PLATFORM_WAIT);
 }
 
 void platform_etch() {
     turn_servo_by_pulse(RUBIKS_TWIST,TWIST_DIAG_PULSE);
     turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_ETCH_PULSE);
-    DELAY_MS(1000);
+    DELAY_MS(PLATFORM_WAIT);
 }

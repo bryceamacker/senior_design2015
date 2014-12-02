@@ -81,17 +81,5 @@ void adc_change_channel(uint8_t u8_channel) {
 
     AD1CHS0 = ADC_CH0_NEG_SAMPLEA_VREFN | u8_channel;
 
-/* Bit of test code
-    // Select the pin we are reading from based on passed in channel
-    if (u8_channel == 0) {
-        AD1CHS0 = ADC_CH0_NEG_SAMPLEA_VREFN | RB0_AN;
-    } else if (u8_channel == 1) {
-        AD1CHS0 = ADC_CH0_NEG_SAMPLEA_VREFN | RB1_AN;
-    } else if (u8_channel == 2) {
-        AD1CHS0 = ADC_CH0_NEG_SAMPLEA_VREFN | RB2_AN;
-    } else if (u8_channel == 3) {
-        AD1CHS0 = ADC_CH0_NEG_SAMPLEA_VREFN | RB3_AN;
-    }
-*/
     AD1CON1bits.ADON = 1;
 }

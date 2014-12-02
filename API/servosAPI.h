@@ -31,10 +31,14 @@
 #define CONT_CLOCK_FULL_ROTATION_TIME    915    // Full clock rotation time for a continuous servo in seconds
 #define STEP_SIZE 1
 
-#define MIN_PW      600     // Minimum pulse width, in us
-#define MAX_PW      2400    // Maximum pulse width, in us
-#define SLOT_WIDTH  2800    // Slot width, in us
-#define MOTOR_PWM_PERIOD  20000   // Full pulse width in ms
+#define NEUTRAL_PULSE       1500
+#define CLOCKWISE_PULSE     2000
+#define COUNTER_PULSE       1000
+
+#define MIN_PW              600     // Minimum pulse width, in us
+#define MAX_PW              2400    // Maximum pulse width, in us
+#define SLOT_WIDTH          2800    // Slot width, in us
+#define MOTOR_PWM_PERIOD    20000   // Full pulse width in ms
 
 typedef enum {
     ETCH_VERTICAL =     0,

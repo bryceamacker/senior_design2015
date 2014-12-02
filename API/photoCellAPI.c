@@ -57,6 +57,10 @@ uint16_t read_photo_cell(photoTrans color) {
             return 0;
             break;
     }
+
+    // I think this should work gotta test it
+    // the enum in photoCellAPI.h would have to be changed
+    // return adc_read(color);
 }
 
 #ifdef DEBUG_BUILD

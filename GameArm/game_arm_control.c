@@ -27,9 +27,14 @@
 ///////////////////////////////////////////////
 
 void game_arm_init() {
-    turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_UP);
-    DELAY_MS(250);
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
+    // Slide forward
+    game_arm_slide_forward();
+
+    // Raise the arm
+    game_arm_raise();
+
+    // Slide it back
+    game_arm_slide_back();
 }
 
 /////////////////////////////////////////////// 
@@ -39,110 +44,118 @@ void game_arm_init() {
 ///////////////////////////////////////////////
 
 void game_arm_release() {
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
-    DELAY_MS(250);
-    turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_UP);
-    DELAY_MS(250);
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
-    DELAY_MS(ARM_GRAB_WAIT);
+    // Slide forward
+    game_arm_slide_forward();
+
+    // Raise the arm
+    game_arm_raise();
+
+    // Slide it back
+    game_arm_slide_back();
 }
 
 void game_arm_pull_simon() {
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
-    DELAY_MS(250);
+    // Slide forward
+    game_arm_slide_forward();
+
+    // Put the arm down
     game_arm_lower();
-    DELAY_MS(250);
+
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_SIMON_PULL_IN);
-    DELAY_MS(250);
+    DELAY_MS(ARM_WAIT);
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_SIMON_HOLD);
-    DELAY_MS(ARM_GRAB_WAIT);
+    DELAY_MS(ARM_WAIT);
 }
 
 void game_arm_pull_rubiks() {
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
-    DELAY_MS(500);
+    // Slide forward
+    game_arm_slide_forward();
+
+    // Put the arm down
     game_arm_lower();
-    DELAY_MS(250);
+
     // This will jostle the cube into the MFGP
     turn_servo_by_pulse(ARM_SLIDE, 1900);
-    DELAY_MS(450);
+    DELAY_MS(ARM_WAIT);
     turn_servo_by_pulse(ARM_SLIDE, 2100);
-    DELAY_MS(450);
+    DELAY_MS(ARM_WAIT);
     turn_servo_by_pulse(ARM_SLIDE, 1700);
-    DELAY_MS(450);
+    DELAY_MS(ARM_WAIT);
     turn_servo_by_pulse(ARM_SLIDE, 1800);
-    DELAY_MS(450);
+    DELAY_MS(ARM_WAIT);
     turn_servo_by_pulse(ARM_SLIDE, 1500);
-    DELAY_MS(450);
+    DELAY_MS(ARM_WAIT);
     turn_servo_by_pulse(ARM_SLIDE, 1700);
-    DELAY_MS(450);
+    DELAY_MS(ARM_WAIT);
 
+    // Final pull on the rubiks
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_RUBIKS);
-    DELAY_MS(500);
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
-    DELAY_MS(500);
-    turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_UP);
-    DELAY_MS(250);
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
-    DELAY_MS(ARM_GRAB_WAIT);
+    DELAY_MS(ARM_WAIT);
+
+    // Slide forward
+    game_arm_slide_forward();
+
+    // Raise the arm
+    game_arm_raise();
+
+    // Slide it back
+    game_arm_slide_back();
 }
 
 void game_arm_pull_etch() {
     // Slide forward
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
-    DELAY_MS(250);
+    game_arm_slide_forward();
 
-    // Step the arm down
+    // Put the arm down
     game_arm_lower();
-    DELAY_MS(250);
 
     // Jostle it in
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_ETCH);
-    DELAY_MS(ARM_GRAB_WAIT);
+    DELAY_MS(ARM_WAIT);
 
     // Slide forward
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
-    DELAY_MS(250);
+    game_arm_slide_forward();
 
     // Raise the arm
-    turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_UP);
-    DELAY_MS(250);
+    game_arm_raise();
 
     // Slide it back
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
-    DELAY_MS(ARM_GRAB_WAIT);
+    game_arm_slide_back();
 }
 
 void game_arm_hold_etch() {    
     // Slide forward
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
-    DELAY_MS(250);
+    game_arm_slide_forward();
 
-    // Step the arm down
+    // Put the arm down
     game_arm_lower();
-    DELAY_MS(250);
 
     // Hold the etch
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_ETCH);
-    DELAY_MS(ARM_GRAB_WAIT);
+    DELAY_MS(ARM_WAIT);
 }
 
 void game_arm_lower() {
+    // Step down the arm so it's not too sudden
     turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_DOWN_STEP_1);
-    DELAY_MS(250);
+    DELAY_MS(ARM_WAIT);
     turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_DOWN_STEP_2);
-    DELAY_MS(250);
+    DELAY_MS(ARM_WAIT);
     turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_DOWN_STEP_3);
+    DELAY_MS(ARM_WAIT);
 }
 
 void game_arm_raise() {
     turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_UP);
+    DELAY_MS(ARM_WAIT);
 }
 
 void game_arm_slide_forward() {
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
+    DELAY_MS(ARM_WAIT);
 }
 
 void game_arm_slide_back() {
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
+    DELAY_MS(ARM_WAIT);
 }
