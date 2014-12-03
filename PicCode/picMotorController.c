@@ -49,11 +49,11 @@ int main (void) {
 
     // Get out of the starting box
     motors_move_forward(0.15);
-    DELAY_MS(2000);
+    DELAY_MS(3000);
     motors_stop();
 
     // Play Rubiks, Etch, and Simon then stop
-    while(u8_currentGame < 3) {
+    while(u8_currentGame <= 3) {
         #ifdef DEBUG_BUILD
         printf("Following line to box\n");
         #endif

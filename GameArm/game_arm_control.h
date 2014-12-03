@@ -28,12 +28,11 @@
 #define ARM_POSITION_DOWN_STEP_2    800
 #define ARM_POSITION_DOWN_STEP_3    600
 
-#define ARM_SLIDE_BACK          	1320
-#define ARM_SLIDE_FORWARD       	2100
-#define ARM_SLIDE_SIMON_PULL_IN     1350
-#define ARM_SLIDE_SIMON_HOLD	 	1600
-#define ARM_SLIDE_RUBIKS        	1300
-#define ARM_SLIDE_ETCH          	1900
+#define ARM_SLIDE_BACK          1320
+#define ARM_SLIDE_FORWARD       2100
+#define ARM_SLIDE_SIMON         1350
+#define ARM_SLIDE_RUBIKS        1300
+#define ARM_SLIDE_ETCH          2000
 
 #define ARM_WAIT                    500
 

@@ -44,6 +44,7 @@ void game_arm_init() {
 ///////////////////////////////////////////////
 
 void game_arm_release() {
+<<<<<<< HEAD
     // Slide forward
     game_arm_slide_forward();
 
@@ -52,6 +53,14 @@ void game_arm_release() {
 
     // Slide it back
     game_arm_slide_back();
+=======
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
+    DELAY_MS(1000);
+    turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_UP);
+    DELAY_MS(1000);
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
+    DELAY_MS(ARM_GRAB_WAIT);
+>>>>>>> 88ae0f6ad8420e98ce98671c603f7fddbaa7cf33
 }
 
 void game_arm_pull_simon() {
@@ -60,9 +69,17 @@ void game_arm_pull_simon() {
 
     // Put the arm down
     game_arm_lower();
+<<<<<<< HEAD
+
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_SIMON_PULL_IN);
+    DELAY_MS(ARM_WAIT);
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_SIMON_HOLD);
+    DELAY_MS(ARM_WAIT);
+=======
     DELAY_MS(250);
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_SIMON);
     DELAY_MS(ARM_GRAB_WAIT);
+>>>>>>> 88ae0f6ad8420e98ce98671c603f7fddbaa7cf33
 }
 
 void game_arm_pull_rubiks() {
@@ -88,6 +105,7 @@ void game_arm_pull_rubiks() {
 
     // Final pull on the rubiks
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_RUBIKS);
+<<<<<<< HEAD
     DELAY_MS(ARM_WAIT);
 
     // Slide forward
@@ -98,6 +116,15 @@ void game_arm_pull_rubiks() {
 
     // Slide it back
     game_arm_slide_back();
+=======
+    DELAY_MS(500);
+    turn_servo_by_pulse(ARM_SLIDE, 2200);
+    DELAY_MS(600);
+    turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_UP);
+    DELAY_MS(500);
+    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
+    DELAY_MS(ARM_GRAB_WAIT);
+>>>>>>> 88ae0f6ad8420e98ce98671c603f7fddbaa7cf33
 }
 
 void game_arm_pull_etch() {
