@@ -216,7 +216,7 @@ for key, value in ARGLIST:
 # =====================
 # First, set up for defining targets.
 #
-env = env.Clone(MCU='24HJ128GP506A',
+env = env.Clone(MCU='24HJ64GP506A',
                 CPPDEFINES=cppdefines,
                 CPPPATH=[
                   './',

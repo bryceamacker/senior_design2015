@@ -61,7 +61,7 @@ uint8_t u8_firstRun = 0;
 uint8_t u8_button;
 
 volatile uint8_t u8_simonFinished = 0;
-volatile uint16_t u16_seconds = 0;
+volatile uint16_t u16_milliSeconds = 0;
 
 /////////////////////////////////////////////// 
 //
@@ -93,18 +93,33 @@ void play_simon() {
         printf("\nROUND %i\n", u8_roundNum);
         #endif
 
-        if (u8_firstRun == 1) {
+        if (u8_roundNum == 1) {
             simon_push_button(YELLOW_BUTTON);
             record_colors(u8_roundNum);
-            u16_seconds = 0;
+            #ifdef DEBUG_BUILD
+            printf("Starting Simon time\n");
+            #endif
+            u8_simonFinished = 0;
+            u16_milliSeconds = 0;
+            T5CONbits.TON = 1;     // Turn on the timer
             simon_hover_button(YELLOW_BUTTON);
-            u8_firstRun = 0;
+            // u8_firstRun = 0;
         } else {
             record_colors(u8_roundNum);
         }
         // If we've surpassed 15 seconds, leave Simon
-        if (u8_simonFinished)
+        if (u8_simonFinished) {
+            #ifdef DEBUG_BUILD
+            printf("Stopping Simon Time\n");
+            #endif
+            T5CONbits.TON = 0;     // Turn off the timer
+            u8_simonFinished = 0;
+            u16_milliSeconds = 0;
+            // u8_firstRun = 1;
+            u8_roundNum = 1;
+            
             break;
+        }
         DELAY_MS(500);
         play_buttons(u8_roundNum);
         u8_roundNum++;
@@ -620,11 +635,11 @@ void simon_push_and_hover_buttons() {
 
 // Count seconds for detrmining when to leave Simon
 void _ISRFAST _T5Interrupt (void) {
-  u16_seconds++;
-  if (u16_seconds >= 15) {
-    u8_simonFinished = 1;
-  }
-  _T5IF = 0;  //clear interrupt flag
+    u16_milliSeconds++;
+    if (u16_milliSeconds >= (SIMON_DURATION * 1000)) {
+        u8_simonFinished = 1;
+    }
+    _T5IF = 0;  //clear interrupt flag
 }
 
 // Configure a timer for detrmining when to leave Simon
@@ -633,10 +648,11 @@ void configTimer5() {
           | T5_IDLE_CON 
           | T5_SOURCE_INT
           | T5_GATE_OFF
-          | T5_PS_1_1 ;  // prescaler of 1
-  PR5 = 0x7FFF;          //period is 1 second
+          | T5_PS_1_1;  // prescaler of 1
+  // PR5 = 0x3D09;          // For prescaler of 256, .1 seconds
+  // PR5 = 0xF423;          // For prescaler of 64, .1 seconds
+  PR5 = 0x9C39;          // For prescaler of 1, 1 milisecond
   _T5IF = 0;             //clear interrupt flag
   _T5IP = 1;             //choose a priority
   _T5IE = 1;             //enable the interrupt
-  T5CONbits.TON = 1;     //turn on the timer
 }

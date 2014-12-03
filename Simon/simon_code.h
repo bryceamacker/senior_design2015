@@ -52,10 +52,15 @@
 #define RED_LIGHT_THRESH_HOLD       150
 #define GREEN_LIGHT_THRESH_HOLD     90
 
+// Amount to increase pulses when a push has not been successful
+#define PULSE_INCREASE  25
+
+// Various delays
 #define PUSH_WAIT       250
 #define RESPONSE_WAIT   10
 
-#define PULSE_INCREASE  25
+// The length of time in seconds to play Simon for
+#define SIMON_DURATION  15
 
 typedef enum {
     YELLOW_BUTTON = 0,
