@@ -62,7 +62,7 @@ void game_arm_pull_simon() {
     game_arm_lower();
     DELAY_MS(250);
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_SIMON);
-    DELAY_MS(ARM_GRAB_WAIT);
+    DELAY_MS(ARM_WAIT);
 }
 
 void game_arm_pull_rubiks() {

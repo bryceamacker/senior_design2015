@@ -1,4 +1,4 @@
-\/*********************************************************************
+/*********************************************************************
 *
 * Mississippi State University
 *
@@ -27,17 +27,17 @@
 void play_card() {
     // Slide arm forward
     game_arm_slide_forward();
-    DELAY(1000);
+    DELAY_MS(500);
 
     // Put arm down
     game_arm_lower();
-    DELAY(1000);
+    DELAY_MS(500);
 
     // Pull arm up
     game_arm_raise();
-    DELAY(1000);
+    DELAY_MS(500);
 
     // Slide arm back
     game_arm_slide_back();
-    DELAY(1000);
+    DELAY_MS(500);
 }
