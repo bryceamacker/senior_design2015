@@ -28,7 +28,6 @@
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>
-#warning "Game Player Controlller: DEBUG BUILD"
 #endif
 
 /**

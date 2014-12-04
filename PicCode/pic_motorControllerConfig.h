@@ -22,7 +22,6 @@
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>
-#warning "Motor Controlller: DEBUG BUILD"
 #endif
 
 /**

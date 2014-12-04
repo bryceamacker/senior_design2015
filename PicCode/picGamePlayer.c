@@ -30,7 +30,7 @@ char sz_waitString[BUFFSIZE] =          "Wait.";
 
 int main(void) {
     // Start off in wait state, waiting for the LED to turn off
-    strncpy(sz_currentStateString, sz_waitString, BUFFSIZE);
+    strncpy((char *) sz_currentStateString, sz_waitString, BUFFSIZE);
     e_picState = IDLE;
 
     // Initialize pic and print out serial menu
@@ -41,7 +41,7 @@ int main(void) {
     // wait_for_start_signal();
 
     // Move to the idle string, letting the motor controller it's time to move
-    strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
+    strncpy((char *) sz_currentStateString, sz_idleString, BUFFSIZE);
     e_picState = IDLE;
 
     // Print out the first serial menu
@@ -62,7 +62,7 @@ int main(void) {
                 play_card();
             }
             e_picState = IDLE;
-            strncpy(sz_currentStateString, sz_idleString, BUFFSIZE);
+            strncpy((char *) sz_currentStateString, sz_idleString, BUFFSIZE);
             #ifdef DEBUG_BUILD
             printf("Waiting for a new game command\n");
             #endif
@@ -91,7 +91,7 @@ void I2C_check_command(volatile char *psz_s1) {
     } else {
         e_picState = IDLE;
     }
-    strncpy(sz_currentStateString, psz_s1, BUFFSIZE);
+    strncpy((char *) sz_currentStateString, (char *) psz_s1, BUFFSIZE);
 
     #ifdef DEBUG_BUILD
     serial_menu();

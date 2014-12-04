@@ -103,10 +103,13 @@ void emittersOn() {
 
 // Calibrates to set the max value
 void calibrate(char u8_readMode) {
-    uint16_t* pau16_sensorValues[SENSOR_NUM];
-    read(pau16_sensorValues, u8_readMode);
+    uint16_t pau16_sensorValues[SENSOR_NUM]; // This might need to be uint16_t*, hasn't been tested
     uint16_t u16_i;
-    uint16_t u16_minValue = pau16_sensorValues[0];
+    uint16_t u16_minValue;
+
+    read(pau16_sensorValues, u8_readMode);
+    u16_minValue = pau16_sensorValues[0];
+    
     for(u16_i = 1; u16_i < SENSOR_NUM; u16_i++) {
         if(pau16_sensorValues[u16_i] < u16_minValue) {
             u16_minValue = pau16_sensorValues[u16_i];
@@ -181,8 +184,8 @@ void read_values(uint16_t* pau16_sensor_values) {
 
 // Binary encodes the raw values of each sensor
 void read_sensor_array(uint16_t* pau16_sensorValues, char u8_readMode) {
-    read(pau16_sensorValues,u8_readMode);
     uint16_t u16_i;
+    read(pau16_sensorValues,u8_readMode);
 
     for(u16_i = 0; u16_i < SENSOR_NUM; u16_i++) {
         if(pau16_sensorValues[u16_i] < u16_maxValue - 1) {

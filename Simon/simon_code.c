@@ -115,7 +115,6 @@ void play_simon() {
             T5CONbits.TON = 0;     // Turn off the timer
             u8_simonFinished = 0;
             u16_milliSeconds = 0;
-            // u8_firstRun = 1;
             u8_roundNum = 1;
             
             break;
@@ -241,8 +240,10 @@ void play_buttons(uint8_t u8_numRounds) {
 // Records colors so that buttons can be pushed in the correct order
 void record_colors(uint8_t u8_numberOfButtons) {
     // Record colors, adding the button to our array of buttons we'll push later
-    uint8_t i;
     uint8_t u8_detectedButtons;
+    #ifdef DEBUG_BUILD
+    uint8_t i;
+    #endif
     u8_detectedButtons = 0;
 
     // Keep looking for lights until we've seen enough

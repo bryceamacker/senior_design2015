@@ -84,7 +84,9 @@ void config_motor_timer3(void) {
 void motor_config_output_compare2(void) {
     T2CONbits.TON = 0;          //disable Timer when configuring Output compare
     //CONFIG_OC2_TO_RP(RB4_RP);   //map OC2 to RB4
-    OC2CONbits.OCM2 = 0b110;
+    // OC2CONbits.OCM2 = 0b110;
+    OC2CONbits.OCM = 0b110; // This is possibly incorrect and may need the line above it to work, but OCM2 is 1 bit, OCM is the 3 bit register
+
     OC2RS = 0;  //clear both registers
     OC2R = 0;
     #ifdef OC2CON1
@@ -103,7 +105,9 @@ void motor_config_output_compare2(void) {
 void motor_config_output_compare3(void) {
     T2CONbits.TON = 0;          //disable Timer when configuring Output compare
     //CONFIG_OC1_TO_RP(RB4_RP);   //map OC1 to RB4
-    OC3CONbits.OCM2 = 0b110;
+    // OC3CONbits.OCM2 = 0b110;
+    OC3CONbits.OCM = 0b110; // This is possibly incorrect and may need the line above it to work, but OCM2 is 1 bit, OCM is the 3 bit register
+
     OC3RS = 0;  //clear both registers
     OC3R = 0;
     #ifdef OC3CON2
@@ -122,7 +126,9 @@ void motor_config_output_compare3(void) {
 void motor_config_output_compare4(void) {
     T3CONbits.TON = 0;          //disable Timer when configuring Output compare
     //CONFIG_OC1_TO_RP(RB4_RP);   //map OC1 to RB4
-    OC4CONbits.OCM2 = 0b110;
+    // OC4CONbits.OCM2 = 0b110;
+    OC4CONbits.OCM = 0b110; // This is possibly incorrect and may need the line above it to work, but OCM2 is 1 bit, OCM is the 3 bit register
+
     OC4RS = 0;  //clear both registers
     OC4R = 0;
     #ifdef OC4CON2
@@ -141,7 +147,9 @@ void motor_config_output_compare4(void) {
 void motor_config_output_compare5(void) {
     T3CONbits.TON = 0;          //disable Timer when configuring Output compare
     //CONFIG_OC1_TO_RP(RB4_RP);   //map OC1 to RB4
-    OC5CONbits.OCM2 = 0b110;
+    // OC5CONbits.OCM2 = 0b110;
+    OC5CONbits.OCM = 0b110; // This is possibly incorrect and may need the line above it to work, but OCM2 is 1 bit, OCM is the 3 bit register
+
     OC5RS = 0;  //clear both registers
     OC5R = 0;
     #ifdef OC5CON2

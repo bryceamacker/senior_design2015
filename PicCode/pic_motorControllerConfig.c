@@ -52,7 +52,7 @@ void motor_controller_serial_command(uint8_t u8_motor) {
     if (u8_function != 's') {
         printf("\nEnter speed percentage: ");
         inStringEcho(sz_buf,31);
-        sscanf(sz_buf,"%d",(uint8_t *) &u8_percentage);
+        sscanf(sz_buf,"%hhu",(uint8_t *) &u8_percentage);
     }
 
     // Perform the given function on the given motor

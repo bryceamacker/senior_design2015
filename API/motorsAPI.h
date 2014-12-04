@@ -65,25 +65,25 @@ void config_motor_timer3(void);
  * @brief Configure the output comparator for motor usage
  * @details Uses OC2
  */
-void config_output_compare2(void);
+void motor_config_output_compare2(void);
 
 /**
  * @brief Configure the output comparator for motor usage
  * @details Uses OC3
  */
-void config_output_compare3(void);
+void motor_config_output_compare3(void);
 
 /**
  * @brief Configure the output comparator for motor usage
  * @details Uses OC4
  */
-void config_output_compare4(void);
+void motor_config_output_compare4(void);
 
 /**
  * @brief Configure the output comparator for motor usage
  * @details Uses OC5
  */
-void config_output_compare5(void);
+void motor_config_output_compare5(void);
 
 /////////////////////////////////////////////// 
 //

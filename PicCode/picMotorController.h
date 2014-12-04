@@ -22,6 +22,11 @@
 #include "pic_motorControllerConfig.h"
 #include <string.h>
 
+#ifdef DEBUG_BUILD
+#include <stdio.h>
+#warning "Motor Controlller: DEBUG BUILD"
+#endif
+
 #ifndef _PIC_MOTOR_CONTROLLER_H_
 #define _PIC_MOTOR_CONTROLLER_H_
 
