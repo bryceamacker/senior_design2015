@@ -27,17 +27,13 @@
 void play_card() {
     // Slide arm forward
     game_arm_slide_forward();
-    DELAY_MS(500);
 
     // Put arm down
     game_arm_lower();
-    DELAY_MS(500);
 
     // Pull arm up
     game_arm_raise();
-    DELAY_MS(500);
 
     // Slide arm back
     game_arm_slide_back();
-    DELAY_MS(500);
 }

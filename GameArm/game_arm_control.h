@@ -34,7 +34,7 @@
 #define ARM_SLIDE_RUBIKS        1300
 #define ARM_SLIDE_ETCH          2000
 
-#define ARM_WAIT                    500
+#define ARM_WAIT                    1000
 
 /////////////////////////////////////////////// 
 //

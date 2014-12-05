@@ -10,8 +10,8 @@
 * Company: Mississippi State University/ECE
 *
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* MODULE FUNCTION: Declarations for functions and constants to draw
-* IEEE on an etch-a-sketch using servos
+* MODULE FUNCTION: Functions and constants to draw IEEE on an 
+* etch-a-sketch using servos
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Author                Date                    Comment
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -33,8 +33,8 @@
 #define FULL_ROTATION_HORIZ_DIST    18.5039     // in mm
 #define FULL_ROTATION_VERT_DIST     19.3421     // in mm
 #define ETCH_UNIT                   4.4         // 4.4 mm unit for simplicity of code
-#define VERTICAL_ADJUSTMENT         1.0
-#define HORIZ_ADJUSTMENT            1.0
+#define VERTICAL_ADJUSTMENT         1.0         // Vertical adjustment factor
+#define HORIZ_ADJUSTMENT            1.0         // Horizontal adjustment factor
 
 /////////////////////////////////////////////// 
 //

@@ -57,7 +57,6 @@ uint16_t u16_currentStartPushPulse = 0;
 
 uint8_t au8_buttonArray[50];
 uint8_t u8_roundNum = 1;
-uint8_t u8_firstRun = 0;
 uint8_t u8_button;
 
 volatile uint8_t u8_simonFinished = 0;
@@ -70,7 +69,6 @@ volatile uint16_t u16_milliSeconds = 0;
 ///////////////////////////////////////////////
 
 void simon_init() {
-    u8_firstRun = 1;
     simon_retract_buttons();
     configTimer5();
 
@@ -85,26 +83,34 @@ void play_simon() {
     #ifdef DEBUG_BUILD
     printf("\n*** Playing Simon ***\n");
     #endif
+
+    // Grab the Simon and calibrate the sensors
     game_arm_pull_simon();
     simon_hover_buttons();
     calibrate_sensors(); // I don't think we need calibration with the new transistors
+
+    // Stop playing if we exceed 5 rounds
     while (u8_roundNum < 5) {
         #ifdef DEBUG_BUILD
         printf("\nROUND %i\n", u8_roundNum);
         #endif
 
+        // If it's the first round, hit the start button
         if (u8_roundNum == 1) {
-            simon_push_button(YELLOW_BUTTON);
+            // Push the start button and record the colors
+            simon_push_button(START_BUTTON);
             record_colors(u8_roundNum);
+
             #ifdef DEBUG_BUILD
             printf("Starting Simon time\n");
             #endif
+
             u8_simonFinished = 0;
             u16_milliSeconds = 0;
             T5CONbits.TON = 1;     // Turn on the timer
             simon_hover_button(YELLOW_BUTTON);
-            // u8_firstRun = 0;
         } else {
+            // Record a certain number of colors
             record_colors(u8_roundNum);
         }
         // If we've surpassed 15 seconds, leave Simon
@@ -119,15 +125,14 @@ void play_simon() {
             
             break;
         }
+        // Play back the buttons
         DELAY_MS(500);
         play_buttons(u8_roundNum);
         u8_roundNum++;
     }
 
-    u8_roundNum = 1;
-    u8_simonFinished = 0;
+    // Let go of the simon and pull the arms back
     game_arm_release();
-    DELAY_MS(1000);
     simon_retract_buttons();
 }
 
@@ -144,6 +149,7 @@ void calibrate_sensors() {
     int16_t i16_tempRedValue = read_photo_cell(RED_TRANS);
     int16_t i16_tempGreenValue = adc_read(GREEN_LIGHT); 
 
+    // Find the lowest value for each sensor over a short period of time
     for (i = 0; i < 100; i++) {
         i16_tempYellowValue = read_photo_cell(YELLOW_TRANS);
         i16_tempBlueValue = read_photo_cell(BLUE_TRANS);

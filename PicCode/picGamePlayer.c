@@ -40,7 +40,7 @@ int main(void) {
     // Wait for the start signal
     // wait_for_start_signal();
 
-    // Move to the idle string, letting the motor controller it's time to move
+    // Move to the idle state, letting the motor controller know that it's time to move
     strncpy((char *) sz_currentStateString, sz_idleString, BUFFSIZE);
     e_picState = IDLE;
 
@@ -51,6 +51,7 @@ int main(void) {
 
     // Game playing loop to check serial commands and I2C commands
     while(1) {
+        // If we're out of the Idle state then there's something to be done
         if (e_picState != IDLE) {
             if (e_picState == PLAY_ETCH) {
                 play_etch();
@@ -80,15 +81,24 @@ int main(void) {
 }
 
 void I2C_check_command(volatile char *psz_s1) {
+    // Etch
     if (strcmp((char*) psz_s1, sz_playEtchString) == 0) {
         e_picState = PLAY_ETCH;
-    } else if(strcmp((char*) psz_s1, sz_playRubiksString) == 0) {  
+    } 
+    // Rubiks
+    else if(strcmp((char*) psz_s1, sz_playRubiksString) == 0) {  
         e_picState = PLAY_RUBIK;
-    } else if(strcmp((char*) psz_s1, sz_playSimonString) == 0) {
+    } 
+    // Simon
+    else if(strcmp((char*) psz_s1, sz_playSimonString) == 0) {
         e_picState = PLAY_SIMON;
-    } else if(strcmp((char*) psz_s1, sz_playCardsString) == 0) {
+    } 
+    // Cards
+    else if(strcmp((char*) psz_s1, sz_playCardsString) == 0) {
         e_picState = PLAY_CARDS;
-    } else {
+    } 
+    // Idle
+    else {
         e_picState = IDLE;
     }
     strncpy((char *) sz_currentStateString, (char *) psz_s1, BUFFSIZE);

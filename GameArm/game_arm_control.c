@@ -60,7 +60,8 @@ void game_arm_pull_simon() {
 
     // Put the arm down
     game_arm_lower();
-    DELAY_MS(250);
+
+    // Grab the Simon
     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_SIMON);
     DELAY_MS(ARM_WAIT);
 }
