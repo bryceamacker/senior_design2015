@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: pic_gamePlayerConfig.c
+* FileName: pic_game_player_config.c
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -17,7 +17,7 @@
 * Steven Calhoun        9/20/204                SECON 2015
 *********************************************************************/
 
-#include "pic_gamePlayerConfig.h"
+#include "pic_game_player_config.h"
 
 #define PIC_I2C_ADDR 0x20
 

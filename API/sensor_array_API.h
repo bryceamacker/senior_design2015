@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: sensorArrayAPI.h
+* FileName: sensor_array_API.h
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16

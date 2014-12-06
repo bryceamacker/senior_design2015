@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: pic_motorControllerConfig.h
+* FileName: pic_navigation_config.h
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -18,7 +18,7 @@
 *********************************************************************/
 
 #include "pic24_all.h"
-#include "lineFollowerAPI.h"
+#include "line_follower_API.h"
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>

@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: lineFollowerAPI.c
+* FileName: line_follower_API.c
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -18,7 +18,7 @@
 * Bryce Amacker         10/01/2014              SECON 2015
 *********************************************************************/
 
-#include "lineFollowerAPI.h"
+#include "line_follower_API.h"
 
 void line_follower_init() {
     snesor_array_init();

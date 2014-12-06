@@ -18,7 +18,7 @@
 * Steven Calhoun        10/13/2014              SECON 2015
 *********************************************************************/
 
-#include "servosAPI.h"
+#include "servos_API.h"
 #include "port_mapping.h"
 
 #ifndef PLATFORM_CONTROL_H_

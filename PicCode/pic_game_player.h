@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: picGamePlayer.h
+* FileName: pic_game_player.h
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -18,7 +18,7 @@
 * Steven Calhoun        9/20/2014               SECON 2015
 *********************************************************************/
 
-#include "pic_gamePlayerConfig.h"
+#include "pic_game_player_config.h"
 #include <string.h>
 
 #ifdef DEBUG_BUILD

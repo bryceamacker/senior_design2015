@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: ADCAPI.c
+* FileName: ADC_API.c
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -17,7 +17,7 @@
 * Steven Calhoun        10/13/2014              SECON 2015
 *********************************************************************/
 
-#include "ADCAPI.h"
+#include "ADC_API.h"
 
 /////////////////////////////////////////////// 
 //

@@ -3,14 +3,14 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: photoCellAPI.h
+* FileName: ADC_API.h
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
 * Company: Mississippi State University/ECE
 *
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* MODULE FUNCTION: Functions to help read from photo cells
+* MODULE FUNCTION: Functions to help read from the ADC
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Author                Date                    Comment
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,46 +19,52 @@
 
 #include "pic24_all.h"
 #include "port_mapping.h"
-#include "ADCAPI.h"
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>
 #endif
 
-#ifndef PHOTO_CELL_API_H_
-#define PHOTO_CELL_API_H_
+#ifndef ADC_API_H_
+#define ADC_API_H_
 
-typedef enum {
-    YELLOW_TRANS =  0,
-    BLUE_TRANS =    1,
-    RED_TRANS =     2,
-    GREEN_TRANS =   3,
-    START_CELL =    4
-} photoTrans;
+#define YELLOW_LIGHT    1
+#define BLUE_LIGHT      0
+#define RED_LIGHT       3
+#define GREEN_LIGHT     2
 
 /////////////////////////////////////////////// 
 //
-// Photocell usage
+// ADC usage
 //
 ///////////////////////////////////////////////
 
 /**
- * @brief Configure the analog channels and ADC
- */
-void  photo_cell_init();
-
-/**
- * @brief Read the value from a photo transistor
+ * @brief Initialize ADC1
+ * @details 12 Bit mode, auto clock, auto-sampling off, internal clock, internal reference
  * 
- * @param color Photo transistor to be read
- * @return the value of the photo transistor
+ * @param u8_channel Pin to start the ADC on
  */
-uint16_t read_photo_cell(photoTrans color);
+void adc_init(uint8_t u8_channel);
 
 /**
- * @brief Continuously print out all the the photo transistors
- * @details THIS REQUIRES A PIC RESET, WOULDN'T RECCOMMEND
+ * @brief Read the ADC on the given pin
+ * 
+ * @param u8_channel The pin to be read
+ * @return The ADC value
  */
-void photo_trans_print();
+uint16_t adc_read(uint8_t u8_channel);
+
+/////////////////////////////////////////////// 
+//
+// ADC primitives
+//
+///////////////////////////////////////////////
+
+/**
+ * @brief Change the ADC to read on the given pin
+ * 
+ * @param u8_channel Pin to be read
+ */
+void adc_change_channel(uint8_t u8_channel);
 
 #endif

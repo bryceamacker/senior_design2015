@@ -18,7 +18,7 @@
 * Steven Calhoun        11/5/2014               SECON 2015
 *********************************************************************/
 
-#include "servosAPI.h"
+#include "servos_API.h"
 
 #ifndef GAME_ARM_CONTROL_H_
 #define GAME_ARM_CONTROL_H_

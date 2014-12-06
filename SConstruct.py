@@ -51,8 +51,8 @@ EnsureSConsVersion(2, 0)
 # USER APP FILES THAT DEFINE THIS APPLICATION
 # ============================================
 UserAppSources = [
-                    'PicCode/picGamePlayer.c',
-                    'PicCode/picMotorController.c'
+                    'PicCode/pic_game_player.c',
+                    'PicCode/pic_navigation.c'
                   ]
 
 LibSources = [
@@ -70,14 +70,14 @@ LibSources = [
                 'lib/src/pic24_timer.c',
                 'lib/src/pic24_uart.c',
                 'lib/src/pic24_util.c',
-                'API/servosAPI.c',
-                'API/photoCellAPI.c',
-                'API/ADCAPI.c',
-                'PicCode/pic_gamePlayerConfig.c',
-                'PicCode/pic_motorControllerConfig.c',
-                'API/motorsAPI.c',
-                'API/sensorArrayAPI.c',
-                'API/lineFollowerAPI.c',
+                'API/servos_API.c',
+                'API/photo_cell_API.c',
+                'API/ADC_API.c',
+                'PicCode/pic_game_player_config.c',
+                'PicCode/pic_navigation_config.c',
+                'API/motors_API.c',
+                'API/sensor_array_API.c',
+                'API/line_follower_API.c',
                 'Etch/etch_code.c',
                 'Rubiks/rubiks_code.c',
                 'Simon/simon_code.c',

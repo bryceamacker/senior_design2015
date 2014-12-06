@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: pic_motorControllerConfig.c
+* FileName: pic_navigation_config.c
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -17,7 +17,7 @@
 * Steven Calhoun        10/01/2014              SECON 2015
 *********************************************************************/
 
-#include "pic_motorControllerConfig.h"
+#include "pic_navigation_config.h"
 
 void pic_motor_controller_init() {
     // Allow the game player to boot up first

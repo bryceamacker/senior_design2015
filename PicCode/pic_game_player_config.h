@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: pic_gamePlayerConfig.h
+* FileName: pic_game_player_config.h
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -18,7 +18,7 @@
 *********************************************************************/
 
 #include "pic24_all.h"
-#include "motorsAPI.h"
+#include "motors_API.h"
 #include "etch_code.h"
 #include "rubiks_code.h"
 #include "simon_code.h"

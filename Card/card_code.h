@@ -17,7 +17,7 @@
 * Steven Calhoun        11/19/2014              SECON 2015
 *********************************************************************/
 
-#include "servosAPI.h"
+#include "servos_API.h"
 #include "port_mapping.h"
 #include "platform_control.h"
 #include "game_arm_control.h"

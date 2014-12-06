@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: lineFollowerAPI.h
+* FileName: line_follower_API.h
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -19,8 +19,8 @@
 *********************************************************************/
 
 #include "pic24_all.h"
-#include "sensorArrayAPI.h"
-#include "motorsAPI.h"
+#include "sensor_array_API.h"
+#include "motors_API.h"
 #include <stdint.h>
 
 #ifdef DEBUG_BUILD

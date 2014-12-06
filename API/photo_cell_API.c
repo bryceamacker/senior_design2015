@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: photoCellAPI.c
+* FileName: photo_cell_API.c
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -17,7 +17,7 @@
 * Steven Calhoun        10/13/2014              SECON 2015
 *********************************************************************/
 
-#include "photoCellAPI.h"
+#include "photo_cell_API.h"
 
 /////////////////////////////////////////////// 
 //

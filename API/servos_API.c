@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: servosAPI.c
+* FileName: servos_API.c
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -17,7 +17,7 @@
 * Steven Calhoun        9/20/2014               SECON 2015
 *********************************************************************/
 
-#include "servosAPI.h"
+#include "servos_API.h"
 
 static volatile uint16_t    au16_servoPWidths1[NUM_SERVOS1];      // Array to hold a servo pulse widths
 volatile uint8_t            u8_currentServo1 = 0;                // Servo currently being controlled

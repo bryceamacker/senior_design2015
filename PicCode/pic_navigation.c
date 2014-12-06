@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: picMotorController.c
+* FileName: pic_navigation.c
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -19,7 +19,7 @@
 * Steven Calhoun        10/01/2014              SECON 2015
 *********************************************************************/
 
-#include "picMotorController.h"
+#include "pic_navigation.h"
 
 uint8_t u8_c;
 char sz_playSimonString[BUFFSIZE] =     "Simon";

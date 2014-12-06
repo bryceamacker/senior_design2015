@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: picGamePlayer.c
+* FileName: pic_game_player.c
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -18,7 +18,7 @@
 * Steven Calhoun        9/20/2014               SECON 2015
 *********************************************************************/
 
-#include "picGamePlayer.h"
+#include "pic_game_player.h"
 
 char u8_c;
 char sz_playSimonString[BUFFSIZE] =     "Simon";

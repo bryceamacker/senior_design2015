@@ -18,8 +18,8 @@
 * Steven Calhoun        10/5/2014               SECON 2015
 *********************************************************************/
 
-#include "servosAPI.h"
-#include "photoCellAPI.h"
+#include "servos_API.h"
+#include "photo_cell_API.h"
 #include "game_arm_control.h"
 #include "port_mapping.h"
 

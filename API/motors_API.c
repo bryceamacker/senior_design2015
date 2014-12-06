@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName: motorsAPI.c
+* FileName: motors_API.c
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC24HJ64GP506A
 * Compiler: gcc-xc16
@@ -17,7 +17,7 @@
 * Steven Calhoun        9/20/2014               SECON 2015
 *********************************************************************/
 
-#include "motorsAPI.h"
+#include "motors_API.h"
 
 /////////////////////////////////////////////// 
 //
