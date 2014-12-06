@@ -32,7 +32,7 @@ char sz_waitString[BUFFSIZE] =          "Wait.";
 int main (void) {
     // Configure the motor controller PIC
     configBasic(HELLO_MSG);
-    pic_motor_controller_init();
+    pic_navigation_init();
 
     // Start with the first game
     u8_currentGame = 0;

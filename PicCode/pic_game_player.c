@@ -38,16 +38,11 @@ int main(void) {
     pic_game_player_init();
 
     // Wait for the start signal
-    // wait_for_start_signal();
+    wait_for_start_signal();
 
     // Move to the idle state, letting the motor controller know that it's time to move
     strncpy((char *) sz_currentStateString, sz_idleString, BUFFSIZE);
     e_picState = IDLE;
-
-    // Print out the first serial menu
-    #ifdef DEBUG_BUILD
-    serial_menu();
-    #endif
 
     // Game playing loop to check serial commands and I2C commands
     while(1) {
@@ -68,14 +63,6 @@ int main(void) {
             printf("Waiting for a new game command\n");
             #endif
         } 
-        #ifdef DEBUG_BUILD
-        else if(isCharReady()) {
-            // Handle serial command
-            u8_c = inChar();
-            serial_command(u8_c);
-            serial_menu();
-        } 
-        #endif
         doHeartbeat();
     }
 }
@@ -102,10 +89,6 @@ void I2C_check_command(volatile char *psz_s1) {
         e_picState = IDLE;
     }
     strncpy((char *) sz_currentStateString, (char *) psz_s1, BUFFSIZE);
-
-    #ifdef DEBUG_BUILD
-    serial_menu();
-    #endif
 }
 
 void wait_for_start_signal(void) {

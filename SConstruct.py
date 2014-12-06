@@ -206,6 +206,8 @@ for key, value in ARGLIST:
     cppdefines.append(value)
     if value == "DEBUG_BUILD":
       debug_build = True
+      UserAppSources.append("PicCode/Controllers/pic_game_player_controller.c");      
+      UserAppSources.append("PicCode/Controllers/pic_navigation_controller.c");      
 
 
 # A DEBUG STATEMENT to see what the scons build envrionment (env) has defined
@@ -241,7 +243,7 @@ env = env.Clone(MCU='24HJ64GP506A',
 for srcFile in UserAppSources:
   env.Program([srcFile, LibSources])
   # Convert it to a .hex
-  bin2hex(srcFile, env, 'esos')
+  bin2hex(srcFile, env, 'SECON')
 
 if debug_build:
   print "DEBUG BUILD"
