@@ -18,11 +18,21 @@
 * Steven Calhoun        12/5/2014              SECON 2015
 *********************************************************************/
 
-#include "pic_navigation.h"
-#include "pic_navigation_controller.h"
+#include "pic24_all.h"
+#include "line_follower_API.h"
+#include <string.h>
+#include <stdio.h>
+
+// Function declarations
+void pic_navigation_init();
+void navigation_serial_command(uint8_t u8_motor);
+void navigation_serial_menu(void);
+void single_motor_function_menu(void);
+void double_motor_function_menu(void);
 
 char u8_c;
 
+// Main loop for the navigation PIC controller using serial commands
 int main (void) {
     // Initialize pic and print out serial menu
     configBasic(HELLO_MSG);
@@ -41,6 +51,24 @@ int main (void) {
         doHeartbeat();
     }
 }
+
+// Initialization for the navigation PIC
+void pic_navigation_init() {
+    // Allow the game player to boot up first
+    DELAY_MS(5000);
+
+    // Initialize everything to follow a line
+    line_follower_init();
+
+    // I2C Config
+    configI2C1(400);
+}
+
+/////////////////////////////////////////////// 
+//
+// Serial menus for the navigation PIC
+//
+///////////////////////////////////////////////
 
 void navigation_serial_command(uint8_t u8_motor) {
     uint8_t u8_function;

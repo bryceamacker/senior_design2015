@@ -19,16 +19,43 @@
 * Steven Calhoun        10/01/2014              SECON 2015
 *********************************************************************/
 
-#include "pic_navigation.h"
+#include "pic24_all.h"
+#include "line_follower_API.h"
+#include <string.h>
 
-uint8_t u8_c;
+#ifdef DEBUG_BUILD
+#include <stdio.h>
+#warning "Navigation: DEBUG BUILD"
+#endif
+
+#define PIC_GAME_PLAYER_ADDR 0x20
+#define BUFFSIZE 64
+
+// Game enumeration
+typedef enum {
+    SIMON =     0,
+    RUBIKS =    1,
+    ETCH =      2,
+    CARD =      3
+} gameID;
+
+// I2C Messages
 char sz_playSimonString[BUFFSIZE] =     "Simon";
 char sz_playRubiksString[BUFFSIZE] =    "Rubik";
 char sz_playCardsString[BUFFSIZE] =     "Cards";
 char sz_playEtchString[BUFFSIZE] =      "Etch.";
 char sz_idleString[BUFFSIZE] =          "Idle.";
 char sz_waitString[BUFFSIZE] =          "Wait.";
+char sz_recieveString[BUFFSIZE];
 
+// Game counter
+uint8_t u8_currentGame;
+
+// Function declarations
+void pic_navigation_init();
+void play_game(gameID game);
+
+// Main loop for the navigation PIC using I2C commands
 int main (void) {
     // Configure the motor controller PIC
     configBasic(HELLO_MSG);
@@ -75,6 +102,19 @@ int main (void) {
     while(1) doHeartbeat();
 }
 
+// Initialization for the navigation PIC
+void pic_navigation_init() {
+    // Allow the game player to boot up first
+    DELAY_MS(5000);
+
+    // Initialize everything to follow a line
+    line_follower_init();
+
+    // I2C Config
+    configI2C1(400);
+}
+
+// Function to send I2C commands to play games
 void play_game(gameID game) {
     char sz_sendString[BUFFSIZE];
     char sz_recieveString[BUFFSIZE];

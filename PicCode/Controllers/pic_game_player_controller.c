@@ -18,10 +18,33 @@
 * Steven Calhoun        12/5/2014               SECON 2015
 *********************************************************************/
 
-#include "pic_game_player_controller.h"
+#include "pic24_all.h"
+#include "motors_API.h"
+#include "etch_code.h"
+#include "rubiks_code.h"
+#include "simon_code.h"
+#include "card_code.h"
+#include "platform_control.h"
+#include "game_arm_control.h"
+#include <string.h>
+#include <stdio.h>
 
+// Varibles for input and to hold the current status of the robot
 char u8_c;
+uint8_t u8_platformPos;
+uint8_t u8_twistPos;
+uint8_t u8_platformFlipped;
+uint16_t u16_pwm;
 
+// Function Declarations
+void pic_game_player_init(void);
+void game_player_serial_command(uint8_t u8_c);
+void game_player_serial_menu(void);
+void game_player_servo_menu(void);
+void simon_menu(void);
+void game_player_set_servo(char u8_servo);
+
+// Main loop for the game player pic using I2C command
 int main(void) {
     // Initialize pic and print out serial menu
     configBasic(HELLO_MSG);
@@ -44,6 +67,32 @@ int main(void) {
         doHeartbeat();
     }
 }
+
+// Controller initialization
+void pic_game_player_init() {
+    // Initialize all the timers and comparators for the servos
+    servo_init();
+
+    // Delay to let the configurations to take place
+    DELAY_MS(500);
+
+    // Initialize the game arm
+    game_arm_init();
+
+    // Initialize all the servos to their starting position
+    rubik_init();
+    etch_init();
+    simon_init();
+
+    // Photo cell init
+    photo_cell_init();
+}
+
+/////////////////////////////////////////////// 
+//
+// Serial menus for the game player PIC
+//
+///////////////////////////////////////////////
 
 void game_player_serial_command(uint8_t u8_c) {
     char u8_servo;
