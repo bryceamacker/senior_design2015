@@ -23,14 +23,15 @@
 #include <string.h>
 #include <stdio.h>
 
+// Variable to hold user input
+char u8_c;
+
 // Function declarations
 void pic_navigation_init();
 void navigation_serial_command(uint8_t u8_motor);
 void navigation_serial_menu(void);
 void single_motor_function_menu(void);
 void double_motor_function_menu(void);
-
-char u8_c;
 
 // Main loop for the navigation PIC controller using serial commands
 int main (void) {

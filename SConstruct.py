@@ -23,23 +23,21 @@
 #    Please maintain this header in its entirety when copying/modifying
 #    these files.
 #
-# ****************************************************************
-# SConstruct.py - Build all libraries and examples over many chips
-# ****************************************************************
-#  #. Install SCons.
-#  #. Install the Microchip compiler. Make sure your path
-#     includes the directories in which the compiler binaries
-#     exist.
-#   From the command line, change to the directory in which
-#     this file lies.
-#   Execute ``SCons``, which builds everything. Optionally use :doc:`runscons.bat <runscons.bat>` to filter through the resulting warnings.
+#    ********************************************************************
+#    FileName: SConstruct.py
+#    Proessor: PIC24HJ64GP506A, PIC24HJ128GP506A
+#    Compiler: gcc-xc16
+#    Company: Mississippi State University/ECE
 #
-#  The build process can be modified by passing options to
-#  SCons. See ``SCons --help`` for options specific
-#  to this build and ``SCons -H`` for generic SCons
-#  options.
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#    MODULE FUNCTION: Build all the PIC code for SECON 2015
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#    Author                Date                    Comment
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#    Steven Calhoun        9/20/2014               SECON 2015
+#    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# .. contents::
+#    ********************************************************************
 
 import os
 import psutil
@@ -73,7 +71,6 @@ LibSources = [
                 'API/servos_API.c',
                 'API/photo_cell_API.c',
                 'API/ADC_API.c',
-                # 'PicCode/pic_navigation_config.c',
                 'API/motors_API.c',
                 'API/sensor_array_API.c',
                 'API/line_follower_API.c',
@@ -146,26 +143,6 @@ b2h = Builder(
         src_suffix = 'elf')
 env.Append(BUILDERS = {'Hex' : b2h})
 
-# Functions used to build an application with library sources
-# ===============================================================
-# This function builds a program which includes the PIC24+ESOS library
-def buildProgramWithCommonSources(
-  # A list of source files to be built into one program.
-  sourceFileList,
-  # A list of source files upon which all sources
-  # in the sourceFileList depend. Wildcards are not
-  # supported.
-  commonSources,
-  # An Environment in which to build these sources.
-  buildEnvironment,
-  # A string to serve as an alias for this build.  commonSources,
-  aliasString):
-
-  be = buildEnvironment
-  be.Program(sourceFileList + commonSources)
-  # Pick the name of the target to be the first c file in the list
-  bin2hex(sourceFileList[0], be, aliasString)
-
 # Command-line options
 # --------------------
 # adjust our default environment based on user command-line requests
@@ -173,50 +150,42 @@ dict = env.Dictionary()
 if dict['BOOTLDR'] != 'msu':
     env.Replace(LINKERSCRIPT = '--script="p${MCU}.gld"')
 
-# By default, run number_of_cpus*4 jobs at once. This only works if the --no-cpp option is passed to the linker; otherwise, the linker produces a temporary file in the root build directory, which gets overwritten and confused when multiple builds run. There's some nice examples and explanation for this in the `SCons user guide <http://www.scons.org/doc/production/HTML/scons-user/c2092.html#AEN2183>`_.
-#
-# Some results from running on my 8-core PC:, gathered from the Total build time returned by the --debug=time scons command-line option:
-#
-# ==  ==========  ===============  ============
-# -j  Time (sec)  Time (hh:mm:ss)  Speedup
-# ==  ==========  ===============  ============
-# 32   303        0:05:03          11.66006601
-# 16   348.7      0:05:49          10.13191855
-#  8   510.9      0:08:31           6.915247602
-#  4   916        0:15:16           3.8569869
-#  2  1777        0:29:37           1.98818233
-#  1  3533        0:58:53           1
-# ==  ==========  ===============  ============
-
 env.SetOption('num_jobs', psutil.NUM_CPUS*4)
-print("Running with -j %d." % GetOption('num_jobs'))
 
 # generate some command line help for our custom options
 Help(opts.GenerateHelpText(env))
-Help("""Additional targets:
-  template-build: Build all .c/.h files which are produced by templates.""")
+Help("""Builds all of the 2015 SECON PIC code.""")
 
 
 cppdefines = ['HARDWARE_PLATFORM=HARDMAPPED_UART']
-debug_build = False
+debugBuild = False
 
 for key, value in ARGLIST:
   if key == 'define':
     cppdefines.append(value)
     if value == "DEBUG_BUILD":
-      debug_build = True
+      debugBuild = True
+      # Add the controllers to be built if this is a debug build
       UserAppSources.append("PicCode/Controllers/pic_game_player_controller.c");      
-      UserAppSources.append("PicCode/Controllers/pic_navigation_controller.c");      
+      UserAppSources.append("PicCode/Controllers/pic_navigation_controller.c");   
+
+if debugBuild:
+  print
+  print "*******************************************************"
+  print "DEBUG BUILD"
+  print "*******************************************************"
+  print
+else:
+  print
+  print "*******************************************************"
+  print "RELEASE BUILD"
+  print "*******************************************************"
+  print
 
 
-# A DEBUG STATEMENT to see what the scons build envrionment (env) has defined
-#print   env.Dump()
-#
-#
 # Definition of targets
 # =====================
 # First, set up for defining targets.
-#
 env = env.Clone(MCU='24HJ64GP506A',
                 CPPDEFINES=cppdefines,
                 CPPPATH=[
@@ -234,15 +203,9 @@ env = env.Clone(MCU='24HJ64GP506A',
                   ]
                 )
 
-#VariantDir('build_EMBEDDEDF14_33EP512GP806','../../pic24lib_all')
-
-# Inform SCons about the dependencies in the template-based files
-# SConscript('templates/SConscript.py', 'env')
-
+# Build each source file
 for srcFile in UserAppSources:
   env.Program([srcFile, LibSources])
   # Convert it to a .hex
   bin2hex(srcFile, env, 'SECON')
 
-if debug_build:
-  print "DEBUG BUILD"
