@@ -2,6 +2,7 @@
     @include row();
     padding-top: 15px;
     padding-left: 10px;
+    padding-bottom: 15px;
 }
 .file {
     @include span-columns(9);

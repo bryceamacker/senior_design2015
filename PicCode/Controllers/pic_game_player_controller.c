@@ -10,7 +10,7 @@
 * Company: Mississippi State University/ECE
 *
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* MODULE FUNCTION: PIC code that will give a user control over all 
+* MODULE FUNCTION: PIC code that will give a user control over all
 * the game player functions via a serial menu
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Author                Date                    Comment
@@ -63,7 +63,7 @@ int main(void) {
             u8_c = inChar();
             game_player_serial_command(u8_c);
             game_player_serial_menu();
-        } 
+        }
         doHeartbeat();
     }
 }
@@ -86,9 +86,12 @@ void pic_game_player_init() {
 
     // Photo cell init
     photo_cell_init();
+
+    // SSD init
+    ssd_init();
 }
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Serial menus for the game player PIC
 //
@@ -105,7 +108,7 @@ void game_player_serial_command(uint8_t u8_c) {
     } else if (u8_c == 'd') {
         play_card();
     } else if (u8_c == 'p') {
-        if (u8_platformPos == 0) { 
+        if (u8_platformPos == 0) {
             u8_platformPos = 1;
             printf("\n*** Lowering platform ***\n");
             platform_rubiks();
@@ -119,7 +122,7 @@ void game_player_serial_command(uint8_t u8_c) {
         if (u8_twistPos == 0) {
             u8_twistPos = 1;
             twist_rubiks_clock();
-        } else {                
+        } else {
             u8_twistPos = 0;
             twist_rubiks_counter();
         }
@@ -231,7 +234,7 @@ void game_player_serial_command(uint8_t u8_c) {
             printf("\n*** Pushing and hover start button ***\n");
             simon_push_and_hover_button(START_BUTTON);
         } else {
-            printf("Invalid command");            
+            printf("Invalid command");
         }
     } else if (u8_c == 'z') {
         photo_trans_print();
@@ -254,7 +257,7 @@ void game_player_serial_menu(void) {
     if (u8_platformPos == 0) {
         printf("   Press 'p' to raise platform\n");
     } else {
-        printf("   Press 'p' to lower platform\n");    
+        printf("   Press 'p' to lower platform\n");
     }
     printf("   Press 't' to spin rubiks twist servo\n");
     if (u8_platformFlipped == 0) {
@@ -300,7 +303,7 @@ void game_player_set_servo(char u8_servo) {
     char sz_buf[32];
     char u8_c;
     u8_c = 0;
-    
+
     // Get pulse width for non-continuous servos
     if (u8_servo != '0' && u8_servo != '1') {
         printf("\nEnter pulse width: ");
@@ -310,7 +313,7 @@ void game_player_set_servo(char u8_servo) {
 
     // Set servo appropriately
     if (u8_servo == 'v') {
-        printf("\nUse 'a' and 'd' to move servo clockwise and counter clockwise and 'q' to quit");  
+        printf("\nUse 'a' and 'd' to move servo clockwise and counter clockwise and 'q' to quit");
         while (u8_c != 'q') {
             u8_c = inChar();
             if (u8_c == 'a') {
@@ -322,7 +325,7 @@ void game_player_set_servo(char u8_servo) {
             }
         }
     } else if (u8_servo == 'h') {
-        printf("\nUse 'a' and 'd' to move servo and 'q' to quit");  
+        printf("\nUse 'a' and 'd' to move servo and 'q' to quit");
         while (u8_c != 'q') {
             u8_c = inChar();
             if (u8_c == 'a') {

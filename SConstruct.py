@@ -74,6 +74,7 @@ LibSources = [
                 'API/motors_API.c',
                 'API/sensor_array_API.c',
                 'API/line_follower_API.c',
+                'API/SSDisplayAPI.c',
                 'Etch/etch_code.c',
                 'Rubiks/rubiks_code.c',
                 'Simon/simon_code.c',
@@ -166,8 +167,8 @@ for key, value in ARGLIST:
     if value == "DEBUG_BUILD":
       debugBuild = True
       # Add the controllers to be built if this is a debug build
-      UserAppSources.append("PicCode/Controllers/pic_game_player_controller.c");      
-      UserAppSources.append("PicCode/Controllers/pic_navigation_controller.c");   
+      UserAppSources.append("PicCode/Controllers/pic_game_player_controller.c");
+      UserAppSources.append("PicCode/Controllers/pic_navigation_controller.c");
 
 if debugBuild:
   print
@@ -186,7 +187,7 @@ else:
 # Definition of targets
 # =====================
 # First, set up for defining targets.
-env = env.Clone(MCU='24HJ64GP506A',
+env = env.Clone(MCU='24HJ128GP506A',
                 CPPDEFINES=cppdefines,
                 CPPPATH=[
                   './',
@@ -208,4 +209,3 @@ for srcFile in UserAppSources:
   env.Program([srcFile, LibSources])
   # Convert it to a .hex
   bin2hex(srcFile, env, 'SECON')
-

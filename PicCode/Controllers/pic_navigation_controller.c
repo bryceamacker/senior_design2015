@@ -10,7 +10,7 @@
 * Company: Mississippi State University/ECE
 *
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* MODULE FUNCTION: PIC code that will give a user control over all 
+* MODULE FUNCTION: PIC code that will give a user control over all
 * the navigation functions via a serial menu
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Author                Date                    Comment
@@ -48,7 +48,7 @@ int main (void) {
             u8_c = inChar();
             navigation_serial_command(u8_c);
             navigation_serial_menu();
-        } 
+        }
         doHeartbeat();
     }
 }
@@ -65,7 +65,7 @@ void pic_navigation_init() {
     configI2C1(400);
 }
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Serial menus for the navigation PIC
 //
