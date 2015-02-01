@@ -10,7 +10,7 @@
 * Company: Mississippi State University/ECE
 *
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* MODULE FUNCTION: PIC that will use a sensor array and motors to 
+* MODULE FUNCTION: PIC that will use a sensor array and motors to
 * follow a line to a game then communicate to another PIC via I2C
 * so that it can play the game
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -68,12 +68,14 @@ int main (void) {
     #ifdef DEBUG_BUILD
     printf("Waiting for start signal\n");
     #endif
+    /**
     while (strcmp((char*) sz_recieveString, "Idle.") != 0) {
         DELAY_MS(1000);
         readNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *) sz_recieveString, 6);
         doHeartbeat();
     }
-
+    **/
+    
     // Get out of the starting box
     motors_move_forward(0.15);
     DELAY_MS(3000);
@@ -118,7 +120,7 @@ void pic_navigation_init() {
 void play_game(gameID game) {
     char sz_sendString[BUFFSIZE];
     char sz_recieveString[BUFFSIZE];
-    
+
     // Copy the correct string to send
     if (game == RUBIKS) {
         #ifdef DEBUG_BUILD

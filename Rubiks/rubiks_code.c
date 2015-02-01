@@ -19,7 +19,7 @@
 
 #include "rubiks_code.h"
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Rubiks Usage
 //
@@ -42,13 +42,15 @@ void play_rubiks() {
 
     // Twist Rubiks
     twist_rubiks_clock();
+    DELAY_MS(WAIT_TIME)
 
     // Reset platform
     platform_up();
+    DELAY_MS(WAIT_TIME)
     twist_rubiks_counter();
 }
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Rubiks primitives
 //
@@ -61,4 +63,3 @@ void twist_rubiks_clock() {
 void twist_rubiks_counter() {
     turn_servo_by_pulse(RUBIKS_TWIST, TWIST_COUNTER_PULSE);
 }
-

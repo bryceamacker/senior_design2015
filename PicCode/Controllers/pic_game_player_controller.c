@@ -43,6 +43,7 @@ void game_player_serial_menu(void);
 void game_player_servo_menu(void);
 void simon_menu(void);
 void game_player_set_servo(char u8_servo);
+void start_light_print(void);
 
 // Main loop for the game player pic using I2C command
 int main(void) {
@@ -238,6 +239,10 @@ void game_player_serial_command(uint8_t u8_c) {
         }
     } else if (u8_c == 'z') {
         photo_trans_print();
+    } else if (u8_c == 'l') {
+        start_light_print();
+    } else if (u8_c == 'v') {
+        test_ss_displays();
     } else if (u8_c == 'x') {
         // Set a sepcific servo
         game_player_servo_menu();
@@ -271,6 +276,8 @@ void game_player_serial_menu(void) {
     printf("   Press 'n' to push and hover Simon buttons\n");
     printf("   Press 'm' motor control\n");
     printf("   Press 'z' to read photo transistors\n");
+    printf("   Press 'l' to read start light resistor\n");
+    printf("   Press 'v' to test the displays\n");
     printf("   Press 'x' to set a servo\n");
 }
 
@@ -362,5 +369,16 @@ void game_player_set_servo(char u8_servo) {
         printf("\n*** Setting arm pivot to %u ***\n", u16_pwm);
     } else {
         printf("Invalid choice\n");
+    }
+}
+
+void start_light_print() {
+    uint16_t u16_startLightvalue;
+
+    while (1) {
+        u16_startLightvalue = read_photo_cell(START_CELL);
+        printf("Start light: %d\n", u16_startLightvalue);
+
+        doHeartbeat();
     }
 }

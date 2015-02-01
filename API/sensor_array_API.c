@@ -21,7 +21,7 @@
 
 uint16_t u16_maxValue = 0x7FFF;
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Sensor config
 //
@@ -30,7 +30,7 @@ uint16_t u16_maxValue = 0x7FFF;
 // Initializes and callibrates the sensor array
 void snesor_array_init() {
     uint8_t i;
-    
+
     // Calibrate a bit for better array results
     for (i = 0; i < 100; i++) {
         calibrate(QTR_EMITTERS_ON);
@@ -71,8 +71,8 @@ void config_inputs() {
 
 // Configures timer to measure discharge time of the capacitor
 void  configTimer4() {
-    T4CON = T4_OFF 
-            | T4_IDLE_CON 
+    T4CON = T4_OFF
+            | T4_IDLE_CON
             | T4_GATE_OFF
             | T4_32BIT_MODE_OFF
             | T4_SOURCE_INT
@@ -81,7 +81,7 @@ void  configTimer4() {
     TMR4  = 0;                       //clear timer2 value
     _T4IF = 0;                       //clear interrupt flag
     T4CONbits.TON = 1;               //turn on the timer
-} 
+}
 
 // Disables LED
 void emittersOff() {
@@ -95,7 +95,7 @@ void emittersOn() {
     DELAY_US(EMITTER_DELAY);
 }
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Sensor primitives
 //
@@ -109,14 +109,14 @@ void calibrate(char u8_readMode) {
 
     read(pau16_sensorValues, u8_readMode);
     u16_minValue = pau16_sensorValues[0];
-    
+
     for(u16_i = 1; u16_i < SENSOR_NUM; u16_i++) {
         if(pau16_sensorValues[u16_i] < u16_minValue) {
             u16_minValue = pau16_sensorValues[u16_i];
         }
     }
-    u16_maxValue = u16_minValue*2.5; 
-} 
+    u16_maxValue = u16_minValue*2.5;
+}
 
 // Reads the sensor values using a specific read mode
 void read(uint16_t* pau16_sensor_values, char u8_readMode) {
@@ -154,7 +154,7 @@ void read_values(uint16_t* pau16_sensor_values) {
     //drive outputs RB0 - RB7 and emitter high
     PORTB = 0x01FF;
     DELAY_US(10);
-    
+
     //change outputs to inputs
     //dissable internal pullups
     config_inputs();
@@ -176,7 +176,7 @@ void read_values(uint16_t* pau16_sensor_values) {
     T4CONbits.TON = 0;
 }
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Sensor usage
 //
@@ -195,4 +195,15 @@ void read_sensor_array(uint16_t* pau16_sensorValues, char u8_readMode) {
             pau16_sensorValues[u16_i] = 0;
         }
     }
-} 
+}
+
+#ifdef DEBUG_BUILD
+void print_sensor_array() {
+    uint16_t pau16_sensorValues[SENSOR_NUM];
+
+    while (1) {
+        read_values(pau16_sensorValues);
+        printf("%u %u %u %u %u %u %u %u\n", pau16_sensorValues[0], pau16_sensorValues[1], pau16_sensorValues[2], pau16_sensorValues[3], pau16_sensorValues[4], pau16_sensorValues[5], pau16_sensorValues[6], pau16_sensorValues[7]);
+    }
+}
+#endif

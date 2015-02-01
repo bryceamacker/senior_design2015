@@ -168,16 +168,16 @@ void I2C_check_command(volatile char *psz_s1) {
 
 // Function to wait on the start light to turn of
 void wait_for_start_signal(void) {
-    uint16_t i16_ledMaxOnValue;
-    uint16_t i16_ledMinOnValue;
+    uint16_t i16_ledMaxOnvalue;
+    uint16_t i16_ledMinOnvalue;
     uint16_t i16_ledThreshold;
-    uint16_t u16_tempLedValue;
+    uint16_t u16_tempLedvalue;
     uint8_t i;
 
-    i16_ledMaxOnValue = 0;
-    i16_ledMinOnValue = 65535;
+    i16_ledMaxOnvalue = 0;
+    i16_ledMinOnvalue = 65535;
     i16_ledThreshold = 0;
-    u16_tempLedValue = 0;
+    u16_tempLedvalue = 0;
 
     #ifdef DEBUG_BUILD
     printf("Waiting for start signal\n");
@@ -185,23 +185,23 @@ void wait_for_start_signal(void) {
 
     // Sample a few values from the on LED
     for (i = 0; i < 100; ++i) {
-        u16_tempLedValue = read_photo_cell(START_CELL);
-        if (u16_tempLedValue < i16_ledMinOnValue) {
-            i16_ledMinOnValue = u16_tempLedValue;
+        u16_tempLedvalue = read_photo_cell(START_CELL);
+        if (u16_tempLedvalue < i16_ledMinOnvalue) {
+            i16_ledMinOnvalue = u16_tempLedvalue;
         }
-        if (u16_tempLedValue > i16_ledMaxOnValue) {
-            i16_ledMaxOnValue = u16_tempLedValue;
+        if (u16_tempLedvalue > i16_ledMaxOnvalue) {
+            i16_ledMaxOnvalue = u16_tempLedvalue;
         }
         DELAY_MS(10);
     }
 
     // Calculate the threshold
-    i16_ledThreshold = i16_ledMaxOnValue - i16_ledMinOnValue;
+    i16_ledThreshold = i16_ledMaxOnvalue - i16_ledMinOnvalue;
 
     // Wait until the start light turns off
-    u16_tempLedValue = read_photo_cell(START_CELL);
-    while(u16_tempLedValue >= (i16_ledMinOnValue - i16_ledThreshold)) {
-        u16_tempLedValue = read_photo_cell(START_CELL);
+    u16_tempLedvalue = read_photo_cell(START_CELL);
+    while(u16_tempLedvalue >= (i16_ledMinOnvalue - i16_ledThreshold)) {
+        u16_tempLedvalue = read_photo_cell(START_CELL);
         doHeartbeat();
     }
 

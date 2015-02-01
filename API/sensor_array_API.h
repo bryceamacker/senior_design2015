@@ -18,6 +18,9 @@
 *********************************************************************/
 
 #include "pic24_all.h"
+#ifdef DEBUG_BUILD
+#include <stdio.h>
+#endif
 
 #ifndef SENSOR_ARRAY_API_H_
 #define SENSOR_ARRAY_API_H_
@@ -29,7 +32,7 @@
 
 #define EMITTER_DELAY           200
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Sensor config
 //
@@ -64,21 +67,21 @@ void emitters_off(void);
  */
 void emitters_on(void);
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Sensor primitives
 //
 ///////////////////////////////////////////////
 /**
  * @brief Calibrates the sensor array for the current lighting
- * 
+ *
  * @param u8_readMode whether the emitters are on or not
  */
 void calibrate(char u8_readMode);
 
 /**
  * @brief Read the sensor values using a specific read mode
- * 
+ *
  * @param pau16_sensorValues the values from the sensor array
  * @param u8_readMode whether the emitters are on or not
  */
@@ -86,22 +89,28 @@ void read(uint16_t* pau16_sensorValues, char u8_readMode);
 
 /**
  * @brief Read each individual capacitor value of each sensor on the array
- * 
+ *
  * @param pau16_sensorValues the values from the sensor array
  */
 void read_values(uint16_t* pau16_sensorValues);
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Sensor usage
 //
 ///////////////////////////////////////////////
 /**
  * @brief Read the entire sensor array
- * 
+ *
  * @param pau16_sensorValues the values from the sensor array
  * @param u8_readMode whether the emitters are on or not
  */
 void read_sensor_array(uint16_t* pau16_sensorValues, char u8_readMode);
 
+/**
+ * @brief Print out all the sensor array values
+**/
+#ifdef DEBUG_BUILD
+void print_sensor_array();
+#endif
 #endif

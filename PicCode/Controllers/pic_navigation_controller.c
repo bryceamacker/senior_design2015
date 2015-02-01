@@ -130,6 +130,9 @@ void navigation_serial_command(uint8_t u8_motor) {
                 motors_stop();
             }
             break;
+        case 'a':
+            print_sensor_array();
+            break;
         default:
             break;
     }
@@ -140,6 +143,7 @@ void navigation_serial_menu() {
     printf("   Press 'l' to control the left motor\n");
     printf("   Press 'r' to control the right motor\n");
     printf("   Press 'b' to control both motors\n");
+    printf("   Press 'a' to print out the sensor array values\n");
     printf("   Press 'q' to quit menu and wait for start light\n");
 }
 
