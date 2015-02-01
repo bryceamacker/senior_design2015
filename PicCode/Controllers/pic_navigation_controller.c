@@ -29,6 +29,7 @@ char u8_c;
 // Function declarations
 void pic_navigation_init();
 void navigation_serial_command(uint8_t u8_motor);
+void motor_control(uint8_t u8_motor, uint8_t u8_function);
 void navigation_serial_menu(void);
 void single_motor_function_menu(void);
 void double_motor_function_menu(void);
@@ -71,22 +72,38 @@ void pic_navigation_init() {
 //
 ///////////////////////////////////////////////
 
-void navigation_serial_command(uint8_t u8_motor) {
+void navigation_serial_command(uint8_t u8_command) {
     uint8_t u8_function;
+
+    switch(u8_command) {
+        case 'l':
+            single_motor_function_menu();
+            u8_function = inChar();
+            motor_control(u8_command, u8_function);
+            break;
+        case 'r':
+            single_motor_function_menu();
+            u8_function = inChar();
+            motor_control(u8_command, u8_function);
+            break;
+        case 'b':
+            double_motor_function_menu();
+            u8_function = inChar();
+            motor_control(u8_command, u8_function);
+            break;
+        case 'a':
+            print_sensor_array();
+            break;
+        default:
+            printf("Invalid Choice\n");
+            break;
+    }
+}
+
+void motor_control(uint8_t u8_motor, uint8_t u8_function) {
     uint8_t u8_percentage;
     char sz_buf[32];
 
-    // Get which funtion to perform
-    if (u8_motor == 'l') {
-        single_motor_function_menu();
-    } else if (u8_motor == 'r') {
-        single_motor_function_menu();
-    } else if (u8_motor == 'b') {
-        double_motor_function_menu();
-    } else {
-        printf("Invalid motor choice\n");
-    }
-    u8_function = inChar();
 
     // Get the speed percentage and convert it to a duty cycle, unless it's a stop command
     if (u8_function != 's') {
@@ -130,9 +147,6 @@ void navigation_serial_command(uint8_t u8_motor) {
                 motors_stop();
             }
             break;
-        case 'a':
-            print_sensor_array();
-            break;
         default:
             break;
     }
@@ -144,7 +158,6 @@ void navigation_serial_menu() {
     printf("   Press 'r' to control the right motor\n");
     printf("   Press 'b' to control both motors\n");
     printf("   Press 'a' to print out the sensor array values\n");
-    printf("   Press 'q' to quit menu and wait for start light\n");
 }
 
 void single_motor_function_menu() {
