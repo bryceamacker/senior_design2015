@@ -30,20 +30,20 @@
 #define YELLOW_RETRACT  2520
 #define BLUE_RETRACT    2450
 #define RED_RETRACT     2350
-#define GREEN_RETRACT   600
+#define GREEN_RETRACT   2350
 
 // Hover pulse width constants
-#define YELLOW_HOVER    955
-#define BLUE_HOVER      990
-#define RED_HOVER       980
-#define GREEN_HOVER     2150
+#define YELLOW_HOVER    890
+#define BLUE_HOVER      1020
+#define RED_HOVER       940
+#define GREEN_HOVER     910
 #define START_HOVER     YELLOW_HOVER
 
 // Push pulse width constants
 #define YELLOW_PUSH     850
-#define BLUE_PUSH       925 
-#define RED_PUSH        920 
-#define GREEN_PUSH      2285
+#define BLUE_PUSH       990
+#define RED_PUSH        920
+#define GREEN_PUSH      900
 #define START_PUSH      YELLOW_PUSH
 
 // Light thresholds
@@ -71,7 +71,7 @@ typedef enum {
 } buttonID;
 
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Simon Usage
 //
@@ -87,7 +87,7 @@ void simon_init(void);
  */
 void play_simon(void);
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Simon primitives
 //
@@ -102,7 +102,7 @@ void calibrate_sensors(void);
 
 /**
  * @brief Detects the Simon colors using the photo transistors
- * 
+ *
  * @param u8_numberOfButtons The number of buttons to expect
  */
 void record_colors(uint8_t u8_numberOfButtons);
@@ -110,49 +110,49 @@ void record_colors(uint8_t u8_numberOfButtons);
 /**
  * @brief Using the servo arms and an array of recorded buttons,
  * Simon buttons are pushed
- * 
+ *
  * @param u8_numRounds The number of buttons to push
  */
 void play_buttons(uint8_t u8_numRounds);
 
 /**
  * @brief Blocking function that blocks until the passed color turns on
- * 
+ *
  * @param u8_color The color to look for
  */
 void confirm_color(uint8_t u8_color);
 
 /**
  * @brief Blocking function that blocks until the passed color turns off
- * 
+ *
  * @param u8_color The color to confirm that is off
  */
 void confirm_color_off(uint8_t u8_color);
 
 /**
  * Retract the arm for the given button
- * 
+ *
  * @param button arm to be retracted
  */
 void simon_retract_button(buttonID button);
 
 /**
  * Hover the arm for the given button
- * 
+ *
  * @param button arm to be hovered
  */
 void simon_hover_button(buttonID button);
 
 /**
  * Push the given Simon button
- * 
+ *
  * @param button to be pushed
  */
 void simon_push_button(buttonID button);
 
 /**
  * Push the given Simon button then return to hover position
- * 
+ *
  * @param button to be pushed then hovered
  */
 void simon_push_and_hover_button(buttonID button);
