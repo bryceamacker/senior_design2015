@@ -9,6 +9,9 @@
 *.sublime-project
 *.sublime-workspace
 
+# Atom stuff
+.atom-build.json
+
 # Scons stuff
 *.elf
 *.o
