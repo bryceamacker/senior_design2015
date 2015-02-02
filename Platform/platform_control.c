@@ -20,7 +20,7 @@
 
 #include "platform_control.h"
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Platform config
 //
@@ -28,10 +28,10 @@
 
 void platform_init() {
     platform_up();
-    turn_servo_by_pulse(RUBIKS_TWIST, TWIST_COUNTER_PULSE);
+    turn_servo_by_pulse(RUBIKS_TWIST, TWIST_INITIAL_PULSE);
 }
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Platform usage
 //
@@ -39,7 +39,6 @@ void platform_init() {
 
 void platform_up() {
     turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_UP_PULSE);
-    DELAY_MS(PLATFORM_WAIT);
 }
 
 void platform_rubiks() {
@@ -51,4 +50,10 @@ void platform_etch() {
     turn_servo_by_pulse(RUBIKS_TWIST,TWIST_DIAG_PULSE);
     turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_ETCH_PULSE);
     DELAY_MS(PLATFORM_WAIT);
+}
+
+void platform_etch_undo() {
+    platform_up();
+    DELAY_MS(200);
+    turn_servo_by_pulse(RUBIKS_TWIST, TWIST_INITIAL_PULSE);
 }

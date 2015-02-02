@@ -10,7 +10,7 @@
 * Company: Mississippi State University/ECE
 *
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* MODULE FUNCTION: Functions and constants to draw IEEE on an 
+* MODULE FUNCTION: Functions and constants to draw IEEE on an
 * etch-a-sketch using servos
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Author                Date                    Comment
@@ -20,7 +20,7 @@
 
 #include "etch_code.h"
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Etch Usage
 //
@@ -44,17 +44,17 @@ void play_etch() {
     // Hold in the etch
     game_arm_hold_etch();
 
-    // Draw 
+    // Draw
     draw_IEEE();
 
     // Release the etch
     game_arm_release();
 
     // Reset the platform
-    platform_init();
+    platform_etch_undo();
 }
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Etch Primitives
 //
@@ -88,7 +88,7 @@ void turn_servo_horizontal_etch_distance(float distance) {
     }
 }
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Etch Characters/words
 //
@@ -124,7 +124,7 @@ void draw_E_character_from_bottom() {
 
 void draw_E_character_from_top() {
     // Top
-    turn_servo_horizontal_etch_distance(3 * ETCH_UNIT); 
+    turn_servo_horizontal_etch_distance(3 * ETCH_UNIT);
     turn_servo_horizontal_etch_distance(-3 * ETCH_UNIT);
 
     // Middle
@@ -148,7 +148,7 @@ void draw_IEEE() {
     draw_E_character_from_top();
     turn_servo_horizontal_etch_distance(2.5);
 
-    draw_E_character_from_bottom();    
+    draw_E_character_from_bottom();
 }
 
 void underline_to_reset() {

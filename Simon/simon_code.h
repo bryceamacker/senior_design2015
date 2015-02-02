@@ -22,6 +22,7 @@
 #include "photo_cell_API.h"
 #include "game_arm_control.h"
 #include "port_mapping.h"
+#include "platform_control.h"
 
 #ifndef SIMON_CODE_H_
 #define SIMON_CODE_H_
@@ -33,9 +34,9 @@
 #define GREEN_RETRACT   2350
 
 // Hover pulse width constants
-#define YELLOW_HOVER    890
-#define BLUE_HOVER      1020
-#define RED_HOVER       940
+#define YELLOW_HOVER    900
+#define BLUE_HOVER      1035
+#define RED_HOVER       970
 #define GREEN_HOVER     910
 #define START_HOVER     YELLOW_HOVER
 
@@ -57,6 +58,7 @@
 #define PULSE_INCREASE  25
 
 // Various delays
+#define PLATFORM_WAIT   1000
 #define PUSH_WAIT       250
 #define RESPONSE_WAIT   10
 

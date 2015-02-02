@@ -136,7 +136,7 @@ void game_player_serial_command(uint8_t u8_c) {
         } else {
             u8_platformFlipped = 0;
             printf("\n*** Reseting platform to original position ***\n");
-            platform_init();
+            platform_etch_undo();
         }
     } else if (u8_c == 'r') {
         simon_menu();

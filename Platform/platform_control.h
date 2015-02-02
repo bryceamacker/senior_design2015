@@ -28,12 +28,12 @@
 #define PLATFORM_RUBIK_PULSE    1550
 #define PLATFORM_ETCH_PULSE     1000
 
-#define TWIST_COUNTER_PULSE     2050
-#define TWIST_DIAG_PULSE        1350
+#define TWIST_INITIAL_PULSE     2050
+#define TWIST_DIAG_PULSE        1200
 
 #define PLATFORM_WAIT           1000
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Platform config
 //
@@ -43,7 +43,7 @@
  */
 void platform_init(void);
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Platform usage
 //
@@ -61,5 +61,10 @@ void platform_rubiks(void);
  * @brief Move twist and platform to position etch servos
  */
 void platform_etch(void);
+
+/**
+ * @brief Put the platform and twist back to the inital positition after flipping
+**/
+void platform_etch_undo(void);
 
 #endif

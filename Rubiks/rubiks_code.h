@@ -29,11 +29,11 @@
 #ifndef RUBIKS_CODE_H_
 #define RUBIKS_CODE_H_
 
-#define TWIST_CLOCK_PULSE       950
-#define TWIST_COUNTER_PULSE     2050
+#define TWIST_CLOCK_PULSE       1000
+#define TWIST_COUNTER_PULSE     2100
 #define WAIT_TIME               1500
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Rubiks Usage
 //
@@ -49,7 +49,7 @@ void rubik_init(void);
  */
 void play_rubiks(void);
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Rubiks primitives
 //

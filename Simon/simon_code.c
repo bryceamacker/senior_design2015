@@ -87,6 +87,9 @@ void play_simon() {
     // Grab the Simon and calibrate the sensors
     game_arm_pull_simon();
     simon_hover_buttons();
+    DELAY_MS(PLATFORM_WAIT);
+    platform_rubiks();
+    DELAY_MS(PLATFORM_WAIT);
     calibrate_sensors(); // I don't think we need calibration with the new transistors
 
     // Stop playing if we exceed 5 rounds
@@ -133,6 +136,8 @@ void play_simon() {
 
     // Let go of the simon and pull the arms back
     game_arm_release();
+    platform_up();
+    DELAY_MS(PLATFORM_WAIT);
     simon_retract_buttons();
 }
 
