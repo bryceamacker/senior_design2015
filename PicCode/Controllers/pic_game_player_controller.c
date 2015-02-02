@@ -20,6 +20,7 @@
 
 #include "pic24_all.h"
 #include "motors_API.h"
+#include "SSDisplayAPI.h"
 #include "etch_code.h"
 #include "rubiks_code.h"
 #include "simon_code.h"

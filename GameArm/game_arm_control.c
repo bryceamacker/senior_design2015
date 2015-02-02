@@ -20,7 +20,7 @@
 
 #include "game_arm_control.h"
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Game arm config
 //
@@ -37,13 +37,17 @@ void game_arm_init() {
     game_arm_slide_back();
 }
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Game arm usage
 //
 ///////////////////////////////////////////////
 
 void game_arm_release() {
+    #ifdef DEBUG_BUILD
+    printf("Releasing Game\n");
+    #endif
+
     // Slide forward
     game_arm_slide_forward();
 
@@ -55,6 +59,10 @@ void game_arm_release() {
 }
 
 void game_arm_pull_simon() {
+    #ifdef DEBUG_BUILD
+    printf("Grabbing Simon\n");
+    #endif
+
     // Slide forward
     game_arm_slide_forward();
 
@@ -67,6 +75,10 @@ void game_arm_pull_simon() {
 }
 
 void game_arm_pull_rubiks() {
+    #ifdef DEBUG_BUILD
+    printf("Grabbing Rubiks\n");
+    #endif
+
     // Slide forward
     game_arm_slide_forward();
 
@@ -102,6 +114,10 @@ void game_arm_pull_rubiks() {
 }
 
 void game_arm_pull_etch() {
+    #ifdef DEBUG_BUILD
+    printf("Grabbing Etch\n");
+    #endif
+
     // Slide forward
     game_arm_slide_forward();
 
@@ -122,7 +138,11 @@ void game_arm_pull_etch() {
     game_arm_slide_back();
 }
 
-void game_arm_hold_etch() {    
+void game_arm_hold_etch() {
+    #ifdef DEBUG_BUILD
+    printf("Holding Etch\n");
+    #endif
+
     // Slide forward
     game_arm_slide_forward();
 

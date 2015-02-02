@@ -20,6 +20,7 @@
 
 #include "pic24_all.h"
 #include "motors_API.h"
+#include "SSDisplayAPI.h"
 #include "etch_code.h"
 #include "rubiks_code.h"
 #include "simon_code.h"
@@ -110,7 +111,7 @@ int main(void) {
             #ifdef DEBUG_BUILD
             printf("Waiting for a new game command\n");
             #endif
-        } 
+        }
         doHeartbeat();
     }
 }
@@ -132,7 +133,7 @@ void pic_game_player_init() {
 
     // Photo cell init
     photo_cell_init();
-    
+
     // I2C init
     configI2C1(400);
     I2C1ADD = PIC_I2C_ADDR >> 1;
@@ -146,19 +147,19 @@ void I2C_check_command(volatile char *psz_s1) {
     // Etch
     if (strcmp((char*) psz_s1, sz_playEtchString) == 0) {
         e_picState = PLAY_ETCH;
-    } 
+    }
     // Rubiks
-    else if(strcmp((char*) psz_s1, sz_playRubiksString) == 0) {  
+    else if(strcmp((char*) psz_s1, sz_playRubiksString) == 0) {
         e_picState = PLAY_RUBIK;
-    } 
+    }
     // Simon
     else if(strcmp((char*) psz_s1, sz_playSimonString) == 0) {
         e_picState = PLAY_SIMON;
-    } 
+    }
     // Cards
     else if(strcmp((char*) psz_s1, sz_playCardsString) == 0) {
         e_picState = PLAY_CARDS;
-    } 
+    }
     // Idle
     else {
         e_picState = IDLE;
@@ -247,4 +248,3 @@ void _ISRFAST _SI2C1Interrupt(void) {
         e_mystate = STATE_WAIT_FOR_ADDR;
     }
 }
-
