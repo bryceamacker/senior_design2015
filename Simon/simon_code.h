@@ -51,6 +51,7 @@
 #define BLUE_LIGHT_THRESH_HOLD      150
 #define RED_LIGHT_THRESH_HOLD       150
 #define GREEN_LIGHT_THRESH_HOLD     90
+#define OFF_THRESH_HOLD             20
 
 // Amount to increase pulses when a push has not been successful
 #define PULSE_INCREASE  25

@@ -20,7 +20,7 @@
 
 #include "simon_code.h"
 
-#ifdef DEBUG_BUILD 
+#ifdef DEBUG_BUILD
 #include <stdio.h>
 #endif
 
@@ -29,10 +29,10 @@ uint8_t u8_blueLightPin = 2;
 uint8_t u8_redLightPin = 0;
 uint8_t u8_greenLightPin = 1;
 
-int16_t i16_lowestYellowValue = 32767;
-int16_t i16_lowestBlueValue = 32767;
-int16_t i16_lowestRedValue = 32767;
-int16_t i16_lowestGreenValue = 32767;
+int16_t i16_ambientYellowValue = 0;
+int16_t i16_ambientBlueValue = 0;
+int16_t i16_ambientRedValue = 0;
+int16_t i16_ambientGreenValue = 0;
 
 int16_t i16_currentYellowValue = 0;
 int16_t i16_currentBlueValue = 0;
@@ -62,7 +62,7 @@ uint8_t u8_button;
 volatile uint8_t u8_simonFinished = 0;
 volatile uint16_t u16_milliSeconds = 0;
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Simon usage
 //
@@ -122,7 +122,7 @@ void play_simon() {
             u8_simonFinished = 0;
             u16_milliSeconds = 0;
             u8_roundNum = 1;
-            
+
             break;
         }
         // Play back the buttons
@@ -136,7 +136,7 @@ void play_simon() {
     simon_retract_buttons();
 }
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Simon primitives
 //
@@ -147,35 +147,35 @@ void calibrate_sensors() {
     int16_t i16_tempYellowValue = read_photo_cell(YELLOW_TRANS);
     int16_t i16_tempBlueValue = read_photo_cell(BLUE_TRANS);
     int16_t i16_tempRedValue = read_photo_cell(RED_TRANS);
-    int16_t i16_tempGreenValue = adc_read(GREEN_LIGHT); 
+    int16_t i16_tempGreenValue = read_photo_cell(GREEN_LIGHT);
 
     // Find the lowest value for each sensor over a short period of time
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 200; i++) {
         i16_tempYellowValue = read_photo_cell(YELLOW_TRANS);
         i16_tempBlueValue = read_photo_cell(BLUE_TRANS);
         i16_tempRedValue = read_photo_cell(RED_TRANS);
         i16_tempGreenValue = read_photo_cell(GREEN_TRANS);
 
-        if (i16_tempYellowValue < i16_lowestYellowValue) {
-            i16_lowestYellowValue = i16_tempYellowValue;
+        if (i16_tempYellowValue > i16_ambientYellowValue) {
+            i16_ambientYellowValue = i16_tempYellowValue;
         }
-        if (i16_tempBlueValue < i16_lowestBlueValue) {
-            i16_lowestBlueValue = i16_tempBlueValue;
+        if (i16_tempBlueValue > i16_ambientBlueValue) {
+            i16_ambientBlueValue = i16_tempBlueValue;
         }
-        if (i16_tempRedValue < i16_lowestRedValue) {
-            i16_lowestRedValue = i16_tempRedValue;
+        if (i16_tempRedValue > i16_ambientRedValue) {
+            i16_ambientRedValue = i16_tempRedValue;
         }
-        if (i16_tempGreenValue < i16_lowestGreenValue) {
-            i16_lowestGreenValue = i16_tempGreenValue;
+        if (i16_tempGreenValue > i16_ambientGreenValue) {
+            i16_ambientGreenValue = i16_tempGreenValue;
         }
         DELAY_MS(RESPONSE_WAIT);
     }
     #ifdef DEBUG_BUILD
     printf("Calibrated\n");
-    printf("Yellow: %i\n", i16_lowestYellowValue);
-    printf("Blue: %i\n", i16_lowestBlueValue);
-    printf("Red: %i\n", i16_lowestRedValue);
-    printf("Green: %i\n", i16_lowestGreenValue);
+    printf("Yellow: %i\n", i16_ambientYellowValue);
+    printf("Blue: %i\n", i16_ambientBlueValue);
+    printf("Red: %i\n", i16_ambientRedValue);
+    printf("Green: %i\n", i16_ambientGreenValue);
     printf("\n");
     #endif
 }
@@ -206,7 +206,7 @@ void play_buttons(uint8_t u8_numRounds) {
             DELAY_MS(120);
             simon_hover_button(YELLOW_BUTTON);
             confirm_color_off(YELLOW_BUTTON);
-        } 
+        }
         else if (au8_buttonArray[i] == BLUE_BUTTON) {
             #ifdef DEBUG_BUILD
             printf("Pressing Blue\n");
@@ -217,7 +217,7 @@ void play_buttons(uint8_t u8_numRounds) {
             DELAY_MS(120);
             simon_hover_button(BLUE_BUTTON);
             confirm_color_off(BLUE_BUTTON);
-        } 
+        }
         else if (au8_buttonArray[i] == RED_BUTTON) {
             #ifdef DEBUG_BUILD
             printf("Pressing Red\n");
@@ -239,7 +239,7 @@ void play_buttons(uint8_t u8_numRounds) {
             DELAY_MS(120);
             simon_hover_button(GREEN_BUTTON);
             confirm_color_off(GREEN_BUTTON);
-        } 
+        }
     }
 }
 
@@ -264,10 +264,10 @@ void record_colors(uint8_t u8_numberOfButtons) {
         i16_currentRedValue = read_photo_cell(RED_TRANS);
         i16_currentGreenValue = read_photo_cell(GREEN_TRANS);
 
-        i16_yellowDifference = i16_currentYellowValue - i16_lowestYellowValue;
-        i16_blueDifference = i16_currentBlueValue - i16_lowestBlueValue;
-        i16_redDifference = i16_currentRedValue - i16_lowestRedValue;
-        i16_greenDifference = i16_currentGreenValue - i16_lowestGreenValue;
+        i16_yellowDifference = i16_currentYellowValue - i16_ambientYellowValue;
+        i16_blueDifference = i16_currentBlueValue - i16_ambientBlueValue;
+        i16_redDifference = i16_currentRedValue - i16_ambientRedValue;
+        i16_greenDifference = i16_currentGreenValue - i16_ambientGreenValue;
 
         // If we encounter a difference larger than the threshold, add the button to our array and wait until it's off
         if (i16_yellowDifference > YELLOW_LIGHT_THRESH_HOLD)
@@ -288,7 +288,7 @@ void record_colors(uint8_t u8_numberOfButtons) {
             #endif
 
             au8_buttonArray[u8_detectedButtons] = BLUE_BUTTON;
-            u8_detectedButtons++;            
+            u8_detectedButtons++;
             DELAY_MS(50);
             confirm_color_off(BLUE_BUTTON);
         }
@@ -315,7 +315,7 @@ void record_colors(uint8_t u8_numberOfButtons) {
             confirm_color_off(GREEN_BUTTON);
         }
         //short DELAY_MS for faster response to light.
-        DELAY_MS(RESPONSE_WAIT); 
+        DELAY_MS(RESPONSE_WAIT);
         if (u8_roundNum == 1) {
             u16_currentStartPushPulse -= PULSE_INCREASE;
             simon_push_button(START_BUTTON);
@@ -357,7 +357,7 @@ void confirm_color(uint8_t u8_color) {
                 return;
 
             i16_currentYellowValue = read_photo_cell(YELLOW_TRANS);
-            i16_yellowDifference = i16_currentYellowValue - i16_lowestYellowValue;
+            i16_yellowDifference = i16_currentYellowValue - i16_ambientYellowValue;
 
             if (i16_yellowDifference > YELLOW_LIGHT_THRESH_HOLD) {
                 #ifdef DEBUG_BUILD
@@ -381,7 +381,7 @@ void confirm_color(uint8_t u8_color) {
                 return;
 
             i16_currentBlueValue = read_photo_cell(BLUE_TRANS);
-            i16_blueDifference = i16_currentBlueValue - i16_lowestBlueValue;
+            i16_blueDifference = i16_currentBlueValue - i16_ambientBlueValue;
 
             if (i16_blueDifference > BLUE_LIGHT_THRESH_HOLD) {
                 #ifdef DEBUG_BUILD
@@ -405,7 +405,7 @@ void confirm_color(uint8_t u8_color) {
                 return;
 
             i16_currentRedValue = read_photo_cell(RED_TRANS);
-            i16_redDifference = i16_currentRedValue - i16_lowestRedValue;
+            i16_redDifference = i16_currentRedValue - i16_ambientRedValue;
 
             if (i16_redDifference > RED_LIGHT_THRESH_HOLD) {
                 #ifdef DEBUG_BUILD
@@ -429,7 +429,7 @@ void confirm_color(uint8_t u8_color) {
                 return;
 
             i16_currentGreenValue = read_photo_cell(GREEN_TRANS);
-            i16_greenDifference = i16_currentGreenValue - i16_lowestGreenValue;
+            i16_greenDifference = i16_currentGreenValue - i16_ambientGreenValue;
 
             if (i16_greenDifference > GREEN_LIGHT_THRESH_HOLD) {
                 #ifdef DEBUG_BUILD
@@ -440,7 +440,7 @@ void confirm_color(uint8_t u8_color) {
             }
 
             // Try and push harder
-            u16_currentGreenPushPulse += PULSE_INCREASE;
+            u16_currentGreenPushPulse -= PULSE_INCREASE;
             simon_push_button(GREEN_BUTTON);
 
             // Short DELAY_MS for faster response to light.
@@ -464,8 +464,8 @@ void confirm_color_off(uint8_t u8_color) {
                 return;
 
             i16_currentYellowValue = read_photo_cell(YELLOW_TRANS);
-            
-            if (i16_currentYellowValue < (i16_lowestYellowValue + 20)) {
+
+            if (i16_currentYellowValue < (i16_ambientYellowValue + OFF_THRESH_HOLD)) {
                 #ifdef DEBUG_BUILD
                 printf("Yellow confirmed off: %i\n", i16_currentYellowValue);
                 #endif
@@ -483,7 +483,7 @@ void confirm_color_off(uint8_t u8_color) {
 
             i16_currentBlueValue = read_photo_cell(BLUE_TRANS);
 
-            if (i16_currentBlueValue < (i16_lowestBlueValue + 20)) {
+            if (i16_currentBlueValue < (i16_ambientBlueValue + OFF_THRESH_HOLD)) {
                 #ifdef DEBUG_BUILD
                 printf("Blue confirmed off: %i\n", i16_currentBlueValue);
                 #endif
@@ -501,7 +501,7 @@ void confirm_color_off(uint8_t u8_color) {
 
             i16_currentRedValue = read_photo_cell(RED_TRANS);
 
-            if (i16_currentRedValue < (i16_lowestRedValue + 20)) {
+            if (i16_currentRedValue < (i16_ambientRedValue + OFF_THRESH_HOLD)) {
                 #ifdef DEBUG_BUILD
                 printf("Red confirmed off: %i\n", i16_currentBlueValue);
                 #endif
@@ -519,7 +519,7 @@ void confirm_color_off(uint8_t u8_color) {
 
             i16_currentGreenValue = read_photo_cell(GREEN_TRANS);
 
-            if (i16_currentGreenValue < (i16_lowestGreenValue + 20)) {
+            if (i16_currentGreenValue < (i16_ambientGreenValue + OFF_THRESH_HOLD)) {
                 #ifdef DEBUG_BUILD
                 printf("Green confirmed off: %i\n", i16_currentGreenValue);
                 #endif
@@ -651,8 +651,8 @@ void _ISRFAST _T5Interrupt (void) {
 
 // Configure a timer for detrmining when to leave Simon
 void configTimer5() {
-  T5CON = T5_OFF 
-          | T5_IDLE_CON 
+  T5CON = T5_OFF
+          | T5_IDLE_CON
           | T5_SOURCE_INT
           | T5_GATE_OFF
           | T5_PS_1_1;  // prescaler of 1
