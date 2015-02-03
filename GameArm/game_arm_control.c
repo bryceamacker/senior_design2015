@@ -170,11 +170,21 @@ void game_arm_raise() {
 }
 
 void game_arm_slide_forward() {
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
+    if (DUAL_ARMS == 0) {
+        turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
+    } else {
+        turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
+        turn_servo_by_pulse(ARM_SLIDE2, ARM_SLIDE_FORWARD2);
+    }
     DELAY_MS(ARM_WAIT);
 }
 
 void game_arm_slide_back() {
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
+    if (DUAL_ARMS == 0) {
+        turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
+    } else {
+        turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
+        turn_servo_by_pulse(ARM_SLIDE2, ARM_SLIDE_BACK2);        
+    }
     DELAY_MS(ARM_WAIT);
 }

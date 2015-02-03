@@ -29,7 +29,7 @@ volatile uint8_t            u8_servoEdge2 = 1;                   // 1 = RISING, 
 
 volatile uint16_t           u16_slotWidthTicks = 0;             // Slot width in ticks
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Servo config
 //
@@ -44,7 +44,7 @@ void servo_init() {
     SIMON_BLUE_PIN = 0;
     SIMON_RED_PIN = 0;
     SIMON_GREEN_PIN = 0;
-    
+
     ARM_POSITION_PIN = 0;
     ARM_SLIDE_PIN = 0;
 
@@ -73,6 +73,7 @@ void servo_init() {
     CONFIG_RD9_AS_DIG_OUTPUT();
     CONFIG_RD10_AS_DIG_OUTPUT();
     CONFIG_RD11_AS_DIG_OUTPUT();
+    CONFIG_RB13_AS_DIG_OUTPUT();
 
     // Turn on the timers
     T3CONbits.TON = 1;
@@ -81,8 +82,8 @@ void servo_init() {
 
 void config_servo_timer3(void) {
     // Config bits
-    T3CON = T3_OFF 
-            | T3_IDLE_CON 
+    T3CON = T3_OFF
+            | T3_IDLE_CON
             | T2_32BIT_MODE_OFF
             | T3_GATE_OFF
             | T3_SOURCE_INT
@@ -96,7 +97,7 @@ void _ISR _OC1Interrupt(void) {
 
     // Change the servo's value
     set_servo_output(u8_currentServo1, u8_servoEdge1);
-    
+
     // Schedule next interrupt
     if (u8_servoEdge1 == 1) {  // Rising edge
        // Next interrupt occurs after pulse width has elapsed
@@ -112,7 +113,7 @@ void _ISR _OC1Interrupt(void) {
         }
         u8_servoEdge1 = 1;     // Change to rising edge
         u8_currentServo1++;
-        if (u8_currentServo1 == NUM_SERVOS1) 
+        if (u8_currentServo1 == NUM_SERVOS1)
             u8_currentServo1 = 0;
     }
 }
@@ -131,8 +132,8 @@ void config_output_capture1(void) {
 
 void config_servo_timer2(void) {
     // Config bits
-    T2CON = T2_OFF 
-            | T2_IDLE_CON 
+    T2CON = T2_OFF
+            | T2_IDLE_CON
             | T2_32BIT_MODE_OFF
             | T2_GATE_OFF
             | T2_SOURCE_INT
@@ -146,7 +147,7 @@ void _ISR _OC2Interrupt(void) {
 
     // Change the servo's value
     set_servo_output(u8_currentServo2 + 5, u8_servoEdge2);
-    
+
     // Schedule next interrupt
     if (u8_servoEdge2 == 1) {  // Rising edge
        // Next interrupt occurs after pulse width has elapsed
@@ -180,7 +181,7 @@ void config_output_capture2(void) {
     _OC2IE = 1;    //enable the OC2 interrupt
 }
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Servo primatives
 //
@@ -218,12 +219,14 @@ void set_servo_output (uint8_t u8_servo, uint8_t u8_val) {
         case 9:
             ARM_SLIDE_PIN = u8_val;
             break;
+        case 10:
+            ARM_SLIDE_PIN2 = u8_val;
         default:
             break;
     }
 }
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Servo usage
 //

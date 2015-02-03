@@ -24,7 +24,7 @@
 #define SERVOS_API_H_
 
 #define NUM_SERVOS1 5
-#define NUM_SERVOS2 5
+#define NUM_SERVOS2 6
 
 #define CONT_COUNTER_FULL_ROTATION_TIME  905    // Full counter rotation time for a continuous servo in seconds
 #define CONT_CLOCK_FULL_ROTATION_TIME    915    // Full clock rotation time for a continuous servo in seconds
@@ -49,10 +49,11 @@ typedef enum {
     SIMON_BLUE =        6,
     SIMON_RED =         7,
     SIMON_GREEN =       8,
-    ARM_SLIDE =         9
+    ARM_SLIDE =         9,
+    ARM_SLIDE2 =        10
 } servoIDs;
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Servo config
 //
@@ -84,27 +85,27 @@ void config_servo_timer2(void);
  */
 void config_output_capture2(void);
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Servo primitives
 //
 ///////////////////////////////////////////////
 /**
  * @brief Set a new pusle width to a servo, called by the interrupt ISR
- * 
+ *
  * @param u8_servo servo number to change
  * @param u8_val new value to assign
  */
 void set_servo_output (uint8_t u8_servo, uint8_t u8_val);
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Servo usage
 //
 ///////////////////////////////////////////////
 /**
  * @brief Provides the given servo a pulse width in order to turn it
- * 
+ *
  * @param id the servoID of the servo to turn
  * @param pulseWidth The pulse width to send the servo
  */
@@ -112,14 +113,14 @@ void turn_servo_by_pulse(servoIDs id, uint16_t pulseWidth);
 
 /**
  * @brief Stops a servo from turning
- * 
+ *
  * @param id the servoID of the servo to stop
  */
 void stop_servo (servoIDs id);
 
 /**
  * @brief Stops a servo from turning
- * 
+ *
  * @param direction clockwise or counter
  * @param id the servoID of the servo to step
  */
@@ -127,7 +128,7 @@ void step_servo (uint8_t direction, servoIDs id);
 
 /**
  * @brief Turn a servo clockwise by a certain degree amount
- * @details This turns the servo counter clockwise when looking at 
+ * @details This turns the servo counter clockwise when looking at
  * the back of the servo
  *
  * @param id the servoID of the servo to turn
@@ -137,9 +138,9 @@ void turn_servo_CW_degrees(servoIDs id, float degrees);
 
 /**
  * @brief Turn a servo counter-clockwise by a certain degree amount
- * @details This turns the servo counter clockwise when looking at 
+ * @details This turns the servo counter clockwise when looking at
  * the back of the servo
- * 
+ *
  * @param id the servoID of the servo to turn
  * @param degrees number of degrees to turn the servo
  */
@@ -147,7 +148,7 @@ void turn_servo_CCW_degrees(servoIDs id, float degrees);
 
 /**
  * @brief Turn a servo to a certain degree
- * 
+ *
  * @param id the servoID of the servo to turn
  * @param degrees number of degrees to turn the servo
  */

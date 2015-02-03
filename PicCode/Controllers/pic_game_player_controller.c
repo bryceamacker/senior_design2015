@@ -293,6 +293,9 @@ void game_player_servo_menu(void) {
     printf("   r) Simon red\n");
     printf("   g) Simon green\n");
     printf("   s) Arm slide\n");
+    if (DUAL_ARMS == 1) {
+        printf("   2) Arm slide\n");
+    }
     printf("   a) Arm positions\n");
 }
 
@@ -365,6 +368,9 @@ void game_player_set_servo(char u8_servo) {
     } else if (u8_servo == 's') {
         turn_servo_by_pulse(ARM_SLIDE, u16_pwm);
         printf("\n*** Setting arm extend to %u ***\n", u16_pwm);
+    } else if (u8_servo == '2') {
+        turn_servo_by_pulse(ARM_SLIDE2, u16_pwm);
+        printf("\n*** Setting arm extend 2 to %u ***\n", u16_pwm);
     } else if (u8_servo == 'a') {
         turn_servo_by_pulse(ARM_POSITION, u16_pwm);
         printf("\n*** Setting arm pivot to %u ***\n", u16_pwm);
