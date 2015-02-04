@@ -28,8 +28,9 @@
 #warning "Navigation: DEBUG BUILD"
 #endif
 
-#define PIC_GAME_PLAYER_ADDR 0x20
-#define BUFFSIZE 64
+#define PIC_GAME_PLAYER_ADDR    0x20
+#define BUFFSIZE                64
+#define START_BUTTON            _RF4
 
 // Game enumeration
 typedef enum {
@@ -52,30 +53,36 @@ char sz_recieveString[BUFFSIZE];
 uint8_t u8_currentGame;
 
 // Function declarations
-void pic_navigation_init();
+void pic_navigation_init(void);
 void play_game(gameID game);
+void setup_start_button(void);
+void wait_for_start_button_push(void);
 
 // Main loop for the navigation PIC using I2C commands
 int main (void) {
     // Configure the motor controller PIC
     configBasic(HELLO_MSG);
     pic_navigation_init();
+    setup_start_button();
 
     // Start with the first game
     u8_currentGame = 0;
+
+    #ifdef DEBUG_BUILD
+    printf("Waiting for start button\n");
+    #endif
+    wait_for_start_button_push();
 
     // Wait for the game player PIC to detect the start light to turn off
     #ifdef DEBUG_BUILD
     printf("Waiting for start signal\n");
     #endif
-    /**
     while (strcmp((char*) sz_recieveString, "Idle.") != 0) {
         DELAY_MS(1000);
         readNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *) sz_recieveString, 6);
         doHeartbeat();
     }
-    **/
-    
+
     // Get out of the starting box
     motors_move_forward(0.15);
     DELAY_MS(3000);
@@ -166,4 +173,16 @@ void play_game(gameID game) {
         printf("Cards played\n");
     }
     #endif
+}
+
+void setup_start_button() {
+    CONFIG_RF4_AS_DIG_INPUT();
+    ENABLE_RF4_PULLUP();
+    DELAY_US(1);
+}
+
+void wait_for_start_button_push() {
+    while (START_BUTTON) {
+        doHeartbeat();
+    }
 }
