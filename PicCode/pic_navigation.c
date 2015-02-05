@@ -31,6 +31,27 @@
 #define PIC_GAME_PLAYER_ADDR    0x20
 #define BUFFSIZE                64
 #define START_BUTTON            _RF4
+#define SIMON_BUTTON            _RG6
+#define ETCH_BUTTON             _RG7
+#define CARD_BUTTON             _RG8
+#define RUBIKS_BUTTON           _RG9
+
+
+#define START_BUTTON_PUSHED     (_RF4 == 0)
+#define START_BUTTON_RELEASED   (_RF4 == 1)
+
+#define SIMON_BUTTON_PUSHED     (_RG6 == 0)
+#define SIMON_BUTTON_RELEASED   (_RG6 == 1)
+
+#define ETCH_BUTTON_PUSHED      (_RG7 == 0)
+#define ETCH_BUTTON_RELEASED    (_RG7 == 1)
+
+#define CARD_BUTTON_PUSHED      (_RG8 == 0)
+#define CARD_BUTTON_RELEASED    (_RG8 == 1)
+
+#define RUBIKS_BUTTON_PUSHED    (_RG9 == 0)
+#define RUBIKS_BUTTON_RELEASED  (_RG9 == 1)
+
 
 // Game enumeration
 typedef enum {
@@ -57,16 +78,33 @@ void pic_navigation_init(void);
 void play_game(gameID game);
 void setup_start_button(void);
 void wait_for_start_button_push(void);
+void setup_game_buttons(void);
+void get_game_order(uint8_t pu8_gameOrder[4]);
+#ifdef DEBUG_BUILD
+void print_order(uint8_t pu8_gameOrder[4]);
+#endif
 
 // Main loop for the navigation PIC using I2C commands
 int main (void) {
+    uint8_t pu8_gameOrder[4];
+
     // Configure the motor controller PIC
     configBasic(HELLO_MSG);
     pic_navigation_init();
     setup_start_button();
+    setup_game_buttons();
 
     // Start with the first game
     u8_currentGame = 0;
+
+    #ifdef DEBUG_BUILD
+    printf("Waiting for game order\n");
+    #endif
+    get_game_order(pu8_gameOrder);
+
+    #ifdef DEBUG_BUILD
+    print_order(pu8_gameOrder);
+    #endif
 
     #ifdef DEBUG_BUILD
     printf("Waiting for start button\n");
@@ -175,14 +213,112 @@ void play_game(gameID game) {
     #endif
 }
 
+// Set up the start button
 void setup_start_button() {
     CONFIG_RF4_AS_DIG_INPUT();
     ENABLE_RF4_PULLUP();
     DELAY_US(1);
 }
 
+// Wait until the start button is pushed
 void wait_for_start_button_push() {
-    while (START_BUTTON) {
+    while (START_BUTTON_RELEASED) {
         doHeartbeat();
     }
 }
+
+// Configure the game selection buttons
+void setup_game_buttons() {
+    CONFIG_RG6_AS_DIG_INPUT();
+    ENABLE_RG6_PULLUP();
+    DELAY_US(1);
+
+    CONFIG_RG7_AS_DIG_INPUT();
+    ENABLE_RG7_PULLUP();
+    DELAY_US(1);
+
+    CONFIG_RG8_AS_DIG_INPUT();
+    ENABLE_RG8_PULLUP();
+    DELAY_US(1);
+
+    CONFIG_RG8_AS_DIG_INPUT();
+    ENABLE_RG8_PULLUP();
+    DELAY_US(1);
+}
+
+// Wait until buttons for every game have been pressed
+void get_game_order(uint8_t pu8_gameOrder[4]) {
+    uint8_t u8_simonSet;
+    uint8_t u8_cardSet;
+    uint8_t u8_etchSet;
+    uint8_t u8_rubiksSet;
+    uint8_t u8_position;
+
+    u8_simonSet = 0;
+    u8_cardSet = 0;
+    u8_etchSet = 0;
+    u8_rubiksSet = 0;
+
+    u8_position = 0;
+
+    while (!(u8_simonSet && u8_cardSet && u8_etchSet && u8_rubiksSet)) {
+        if (SIMON_BUTTON_PUSHED && (!u8_simonSet)) {
+            #ifdef DEBUG_BUILD
+            printf("Qeued Simon\n");
+            #endif
+
+            pu8_gameOrder[u8_position] = SIMON;
+            u8_simonSet = 1;
+            u8_position++;
+        }
+        else if (CARD_BUTTON_PUSHED && (!u8_cardSet)) {
+            #ifdef DEBUG_BUILD
+            printf("Qeued Card\n");
+            #endif
+
+            pu8_gameOrder[u8_position] = CARD;
+            u8_cardSet = 1;
+            u8_position++;
+        }
+        else if (ETCH_BUTTON_PUSHED && (!u8_etchSet)) {
+            #ifdef DEBUG_BUILD
+            printf("Qeued Etch\n");
+            #endif
+
+            pu8_gameOrder[u8_position] = ETCH;
+            u8_etchSet = 1;
+            u8_position++;
+        }
+        else if (RUBIKS_BUTTON_PUSHED && (!u8_rubiksSet)) {
+            #ifdef DEBUG_BUILD
+            printf("Qeued Rubiks\n");
+            #endif
+
+            pu8_gameOrder[u8_position] = RUBIKS;
+            u8_rubiksSet = 1;
+            u8_position++;
+        }
+    }
+}
+
+#ifdef DEBUG_BUILD
+// Helper to print out the inputted game order
+void print_order(uint8_t pu8_order[4]) {
+    uint8_t u8_i;
+    uint8_t game;
+
+    for (u8_i=0;u8_i<=3;u8_i++) {
+        game = pu8_order[u8_i];
+
+        if (game == RUBIKS) {
+            printf("%u) Rubiks\n", u8_i+1);
+        } else if (game == ETCH) {
+            printf("%u) Etch\n", u8_i+1);
+        } else if (game == SIMON) {
+            printf("%u) Simon\n", u8_i+1);
+        } else if (game == CARD) {
+            printf("%u) Cards\n", u8_i+1);
+        }
+    }
+}
+#endif
