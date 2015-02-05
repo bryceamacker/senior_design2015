@@ -298,6 +298,7 @@ void get_game_order(uint8_t pu8_gameOrder[4]) {
             u8_rubiksSet = 1;
             u8_position++;
         }
+        doHeartbeat();
     }
 }
 
