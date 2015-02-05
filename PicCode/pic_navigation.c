@@ -136,7 +136,7 @@ int main (void) {
         follow_line_to_box(0.15);
 
         // Tell the game player to play a game
-        play_game(u8_currentGame);
+        play_game(pu8_gameOrder[u8_currentGame]);
 
         // Back up for a few seconds, increment the current game, and start over
         motors_move_reverse(0.15);
