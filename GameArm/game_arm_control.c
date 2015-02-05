@@ -170,9 +170,30 @@ void game_arm_raise() {
 }
 
 void game_arm_slide_forward() {
+    uint16_t u16_arm1Diff;
+    uint16_t u16_arm2Diff;
+    uint16_t u16_arm1Step;
+    uint16_t u16_arm2Step;
+    uint8_t u8_numSteps;
+    uint8_t u8_i;
+
+    u8_numSteps = 80;
+
     if (DUAL_ARMS == 0) {
         turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
     } else {
+        u16_arm1Diff = ARM_SLIDE_FORWARD - ARM_SLIDE_BACK;
+        u16_arm2Diff = ARM_SLIDE_BACK2 - ARM_SLIDE_FORWARD2;
+
+        u16_arm1Step = u16_arm1Diff/u8_numSteps;
+        u16_arm2Step = u16_arm2Diff/u8_numSteps;
+
+        // for (u8_i=1;u8_i<=u8_numSteps;u8_i++) {
+        //     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK + (u16_arm1Step*u8_i));
+        //     turn_servo_by_pulse(ARM_SLIDE2, ARM_SLIDE_BACK2 - (u16_arm2Step*u8_i));
+        //     DELAY_MS(ARM_SLIDE_DELAY);
+        // }
+
         turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
         turn_servo_by_pulse(ARM_SLIDE2, ARM_SLIDE_FORWARD2);
     }
@@ -180,11 +201,32 @@ void game_arm_slide_forward() {
 }
 
 void game_arm_slide_back() {
+    uint16_t u16_arm1Diff;
+    uint16_t u16_arm2Diff;
+    uint16_t u16_arm1Step;
+    uint16_t u16_arm2Step;
+    uint8_t u8_numSteps;
+    uint8_t u8_i;
+
+    u8_numSteps = 80;
+
     if (DUAL_ARMS == 0) {
         turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
     } else {
+        u16_arm1Diff = ARM_SLIDE_FORWARD - ARM_SLIDE_BACK;
+        u16_arm2Diff = ARM_SLIDE_BACK2 - ARM_SLIDE_FORWARD2;
+
+        u16_arm1Step = u16_arm1Diff/u8_numSteps;
+        u16_arm2Step = u16_arm2Diff/u8_numSteps;
+
+        // for (u8_i=1;u8_i<=u8_numSteps;u8_i++) {
+        //     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD - (u16_arm1Step*u8_i));
+        //     turn_servo_by_pulse(ARM_SLIDE2, ARM_SLIDE_FORWARD2 + (u16_arm2Step*u8_i));
+        //     DELAY_MS(ARM_SLIDE_DELAY);
+        // }
+
         turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
-        turn_servo_by_pulse(ARM_SLIDE2, ARM_SLIDE_BACK2);        
+        turn_servo_by_pulse(ARM_SLIDE2, ARM_SLIDE_BACK2);
     }
     DELAY_MS(ARM_WAIT);
 }
