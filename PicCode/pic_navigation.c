@@ -241,8 +241,8 @@ void setup_game_buttons() {
     ENABLE_RG8_PULLUP();
     DELAY_US(1);
 
-    CONFIG_RG8_AS_DIG_INPUT();
-    ENABLE_RG8_PULLUP();
+    CONFIG_RG9_AS_DIG_INPUT();
+    ENABLE_RG9_PULLUP();
     DELAY_US(1);
 }
 
@@ -273,7 +273,7 @@ void get_game_order(uint8_t pu8_gameOrder[4]) {
         }
         else if (CARD_BUTTON_PUSHED && (!u8_cardSet)) {
             #ifdef DEBUG_BUILD
-            printf("Qeued Card\n");
+            printf("Qeued Cards\n");
             #endif
 
             pu8_gameOrder[u8_position] = CARD;

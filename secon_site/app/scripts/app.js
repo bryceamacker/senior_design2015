@@ -1,6 +1,6 @@
 $(document).ready(function () {
   'use strict';
-  
+
   function updateSection(selection, id) {
     if (!$(selection).hasClass('active')) {
       $(selection).siblings().attr('class', '');
@@ -34,7 +34,7 @@ $(document).ready(function () {
     updateSection(this, '#design');
   });
 
-  // Galleria.loadTheme('scripts/galleria/themes/galleria-classicmod/galleria.classicmod.js');
-  // Galleria.run('.galleria');
+  Galleria.loadTheme('scripts/galleria/themes/galleria-classicmod/galleria.classicmod.js');
+  Galleria.run('.galleria');
 
 });
