@@ -35,6 +35,8 @@ char u8_c;
 uint8_t u8_platformPos;
 uint8_t u8_twistPos;
 uint8_t u8_platformFlipped;
+uint8_t u8_armSlide;
+uint8_t u8_armPivot;
 uint16_t u16_pwm;
 
 // Function Declarations
@@ -55,6 +57,8 @@ int main(void) {
     u8_twistPos = 0;
     u8_platformPos = 0;
     u8_platformFlipped = 0;
+    u8_armSlide = 0;
+    u8_armPivot = 0;
 
     game_player_serial_menu();
 
@@ -213,30 +217,25 @@ void game_player_serial_command(uint8_t u8_c) {
         } else {
             printf("Invalid command");
         }
-    } else if (u8_c == 'n') {
-        simon_menu();
-        u8_servo = inChar();
-
-        if (u8_servo == 'a') {
-            printf("\n*** Pushing and hover all buttons ***\n");
-            simon_push_and_hover_buttons();
-        } else if (u8_servo == 'y') {
-            printf("\n*** Pushing and hover yellow button ***\n");
-            simon_push_and_hover_button(YELLOW_BUTTON);
-        } else if (u8_servo == 'b') {
-            printf("\n*** Pushing and hover blue button ***\n");
-            simon_push_and_hover_button(BLUE_BUTTON);
-        } else if (u8_servo == 'r') {
-            printf("\n*** Pushing and hover red button ***\n");
-            simon_push_and_hover_button(RED_BUTTON);
-        } else if (u8_servo == 'g') {
-            printf("\n*** Pushing and hover green button ***\n");
-            simon_push_and_hover_button(GREEN_BUTTON);
-        } else if (u8_servo == 's') {
-            printf("\n*** Pushing and hover start button ***\n");
-            simon_push_and_hover_button(START_BUTTON);
+    } else if (u8_c == 'a') {
+        if (u8_armSlide == 0) {
+            // Slide arm forward
+            game_arm_slide_forward();
+            u8_armSlide = 1;
         } else {
-            printf("Invalid command");
+            // Slide arm back
+            game_arm_slide_back();
+            u8_armSlide = 0;
+        }
+    } else if (u8_c == 'o') {
+        if (u8_armPivot == 0) {
+            // Lower the arm
+            game_arm_lower();
+            u8_armPivot = 1;
+        } else {
+            // Raise the arm
+            game_arm_raise();
+            u8_armPivot = 0;
         }
     } else if (u8_c == 'z') {
         photo_trans_print();
@@ -274,8 +273,17 @@ void game_player_serial_menu(void) {
     printf("   Press 'r' to retract Simon arms\n");
     printf("   Press 'h' to hover Simon arms\n");
     printf("   Press 'b' to push Simon buttons\n");
-    printf("   Press 'n' to push and hover Simon buttons\n");
-    printf("   Press 'm' motor control\n");
+    if (u8_armSlide == 0) {
+        printf("   Press 'a' to slide arm forward\n");
+    } else {
+        printf("   Press 'a' to slide arm back\n");
+    }
+    if (u8_armPivot == 0) {
+        printf("   Press 'o' to lower arm\n");
+    } else {
+        printf("   Press 'o' to raise arm\n");
+    }
+
     printf("   Press 'z' to read photo transistors\n");
     printf("   Press 'l' to read start light resistor\n");
     printf("   Press 'v' to test the displays\n");
