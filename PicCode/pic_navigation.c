@@ -36,6 +36,9 @@
 #define CARD_BUTTON             _RG8
 #define RUBIKS_BUTTON           _RG9
 
+#define STATIC_ORDER            1
+#define SKIP_START_LIGHT        1
+#define SKIP_START_BUTTON       1
 
 #define START_BUTTON_PUSHED     (_RF4 == 0)
 #define START_BUTTON_RELEASED   (_RF4 == 1)
@@ -97,19 +100,28 @@ int main (void) {
     // Start with the first game
     u8_currentGame = 0;
 
-    #ifdef DEBUG_BUILD
-    printf("Waiting for game order\n");
-    #endif
-    get_game_order(pu8_gameOrder);
+    if (STATIC_ORDER == 0) {
+        #ifdef DEBUG_BUILD
+        printf("Waiting for game order\n");
+        #endif
+        get_game_order(pu8_gameOrder);
 
-    #ifdef DEBUG_BUILD
-    print_order(pu8_gameOrder);
-    #endif
+        #ifdef DEBUG_BUILD
+        print_order(pu8_gameOrder);
+        #endif
+    } else {
+        pu8_gameOrder[0] = SIMON;
+        pu8_gameOrder[1] = RUBIKS;
+        pu8_gameOrder[2] = ETCH;
+        pu8_gameOrder[3] = CARD;
+    }
 
-    #ifdef DEBUG_BUILD
-    printf("Waiting for start button\n");
-    #endif
-    wait_for_start_button_push();
+    if (SKIP_START_BUTTON == 0) {
+        #ifdef DEBUG_BUILD
+        printf("Waiting for start button\n");
+        #endif
+        wait_for_start_button_push();
+    }
 
     // Wait for the game player PIC to detect the start light to turn off
     #ifdef DEBUG_BUILD

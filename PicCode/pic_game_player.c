@@ -35,8 +35,10 @@
 #endif
 
 // I2C buffer size and address
-#define BUFFSIZE    64
-#define PIC_I2C_ADDR 0x20
+#define BUFFSIZE            64
+#define PIC_I2C_ADDR        0x20
+
+#define SKIP_START_LIGHT    1
 
 // States for the game player PIC
 typedef enum {
@@ -86,8 +88,12 @@ int main(void) {
     configBasic(HELLO_MSG);
     pic_game_player_init();
 
-    // Wait for the start signal
-    wait_for_start_signal();
+    if (SKIP_START_LIGHT == 0) {
+        // Wait for the start signal
+        wait_for_start_signal();
+    } else {
+        DELAY_MS(5000);
+    }
 
     // Move to the idle state, letting the motor controller know that it's time to move
     strncpy((char *) sz_currentStateString, sz_idleString, BUFFSIZE);
