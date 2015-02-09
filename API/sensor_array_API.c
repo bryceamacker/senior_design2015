@@ -47,6 +47,14 @@ void config_outputs() {
     CONFIG_RB5_AS_DIG_OUTPUT();
     CONFIG_RB6_AS_DIG_OUTPUT();
     CONFIG_RB7_AS_DIG_OUTPUT();
+    // CONFIG_RB8_AS_DIG_OUTPUT();
+    // CONFIG_RB9_AS_DIG_OUTPUT();
+    // CONFIG_RB10_AS_DIG_OUTPUT();
+    // CONFIG_RB11_AS_DIG_OUTPUT();
+    // CONFIG_RB12_AS_DIG_OUTPUT();
+    // CONFIG_RB13_AS_DIG_OUTPUT();
+    // CONFIG_RB14_AS_DIG_OUTPUT();
+    // CONFIG_RB15_AS_DIG_OUTPUT();
 }
 
 // Configures pins as dig inpts
@@ -67,6 +75,22 @@ void config_inputs() {
     DISABLE_RB6_PULLUP();
     CONFIG_RB7_AS_DIG_INPUT();
     DISABLE_RB7_PULLUP();
+    // CONFIG_RB8_AS_DIG_INPUT();
+    // DISABLE_RB8_PULLUP();
+    // CONFIG_RB9_AS_DIG_INPUT();
+    // DISABLE_RB9_PULLUP();
+    // CONFIG_RB10_AS_DIG_INPUT();
+    // DISABLE_RB10_PULLUP();
+    // CONFIG_RB11_AS_DIG_INPUT();
+    // DISABLE_RB11_PULLUP();
+    // CONFIG_RB12_AS_DIG_INPUT();
+    // DISABLE_RB12_PULLUP();
+    // CONFIG_RB13_AS_DIG_INPUT();
+    // DISABLE_RB13_PULLUP();
+    // CONFIG_RB14_AS_DIG_INPUT();
+    // DISABLE_RB14_PULLUP();
+    // CONFIG_RB15_AS_DIG_INPUT();
+    // DISABLE_RB15_PULLUP();
 }
 
 // Configures timer to measure discharge time of the capacitor
@@ -86,12 +110,14 @@ void  configTimer4() {
 // Disables LED
 void emittersOff() {
     _RB8 = 0;
+    // _RF4 = 0;
     DELAY_US(EMITTER_DELAY);
 }
 
 // Enables LED
 void emittersOn() {
     _RB8 = 1;
+    // _RF4 = 1;
     DELAY_US(EMITTER_DELAY);
 }
 
@@ -124,6 +150,7 @@ void read(uint16_t* pau16_sensor_values, char u8_readMode) {
     uint16_t u16_i;
     //emitter pin = RB8
     CONFIG_RB8_AS_DIG_OUTPUT();
+    // CONFIG_RF4_AS_DIG_OUTPUT();
     if(u8_readMode == QTR_EMITTERS_ON || u8_readMode == QTR_EMITTERS_ON_AND_OFF) {
         emittersOn();
     }
@@ -153,6 +180,9 @@ void read_values(uint16_t* pau16_sensor_values) {
     }
     //drive outputs RB0 - RB7 and emitter high
     PORTB = 0x01FF;
+    // PORTB = 0x7FFF;
+    // PORTB = 0xFE00;
+    // PORTF = 0x0010;
     DELAY_US(10);
 
     //change outputs to inputs
@@ -200,10 +230,22 @@ void read_sensor_array(uint16_t* pau16_sensorValues, char u8_readMode) {
 #ifdef DEBUG_BUILD
 void print_sensor_array() {
     uint16_t pau16_sensorValues[SENSOR_NUM];
+    char sz_stringBuffer[20];
+    char* sz_sensorValues[SENSOR_NUM];
+    uint16_t u16_i;
 
     while (1) {
-        read_values(pau16_sensorValues);
-        printf("%u %u %u %u %u %u %u %u\n", pau16_sensorValues[0], pau16_sensorValues[1], pau16_sensorValues[2], pau16_sensorValues[3], pau16_sensorValues[4], pau16_sensorValues[5], pau16_sensorValues[6], pau16_sensorValues[7]);
+        read_sensor_array(pau16_sensorValues, QTR_EMITTERS_ON);
+
+        // read_values(pau16_sensorValues);
+        // for(u16_i = 0; u16_i < SENSOR_NUM; u16_i++) {
+        //     snprintf(sz_stringBuffer, 20, "%d ", pau16_sensorValues[u16_i]);
+        //     // check for overrun omitted
+        //     sz_sensorValues[u16_i] = strdup(sz_stringBuffer);
+        // }            
+        // printf("%s\n", sz_stringBuffer);
+        printf("%u %u %u %u %u %u %u %u \n", pau16_sensorValues[0], pau16_sensorValues[1], pau16_sensorValues[2], pau16_sensorValues[3], pau16_sensorValues[4], pau16_sensorValues[5], pau16_sensorValues[6], pau16_sensorValues[7]);
+        // printf("%u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u\n", pau16_sensorValues[0], pau16_sensorValues[1], pau16_sensorValues[2], pau16_sensorValues[3], pau16_sensorValues[4], pau16_sensorValues[5], pau16_sensorValues[6], pau16_sensorValues[7], pau16_sensorValues[8], pau16_sensorValues[9], pau16_sensorValues[10], pau16_sensorValues[11], pau16_sensorValues[12], pau16_sensorValues[13], pau16_sensorValues[14], pau16_sensorValues[15]);
     }
 }
 #endif

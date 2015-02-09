@@ -71,10 +71,19 @@ void follow_line_to_box(float f_maxSpeed) {
         }
 
         // If enough sensors are detecting, what appears to be a wide line is most likely the edge of a box
-        if (u8_detectingSensors >= SENSOR_NUM - 2) {
+        if (u8_detectingSensors >= SENSOR_NUM) {
             motors_stop();
             return;
-        } else { 
+        } 
+        // else if (pau16_sensorValues[5] == 1 && pau16_sensorValues[6] == 1 && pau16_sensorValues[7] == 1) {
+        //     motors_move_forward(.15);
+        //     DELAY_MS(500);
+        //     right_motor_fwd(.25);
+        //     left_motor_reverse(.25);
+        //     DELAY_MS(1250);
+        // }
+    
+        else { 
             if (i16_error > 1000) {
                 motors_turn_left(f_maxSpeed);
             }
@@ -85,6 +94,76 @@ void follow_line_to_box(float f_maxSpeed) {
                 motors_move_forward(f_maxSpeed);
             }
         }
+    }
+}
+
+void follow_line_to_box_pid(float f_maxSpeed) {
+    uint16_t pau16_sensorValues[SENSOR_NUM];
+    uint16_t u16_position;
+
+    int16_t i16_proportional;
+    int16_t i16_derivative;
+    int16_t i16_last_proportional;
+    int16_t i16_integral;
+    int16_t i16_error;
+    int16_t i16_lineCenter;
+    
+    uint8_t u8_detectingSensors;
+    uint8_t i;
+
+    // Find the center of the line we are constantly trying to stay at
+    i16_lineCenter = ((1000 * (SENSOR_NUM - 1)) / 2);
+
+    while(1) {
+        // Get the average position of the line
+        u16_position = 1000 * get_line(pau16_sensorValues);
+        i16_proportional = ((int)u16_position) - 2000;
+
+        // Compute the derivative (change) and integral (sum) of the
+        // position.
+        i16_derivative = i16_proportional - i16_last_proportional;
+        i16_integral += i16_proportional;
+
+        i16_last_proportional = i16_proportional;
+
+        i16_error = u16_position - i16_lineCenter;
+        u8_detectingSensors = 0;
+
+        // Sum up the array
+        for (i = 0; i < SENSOR_NUM; i++) {
+            u8_detectingSensors += pau16_sensorValues[i];
+        }
+
+        if (u8_detectingSensors >= SENSOR_NUM - 2) {
+            motors_stop();
+            return;
+        } else { 
+            // Compute the difference between the two motor power settings,
+            // m1 - m2.  If this is a positive number the robot will turn
+            // to the right.  If it is a negative number, the robot will
+            // turn to the left, and the magnitude of the number determines
+            // the sharpness of the turn.
+            int power_difference = i16_proportional/20 + i16_integral/10000 + i16_derivative*3/2;
+            printf("Power: %i Prop: %i Int: %i, Der: %i\n", power_difference, i16_proportional, i16_integral, i16_derivative);
+             power_difference = power_difference / 2;
+            // Compute the actual motor settings.  We never set either motor
+            // to a negative value.
+            const int max = 1;
+            if(power_difference > max)
+                power_difference = max;
+            if(power_difference < -max)
+                power_difference = -max;
+            if(power_difference < 0){
+                printf("Max + power: %i", max+power_difference);
+                right_motor_fwd(max+power_difference);
+                left_motor_fwd(max);
+            }
+            else{
+                printf("Max - power: %i", max-power_difference);                
+                right_motor_fwd(max);
+                left_motor_fwd(max-power_difference);
+            }
+        }   
     }
 }
 

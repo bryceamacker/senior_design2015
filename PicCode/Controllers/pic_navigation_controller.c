@@ -93,6 +93,9 @@ void navigation_serial_command(uint8_t u8_command) {
             break;
         case 'a':
             print_sensor_array();
+            break;        
+        case 'n':
+            follow_line_to_box(0.15);
             break;
         default:
             printf("Invalid Choice\n");
@@ -158,6 +161,7 @@ void navigation_serial_menu() {
     printf("   Press 'r' to control the right motor\n");
     printf("   Press 'b' to control both motors\n");
     printf("   Press 'a' to print out the sensor array values\n");
+    printf("   Press 'n' to navigate to a box\n");
 }
 
 void single_motor_function_menu() {
