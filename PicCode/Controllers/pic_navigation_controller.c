@@ -233,5 +233,6 @@ void sensor_array_print(uint8_t u8_sensorArray) {
                 print_sensor_back();
                 break;
         }
+        doHeartbeat();
     }
 }

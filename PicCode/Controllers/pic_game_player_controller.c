@@ -238,7 +238,10 @@ void game_player_serial_command(uint8_t u8_c) {
             u8_armPivot = 0;
         }
     } else if (u8_c == 'z') {
-        photo_trans_print();
+        while (isCharReady() == 0) {
+            photo_trans_print();
+            doHeartbeat();
+        }
     } else if (u8_c == 'l') {
         start_light_print();
     } else if (u8_c == 'v') {
