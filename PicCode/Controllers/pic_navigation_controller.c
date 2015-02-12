@@ -33,6 +33,8 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function);
 void navigation_serial_menu(void);
 void single_motor_function_menu(void);
 void double_motor_function_menu(void);
+void sensor_array_menu(void);
+void sensor_array_print(uint8_t u8_sensorArray);
 
 // Main loop for the navigation PIC controller using serial commands
 int main (void) {
@@ -74,6 +76,7 @@ void pic_navigation_init() {
 
 void navigation_serial_command(uint8_t u8_command) {
     uint8_t u8_function;
+    uint8_t u8_sensorArray;
 
     switch(u8_command) {
         case 'l':
@@ -92,8 +95,10 @@ void navigation_serial_command(uint8_t u8_command) {
             motor_control(u8_command, u8_function);
             break;
         case 'a':
-            print_sensor_array();
-            break;        
+            sensor_array_menu();
+            u8_sensorArray = inChar();
+            sensor_array_print(u8_sensorArray);
+            break;
         case 'n':
             follow_line_to_box(0.15);
             break;
@@ -178,4 +183,55 @@ void double_motor_function_menu() {
     printf("   Press 'r' for right turn\n");
     printf("   Press 'l' for left turn\n");
     printf("   Press 's' for stop\n");
+}
+
+void sensor_array_menu() {
+    printf("\nChoose a sensor array to print\n");
+    printf("   Press 'a' for forward\n");
+    printf("   Press '1' for line 1\n");
+    printf("   Press '2' for line 2\n");
+    printf("   Press '3' for line 3\n");
+    printf("   Press '4' for line 4\n");
+    printf("   Press '5' for line 5\n");
+    printf("   Press 't' for the triple\n");
+    printf("   Press 'h' for the hi-res\n");
+    printf("   Press 'p' for the triple plus the hi-res\n");
+    printf("   Press 'b' for back line\n");
+}
+
+void sensor_array_print(uint8_t u8_sensorArray) {
+    while(isCharReady() == 0) {
+        switch(u8_sensorArray) {
+            case 'a':
+                print_all_sensor_arrays();
+                break;
+            case '1':
+                print_sensor_array(1);
+                break;
+            case '2':
+                print_sensor_array(2);
+                break;
+            case '3':
+                print_sensor_array(3);
+                break;
+            case '4':
+                print_sensor_array(4);
+                break;
+            case '5':
+                print_sensor_array(5);
+                break;
+            case 't':
+                print_sensor_triple();
+                break;
+            case 'h':
+                print_sensor_hi_res();
+                break;
+            case 'p':
+                print_sensor_triple_plus_hi_res();
+                break;
+            case 'b':
+                print_sensor_back();
+                break;
+        }
+    }
 }

@@ -19,189 +19,278 @@
 
 #include "sensor_array_API.h"
 
-uint16_t u16_maxValue = 0x7FFF;
-
 ///////////////////////////////////////////////
 //
 // Sensor config
 //
 ///////////////////////////////////////////////
 
-// Initializes and callibrates the sensor array
-void snesor_array_init() {
-    uint8_t i;
+// Initializes and callibrates each sensor array
+void sensor_array_init() {
+    sensor_array_init_line1();
+    calibrate(QTR_EMITTERS_ON, 1);
 
-    // Calibrate a bit for better array results
+    sensor_array_init_line2();
+    calibrate(QTR_EMITTERS_ON, 2);
+
+    sensor_array_init_line3();
+    calibrate(QTR_EMITTERS_ON, 3);
+
+    sensor_array_init_line4();
+    calibrate(QTR_EMITTERS_ON, 4);
+
+    sensor_array_init_line5();
+    calibrate(QTR_EMITTERS_ON, 5);
+}
+
+// Calibrate a sensor
+void calibrate(char u8_readMode, uint8_t u8_line) {
+    uint16_t pau16_sensorValues[SENSOR_NUM];
+    uint16_t u16_minValue;
+    uint16_t i;
+    uint16_t j;
+
     for (i = 0; i < 100; i++) {
-        calibrate(QTR_EMITTERS_ON);
+
+        read(pau16_sensorValues, u8_readMode, u8_line);
+        u16_minValue = pau16_sensorValues[0];
+
+        for(j = 1; j < SENSOR_NUM; j++) {
+            if(pau16_sensorValues[j] < u16_minValue) {
+                u16_minValue = pau16_sensorValues[j];
+            }
+        }
+        set_line_max_value(u16_minValue*2.5, u8_line);
     }
 }
-
-// Configures pins as dig outputs
-void config_outputs() {
-    CONFIG_RB0_AS_DIG_OUTPUT();
-    CONFIG_RB1_AS_DIG_OUTPUT();
-    CONFIG_RB2_AS_DIG_OUTPUT();
-    CONFIG_RB3_AS_DIG_OUTPUT();
-    CONFIG_RB4_AS_DIG_OUTPUT();
-    CONFIG_RB5_AS_DIG_OUTPUT();
-    CONFIG_RB6_AS_DIG_OUTPUT();
-    CONFIG_RB7_AS_DIG_OUTPUT();
-    // CONFIG_RB8_AS_DIG_OUTPUT();
-    // CONFIG_RB9_AS_DIG_OUTPUT();
-    // CONFIG_RB10_AS_DIG_OUTPUT();
-    // CONFIG_RB11_AS_DIG_OUTPUT();
-    // CONFIG_RB12_AS_DIG_OUTPUT();
-    // CONFIG_RB13_AS_DIG_OUTPUT();
-    // CONFIG_RB14_AS_DIG_OUTPUT();
-    // CONFIG_RB15_AS_DIG_OUTPUT();
-}
-
-// Configures pins as dig inpts
-void config_inputs() {
-    CONFIG_RB0_AS_DIG_INPUT();
-    DISABLE_RB0_PULLUP();
-    CONFIG_RB1_AS_DIG_INPUT();
-    DISABLE_RB1_PULLUP();
-    CONFIG_RB2_AS_DIG_INPUT();
-    DISABLE_RB2_PULLUP();
-    CONFIG_RB3_AS_DIG_INPUT();
-    DISABLE_RB3_PULLUP();
-    CONFIG_RB4_AS_DIG_INPUT();
-    DISABLE_RB4_PULLUP();
-    CONFIG_RB5_AS_DIG_INPUT();
-    DISABLE_RB5_PULLUP();
-    CONFIG_RB6_AS_DIG_INPUT();
-    DISABLE_RB6_PULLUP();
-    CONFIG_RB7_AS_DIG_INPUT();
-    DISABLE_RB7_PULLUP();
-    // CONFIG_RB8_AS_DIG_INPUT();
-    // DISABLE_RB8_PULLUP();
-    // CONFIG_RB9_AS_DIG_INPUT();
-    // DISABLE_RB9_PULLUP();
-    // CONFIG_RB10_AS_DIG_INPUT();
-    // DISABLE_RB10_PULLUP();
-    // CONFIG_RB11_AS_DIG_INPUT();
-    // DISABLE_RB11_PULLUP();
-    // CONFIG_RB12_AS_DIG_INPUT();
-    // DISABLE_RB12_PULLUP();
-    // CONFIG_RB13_AS_DIG_INPUT();
-    // DISABLE_RB13_PULLUP();
-    // CONFIG_RB14_AS_DIG_INPUT();
-    // DISABLE_RB14_PULLUP();
-    // CONFIG_RB15_AS_DIG_INPUT();
-    // DISABLE_RB15_PULLUP();
-}
-
-// Configures timer to measure discharge time of the capacitor
-void  configTimer4() {
-    T4CON = T4_OFF
-            | T4_IDLE_CON
-            | T4_GATE_OFF
-            | T4_32BIT_MODE_OFF
-            | T4_SOURCE_INT
-            | T4_PS_1_8;  //1 tick = 0.2 us at FCY=40 MHz
-    PR4 = 0xFFFF;                    //maximum period
-    TMR4  = 0;                       //clear timer2 value
-    _T4IF = 0;                       //clear interrupt flag
-    T4CONbits.TON = 1;               //turn on the timer
-}
-
-// Disables LED
-void emittersOff() {
-    _RB8 = 0;
-    // _RF4 = 0;
-    DELAY_US(EMITTER_DELAY);
-}
-
-// Enables LED
-void emittersOn() {
-    _RB8 = 1;
-    // _RF4 = 1;
-    DELAY_US(EMITTER_DELAY);
-}
-
 ///////////////////////////////////////////////
 //
 // Sensor primitives
 //
 ///////////////////////////////////////////////
 
-// Calibrates to set the max value
-void calibrate(char u8_readMode) {
-    uint16_t pau16_sensorValues[SENSOR_NUM]; // This might need to be uint16_t*, hasn't been tested
-    uint16_t u16_i;
-    uint16_t u16_minValue;
-
-    read(pau16_sensorValues, u8_readMode);
-    u16_minValue = pau16_sensorValues[0];
-
-    for(u16_i = 1; u16_i < SENSOR_NUM; u16_i++) {
-        if(pau16_sensorValues[u16_i] < u16_minValue) {
-            u16_minValue = pau16_sensorValues[u16_i];
-        }
+// Config a line sensor as output
+void config_outputs(uint8_t u8_line) {
+    switch(u8_line) {
+        case 1:
+            config_outputs_line1();
+            break;
+        case 2:
+            config_outputs_line2();
+            break;
+        case 3:
+            config_outputs_line3();
+            break;
+        case 4:
+            config_outputs_line4();
+            break;
+        case 5:
+            config_outputs_line5();
+            break;
     }
-    u16_maxValue = u16_minValue*2.5;
+}
+
+// Config a line sensor as input
+void config_inputs(uint8_t u8_line) {
+    switch(u8_line) {
+        case 1:
+            config_inputs_line1();
+            break;
+        case 2:
+            config_inputs_line2();
+            break;
+        case 3:
+            config_inputs_line3();
+            break;
+        case 4:
+            config_inputs_line4();
+            break;
+        case 5:
+            config_inputs_line5();
+            break;
+    }
+}
+
+// Set the sensor values high for a line
+void set_sensors_high(uint8_t u8_line) {
+    switch(u8_line) {
+        case 1:
+            set_sensors_high_line1();
+            break;
+        case 2:
+            set_sensors_high_line2();
+            break;
+        case 3:
+            set_sensors_high_line3();
+            break;
+        case 4:
+            set_sensors_high_line4();
+            break;
+        case 5:
+            set_sensors_high_line5();
+            break;
+    }
+}
+
+// Check the sensor values of a line
+void check_sensor_values(uint16_t* pau16_sensorValues, uint16_t u16_delta, uint8_t u8_line) {
+    switch(u8_line) {
+        case 1:
+            check_sensor_values_line1(pau16_sensorValues, u16_delta);
+            break;
+        case 2:
+            check_sensor_values_line2(pau16_sensorValues, u16_delta);
+            break;
+        case 3:
+            check_sensor_values_line3(pau16_sensorValues, u16_delta);
+            break;
+        case 4:
+            check_sensor_values_line4(pau16_sensorValues, u16_delta);
+            break;
+        case 5:
+            check_sensor_values_line5(pau16_sensorValues, u16_delta);
+            break;
+    }
+}
+
+// Turn emitters on for a line
+void emitters_on(uint8_t u8_line) {
+    switch(u8_line) {
+        case 1:
+            emitters_on_line1();
+            break;
+        case 2:
+            emitters_on_line2();
+            break;
+        case 3:
+            emitters_on_line3();
+            break;
+        case 4:
+            emitters_on_line4();
+            break;
+        case 5:
+            emitters_on_line5();
+            break;
+    }
+}
+
+// Turn emitters off for a line
+void emitters_off(uint8_t u8_line) {
+    switch(u8_line) {
+        case 1:
+            emitters_off_line1();
+            break;
+        case 2:
+            emitters_off_line2();
+            break;
+        case 3:
+            emitters_off_line3();
+            break;
+        case 4:
+            emitters_off_line4();
+            break;
+        case 5:
+            emitters_off_line5();
+            break;
+    }
+}
+
+// Get the max value from the calibration step
+uint16_t get_line_max_value(uint8_t u8_line) {
+    switch(u8_line) {
+        case 1:
+            return get_line_max_value_line1();
+            break;
+        case 2:
+            return get_line_max_value_line2();
+            break;
+        case 3:
+            return get_line_max_value_line3();
+            break;
+        case 4:
+            return get_line_max_value_line4();
+            break;
+        case 5:
+            return get_line_max_value_line5();
+            break;
+        default:
+            #ifdef DEBUG_BUILD
+            printf("NOT GOOD CAP'N\n");
+            #endif
+            return 0;
+            break;
+    }
+}
+
+//Set the max value during calibration
+void set_line_max_value(uint16_t u16_maxValue, uint8_t u8_line) {
+    switch(u8_line) {
+        case 1:
+            set_line_max_value_line1(u16_maxValue);
+            break;
+        case 2:
+            set_line_max_value_line2(u16_maxValue);
+            break;
+        case 3:
+            set_line_max_value_line3(u16_maxValue);
+            break;
+        case 4:
+            set_line_max_value_line4(u16_maxValue);
+            break;
+        case 5:
+            set_line_max_value_line5(u16_maxValue);
+            break;
+    }
 }
 
 // Reads the sensor values using a specific read mode
-void read(uint16_t* pau16_sensor_values, char u8_readMode) {
+void read(uint16_t* pau16_sensorValues, char u8_readMode, uint8_t u8_line) {
     uint16_t pau16_off_values[SENSOR_NUM];
     uint16_t u16_i;
-    //emitter pin = RB8
-    CONFIG_RB8_AS_DIG_OUTPUT();
-    // CONFIG_RF4_AS_DIG_OUTPUT();
-    if(u8_readMode == QTR_EMITTERS_ON || u8_readMode == QTR_EMITTERS_ON_AND_OFF) {
-        emittersOn();
-    }
-    read_values(pau16_sensor_values);
 
-    emittersOff();
+    if(u8_readMode == QTR_EMITTERS_ON || u8_readMode == QTR_EMITTERS_ON_AND_OFF) {
+        emitters_on(u8_line);
+    }
+    read_values(pau16_sensorValues, u8_line);
+
+    emitters_off(u8_line);
     if(u8_readMode == QTR_EMITTERS_ON_AND_OFF) {
-        read_values(pau16_off_values);
+        read_values(pau16_off_values, u8_line);
     }
 
     if(u8_readMode == QTR_EMITTERS_ON_AND_OFF) {
         for(u16_i = 0; u16_i < SENSOR_NUM; u16_i++) {
-            pau16_sensor_values[u16_i] += u16_maxValue - pau16_off_values[u16_i];
+            pau16_sensorValues[u16_i] += get_line_max_value(u8_line) - pau16_off_values[u16_i];
         }
     }
 }
 
-// Measures the discharge time for each capacitor associated with a sensor
-void read_values(uint16_t* pau16_sensor_values) {
-    uint16_t u16_start, u16_delta, u16_i, u16_pin;
+// Measures the discharge time for each capacitor associated with a sensor for line 1
+void read_values(uint16_t* pau16_sensorValues, uint8_t u8_line) {
+    uint16_t u16_start, u16_delta, u16_i, u16_maxValue;
     uint8_t pau8_sensorCheck[SENSOR_NUM];
-    config_outputs();
+
+    u16_maxValue = get_line_max_value(u8_line);
+    config_outputs(u8_line);
+
     DELAY_US(1);
     for(u16_i = 0; u16_i < SENSOR_NUM; u16_i++) {
-        pau16_sensor_values[u16_i] = u16_maxValue;
+        pau16_sensorValues[u16_i] = u16_maxValue;
         pau8_sensorCheck[u16_i] = 0;
     }
-    //drive outputs RB0 - RB7 and emitter high
-    PORTB = 0x01FF;
-    // PORTB = 0x7FFF;
-    // PORTB = 0xFE00;
-    // PORTF = 0x0010;
+    set_sensors_high(u8_line);
     DELAY_US(10);
 
-    //change outputs to inputs
-    //dissable internal pullups
-    config_inputs();
+    config_inputs(u8_line);
     DELAY_US(1);
-    //mesure time for each input
 
-    configTimer4();
+    config_timer4();
     u16_start = TMR4;
+
     while(TMR4 - u16_start < u16_maxValue) {
         u16_delta = TMR4 - u16_start;
-        for(u16_i = 0; u16_i < SENSOR_NUM; u16_i++) {
-            u16_pin = 0x0001;
-            u16_pin = u16_pin << u16_i;
-            if(((PORTB & u16_pin) == 0) && (u16_delta < pau16_sensor_values[u16_i])) {
-                pau16_sensor_values[u16_i] = u16_delta;
-            }
-        }
+
+        check_sensor_values(pau16_sensorValues, u16_delta, u8_line);
     }
     T4CONbits.TON = 0;
 }
@@ -213,39 +302,197 @@ void read_values(uint16_t* pau16_sensor_values) {
 ///////////////////////////////////////////////
 
 // Binary encodes the raw values of each sensor
-void read_sensor_array(uint16_t* pau16_sensorValues, char u8_readMode) {
-    uint16_t u16_i;
-    read(pau16_sensorValues,u8_readMode);
+void read_sensor_array(uint16_t* pau16_sensorValues, char u8_readMode, uint8_t u8_line) {
+    uint16_t i;
+    read(pau16_sensorValues, u8_readMode, u8_line);
 
-    for(u16_i = 0; u16_i < SENSOR_NUM; u16_i++) {
-        if(pau16_sensorValues[u16_i] < u16_maxValue - 1) {
-            pau16_sensorValues[u16_i] = 1;
+    for(i = 0; i < SENSOR_NUM; i++) {
+        if(pau16_sensorValues[i] < get_line_max_value(u8_line) - 1) {
+            pau16_sensorValues[i] = 1;
         }
         else {
-            pau16_sensorValues[u16_i] = 0;
+            pau16_sensorValues[i] = 0;
         }
     }
 }
 
-#ifdef DEBUG_BUILD
-void print_sensor_array() {
+// Read all the of the sensor arrays
+void read_all_sensor_arrays(uint16_t* pau16_allSensorValues, char u8_readMode) {
     uint16_t pau16_sensorValues[SENSOR_NUM];
-    char sz_stringBuffer[20];
-    char* sz_sensorValues[SENSOR_NUM];
-    uint16_t u16_i;
+    uint8_t i;
+    uint8_t j;
 
-    while (1) {
-        read_sensor_array(pau16_sensorValues, QTR_EMITTERS_ON);
 
-        // read_values(pau16_sensorValues);
-        // for(u16_i = 0; u16_i < SENSOR_NUM; u16_i++) {
-        //     snprintf(sz_stringBuffer, 20, "%d ", pau16_sensorValues[u16_i]);
-        //     // check for overrun omitted
-        //     sz_sensorValues[u16_i] = strdup(sz_stringBuffer);
-        // }            
-        // printf("%s\n", sz_stringBuffer);
-        printf("%u %u %u %u %u %u %u %u \n", pau16_sensorValues[0], pau16_sensorValues[1], pau16_sensorValues[2], pau16_sensorValues[3], pau16_sensorValues[4], pau16_sensorValues[5], pau16_sensorValues[6], pau16_sensorValues[7]);
-        // printf("%u %u %u %u %u %u %u %u %u %u %u %u %u %u %u %u\n", pau16_sensorValues[0], pau16_sensorValues[1], pau16_sensorValues[2], pau16_sensorValues[3], pau16_sensorValues[4], pau16_sensorValues[5], pau16_sensorValues[6], pau16_sensorValues[7], pau16_sensorValues[8], pau16_sensorValues[9], pau16_sensorValues[10], pau16_sensorValues[11], pau16_sensorValues[12], pau16_sensorValues[13], pau16_sensorValues[14], pau16_sensorValues[15]);
+    // Read all the lines
+    for(i = 1; i <= NUM_ARRAYS; i++) {
+        // Read one line at a time
+        read_sensor_array(pau16_sensorValues, u8_readMode, i);
+
+        // Take the values from the read and put it in a combined array
+        for(j = 0; j < SENSOR_NUM; j++) {
+            pau16_allSensorValues[((i - 1)*SENSOR_NUM)+j] = pau16_sensorValues[j];
+        }
     }
+}
+
+// Read the consecutive line of three lines
+void read_sensor_triple(uint16_t* pau16_tripleSensorValues, char u8_readMode) {
+    uint16_t pau16_sensorValues[SENSOR_NUM];
+    uint8_t i;
+
+    // Read the left line and place them in the combined array
+    read_sensor_array(pau16_sensorValues, u8_readMode, TRIPLE_LEFT_LINE);
+    for(i = (SENSOR_NUM*0); i < SENSOR_NUM; i++) {
+        pau16_tripleSensorValues[i] = pau16_sensorValues[i];
+    }
+
+    // Read the main line and place them in the combined array
+    read_sensor_array(pau16_sensorValues, u8_readMode, MAIN_LINE);
+    for(i = (SENSOR_NUM*1); i < SENSOR_NUM; i++) {
+        pau16_tripleSensorValues[i] = pau16_sensorValues[i];
+    }
+
+    // Read the right line and place them in the combined array
+    read_sensor_array(pau16_sensorValues, u8_readMode, TRIPLE_RIGHT_LINE);
+    for(i = (SENSOR_NUM*2); i < SENSOR_NUM; i++) {
+        pau16_tripleSensorValues[i] = pau16_sensorValues[i];
+    }
+
+}
+
+// Read the high resolution double sensor line
+void read_sensor_hi_res(uint16_t* pau16_hiResSensorValues, char u8_readMode) {
+    uint16_t pau16_backSensorValues[SENSOR_NUM];
+    uint16_t pau16_frontSensorValues[SENSOR_NUM];
+    uint8_t i;
+
+    read_sensor_array(pau16_backSensorValues, u8_readMode, HI_RES_LINE);
+    read_sensor_array(pau16_frontSensorValues, u8_readMode, MAIN_LINE);
+
+    // Back sensors go in the even slots
+    for(i = 0; i < SENSOR_NUM; i++) {
+        pau16_hiResSensorValues[i*2] = pau16_backSensorValues[i];
+    }
+
+    // Front sensors go in the odd slots
+    for(i = 0; i < SENSOR_NUM; i++) {
+        pau16_hiResSensorValues[(i*2)+1] = pau16_frontSensorValues[i];
+    }
+}
+
+// Read the consecutive line of three lines plus the high resolution double sensor line
+void read_sensor_triple_plus_hi_res(uint16_t* pau16_tripleHiResSensorValues, char u8_readMode) {
+    uint16_t pau16_sensorValues[SENSOR_NUM];
+    uint16_t pau16_hiResSensorValues[SENSOR_NUM*2];
+    uint8_t i;
+
+    // Read the left line and place them in the combined array
+    read_sensor_array(pau16_sensorValues, u8_readMode, TRIPLE_LEFT_LINE);
+    for(i = (SENSOR_NUM*0); i < SENSOR_NUM; i++) {
+        pau16_tripleHiResSensorValues[i] = pau16_sensorValues[i];
+    }
+
+    // Read the main line plus the hires line and place them in the combine array
+    read_sensor_hi_res(pau16_sensorValues, u8_readMode);
+    for(i = (SENSOR_NUM*1); i < SENSOR_NUM*2; i++) {
+        pau16_tripleHiResSensorValues[i] = pau16_hiResSensorValues[i];
+    }
+
+    // Read the right line and place them in the combined array
+    read_sensor_array(pau16_sensorValues, u8_readMode, TRIPLE_RIGHT_LINE);
+    for(i = (SENSOR_NUM*3); i < SENSOR_NUM; i++) {
+        pau16_tripleHiResSensorValues[i] = pau16_sensorValues[i];
+    }
+}
+
+//Read the back line
+void read_sensor_back(uint16_t* pau16_backSensorValues, char u8_readMode) {
+    read_sensor_array(pau16_backSensorValues, u8_readMode, BACK_LINE);
+}
+
+///////////////////////////////////////////////
+//
+// Sensor printing (self explanatory)
+//
+///////////////////////////////////////////////
+
+#ifdef DEBUG_BUILD
+// Print out all the values for the passed in line
+void print_sensor_array(uint8_t u8_line) {
+    uint16_t pau16_sensorValues[SENSOR_NUM];
+    uint8_t i;
+
+    read_sensor_array(pau16_sensorValues, QTR_EMITTERS_ON, u8_line);
+
+    for(i = 0; i < SENSOR_NUM; i++) {
+        printf("%u ", pau16_sensorValues[i]);
+    }
+    printf("\n");
+}
+
+// Print out all of the sensor array
+void print_all_sensor_arrays() {
+    uint16_t pau16_allSensorValues[SENSOR_NUM*NUM_ARRAYS];
+    uint8_t i;
+
+    // Read all the sensor arrays
+    read_all_sensor_arrays(pau16_allSensorValues, QTR_EMITTERS_ON);
+
+    // Print all of the lines
+    for(i = 0; i < SENSOR_NUM*NUM_ARRAYS; i++) {
+        printf("%u", pau16_allSensorValues[i]);
+    }
+    printf("\n");
+}
+
+// Print out the line of three lines
+void print_sensor_triple() {
+    uint16_t pau16_tripleSensorValues[SENSOR_NUM*3];
+    uint8_t i;
+
+    read_sensor_triple(pau16_tripleSensorValues, QTR_EMITTERS_ON);
+
+    for(i = 0; i < SENSOR_NUM*3; i++) {
+        printf("%u", pau16_tripleSensorValues[i]);
+    }
+    printf("\n");
+}
+
+// Print out the hi res line
+void print_sensor_hi_res() {
+    uint16_t pau16_hiResSensorValues[SENSOR_NUM*2];
+    uint8_t i;
+
+    read_sensor_hi_res(pau16_hiResSensorValues, QTR_EMITTERS_ON);
+
+    for(i = 0; i < SENSOR_NUM*2; i++) {
+        printf("%u", pau16_hiResSensorValues[i]);
+    }
+    printf("\n");
+}
+
+// Print out the triple line plus hi res line
+void print_sensor_triple_plus_hi_res() {
+    uint16_t pau16_tripleHiResSensorValues[SENSOR_NUM*4];
+    uint8_t i;
+    read_sensor_triple_plus_hi_res(pau16_tripleHiResSensorValues, QTR_EMITTERS_ON);
+
+    for(i = 0; i < SENSOR_NUM*4; i++) {
+        printf("%u", pau16_tripleHiResSensorValues[i]);
+    }
+    printf("\n");
+}
+
+// Print the sensor array in the back
+void print_sensor_back() {
+    uint16_t pau16_backSensorValues[SENSOR_NUM];
+    uint8_t i;
+
+    read_sensor_back(pau16_backSensorValues, QTR_EMITTERS_ON);
+
+    for(i = 0; i < SENSOR_NUM; i++) {
+        printf("%u ", pau16_backSensorValues[i]);
+    }
+    printf("\n");
 }
 #endif

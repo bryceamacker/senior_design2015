@@ -21,7 +21,7 @@
 #include "line_follower_API.h"
 
 void line_follower_init() {
-    snesor_array_init();
+    sensor_array_init();
     motors_init();
 }
 
@@ -31,7 +31,7 @@ float get_line(uint16_t* pau16_sensorValues) {
     uint16_t u16_sum;
 
     f_line = 0;
-    read_sensor_array(pau16_sensorValues, QTR_EMITTERS_ON);
+    read_sensor_array(pau16_sensorValues, QTR_EMITTERS_ON, 1);
     for(u16_i = 0; u16_i < SENSOR_NUM; u16_i++) {
         f_line += pau16_sensorValues[u16_i] * (u16_i+1);
     }
@@ -52,7 +52,7 @@ void follow_line_to_box(float f_maxSpeed) {
 
     int16_t i16_error;
     int16_t i16_lineCenter;
-    
+
     uint8_t u8_detectingSensors;
     uint8_t i;
 
@@ -74,7 +74,7 @@ void follow_line_to_box(float f_maxSpeed) {
         if (u8_detectingSensors >= SENSOR_NUM) {
             motors_stop();
             return;
-        } 
+        }
         // else if (pau16_sensorValues[5] == 1 && pau16_sensorValues[6] == 1 && pau16_sensorValues[7] == 1) {
         //     motors_move_forward(.15);
         //     DELAY_MS(500);
@@ -82,8 +82,8 @@ void follow_line_to_box(float f_maxSpeed) {
         //     left_motor_reverse(.25);
         //     DELAY_MS(1250);
         // }
-    
-        else { 
+
+        else {
             if (i16_error > 1000) {
                 motors_turn_left(f_maxSpeed);
             }
@@ -107,9 +107,11 @@ void follow_line_to_box_pid(float f_maxSpeed) {
     int16_t i16_integral;
     int16_t i16_error;
     int16_t i16_lineCenter;
-    
+
     uint8_t u8_detectingSensors;
     uint8_t i;
+
+    const int max = 1;
 
     // Find the center of the line we are constantly trying to stay at
     i16_lineCenter = ((1000 * (SENSOR_NUM - 1)) / 2);
@@ -137,7 +139,7 @@ void follow_line_to_box_pid(float f_maxSpeed) {
         if (u8_detectingSensors >= SENSOR_NUM - 2) {
             motors_stop();
             return;
-        } else { 
+        } else {
             // Compute the difference between the two motor power settings,
             // m1 - m2.  If this is a positive number the robot will turn
             // to the right.  If it is a negative number, the robot will
@@ -148,7 +150,6 @@ void follow_line_to_box_pid(float f_maxSpeed) {
              power_difference = power_difference / 2;
             // Compute the actual motor settings.  We never set either motor
             // to a negative value.
-            const int max = 1;
             if(power_difference > max)
                 power_difference = max;
             if(power_difference < -max)
@@ -159,11 +160,11 @@ void follow_line_to_box_pid(float f_maxSpeed) {
                 left_motor_fwd(max);
             }
             else{
-                printf("Max - power: %i", max-power_difference);                
+                printf("Max - power: %i", max-power_difference);
                 right_motor_fwd(max);
                 left_motor_fwd(max-power_difference);
             }
-        }   
+        }
     }
 }
 
@@ -212,7 +213,7 @@ void follow_line_back(uint16_t* pau16_sensorValues, float f_maxSpeed) {
 
 #ifdef DEBUG_BUILD
 // Print line follower data
-void print_line_data(uint16_t* pau16_sensorValues) { 
+void print_line_data(uint16_t* pau16_sensorValues) {
     int i;
     for (i = 0 ; i < SENSOR_NUM ; ++i)
     {

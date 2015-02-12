@@ -175,7 +175,7 @@ void game_arm_slide_forward() {
     uint16_t u16_arm1Step;
     uint16_t u16_arm2Step;
     uint8_t u8_numSteps;
-    uint8_t u8_i;
+    // uint8_t u8_i;
 
     u8_numSteps = 80;
 
@@ -206,7 +206,7 @@ void game_arm_slide_back() {
     uint16_t u16_arm1Step;
     uint16_t u16_arm2Step;
     uint8_t u8_numSteps;
-    uint8_t u8_i;
+    // uint8_t u8_i;
 
     u8_numSteps = 80;
 

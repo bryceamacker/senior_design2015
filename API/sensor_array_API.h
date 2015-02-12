@@ -18,6 +18,11 @@
 *********************************************************************/
 
 #include "pic24_all.h"
+#include "sensor_array_1.h"
+#include "sensor_array_2.h"
+#include "sensor_array_3.h"
+#include "sensor_array_4.h"
+#include "sensor_array_5.h"
 #ifdef DEBUG_BUILD
 #include <stdio.h>
 #endif
@@ -25,12 +30,13 @@
 #ifndef SENSOR_ARRAY_API_H_
 #define SENSOR_ARRAY_API_H_
 
-#define SENSOR_NUM              8
-#define QTR_EMITTERS_OFF        0
-#define QTR_EMITTERS_ON         1
-#define QTR_EMITTERS_ON_AND_OFF 2
+#define NUM_ARRAYS      5
 
-#define EMITTER_DELAY           200
+#define MAIN_LINE               1
+#define TRIPLE_LEFT_LINE        2
+#define TRIPLE_RIGHT_LINE       3
+#define HI_RES_LINE             4
+#define BACK_LINE               5
 
 ///////////////////////////////////////////////
 //
@@ -38,34 +44,16 @@
 //
 ///////////////////////////////////////////////
 /**
- * @brief Initializes and calibrates the sensor array
+ * @brief Initializes and calibrates the sensor lines
  */
-void snesor_array_init(void);
+void sensor_array_init(void);
 
 /**
- * @brief Configures all the sensor arrays pins as outputs
+ * @brief Calibrates a sensor in a given mode
+ * @param u8_readMode Mode to calibrate in
+ * @param u8_line Line to calibrate
  */
-void config_outputs(void);
-
-/**
- * @brief Configures all the sensor arrays pins as inputs
- */
-void config_inputs(void);
-
-/**
- * @brief Configures timer 4 for sensor usage
- */
-void config_timer4(void);
-
-/**
- * @brief Turns on the sensor array emitters
- */
-void emitters_off(void);
-
-/**
- * @brief Turns off the sensor array emitters
- */
-void emitters_on(void);
+void calibrate(char u8_readMode, uint8_t u8_line);
 
 ///////////////////////////////////////////////
 //
@@ -73,26 +61,71 @@ void emitters_on(void);
 //
 ///////////////////////////////////////////////
 /**
- * @brief Calibrates the sensor array for the current lighting
- *
- * @param u8_readMode whether the emitters are on or not
+ * @brief Configures all the sensor arrays pins as outputs
+ * @param u8_line Line to set sensors as outputs
  */
-void calibrate(char u8_readMode);
+void config_outputs(uint8_t u8_line);
 
 /**
- * @brief Read the sensor values using a specific read mode
- *
- * @param pau16_sensorValues the values from the sensor array
- * @param u8_readMode whether the emitters are on or not
+ * @brief Configures all the sensor arrays pins as inputs
+ * @param u8_line Line to set sensors as inputs
  */
-void read(uint16_t* pau16_sensorValues, char u8_readMode);
+void config_inputs(uint8_t u8_line);
 
 /**
- * @brief Read each individual capacitor value of each sensor on the array
- *
- * @param pau16_sensorValues the values from the sensor array
+ * @brief Sets all the sensors high and times as they discharge
+ * @param u8_line Line to set its emitters high
  */
-void read_values(uint16_t* pau16_sensorValues);
+void set_sensors_high(uint8_t u8_line);
+
+/**
+ * @brief Check each sensor on this array
+ * @param pau16_sensorValues the current sensor values
+ * @param u16_delta the time that has elapsed
+ * @param u8_line Line to check
+**/
+void check_sensor_values(uint16_t* pau16_sensorValues, uint16_t u16_delta, uint8_t u8_line);
+
+/**
+ * @brief Turns on the emitters
+ * @param u8_line Line to turn its emitter on
+ */
+void emitters_on(uint8_t u8_line);
+
+/**
+ * @brief Turns off the emitters
+ * @param u8_line Line to turn its emitter off
+ */
+void emitters_off(uint8_t u8_line);
+
+/**
+ * @brief Get the max value from the calibration step
+ * @param u8_line Line to get the max value from
+ * @return the max value
+**/
+uint16_t get_line_max_value(uint8_t u8_line);
+
+/**
+ * Set the max value during calibration
+ * @param u16_maxValue the new max value
+ * @param u8_line Line to set
+**/
+void set_line_max_value(uint16_t u16_maxValue, uint8_t u8_line);
+
+/**
+ * @brief Reads the sensor values using a specific read mode
+ * @param pau16_sensorValues Values from the sensor
+ * @param u8_readMode The mode to read in
+ * @param u8_line The line to read
+**/
+void read(uint16_t* pau16_sensorValues, char u8_readMode, uint8_t u8_line);
+
+/**
+ * @brief Reads the sensor values
+ * @param pau16_sensorValues Values from the sensor
+ * @param u8_line The line to read
+**/
+void read_values(uint16_t* pau16_sensorValues, uint8_t u8_line);
 
 ///////////////////////////////////////////////
 //
@@ -100,17 +133,61 @@ void read_values(uint16_t* pau16_sensorValues);
 //
 ///////////////////////////////////////////////
 /**
- * @brief Read the entire sensor array
+ * @brief Read an entire sensor line
+ *
+ * @param pau16_sensorValues the values from the sensor array
+ * @param u8_readMode whether the emitters are on or not
+ * @param u8_line sensor line to read
+ */
+void read_sensor_array(uint16_t* pau16_sensorValues, char u8_readMode, uint8_t u8_line);
+
+/**
+ * @brief Read all of the sensor lines
  *
  * @param pau16_sensorValues the values from the sensor array
  * @param u8_readMode whether the emitters are on or not
  */
-void read_sensor_array(uint16_t* pau16_sensorValues, char u8_readMode);
+void read_all_sensor_arrays(uint16_t* pau16_allSensorValues, char u8_readMode);
 
 /**
- * @brief Print out all the sensor array values
+ * @brief Read the consecutive line of three lines
+ * @param pau16_tripleSensorValues the values from the sensor array
+ *
 **/
+void read_sensor_triple(uint16_t* pau16_tripleSensorValues, char u8_readMode);
+
+/**
+ * @brief Read the high resolution double sensor line
+ * @param pau16_hiResSensorValues the values from the sensor array
+ *
+**/
+void read_sensor_hi_res(uint16_t* pau16_hiResSensorValues, char u8_readMode);
+
+/**
+ * @brief Read the consecutive line of three lines plus the high resolution double sensor line
+ * @param pau16_tripleHiResSensorValues the values from the sensor array
+ *
+**/
+void read_sensor_triple_plus_hi_res(uint16_t* pau16_tripleHiResSensorValues, char u8_readMode);
+
+/**
+ * @brief Read the back line
+ * @param pau16_backSensorValues the values from the sensor array
+ *
+**/
+void read_sensor_back(uint16_t* pau16_backSensorValues, char u8_readMode);
+
+///////////////////////////////////////////////
+//
+// Sensor printing (self explanatory)
+//
+///////////////////////////////////////////////
 #ifdef DEBUG_BUILD
-void print_sensor_array();
+void print_sensor_array(uint8_t u8_line);
+void print_all_sensor_arrays(void);
+void print_sensor_triple(void);
+void print_sensor_hi_res(void);
+void print_sensor_triple_plus_hi_res(void);
+void print_sensor_back(void);
 #endif
 #endif
