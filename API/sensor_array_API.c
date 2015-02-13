@@ -51,7 +51,6 @@ void calibrate(char u8_readMode, uint8_t u8_line) {
     uint16_t j;
 
     for (i = 0; i < 100; i++) {
-
         read(pau16_sensorValues, u8_readMode, u8_line);
         u16_minValue = pau16_sensorValues[0];
 

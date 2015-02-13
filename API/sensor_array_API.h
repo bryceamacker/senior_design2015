@@ -33,9 +33,9 @@
 #define NUM_ARRAYS      5
 
 #define MAIN_LINE               1
-#define TRIPLE_LEFT_LINE        2
-#define TRIPLE_RIGHT_LINE       3
-#define HI_RES_LINE             4
+#define HI_RES_LINE             2
+#define TRIPLE_LEFT_LINE        3
+#define TRIPLE_RIGHT_LINE       4
 #define BACK_LINE               5
 
 ///////////////////////////////////////////////

@@ -28,14 +28,14 @@
 
 #define EMITTER_LINE2                   _RD8
 
-#define SENSOR0_LINE2_IN                _RF4
-#define SENSOR1_LINE2_IN                _RB15
-#define SENSOR2_LINE2_IN                _RB14
-#define SENSOR3_LINE2_IN                _RB13
+#define SENSOR0_LINE2_IN                _RB15
+#define SENSOR1_LINE2_IN                _RB9
+#define SENSOR2_LINE2_IN                _RB10
+#define SENSOR3_LINE2_IN                _RB11
 #define SENSOR4_LINE2_IN                _RB12
-#define SENSOR5_LINE2_IN                _RB11
-#define SENSOR6_LINE2_IN                _RB10
-#define SENSOR7_LINE2_IN                _RB9
+#define SENSOR5_LINE2_IN                _RB13
+#define SENSOR6_LINE2_IN                _RB14
+#define SENSOR7_LINE2_IN                _RF4
 
 #define SENSOR0_LINE2_OUT               _LATF4
 #define SENSOR1_LINE2_OUT               _LATB15
