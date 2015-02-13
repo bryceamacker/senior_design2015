@@ -38,9 +38,16 @@
 #define RIN1_PULSE                      OC4RS   // Pin D3
 #define RIN2_PULSE                      OC5RS   // Pin D4
 
+#define ENCODER_YELLOW_PIN              _RG6
+#define ENCODER_WHITE_PIN               _RG7
+
+#define GET_ENCODER_DATA()              ((ENCODER_YELLOW_PIN << 1) | ENCODER_WHITE_PIN)
+#define ROT_MAX                         4480
+#define ENCODER_INTERRUPT_PERIOD        100 // microseconds
+
 #define MOTOR_PWM_PERIOD 20000  // desired period, in us
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Motor config
 //
@@ -49,6 +56,8 @@
  * @brief Initializes every thing for the motors
  */
 void motors_init();
+
+void config_encoders(void);
 
 /**
  * @brief Configs timer 2 to drive motors
@@ -59,6 +68,8 @@ void config_motor_timer2(void);
  * @brief Configs timer 3 to drive motors
  */
 void config_motor_timer3(void);
+
+void config_encoder_timer4(void);
 
 /**
  * @brief Configure the output comparator for motor usage
@@ -84,21 +95,21 @@ void motor_config_output_compare4(void);
  */
 void motor_config_output_compare5(void);
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Motor primitives
 //
 ///////////////////////////////////////////////
 /**
  * @brief Drive the left motor forward
- * 
+ *
  * @param duty speed for the left motor PWM
  */
 void left_motor_fwd(float f_duty);
 
 /**
  * @brief Drive the left motor reverse
- * 
+ *
  * @param duty speed for the left motor PWM
  */
 void left_motor_reverse(float f_duty);
@@ -110,14 +121,14 @@ void left_motor_stop(void);
 
 /**
  * @brief Drive the right motor forward
- * 
+ *
  * @param duty speed for the right motor PWM
  */
 void right_motor_fwd(float f_duty);
 
 /**
  * @brief Drive the right motor reverse
- * 
+ *
  * @param duty speed for the right motor PWM
  */
 void right_motor_reverse(float f_duty);
@@ -127,7 +138,9 @@ void right_motor_reverse(float f_duty);
  */
 void right_motor_stop(void);
 
-/////////////////////////////////////////////// 
+uint8_t process_rotary_data(volatile uint8_t u8_current, uint8_t u8_last, volatile uint16_t* u16_counter, uint16_t u16_max);
+
+///////////////////////////////////////////////
 //
 // Motor usage
 //
@@ -139,28 +152,28 @@ void motors_stop(void);
 
 /**
  * @brief Turn the robot right
- * 
+ *
  * @param duty speed to the turn the robot at
  */
 void motors_turn_right(float f_duty);
 
 /**
  * @brief Turn the robot left
- * 
+ *
  * @param duty speed to the turn the robot at
  */
 void motors_turn_left(float f_duty);
 
 /**
  * @brief Move the robot forward
- * 
+ *
  * @param duty speed to move the robot forward at
  */
 void motors_move_forward(float f_duty);
 
 /**
  * @brief Move the robot back
- * 
+ *
  * @param duty speed to move the robot back at
  */
 void motors_move_reverse(float f_duty);

@@ -19,7 +19,12 @@
 
 #include "motors_API.h"
 
-/////////////////////////////////////////////// 
+volatile uint8_t u8_valueROT = 0;
+volatile uint8_t u8_lastValueROT = 0;
+volatile uint8_t u8_errorROT = 0;
+volatile uint16_t u16_counterROT = 0;
+
+///////////////////////////////////////////////
 //
 // Motor config
 //
@@ -30,7 +35,7 @@ void motors_init(void)
     // Configure timers
     config_motor_timer2();
     config_motor_timer3();
-    
+
     // Configure output comparators
     motor_config_output_compare2();
     motor_config_output_compare3();
@@ -47,12 +52,28 @@ void motors_init(void)
     CONFIG_LEFT_MOTOR_IN1();
     CONFIG_LEFT_MOTOR_IN2();
 
+    config_encoders();
+    config_encoder_timer4();
+    u8_valueROT = GET_ENCODER_DATA();
+    u8_lastValueROT = u8_valueROT;
+    T4CONbits.TON = 1;
+
     // Stop both motors
     motors_stop();
 }
 
+void config_encoders(void) {
+    CONFIG_RG6_AS_DIG_INPUT();
+    ENABLE_RG6_PULLUP();
+
+    CONFIG_RG7_AS_DIG_INPUT();
+    ENABLE_RG7_PULLUP();
+
+    DELAY_US(1);
+}
+
 void config_motor_timer2(void) {
-    T2CON = T2_OFF  
+    T2CON = T2_OFF
             | T2_IDLE_CON
             | T2_GATE_OFF
             | T2_32BIT_MODE_OFF
@@ -67,8 +88,8 @@ void config_motor_timer2(void) {
 }
 
 void config_motor_timer3(void) {
-    T3CON = T3_OFF 
-            | T3_IDLE_CON 
+    T3CON = T3_OFF
+            | T3_IDLE_CON
             | T3_GATE_OFF
             | T2_32BIT_MODE_OFF
             | T3_SOURCE_INT
@@ -79,6 +100,19 @@ void config_motor_timer3(void) {
     _T3IF = 0;
     _T3IP = 1;
     _T3IE = 1;    //enable the Timer3 interrupt
+}
+
+void config_encoder_timer4(void) {
+    T4CON = T4_OFF
+            | T4_IDLE_CON
+            | T4_GATE_OFF
+            | T4_SOURCE_INT
+            | T4_PS_1_1;
+    PR4 = usToU16Ticks(ENCODER_INTERRUPT_PERIOD, getTimerPrescale(T4CONbits)) - 1;
+    TMR4  = 0;       //clear timer3 value
+    _T4IF = 0;
+    _T4IP = 1;
+    _T4IE = 1;    //enable the Timer3 interrupt
 }
 
 void motor_config_output_compare2(void) {
@@ -173,12 +207,24 @@ void _ISR _T3Interrupt(void) {
       _T3IF = 0;    //clear the timer interrupt bit
 }
 
-/////////////////////////////////////////////// 
+void _ISRFAST _T4Interrupt(void) {
+    u8_valueROT = GET_ENCODER_DATA();
+    if (u8_lastValueROT != u8_valueROT) {
+        u8_errorROT = process_rotary_data(u8_valueROT, u8_lastValueROT, &u16_counterROT, ROT_MAX);
+        u8_lastValueROT = u8_valueROT;
+    }
+    printf("Current data: %u Counter: %u\n", u8_valueROT, u16_counterROT);
+
+    _T4IF = 0;
+}
+
+///////////////////////////////////////////////
 //
 // Motor primitives
 //
 ///////////////////////////////////////////////
 
+// Left motor primitive movements
 void left_motor_reverse (float f_duty) {
     LIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits));
     LIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1-f_duty);
@@ -210,7 +256,63 @@ void right_motor_stop() {
     RIN2_PULSE = 0;
 }
 
-/////////////////////////////////////////////// 
+uint8_t process_rotary_data(volatile uint8_t u8_current, uint8_t u8_last, volatile uint16_t* u16_counter, uint16_t u16_max) {
+    int8_t i8_delta;
+    i8_delta = 0;
+
+    switch(u8_current) {
+        case 0:
+            if (u8_last == 1) {
+                i8_delta = 1;
+            } else if (u8_last == 2) {
+                i8_delta = -1;
+            }
+            break;
+        case 1:
+            if (u8_last == 3) {
+                i8_delta = 1;
+            } else if (u8_last == 0) {
+                i8_delta = -1;
+            }
+            break;
+        case 2:
+            if (u8_last == 2) {
+                i8_delta = 1;
+            } else if (u8_last == 1) {
+                i8_delta = -1;
+            }
+            break;
+        case 3:
+            if (u8_last == 0) {
+                i8_delta = 1;
+            } else if (u8_last == 3) {
+                i8_delta = -1;
+            }
+            break;
+        default:
+            break;
+    }
+
+    if (i8_delta == 0) {
+        return(1);
+    }
+
+    if ((*u16_counter) == 0 && i8_delta == -1) {
+        (*u16_counter) = u16_max;
+        return(0);
+    }
+
+    if ((*u16_counter) == u16_max && i8_delta == 1) {
+        (*u16_counter) = 0;
+        printf("Full Rev\n");
+        return(0);
+    }
+
+    (*u16_counter) = (*u16_counter) + i8_delta;
+    return(0);
+}
+
+///////////////////////////////////////////////
 //
 // Motor usage
 //

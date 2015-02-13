@@ -39,8 +39,8 @@ void sensor_array_init() {
     sensor_array_init_line4();
     calibrate(QTR_EMITTERS_ON, 4);
 
-    sensor_array_init_line5();
-    calibrate(QTR_EMITTERS_ON, 5);
+    // sensor_array_init_line5();
+    // calibrate(QTR_EMITTERS_ON, 5);
 }
 
 // Calibrate a sensor
