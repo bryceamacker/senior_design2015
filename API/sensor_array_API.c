@@ -341,22 +341,21 @@ void read_sensor_triple(uint16_t* pau16_tripleSensorValues, char u8_readMode) {
 
     // Read the left line and place them in the combined array
     read_sensor_array(pau16_sensorValues, u8_readMode, TRIPLE_LEFT_LINE);
-    for(i = (SENSOR_NUM*0); i < SENSOR_NUM; i++) {
-        pau16_tripleSensorValues[i] = pau16_sensorValues[i];
+    for(i = 0; i < SENSOR_NUM; i++) {
+        pau16_tripleSensorValues[i] = pau16_sensorValues[SENSOR_NUM - 1 - i];
     }
 
     // Read the main line and place them in the combined array
     read_sensor_array(pau16_sensorValues, u8_readMode, MAIN_LINE);
-    for(i = (SENSOR_NUM*1); i < SENSOR_NUM; i++) {
-        pau16_tripleSensorValues[i] = pau16_sensorValues[i];
+    for(i = 0; i < SENSOR_NUM; i++) {
+        pau16_tripleSensorValues[i + SENSOR_NUM*1] = pau16_sensorValues[SENSOR_NUM - 1 - i];
     }
 
     // Read the right line and place them in the combined array
     read_sensor_array(pau16_sensorValues, u8_readMode, TRIPLE_RIGHT_LINE);
-    for(i = (SENSOR_NUM*2); i < SENSOR_NUM; i++) {
-        pau16_tripleSensorValues[i] = pau16_sensorValues[i];
+    for(i = 0; i < SENSOR_NUM; i++) {
+        pau16_tripleSensorValues[i + SENSOR_NUM*2] = pau16_sensorValues[SENSOR_NUM - 1 - i];
     }
-
 }
 
 // Read the high resolution double sensor line
@@ -370,12 +369,12 @@ void read_sensor_hi_res(uint16_t* pau16_hiResSensorValues, char u8_readMode) {
 
     // Back sensors go in the even slots
     for(i = 0; i < SENSOR_NUM; i++) {
-        pau16_hiResSensorValues[i*2] = pau16_backSensorValues[i];
+        pau16_hiResSensorValues[i*2] = pau16_backSensorValues[SENSOR_NUM - 1 - i];
     }
 
     // Front sensors go in the odd slots
     for(i = 0; i < SENSOR_NUM; i++) {
-        pau16_hiResSensorValues[(i*2)+1] = pau16_frontSensorValues[i];
+        pau16_hiResSensorValues[(i*2)+1] = pau16_frontSensorValues[SENSOR_NUM - 1 - i];
     }
 }
 
@@ -388,19 +387,19 @@ void read_sensor_triple_plus_hi_res(uint16_t* pau16_tripleHiResSensorValues, cha
     // Read the left line and place them in the combined array
     read_sensor_array(pau16_sensorValues, u8_readMode, TRIPLE_LEFT_LINE);
     for(i = (SENSOR_NUM*0); i < SENSOR_NUM; i++) {
-        pau16_tripleHiResSensorValues[i] = pau16_sensorValues[i];
+        pau16_tripleHiResSensorValues[i] = pau16_sensorValues[SENSOR_NUM - 1 - i];
     }
 
     // Read the main line plus the hires line and place them in the combine array
-    read_sensor_hi_res(pau16_sensorValues, u8_readMode);
-    for(i = (SENSOR_NUM*1); i < SENSOR_NUM*2; i++) {
-        pau16_tripleHiResSensorValues[i] = pau16_hiResSensorValues[i];
+    read_sensor_hi_res(pau16_hiResSensorValues, u8_readMode);
+    for(i = 0; i < SENSOR_NUM*2; i++) {
+        pau16_tripleHiResSensorValues[i + SENSOR_NUM*1] = pau16_hiResSensorValues[i];
     }
 
     // Read the right line and place them in the combined array
     read_sensor_array(pau16_sensorValues, u8_readMode, TRIPLE_RIGHT_LINE);
-    for(i = (SENSOR_NUM*3); i < SENSOR_NUM; i++) {
-        pau16_tripleHiResSensorValues[i] = pau16_sensorValues[i];
+    for(i = 0; i < SENSOR_NUM; i++) {
+        pau16_tripleHiResSensorValues[i + SENSOR_NUM*3] = pau16_sensorValues[SENSOR_NUM - 1 - i];
     }
 }
 
@@ -472,7 +471,7 @@ void print_sensor_hi_res() {
 
 // Print out the triple line plus hi res line
 void print_sensor_triple_plus_hi_res() {
-    uint16_t pau16_tripleHiResSensorValues[SENSOR_NUM*4];
+    uint16_t pau16_tripleHiResSensorValues[SENSOR_NUM*5];
     uint8_t i;
     read_sensor_triple_plus_hi_res(pau16_tripleHiResSensorValues, QTR_EMITTERS_ON);
 

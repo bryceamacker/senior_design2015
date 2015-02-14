@@ -213,7 +213,7 @@ void _ISRFAST _T4Interrupt(void) {
         u8_errorROT = process_rotary_data(u8_valueROT, u8_lastValueROT, &u16_counterROT, ROT_MAX);
         u8_lastValueROT = u8_valueROT;
     }
-    printf("Current data: %u Counter: %u\n", u8_valueROT, u16_counterROT);
+    // printf("Current data: %u Counter: %u\n", u8_valueROT, u16_counterROT);
 
     _T4IF = 0;
 }
