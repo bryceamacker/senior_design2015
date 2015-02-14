@@ -31,15 +31,17 @@ float get_line(uint16_t* pau16_sensorValues) {
     uint16_t u16_sum;
 
     f_line = 0;
-    read_sensor_array(pau16_sensorValues, QTR_EMITTERS_ON, 1);
-    for(u16_i = 0; u16_i < SENSOR_NUM; u16_i++) {
+    // read_sensor_array(pau16_sensorValues, QTR_EMITTERS_ON, 1);
+    read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
+
+    for(u16_i = 0; u16_i < TRIPLE_HI_RES_SENSOR_NUM; u16_i++) {
         f_line += pau16_sensorValues[u16_i] * (u16_i+1);
     }
     if(f_line == 0.0) {
         return 0.0;
     }
     u16_sum = 0;
-    for(u16_i = 0; u16_i < SENSOR_NUM; u16_i++) {
+    for(u16_i = 0; u16_i < TRIPLE_HI_RES_SENSOR_NUM; u16_i++) {
         u16_sum += pau16_sensorValues[u16_i];
     }
     f_line = f_line/u16_sum;
@@ -47,7 +49,7 @@ float get_line(uint16_t* pau16_sensorValues) {
 }
 
 void follow_line_to_box(float f_maxSpeed) {
-    uint16_t pau16_sensorValues[SENSOR_NUM];
+    uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
     uint16_t u16_position;
 
     int16_t i16_error;
@@ -57,7 +59,7 @@ void follow_line_to_box(float f_maxSpeed) {
     uint8_t i;
 
     // Find the center of the line we are constantly trying to stay at
-    i16_lineCenter = ((1000 * (SENSOR_NUM - 1)) / 2);
+    i16_lineCenter = ((1000 * (TRIPLE_HI_RES_SENSOR_NUM - 1)) / 2);
 
     while(1) {
         // Get the average position of the line
@@ -66,12 +68,12 @@ void follow_line_to_box(float f_maxSpeed) {
         u8_detectingSensors = 0;
 
         // Sum up the array
-        for (i = 0; i < SENSOR_NUM; i++) {
+        for (i = 0; i < TRIPLE_HI_RES_SENSOR_NUM; i++) {
             u8_detectingSensors += pau16_sensorValues[i];
         }
 
         // If enough sensors are detecting, what appears to be a wide line is most likely the edge of a box
-        if (u8_detectingSensors >= SENSOR_NUM) {
+        if (u8_detectingSensors >= TRIPLE_HI_RES_SENSOR_NUM) {
             motors_stop();
             return;
         }
@@ -85,10 +87,10 @@ void follow_line_to_box(float f_maxSpeed) {
 
         else {
             if (i16_error > 1000) {
-                motors_turn_left(f_maxSpeed);
+                motors_turn_right(f_maxSpeed);
             }
             if (i16_error < -1000) {
-                motors_turn_right(f_maxSpeed);
+                motors_turn_left(f_maxSpeed);
             }
             if ((i16_error >= -1000) && (i16_error <= 1000)) {
                 motors_move_forward(f_maxSpeed);

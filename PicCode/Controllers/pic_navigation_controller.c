@@ -35,6 +35,7 @@ void single_motor_function_menu(void);
 void double_motor_function_menu(void);
 void sensor_array_menu(void);
 void sensor_array_print(uint8_t u8_sensorArray);
+void print_get_line(void);
 
 // Main loop for the navigation PIC controller using serial commands
 int main (void) {
@@ -98,6 +99,15 @@ void navigation_serial_command(uint8_t u8_command) {
             sensor_array_menu();
             u8_sensorArray = inChar();
             sensor_array_print(u8_sensorArray);
+            break;
+        case 'c':
+            calibrate(QTR_EMITTERS_ON, 1);
+            calibrate(QTR_EMITTERS_ON, 2);
+            calibrate(QTR_EMITTERS_ON, 3);
+            calibrate(QTR_EMITTERS_ON, 4);
+            break;
+        case 'g':
+            print_get_line();
             break;
         case 'n':
             follow_line_to_box(0.15);
@@ -166,6 +176,8 @@ void navigation_serial_menu() {
     printf("   Press 'r' to control the right motor\n");
     printf("   Press 'b' to control both motors\n");
     printf("   Press 'a' to print out the sensor array values\n");
+    printf("   Press 'c' to recalibrate all the sensor arrays\n");
+    printf("   Press 'g' to get line continuously and print line value\n");
     printf("   Press 'n' to navigate to a box\n");
 }
 
@@ -234,5 +246,15 @@ void sensor_array_print(uint8_t u8_sensorArray) {
                 break;
         }
         doHeartbeat();
+    }
+}
+
+void print_get_line() {
+    uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
+    uint16_t u16_position;
+
+    while(isCharReady() == 0) {
+        u16_position = 1000 * get_line(pau16_sensorValues);
+        printf("Line position: %u\n", u16_position);
     }
 }
