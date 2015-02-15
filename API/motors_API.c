@@ -24,6 +24,9 @@ volatile uint8_t u8_lastValueROT = 0;
 volatile uint8_t u8_errorROT = 0;
 volatile uint16_t u16_counterROT = 0;
 
+uint16_t u16_90DegreeTurnTime;
+uint16_t u16_prepareTurnDelayTime;
+
 ///////////////////////////////////////////////
 //
 // Motor config
@@ -60,6 +63,10 @@ void motors_init(void)
 
     // Stop both motors
     motors_stop();
+
+    // Set up some constants that we can set from serial menu
+    u16_90DegreeTurnTime = DEGREE_90_TURN_TIME;
+    u16_prepareTurnDelayTime = PREPARE_TURN_TIME;
 }
 
 void config_encoders(void) {
@@ -342,3 +349,32 @@ void motors_move_reverse(float f_duty) {
     right_motor_reverse(f_duty);
     left_motor_reverse(f_duty);
 }
+
+void prepare_for_90_degree_turn(float f_duty) {
+    motors_move_forward(f_duty);
+    DELAY_MS(u16_prepareTurnDelayTime);
+    motors_stop();
+}
+
+void turn_90_degrees(float f_duty, uint8_t u8_direction) {
+    prepare_for_90_degree_turn(f_duty);
+    if (u8_direction == RIGHT_DIRECTION) {
+        motors_turn_right(f_duty);
+        DELAY_MS(u16_90DegreeTurnTime);
+    }
+    if (u8_direction == LEFT_DIRECTION) {
+        motors_turn_left(f_duty);
+        DELAY_MS(u16_90DegreeTurnTime);
+    }
+    motors_stop();
+}
+
+#ifdef DEBUG_BUILD
+void set_prepare_time(uint16_t u16_newTime) {
+    u16_prepareTurnDelayTime = u16_newTime;
+}
+
+void set_turn_time(uint16_t u16_newTime) {
+    u16_90DegreeTurnTime = u16_newTime;
+}
+#endif

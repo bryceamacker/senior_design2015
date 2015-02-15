@@ -58,6 +58,10 @@ void follow_line_to_box(float f_maxSpeed) {
     uint8_t u8_detectingSensors;
     uint8_t i;
 
+    #ifdef DEBUG_BUILD
+    printf("Box...here I come\n");
+    #endif
+
     // Find the center of the line we are constantly trying to stay at
     i16_lineCenter = ((1000 * (TRIPLE_HI_RES_SENSOR_NUM - 1)) / 2);
 
@@ -72,19 +76,35 @@ void follow_line_to_box(float f_maxSpeed) {
             u8_detectingSensors += pau16_sensorValues[i];
         }
 
-        // If enough sensors are detecting, what appears to be a wide line is most likely the edge of a box
-        if (u8_detectingSensors >= TRIPLE_HI_RES_SENSOR_NUM) {
+        // Check for a box to stop at
+        if (check_for_box() == 1) {
             motors_stop();
+
+            #ifdef DEBUG_BUILD
+            printf("Yay a box!\n");
+            #endif
+
             return;
         }
-        // else if (pau16_sensorValues[5] == 1 && pau16_sensorValues[6] == 1 && pau16_sensorValues[7] == 1) {
-        //     motors_move_forward(.15);
-        //     DELAY_MS(500);
-        //     right_motor_fwd(.25);
-        //     left_motor_reverse(.25);
-        //     DELAY_MS(1250);
-        // }
+        // Check for a left turn
+        else if (check_for_left_turn() == 1) {
+            #ifdef DEBUG_BUILD
+            printf("Left turn!\n");
+            #endif
 
+            motors_stop();
+            turn_90_degrees(f_maxSpeed, LEFT_DIRECTION);
+        }
+        // Check for a right turn
+        else if (check_for_right_turn() == 1) {
+            #ifdef DEBUG_BUILD
+            printf("Right turn!\n");
+            #endif
+
+            motors_stop();
+            turn_90_degrees(f_maxSpeed, RIGHT_DIRECTION);
+        }
+        // Otherwise just continue along the line correcting movement as needed
         else {
             if (i16_error > 1000) {
                 motors_turn_right(f_maxSpeed);
@@ -211,6 +231,75 @@ void follow_line_back(uint16_t* pau16_sensorValues, float f_maxSpeed) {
     }
     left_motor_reverse(f_rightDuty);
     right_motor_reverse(f_leftDuty);
+}
+
+// Check for a box
+uint8_t check_for_box(void) {
+    uint16_t pau16_sensorValues[TRIPLE_SENSOR_NUM];
+    uint8_t u8_detectingSensors;
+    uint8_t i;
+
+    u8_detectingSensors = 0;
+
+    read_sensor_triple(pau16_sensorValues, QTR_EMITTERS_ON);
+
+    for (i = 0; i < TRIPLE_SENSOR_NUM; i++) {
+        if (pau16_sensorValues[i] == 1) {
+            u8_detectingSensors++;
+        }
+    }
+
+    if (u8_detectingSensors >= TRIPLE_SENSOR_NUM - 8) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+// Check for a left turn
+uint8_t check_for_left_turn(void) {
+    uint16_t pau16_sensorValues[SENSOR_NUM];
+    uint8_t u8_detectingSensors;
+    uint8_t i;
+
+    u8_detectingSensors = 0;
+
+    read_sensor_array(pau16_sensorValues, QTR_EMITTERS_ON, TRIPLE_LEFT_LINE);
+
+    for (i = 0; i < SENSOR_NUM; i++) {
+        if (pau16_sensorValues[i] == 1) {
+            u8_detectingSensors++;
+        }
+    }
+
+    if (u8_detectingSensors >= SENSOR_NUM - 1) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+// Check for a right turn
+uint8_t check_for_right_turn(void) {
+    uint16_t pau16_sensorValues[SENSOR_NUM];
+    uint8_t u8_detectingSensors;
+    uint8_t i;
+
+    u8_detectingSensors = 0;
+
+    read_sensor_array(pau16_sensorValues, QTR_EMITTERS_ON, TRIPLE_RIGHT_LINE);
+
+    for (i = 0; i < SENSOR_NUM; i++) {
+        if (pau16_sensorValues[i] == 1) {
+            u8_detectingSensors++;
+        }
+    }
+
+    if (u8_detectingSensors >= SENSOR_NUM - 1) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 #ifdef DEBUG_BUILD

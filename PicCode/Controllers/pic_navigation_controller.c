@@ -78,6 +78,8 @@ void pic_navigation_init() {
 void navigation_serial_command(uint8_t u8_command) {
     uint8_t u8_function;
     uint8_t u8_sensorArray;
+    uint16_t u16_newTime;
+    char sz_buf[32];
 
     switch(u8_command) {
         case 'l':
@@ -112,6 +114,34 @@ void navigation_serial_command(uint8_t u8_command) {
         case 'n':
             follow_line_to_box(0.15);
             break;
+        case 'h':
+            printf("\nChoose a direction to turn\n");
+            printf("   Press 'l' turn left\n");
+            printf("   Press 'r' turn right\n");
+            u8_c = inChar();
+
+            if (u8_c == 'r') {
+                turn_90_degrees(0.15, RIGHT_DIRECTION);
+            }
+            else if (u8_c == 'l') {
+                turn_90_degrees(0.15, LEFT_DIRECTION);
+            }
+            else {
+                printf("Invalid Choice\n");
+            }
+            break;
+        case 't':
+            printf("\nEnter new turn time delay in us: ");
+            inStringEcho(sz_buf,31);
+            sscanf(sz_buf,"%hhu",(uint8_t *) &u16_newTime);
+            set_turn_time(u16_newTime);
+            break;
+        case 'd':
+            printf("\nEnter new prepare time delay in us: ");
+            inStringEcho(sz_buf,31);
+            sscanf(sz_buf,"%hhu",(uint8_t *) &u16_newTime);
+            set_prepare_time(u16_newTime);
+            break;
         default:
             printf("Invalid Choice\n");
             break;
@@ -121,7 +151,6 @@ void navigation_serial_command(uint8_t u8_command) {
 void motor_control(uint8_t u8_motor, uint8_t u8_function) {
     uint8_t u8_percentage;
     char sz_buf[32];
-
 
     // Get the speed percentage and convert it to a duty cycle, unless it's a stop command
     if (u8_function != 's') {
@@ -179,6 +208,9 @@ void navigation_serial_menu() {
     printf("   Press 'c' to recalibrate all the sensor arrays\n");
     printf("   Press 'g' to get line continuously and print line value\n");
     printf("   Press 'n' to navigate to a box\n");
+    printf("   Press 'h' to turn 90 degrees\n");
+    printf("   Press 't' to set a new turn time\n");
+    printf("   Press 'd' to set a new prepare time\n");
 }
 
 void single_motor_function_menu() {

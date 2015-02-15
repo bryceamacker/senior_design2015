@@ -47,6 +47,12 @@
 
 #define MOTOR_PWM_PERIOD 20000  // desired period, in us
 
+#define LEFT_DIRECTION                  0
+#define RIGHT_DIRECTION                 1
+
+#define DEGREE_90_TURN_TIME             2600 // At 15 % speed
+#define PREPARE_TURN_TIME               1500 // At 15 % speed
+
 ///////////////////////////////////////////////
 //
 // Motor config
@@ -177,5 +183,11 @@ void motors_move_forward(float f_duty);
  * @param duty speed to move the robot back at
  */
 void motors_move_reverse(float f_duty);
+
+void prepare_for_90_degree_turn(float f_duty);
+void turn_90_degrees(float f_duty, uint8_t u8_direction);
+
+void set_prepare_time(uint16_t u16_newTime);
+void set_turn_time(uint16_t u16_newTime);
 
 #endif
