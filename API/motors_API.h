@@ -42,7 +42,7 @@
 #define ENCODER_WHITE_PIN               _RG7
 
 #define GET_ENCODER_DATA()              ((ENCODER_YELLOW_PIN << 1) | ENCODER_WHITE_PIN)
-#define ROT_MAX                         4480
+#define ROT_MAX                         1120
 #define ENCODER_INTERRUPT_PERIOD        100 // microseconds
 
 #define MOTOR_PWM_PERIOD 20000  // desired period, in us
@@ -50,8 +50,16 @@
 #define LEFT_DIRECTION                  0
 #define RIGHT_DIRECTION                 1
 
+#define STOPPED                         0
+#define FORWARD_MOVEMENT                1
+#define BACKWARD_MOVEMENT               2
+
 #define DEGREE_90_TURN_TIME             2600 // At 15 % speed
 #define PREPARE_TURN_TIME               1500 // At 15 % speed
+
+#define WHEEL_DIAMETER                  1000 // in milimeters
+
+#define M_PI 3.14159265358979323846
 
 ///////////////////////////////////////////////
 //
@@ -75,7 +83,7 @@ void config_motor_timer2(void);
  */
 void config_motor_timer3(void);
 
-void config_encoder_timer4(void);
+void config_encoder_interrupts(void);
 
 /**
  * @brief Configure the output comparator for motor usage
@@ -144,7 +152,12 @@ void right_motor_reverse(float f_duty);
  */
 void right_motor_stop(void);
 
-uint8_t process_rotary_data(volatile uint8_t u8_current, uint8_t u8_last, volatile uint16_t* u16_counter, uint16_t u16_max);
+void process_right_rotary_data();
+void process_left_rotary_data();
+
+
+float get_right_motor_location();
+float get_left_motor_location();
 
 ///////////////////////////////////////////////
 //

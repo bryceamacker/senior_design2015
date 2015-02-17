@@ -31,9 +31,11 @@ float get_line(uint16_t* pau16_sensorValues) {
     uint16_t u16_sum;
 
     f_line = 0;
-    // read_sensor_array(pau16_sensorValues, QTR_EMITTERS_ON, 1);
+
+    // Read the hi-res triple
     read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
 
+    // Add up all the sensors that see something
     for(u16_i = 0; u16_i < TRIPLE_HI_RES_SENSOR_NUM; u16_i++) {
         f_line += pau16_sensorValues[u16_i] * (u16_i+1);
     }

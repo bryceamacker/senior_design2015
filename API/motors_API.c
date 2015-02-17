@@ -19,13 +19,26 @@
 
 #include "motors_API.h"
 
-volatile uint8_t u8_valueROT = 0;
-volatile uint8_t u8_lastValueROT = 0;
-volatile uint8_t u8_errorROT = 0;
-volatile uint16_t u16_counterROT = 0;
+volatile int16_t i16_leftCounterROT = 0;
+volatile int16_t i16_rightCounterROT = 0;
+
+uint8_t u8_leftMotorDirection = 0;
+uint8_t u8_rightMotorDirection = 0;
+
+volatile int16_t i16_rightRevolutionCount = 0;
+volatile int16_t i16_leftRevolutionCount = 0;
+
+float f_rightTargetPosition = 0.0;
+float f_leftTargetPosition = 0.0;
+
+uint8_t u8_rightAtTarget = 0;
+uint8_t u8_leftAtTarget = 0;
 
 uint16_t u16_90DegreeTurnTime;
 uint16_t u16_prepareTurnDelayTime;
+
+float f_wheelCircumference = WHEEL_DIAMETER * M_PI;
+
 
 ///////////////////////////////////////////////
 //
@@ -55,11 +68,9 @@ void motors_init(void)
     CONFIG_LEFT_MOTOR_IN1();
     CONFIG_LEFT_MOTOR_IN2();
 
-    config_encoders();
-    config_encoder_timer4();
-    u8_valueROT = GET_ENCODER_DATA();
-    u8_lastValueROT = u8_valueROT;
-    T4CONbits.TON = 1;
+    config_encoder_interrupts();
+    CONFIG_RF6_AS_DIG_INPUT();
+    CONFIG_RD8_AS_DIG_INPUT();
 
     // Stop both motors
     motors_stop();
@@ -109,17 +120,18 @@ void config_motor_timer3(void) {
     _T3IE = 1;    //enable the Timer3 interrupt
 }
 
-void config_encoder_timer4(void) {
-    T4CON = T4_OFF
-            | T4_IDLE_CON
-            | T4_GATE_OFF
-            | T4_SOURCE_INT
-            | T4_PS_1_1;
-    PR4 = usToU16Ticks(ENCODER_INTERRUPT_PERIOD, getTimerPrescale(T4CONbits)) - 1;
-    TMR4  = 0;       //clear timer3 value
-    _T4IF = 0;
-    _T4IP = 1;
-    _T4IE = 1;    //enable the Timer3 interrupt
+void config_encoder_interrupts(void) {
+    // Right encoder
+    _INT0IF = 0;     //Clear the interrupt flag
+    _INT0IP = 2;     //Choose a priority
+    _INT0EP = 0;     //positive edge triggerred
+    _INT0IE = 1;     //enable INT0 interrupt
+
+    // Left encoder
+    _INT1IF = 0;     //Clear the interrupt flag
+    _INT1IP = 2;     //Choose a priority
+    _INT1EP = 0;     //positive edge triggerred
+    _INT1IE = 1;     //enable INT1 interrupt
 }
 
 void motor_config_output_compare2(void) {
@@ -214,15 +226,16 @@ void _ISR _T3Interrupt(void) {
       _T3IF = 0;    //clear the timer interrupt bit
 }
 
-void _ISRFAST _T4Interrupt(void) {
-    u8_valueROT = GET_ENCODER_DATA();
-    if (u8_lastValueROT != u8_valueROT) {
-        u8_errorROT = process_rotary_data(u8_valueROT, u8_lastValueROT, &u16_counterROT, ROT_MAX);
-        u8_lastValueROT = u8_valueROT;
-    }
-    // printf("Current data: %u Counter: %u\n", u8_valueROT, u16_counterROT);
+// Interrupt Service Routine for INT0 for right encoder
+void _ISRFAST _INT0Interrupt (void) {
+    _INT0IF = 0;    //clear the interrupt bit
+    process_right_rotary_data();
+}
 
-    _T4IF = 0;
+// Interrupt Service Routine for INT0 for left encoder
+void _ISRFAST _INT1Interrupt (void) {
+    _INT0IF = 0;    //clear the interrupt bit
+    process_left_rotary_data();
 }
 
 ///////////////////////////////////////////////
@@ -235,90 +248,165 @@ void _ISRFAST _T4Interrupt(void) {
 void left_motor_reverse (float f_duty) {
     LIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits));
     LIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1-f_duty);
+
+    u8_leftMotorDirection = BACKWARD_MOVEMENT;
 }
 
 void left_motor_fwd (float f_duty) {
     LIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1-f_duty);
     LIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits));
+
+    u8_leftMotorDirection = FORWARD_MOVEMENT;
 }
 
 void left_motor_stop() {
     LIN1_PULSE = 0;
     LIN2_PULSE = 0;
+
+    u8_leftMotorDirection = STOPPED;
 }
 
 // Right motor primitive movements
 void right_motor_reverse (float f_duty) {
     RIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits));
     RIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1-f_duty);
+
+    u8_rightMotorDirection = BACKWARD_MOVEMENT;
 }
 
 void right_motor_fwd (float f_duty) {
     RIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1-f_duty);
     RIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits));
+
+    u8_rightMotorDirection = FORWARD_MOVEMENT;
 }
 
 void right_motor_stop() {
     RIN1_PULSE = 0;
     RIN2_PULSE = 0;
+
+    u8_rightMotorDirection = STOPPED;
 }
 
-uint8_t process_rotary_data(volatile uint8_t u8_current, uint8_t u8_last, volatile uint16_t* u16_counter, uint16_t u16_max) {
-    int8_t i8_delta;
-    i8_delta = 0;
-
-    switch(u8_current) {
-        case 0:
-            if (u8_last == 1) {
-                i8_delta = 1;
-            } else if (u8_last == 2) {
-                i8_delta = -1;
-            }
-            break;
-        case 1:
-            if (u8_last == 3) {
-                i8_delta = 1;
-            } else if (u8_last == 0) {
-                i8_delta = -1;
-            }
-            break;
-        case 2:
-            if (u8_last == 2) {
-                i8_delta = 1;
-            } else if (u8_last == 1) {
-                i8_delta = -1;
-            }
-            break;
-        case 3:
-            if (u8_last == 0) {
-                i8_delta = 1;
-            } else if (u8_last == 3) {
-                i8_delta = -1;
-            }
-            break;
-        default:
-            break;
+// Process the right encoder's data
+void process_right_rotary_data() {
+    // Increment if moving forward
+    if (u8_rightMotorDirection == FORWARD_MOVEMENT) {
+        i16_rightCounterROT++;
     }
 
-    if (i8_delta == 0) {
-        return(1);
+    // Decrement if moving backwards
+    if (u8_rightMotorDirection == BACKWARD_MOVEMENT) {
+        i16_rightCounterROT--;
     }
 
-    if ((*u16_counter) == 0 && i8_delta == -1) {
-        (*u16_counter) = u16_max;
-        return(0);
+    // Reset counter to 0 we've reached max and increment revolution count
+    if (i16_rightCounterROT > ROT_MAX) {
+        i16_rightCounterROT = 0;
+        i16_rightRevolutionCount++;
     }
 
-    if ((*u16_counter) == u16_max && i8_delta == 1) {
-        (*u16_counter) = 0;
-        printf("Full Rev\n");
-        return(0);
+    // Reset counter to max we've reached 0 and decrement revolution count
+    if (i16_rightCounterROT < 0 ) {
+        i16_rightCounterROT = ROT_MAX;
+        i16_rightRevolutionCount--;
     }
 
-    (*u16_counter) = (*u16_counter) + i8_delta;
-    return(0);
+    // Check to see if we're at our target
+    if (u8_rightAtTarget == 0) {
+        if (get_right_motor_location() == f_rightTargetPosition) {
+            u8_rightAtTarget = 1;
+        }
+        right_motor_stop();
+    }
 }
 
+// Process the left encoder's data
+void process_left_rotary_data() {
+    // Increment if moving forward
+    if (u8_leftMotorDirection == FORWARD_MOVEMENT) {
+        i16_leftCounterROT++;
+    }
+
+    // Decrement if moving backwards
+    if (u8_leftMotorDirection == BACKWARD_MOVEMENT) {
+        i16_leftCounterROT--;
+    }
+
+    // Reset counter to 0 we've reached max and increment revolution count
+    if (i16_leftCounterROT > ROT_MAX) {
+        i16_leftCounterROT = 0;
+        i16_leftRevolutionCount++;
+    }
+
+    // Reset counter to max we've reached 0 and decrement revolution count
+    if (i16_leftCounterROT < 0 ) {
+        i16_leftCounterROT = ROT_MAX;
+        i16_leftRevolutionCount--;
+    }
+
+    // Check to see if we're at our target
+    if (u8_leftAtTarget == 0) {
+        if (get_left_motor_location() == f_leftTargetPosition) {
+            u8_leftAtTarget = 1;
+        }
+        left_motor_stop();
+    }
+}
+
+// Get the current location of the right motor
+float get_right_motor_location() {
+    float f_fractionPart;
+    float f_total;
+
+    f_fractionPart = i16_rightCounterROT/ROT_MAX;
+
+    // Located in the positive direction
+    if (i16_rightRevolutionCount > 0) {
+        f_total = i16_rightRevolutionCount + f_fractionPart;
+    }
+    // Located in the negative direction
+    else if (i16_rightRevolutionCount < 0){
+        f_total = i16_rightRevolutionCount - f_fractionPart;
+    }
+    // At zero so we have to look at our movement
+    else {
+        if (u8_rightMotorDirection == FORWARD_MOVEMENT) {
+            f_total = 0 + f_fractionPart;
+        }
+        else {
+            f_total = 0 - f_fractionPart;
+        }
+    }
+    return f_total;
+}
+
+// Get the current location of the left motor
+float get_left_motor_location() {
+    float f_fractionPart;
+    float f_total;
+
+    f_fractionPart = i16_leftCounterROT/ROT_MAX;
+
+    // Located in the positive direction
+    if (i16_leftRevolutionCount > 0) {
+        f_total = i16_leftRevolutionCount + f_fractionPart;
+    }
+    // Located in the negative direction
+    else if (i16_leftRevolutionCount < 0){
+        f_total = i16_leftRevolutionCount - f_fractionPart;
+    }
+    // At zero so we have to look at our movement
+    else {
+        if (u8_leftMotorDirection == FORWARD_MOVEMENT) {
+            f_total = 0 + f_fractionPart;
+        }
+        else {
+            f_total = 0 - f_fractionPart;
+        }
+    }
+    return f_total;
+}
 ///////////////////////////////////////////////
 //
 // Motor usage
@@ -367,6 +455,54 @@ void turn_90_degrees(float f_duty, uint8_t u8_direction) {
         DELAY_MS(u16_90DegreeTurnTime);
     }
     motors_stop();
+}
+
+void move_right_motor_by_revolutions(float f_revolutions, float f_duty) {
+    float f_currentPosition;
+
+    f_currentPosition = get_right_motor_location();
+    if (f_revolutions > 0) {
+        f_rightTargetPosition = f_currentPosition + f_revolutions;
+        right_motor_fwd(f_duty);
+    }
+    else if (f_revolutions < 0) {
+        f_rightTargetPosition = f_currentPosition - f_revolutions;
+        right_motor_reverse(f_duty);
+    }
+    u8_rightAtTarget = 0;
+}
+
+void move_left_motor_by_revolutions(float f_revolutions, float f_duty) {
+    float f_currentPosition;
+
+    f_currentPosition = get_left_motor_location();
+    if (f_revolutions > 0) {
+        f_leftTargetPosition = f_currentPosition + f_revolutions;
+        left_motor_fwd(f_duty);
+    }
+    else if (f_revolutions < 0) {
+        f_leftTargetPosition = f_currentPosition - f_revolutions;
+        left_motor_reverse(f_duty);
+    }
+    u8_leftAtTarget = 0;
+}
+
+void move_right_motor_by_distance(float f_distance, float f_duty) {
+    move_right_motor_by_revolutions(f_distance/f_wheelCircumference, f_duty);
+}
+
+void move_left_motor_by_distance(float f_distance, float f_duty) {
+    move_left_motor_by_revolutions(f_distance/f_wheelCircumference, f_duty);
+}
+
+void move_by_revolutions(float f_revolutions, float f_duty) {
+    move_right_motor_by_revolutions(f_revolutions, f_duty);
+    move_left_motor_by_revolutions(f_revolutions, f_duty);
+}
+
+void move_by_distance(float f_distance, float f_duty) {
+    move_right_motor_by_distance(f_distance, f_duty);
+    move_left_motor_by_distance(f_distance, f_duty);
 }
 
 #ifdef DEBUG_BUILD
