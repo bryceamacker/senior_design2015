@@ -110,10 +110,9 @@ int main (void) {
         print_order(pu8_gameOrder);
         #endif
     } else {
-        pu8_gameOrder[0] = SIMON;
-        pu8_gameOrder[1] = RUBIKS;
-        pu8_gameOrder[2] = ETCH;
-        pu8_gameOrder[3] = CARD;
+        pu8_gameOrder[0] = RUBIKS;
+        pu8_gameOrder[1] = ETCH;
+        pu8_gameOrder[2] = SIMON;
     }
 
     if (SKIP_START_BUTTON == 0) {
@@ -139,7 +138,7 @@ int main (void) {
     motors_stop();
 
     // Play Rubiks, Etch, and Simon then stop
-    while(u8_currentGame <= 3) {
+    while(u8_currentGame <= 2) {
         #ifdef DEBUG_BUILD
         printf("Following line to box\n");
         #endif
