@@ -33,33 +33,29 @@
 #define CONFIG_LEFT_MOTOR_IN1()         CONFIG_RD3_AS_DIG_OUTPUT()
 #define CONFIG_LEFT_MOTOR_IN2()         CONFIG_RD4_AS_DIG_OUTPUT()
 
-#define LIN1_PULSE                      OC2RS   // Pin D1
-#define LIN2_PULSE                      OC3RS   // Pin D2
-#define RIN1_PULSE                      OC4RS   // Pin D3
-#define RIN2_PULSE                      OC5RS   // Pin D4
+#define LIN1_PULSE                      OC2RS                   // Pin D1
+#define LIN2_PULSE                      OC3RS                   // Pin D2
+#define RIN1_PULSE                      OC4RS                   // Pin D3
+#define RIN2_PULSE                      OC5RS                   // Pin D4
 
-#define ENCODER_YELLOW_PIN              _RG6
-#define ENCODER_WHITE_PIN               _RG7
+#define ROT_MAX                         1120 - 1                // Max encoder value
+#define ENCODER_INTERRUPT_PERIOD        100                     // microseconds
 
-#define GET_ENCODER_DATA()              ((ENCODER_YELLOW_PIN << 1) | ENCODER_WHITE_PIN)
-#define ROT_MAX                         1120 - 1
-#define ENCODER_INTERRUPT_PERIOD        100 // microseconds
+#define MOTOR_PWM_PERIOD                20000                   // desired period, in us
 
-#define MOTOR_PWM_PERIOD 20000  // desired period, in us
+#define LEFT_DIRECTION                  0                       // Boolean for left turning direction
+#define RIGHT_DIRECTION                 1                       // Boolean for left turning direction
 
-#define LEFT_DIRECTION                  0
-#define RIGHT_DIRECTION                 1
+#define STOPPED                         0                       // Stopped motion
+#define FORWARD_MOVEMENT                1                       // Forward motion
+#define BACKWARD_MOVEMENT               2                       // Backward motion
 
-#define STOPPED                         0
-#define FORWARD_MOVEMENT                1
-#define BACKWARD_MOVEMENT               2
+#define DEGREE_90_TURN_TIME             2600                    // At 15 % speed
+#define PREPARE_TURN_TIME               1500                    // At 15 % speed
 
-#define DEGREE_90_TURN_TIME             2600 // At 15 % speed
-#define PREPARE_TURN_TIME               1500 // At 15 % speed
-
-#define WHEEL_DIAMETER                  80   // in milimeters
-#define M_PI                            3.14159265358979323846
-#define WHEEL_CIRCUMFERENCE             WHEEL_DIAMETER * M_PI // in milimeters
+#define M_PI                            3.14159265358979323846  // pi constant
+#define WHEEL_DIAMETER                  80                      // in milimeters
+#define WHEEL_CIRCUMFERENCE             (WHEEL_DIAMETER * M_PI) // in milimeters
 
 ///////////////////////////////////////////////
 //
@@ -71,8 +67,6 @@
  */
 void motors_init();
 
-void config_encoders(void);
-
 /**
  * @brief Configs timer 2 to drive motors
  */
@@ -83,6 +77,9 @@ void config_motor_timer2(void);
  */
 void config_motor_timer3(void);
 
+/**
+ * @brief Configs the interrupts for each encoder
+ */
 void config_encoder_interrupts(void);
 
 /**
@@ -152,12 +149,29 @@ void right_motor_reverse(float f_duty);
  */
 void right_motor_stop(void);
 
-void process_right_rotary_data();
-void process_left_rotary_data();
+/**
+ * @brief Process the encoder for the right motoer
+**/
+void process_right_rotary_data(void);
 
+/**
+ * @brief Process the encoder for the right motoer
+**/
+void process_left_rotary_data(void);
 
-float get_right_motor_location();
-float get_left_motor_location();
+/**
+ * @brief Get the current location of the right motor
+ *
+ * @return the revolution count and fraction
+**/
+float get_right_motor_location(void);
+
+/**
+ * @brief Get the current location of the left motor
+ *
+ * @return the revolution count and fraction
+**/
+float get_left_motor_location(void);
 
 ///////////////////////////////////////////////
 //
@@ -172,48 +186,105 @@ void motors_stop(void);
 /**
  * @brief Turn the robot right
  *
- * @param duty speed to the turn the robot at
+ * @param f_duty speed to the turn the robot at
  */
 void motors_turn_right(float f_duty);
 
 /**
  * @brief Turn the robot left
  *
- * @param duty speed to the turn the robot at
+ * @param f_duty speed to the turn the robot at
  */
 void motors_turn_left(float f_duty);
 
 /**
  * @brief Move the robot forward
  *
- * @param duty speed to move the robot forward at
+ * @param f_duty speed to move the robot forward at
  */
 void motors_move_forward(float f_duty);
 
 /**
  * @brief Move the robot back
  *
- * @param duty speed to move the robot back at
+ * @param f_duty speed to move the robot back at
  */
 void motors_move_reverse(float f_duty);
 
+/**
+ * @brief Prepare the robot for a 90 degree turn using delays
+ *
+ * @param f_duty speed to move the robot
+**/
 void prepare_for_90_degree_turn(float f_duty);
+
+/**
+ * @brief Turn the robot by 90 degrees
+ *
+ * @param f_duty speed to move the robot
+**/
 void turn_90_degrees(float f_duty, uint8_t u8_direction);
 
+/**
+ * @brief Set the time to wait when preparing the robot for 90 degree turns
+ *
+ * @param u16_newTime the new time
+**/
 void set_prepare_time(uint16_t u16_newTime);
+
+/**
+ * @brief Set the time to wait when turning the robot 90 degrees
+ *
+ * @param u16_newTime the new time
+**/
 void set_turn_time(uint16_t u16_newTime);
 
+/**
+ * @brief Turn the left motor by a number of revolutions
+ *
+ * @param f_revolutions Number of revolutions to turn
+ * @param f_duty Speed to turn the motor
+**/
 void move_right_motor_by_revolutions(float f_revolutions, float f_duty);
 
+/**
+ * @brief Turn the right motor by a number of revolutions
+ *
+ * @param f_revolutions Number of revolutions to turn
+ * @param f_duty Speed to turn the motor
+**/
 void move_left_motor_by_revolutions(float f_revolutions, float f_duty);
 
+/**
+ * @brief Move the right motor by mm
+ *
+ * @param f_distance Milimeters to move the motor
+ * @param f_duty Speed to turn the motor
+**/
 void move_right_motor_by_distance(float f_distance, float f_duty);
 
+/**
+ * @brief Move the left motor by mm
+ *
+ * @param f_distance Milimeters to move the motor
+ * @param f_duty Speed to turn the motor
+**/
 void move_left_motor_by_distance(float f_distance, float f_duty);
 
+/**
+ * @brief Turn the robot by a number of revolutions
+ *
+ * @param f_revolutions Number of revolutions to turn
+ * @param f_duty Speed to turn the robot
+**/
 void move_by_revolutions(float f_revolutions, float f_duty);
 
+/**
+ * @brief Move the robot by mm
+ *
+ * @param f_distance Milimeters to move the robot
+ * @param f_duty Speed to turn the robot
+**/
 void move_by_distance(float f_distance, float f_duty);
-
 
 #endif

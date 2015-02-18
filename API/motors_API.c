@@ -19,21 +19,27 @@
 
 #include "motors_API.h"
 
+// Current encoder count for each motor
 volatile int16_t i16_leftCounterROT = 0;
 volatile int16_t i16_rightCounterROT = 0;
 
+// Direction of each motor
 uint8_t u8_leftMotorDirection = 0;
 uint8_t u8_rightMotorDirection = 0;
 
+// Current revolution count for each motor
 volatile int16_t i16_rightRevolutionCount = 0;
 volatile int16_t i16_leftRevolutionCount = 0;
 
+// Target locations for each motor
 float f_rightTargetPosition = 0.0;
 float f_leftTargetPosition = 0.0;
 
+// Whether or not the motors have reached their target location
 uint8_t u8_rightAtTarget = 0;
 uint8_t u8_leftAtTarget = 0;
 
+// Delay time for 90 degreen turns
 uint16_t u16_90DegreeTurnTime;
 uint16_t u16_prepareTurnDelayTime;
 
@@ -66,9 +72,8 @@ void motors_init(void)
     CONFIG_LEFT_MOTOR_IN1();
     CONFIG_LEFT_MOTOR_IN2();
 
+    // Config the encoders
     config_encoder_interrupts();
-    CONFIG_RF6_AS_DIG_INPUT();
-    CONFIG_RD9_AS_DIG_INPUT();
 
     // Stop both motors
     motors_stop();
@@ -76,16 +81,6 @@ void motors_init(void)
     // Set up some constants that we can set from serial menu
     u16_90DegreeTurnTime = DEGREE_90_TURN_TIME;
     u16_prepareTurnDelayTime = PREPARE_TURN_TIME;
-}
-
-void config_encoders(void) {
-    CONFIG_RG6_AS_DIG_INPUT();
-    ENABLE_RG6_PULLUP();
-
-    CONFIG_RG7_AS_DIG_INPUT();
-    ENABLE_RG7_PULLUP();
-
-    DELAY_US(1);
 }
 
 void config_motor_timer2(void) {
@@ -130,6 +125,10 @@ void config_encoder_interrupts(void) {
     _INT1IP = 2;     //Choose a priority
     _INT1EP = 0;     //positive edge triggerred
     _INT1IE = 1;     //enable INT1 interrupt
+
+    // Enable the input pins
+    CONFIG_RF6_AS_DIG_INPUT();
+    CONFIG_RD8_AS_DIG_INPUT();
 }
 
 void motor_config_output_compare2(void) {
@@ -230,9 +229,9 @@ void _ISRFAST _INT0Interrupt (void) {
     process_right_rotary_data();
 }
 
-// Interrupt Service Routine for INT0 for left encoder
+// Interrupt Service Routine for INT1 for left encoder
 void _ISRFAST _INT1Interrupt (void) {
-    _INT0IF = 0;    //clear the interrupt bit
+    _INT1IF = 0;    //clear the interrupt bit
     process_left_rotary_data();
 }
 
@@ -413,37 +412,44 @@ float get_left_motor_location() {
 //
 ///////////////////////////////////////////////
 
+// Stop robot
 void motors_stop(void) {
     left_motor_stop();
     right_motor_stop();
 }
 
+// Turn robot right
 void motors_turn_right(float f_duty) {
     right_motor_reverse(f_duty);
     left_motor_fwd(f_duty);
 }
 
+// Turn robot left
 void motors_turn_left(float f_duty) {
     right_motor_fwd(f_duty);
     left_motor_reverse(f_duty);
 }
 
+// Move robot forward
 void motors_move_forward(float f_duty) {
     right_motor_fwd(f_duty);
     left_motor_fwd(f_duty);
 }
 
+// Move robot in reverse
 void motors_move_reverse(float f_duty) {
     right_motor_reverse(f_duty);
     left_motor_reverse(f_duty);
 }
 
+// Prepare robot for 90 degree turn by time
 void prepare_for_90_degree_turn(float f_duty) {
     motors_move_forward(f_duty);
     DELAY_MS(u16_prepareTurnDelayTime);
     motors_stop();
 }
 
+// Turn robot 90 degrees by time
 void turn_90_degrees(float f_duty, uint8_t u8_direction) {
     prepare_for_90_degree_turn(f_duty);
     if (u8_direction == RIGHT_DIRECTION) {
@@ -457,6 +463,7 @@ void turn_90_degrees(float f_duty, uint8_t u8_direction) {
     motors_stop();
 }
 
+// Move right motor by revolutions
 void move_right_motor_by_revolutions(float f_revolutions, float f_duty) {
     float f_currentPosition;
 
@@ -471,11 +478,14 @@ void move_right_motor_by_revolutions(float f_revolutions, float f_duty) {
         u8_rightMotorDirection = BACKWARD_MOVEMENT;
         right_motor_reverse(f_duty);
     }
-    printf("Current position: %f\n", (double) f_currentPosition);
+    #ifdef DEBUG_BUILD
+    printf("Current right position: %f\n", (double) f_currentPosition);
     printf("New right target: %f\n", (double) f_rightTargetPosition);
+    #endif
     u8_rightAtTarget = 0;
 }
 
+// Move left motor by revolutions
 void move_left_motor_by_revolutions(float f_revolutions, float f_duty) {
     float f_currentPosition;
 
@@ -490,24 +500,30 @@ void move_left_motor_by_revolutions(float f_revolutions, float f_duty) {
         u8_leftMotorDirection = BACKWARD_MOVEMENT;
         left_motor_reverse(f_duty);
     }
-    printf("Current position: %f\n", (double) f_currentPosition);
+    #ifdef DEBUG_BUILD
+    printf("Current left position: %f\n", (double) f_currentPosition);
     printf("New left target: %f\n", (double) f_rightTargetPosition);
+    #endif
     u8_leftAtTarget = 0;
 }
 
+// Move right motor by mm
 void move_right_motor_by_distance(float f_distance, float f_duty) {
     move_right_motor_by_revolutions(f_distance/WHEEL_CIRCUMFERENCE, f_duty);
 }
 
+// Move left motor by mm
 void move_left_motor_by_distance(float f_distance, float f_duty) {
     move_left_motor_by_revolutions(f_distance/WHEEL_CIRCUMFERENCE, f_duty);
 }
 
+// Move entire robot by revolutions
 void move_by_revolutions(float f_revolutions, float f_duty) {
     move_right_motor_by_revolutions(f_revolutions, f_duty);
     move_left_motor_by_revolutions(f_revolutions, f_duty);
 }
 
+// Move entire robot by mm
 void move_by_distance(float f_distance, float f_duty) {
     move_right_motor_by_distance(f_distance, f_duty);
     move_left_motor_by_distance(f_distance, f_duty);

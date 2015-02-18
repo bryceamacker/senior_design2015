@@ -196,6 +196,7 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
             printf("\nEnter number of tenths of revolutions\n");
             inStringEcho(sz_buf,31);
             sscanf(sz_buf,"%u", (uint16_t *) &u16_revolutions);
+            u8_c2 = inChar();
 
             printf("\n(f)orward or (b)ack\n");
             u8_c = inChar();
@@ -222,6 +223,7 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
             printf("\nEnter distance in mm\n");
             inStringEcho(sz_buf,31);
             sscanf(sz_buf,"%u", (uint16_t *) &u16_distance);
+            u8_c2 = inChar();
 
             printf("\n(f)orward or (b)ack\n");
             u8_c = inChar();
@@ -235,13 +237,13 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
 
             if (u8_motor == 'l') {
                 printf("Turning left motor by %u mm\n", u16_distance);
-                move_left_motor_by_distance(i16_distance/1.0, u8_percentage/100.0);
+                move_left_motor_by_distance(i16_distance*1.0, u8_percentage/100.0);
             } else if (u8_motor == 'r') {
                 printf("Turning right motor by %u mm\n", u16_distance);
-                move_right_motor_by_distance(i16_distance/1.0, u8_percentage/100.0);
+                move_right_motor_by_distance(i16_distance*1.0, u8_percentage/100.0);
             } else if (u8_motor == 'b') {
                 printf("Turning motors by %u mm\n", u16_distance);
-                move_by_distance(i16_distance/1.0, u8_percentage/100.0);
+                move_by_distance(i16_distance*1.0, u8_percentage/100.0);
             }
             break;
         case 's':
