@@ -37,8 +37,6 @@ uint8_t u8_leftAtTarget = 0;
 uint16_t u16_90DegreeTurnTime;
 uint16_t u16_prepareTurnDelayTime;
 
-float f_wheelCircumference = WHEEL_DIAMETER * M_PI;
-
 
 ///////////////////////////////////////////////
 //
@@ -70,7 +68,7 @@ void motors_init(void)
 
     config_encoder_interrupts();
     CONFIG_RF6_AS_DIG_INPUT();
-    CONFIG_RD8_AS_DIG_INPUT();
+    CONFIG_RD9_AS_DIG_INPUT();
 
     // Stop both motors
     motors_stop();
@@ -293,11 +291,19 @@ void process_right_rotary_data() {
     // Increment if moving forward
     if (u8_rightMotorDirection == FORWARD_MOVEMENT) {
         i16_rightCounterROT++;
+        if ((get_right_motor_location() >= f_rightTargetPosition) && (u8_rightAtTarget == 0)){
+            u8_rightAtTarget = 1;
+            right_motor_stop();
+        }
     }
 
     // Decrement if moving backwards
     if (u8_rightMotorDirection == BACKWARD_MOVEMENT) {
         i16_rightCounterROT--;
+        if ((get_right_motor_location() <= f_rightTargetPosition) && (u8_rightAtTarget == 0)){
+            u8_rightAtTarget = 1;
+            right_motor_stop();
+        }
     }
 
     // Reset counter to 0 we've reached max and increment revolution count
@@ -311,14 +317,6 @@ void process_right_rotary_data() {
         i16_rightCounterROT = ROT_MAX;
         i16_rightRevolutionCount--;
     }
-
-    // Check to see if we're at our target
-    if (u8_rightAtTarget == 0) {
-        if (get_right_motor_location() == f_rightTargetPosition) {
-            u8_rightAtTarget = 1;
-        }
-        right_motor_stop();
-    }
 }
 
 // Process the left encoder's data
@@ -326,11 +324,21 @@ void process_left_rotary_data() {
     // Increment if moving forward
     if (u8_leftMotorDirection == FORWARD_MOVEMENT) {
         i16_leftCounterROT++;
+
+        if ((get_left_motor_location() >= f_leftTargetPosition) && (u8_leftAtTarget == 0)) {
+            u8_leftAtTarget = 1;
+            left_motor_stop();
+        }
     }
 
     // Decrement if moving backwards
     if (u8_leftMotorDirection == BACKWARD_MOVEMENT) {
         i16_leftCounterROT--;
+
+        if ((get_left_motor_location() <= f_leftTargetPosition) && (u8_leftAtTarget == 0)) {
+            u8_leftAtTarget = 1;
+            left_motor_stop();
+        }
     }
 
     // Reset counter to 0 we've reached max and increment revolution count
@@ -344,14 +352,6 @@ void process_left_rotary_data() {
         i16_leftCounterROT = ROT_MAX;
         i16_leftRevolutionCount--;
     }
-
-    // Check to see if we're at our target
-    if (u8_leftAtTarget == 0) {
-        if (get_left_motor_location() == f_leftTargetPosition) {
-            u8_leftAtTarget = 1;
-        }
-        left_motor_stop();
-    }
 }
 
 // Get the current location of the right motor
@@ -359,7 +359,7 @@ float get_right_motor_location() {
     float f_fractionPart;
     float f_total;
 
-    f_fractionPart = i16_rightCounterROT/ROT_MAX;
+    f_fractionPart = (1.0 * i16_rightCounterROT)/(1.0 * ROT_MAX);
 
     // Located in the positive direction
     if (i16_rightRevolutionCount > 0) {
@@ -386,7 +386,7 @@ float get_left_motor_location() {
     float f_fractionPart;
     float f_total;
 
-    f_fractionPart = i16_leftCounterROT/ROT_MAX;
+    f_fractionPart = (1.0 * i16_leftCounterROT)/(1.0 * ROT_MAX);
 
     // Located in the positive direction
     if (i16_leftRevolutionCount > 0) {
@@ -463,12 +463,16 @@ void move_right_motor_by_revolutions(float f_revolutions, float f_duty) {
     f_currentPosition = get_right_motor_location();
     if (f_revolutions > 0) {
         f_rightTargetPosition = f_currentPosition + f_revolutions;
+        u8_rightMotorDirection = FORWARD_MOVEMENT;
         right_motor_fwd(f_duty);
     }
     else if (f_revolutions < 0) {
         f_rightTargetPosition = f_currentPosition - f_revolutions;
+        u8_rightMotorDirection = BACKWARD_MOVEMENT;
         right_motor_reverse(f_duty);
     }
+    printf("Current position: %f\n", (double) f_currentPosition);
+    printf("New right target: %f\n", (double) f_rightTargetPosition);
     u8_rightAtTarget = 0;
 }
 
@@ -478,21 +482,25 @@ void move_left_motor_by_revolutions(float f_revolutions, float f_duty) {
     f_currentPosition = get_left_motor_location();
     if (f_revolutions > 0) {
         f_leftTargetPosition = f_currentPosition + f_revolutions;
+        u8_leftMotorDirection = FORWARD_MOVEMENT;
         left_motor_fwd(f_duty);
     }
     else if (f_revolutions < 0) {
         f_leftTargetPosition = f_currentPosition - f_revolutions;
+        u8_leftMotorDirection = BACKWARD_MOVEMENT;
         left_motor_reverse(f_duty);
     }
+    printf("Current position: %f\n", (double) f_currentPosition);
+    printf("New left target: %f\n", (double) f_rightTargetPosition);
     u8_leftAtTarget = 0;
 }
 
 void move_right_motor_by_distance(float f_distance, float f_duty) {
-    move_right_motor_by_revolutions(f_distance/f_wheelCircumference, f_duty);
+    move_right_motor_by_revolutions(f_distance/WHEEL_CIRCUMFERENCE, f_duty);
 }
 
 void move_left_motor_by_distance(float f_distance, float f_duty) {
-    move_left_motor_by_revolutions(f_distance/f_wheelCircumference, f_duty);
+    move_left_motor_by_revolutions(f_distance/WHEEL_CIRCUMFERENCE, f_duty);
 }
 
 void move_by_revolutions(float f_revolutions, float f_duty) {

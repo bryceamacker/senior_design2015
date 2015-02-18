@@ -150,6 +150,12 @@ void navigation_serial_command(uint8_t u8_command) {
 
 void motor_control(uint8_t u8_motor, uint8_t u8_function) {
     uint8_t u8_percentage;
+    uint8_t u8_c2;
+    uint16_t u16_revolutions;
+    uint16_t u16_distance;
+    int16_t i16_revolutions;
+    int16_t i16_distance;
+
     char sz_buf[32];
 
     // Get the speed percentage and convert it to a duty cycle, unless it's a stop command
@@ -157,6 +163,7 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
         printf("\nEnter speed percentage: ");
         inStringEcho(sz_buf,31);
         sscanf(sz_buf,"%hhu",(uint8_t *) &u8_percentage);
+        u8_c2 = inChar();
     }
 
     // Perform the given function on the given motor
@@ -184,6 +191,58 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
             break;
         case 'l':
             motors_turn_left(u8_percentage/100.0);
+            break;
+        case 'o':
+            printf("\nEnter number of tenths of revolutions\n");
+            inStringEcho(sz_buf,31);
+            sscanf(sz_buf,"%u", (uint16_t *) &u16_revolutions);
+
+            printf("\n(f)orward or (b)ack\n");
+            u8_c = inChar();
+
+            if (u8_c == 'b') {
+                i16_revolutions = 0 - u16_revolutions;
+            }
+            else {
+                i16_revolutions = u16_revolutions;
+            }
+
+            if (u8_motor == 'l') {
+                printf("Turning left motor by %u tenths of revolutions\n", u16_revolutions);
+                move_left_motor_by_revolutions(i16_revolutions/10.0, u8_percentage/100.0);
+            } else if (u8_motor == 'r') {
+                printf("Turning left motor by %u tenths of revolutions\n", u16_revolutions);
+                move_right_motor_by_revolutions(i16_revolutions/10.0, u8_percentage/100.0);
+            } else if (u8_motor == 'b') {
+                printf("Turning motors by %u tenths of revolutions\n", u16_revolutions);
+                move_by_revolutions(i16_revolutions/10.0, u8_percentage/100.0);
+            }
+            break;
+        case 'd':
+            printf("\nEnter distance in mm\n");
+            inStringEcho(sz_buf,31);
+            sscanf(sz_buf,"%u", (uint16_t *) &u16_distance);
+
+            printf("\n(f)orward or (b)ack\n");
+            u8_c = inChar();
+
+            if (u8_c == 'b') {
+                i16_distance = 0 - u16_distance;
+            }
+            else {
+                i16_distance = u16_distance;
+            }
+
+            if (u8_motor == 'l') {
+                printf("Turning left motor by %u mm\n", u16_distance);
+                move_left_motor_by_distance(i16_distance/1.0, u8_percentage/100.0);
+            } else if (u8_motor == 'r') {
+                printf("Turning right motor by %u mm\n", u16_distance);
+                move_right_motor_by_distance(i16_distance/1.0, u8_percentage/100.0);
+            } else if (u8_motor == 'b') {
+                printf("Turning motors by %u mm\n", u16_distance);
+                move_by_distance(i16_distance/1.0, u8_percentage/100.0);
+            }
             break;
         case 's':
             if (u8_motor == 'l') {
@@ -217,6 +276,8 @@ void single_motor_function_menu() {
     printf("\nChoose a motor function\n");
     printf("   Press 'f' for forward\n");
     printf("   Press 'b' for back\n");
+    printf("   Press 'o' to move by revolution\n");
+    printf("   Press 'd' to move by distance\n");
     printf("   Press 's' for stop\n");
 }
 
@@ -226,6 +287,8 @@ void double_motor_function_menu() {
     printf("   Press 'b' for back\n");
     printf("   Press 'r' for right turn\n");
     printf("   Press 'l' for left turn\n");
+    printf("   Press 'o' to move by revolution\n");
+    printf("   Press 'd' to move by distance\n");
     printf("   Press 's' for stop\n");
 }
 

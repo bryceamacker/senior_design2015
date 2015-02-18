@@ -42,7 +42,7 @@
 #define ENCODER_WHITE_PIN               _RG7
 
 #define GET_ENCODER_DATA()              ((ENCODER_YELLOW_PIN << 1) | ENCODER_WHITE_PIN)
-#define ROT_MAX                         1120
+#define ROT_MAX                         1120 - 1
 #define ENCODER_INTERRUPT_PERIOD        100 // microseconds
 
 #define MOTOR_PWM_PERIOD 20000  // desired period, in us
@@ -57,9 +57,9 @@
 #define DEGREE_90_TURN_TIME             2600 // At 15 % speed
 #define PREPARE_TURN_TIME               1500 // At 15 % speed
 
-#define WHEEL_DIAMETER                  1000 // in milimeters
-
-#define M_PI 3.14159265358979323846
+#define WHEEL_DIAMETER                  80   // in milimeters
+#define M_PI                            3.14159265358979323846
+#define WHEEL_CIRCUMFERENCE             WHEEL_DIAMETER * M_PI // in milimeters
 
 ///////////////////////////////////////////////
 //
@@ -202,5 +202,18 @@ void turn_90_degrees(float f_duty, uint8_t u8_direction);
 
 void set_prepare_time(uint16_t u16_newTime);
 void set_turn_time(uint16_t u16_newTime);
+
+void move_right_motor_by_revolutions(float f_revolutions, float f_duty);
+
+void move_left_motor_by_revolutions(float f_revolutions, float f_duty);
+
+void move_right_motor_by_distance(float f_distance, float f_duty);
+
+void move_left_motor_by_distance(float f_distance, float f_duty);
+
+void move_by_revolutions(float f_revolutions, float f_duty);
+
+void move_by_distance(float f_distance, float f_duty);
+
 
 #endif
