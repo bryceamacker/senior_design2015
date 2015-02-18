@@ -28,16 +28,16 @@ uint8_t u8_leftMotorDirection = 0;
 uint8_t u8_rightMotorDirection = 0;
 
 // Current revolution count for each motor
-volatile int16_t i16_rightRevolutionCount = 0;
-volatile int16_t i16_leftRevolutionCount = 0;
+volatile int16_t i16_rightRevolutionCount = 5000;
+volatile int16_t i16_leftRevolutionCount = 5000;
 
 // Target locations for each motor
-float f_rightTargetPosition = 0.0;
-float f_leftTargetPosition = 0.0;
+float f_rightTargetPosition = 5000.0;
+float f_leftTargetPosition = 5000.0;
 
 // Whether or not the motors have reached their target location
-uint8_t u8_rightAtTarget = 0;
-uint8_t u8_leftAtTarget = 0;
+uint8_t u8_rightAtTarget = 1;
+uint8_t u8_leftAtTarget = 1;
 
 // Delay time for 90 degreen turns
 uint16_t u16_90DegreeTurnTime;
@@ -293,6 +293,7 @@ void process_right_rotary_data() {
         if ((get_right_motor_location() >= f_rightTargetPosition) && (u8_rightAtTarget == 0)){
             u8_rightAtTarget = 1;
             right_motor_stop();
+            printf("Right reached target\n");
         }
     }
 
@@ -302,6 +303,7 @@ void process_right_rotary_data() {
         if ((get_right_motor_location() <= f_rightTargetPosition) && (u8_rightAtTarget == 0)){
             u8_rightAtTarget = 1;
             right_motor_stop();
+            printf("Right reached target\n");
         }
     }
 
@@ -327,6 +329,7 @@ void process_left_rotary_data() {
         if ((get_left_motor_location() >= f_leftTargetPosition) && (u8_leftAtTarget == 0)) {
             u8_leftAtTarget = 1;
             left_motor_stop();
+            printf("Left reached target\n");
         }
     }
 
@@ -337,6 +340,7 @@ void process_left_rotary_data() {
         if ((get_left_motor_location() <= f_leftTargetPosition) && (u8_leftAtTarget == 0)) {
             u8_leftAtTarget = 1;
             left_motor_stop();
+            printf("Left reached target\n");
         }
     }
 
@@ -444,8 +448,8 @@ void motors_move_reverse(float f_duty) {
 
 // Prepare robot for 90 degree turn by time
 void prepare_for_90_degree_turn(float f_duty) {
-    motors_move_forward(f_duty);
-    DELAY_MS(u16_prepareTurnDelayTime);
+    move_by_distance(PREPARE_90_TURN_DISTANCE, f_duty);
+    DELAY_MS(PREPARE_TURN_TIME + 500);
     motors_stop();
 }
 
@@ -453,14 +457,14 @@ void prepare_for_90_degree_turn(float f_duty) {
 void turn_90_degrees(float f_duty, uint8_t u8_direction) {
     prepare_for_90_degree_turn(f_duty);
     if (u8_direction == RIGHT_DIRECTION) {
-        motors_turn_right(f_duty);
-        DELAY_MS(u16_90DegreeTurnTime);
+        move_right_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_duty);
+        move_left_motor_by_revolutions(DEGREE_90_TURN_REVS, f_duty);
     }
     if (u8_direction == LEFT_DIRECTION) {
-        motors_turn_left(f_duty);
-        DELAY_MS(u16_90DegreeTurnTime);
+        move_right_motor_by_revolutions(DEGREE_90_TURN_REVS, f_duty);
+        move_left_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_duty);
     }
-    motors_stop();
+    DELAY_MS(DEGREE_90_TURN_TIME + 500);
 }
 
 // Move right motor by revolutions
@@ -468,21 +472,19 @@ void move_right_motor_by_revolutions(float f_revolutions, float f_duty) {
     float f_currentPosition;
 
     f_currentPosition = get_right_motor_location();
+    f_rightTargetPosition = f_currentPosition + f_revolutions;
+    u8_rightAtTarget = 0;
+
     if (f_revolutions > 0) {
-        f_rightTargetPosition = f_currentPosition + f_revolutions;
-        u8_rightMotorDirection = FORWARD_MOVEMENT;
         right_motor_fwd(f_duty);
     }
     else if (f_revolutions < 0) {
-        f_rightTargetPosition = f_currentPosition - f_revolutions;
-        u8_rightMotorDirection = BACKWARD_MOVEMENT;
         right_motor_reverse(f_duty);
     }
     #ifdef DEBUG_BUILD
     printf("Current right position: %f\n", (double) f_currentPosition);
     printf("New right target: %f\n", (double) f_rightTargetPosition);
     #endif
-    u8_rightAtTarget = 0;
 }
 
 // Move left motor by revolutions
@@ -490,21 +492,19 @@ void move_left_motor_by_revolutions(float f_revolutions, float f_duty) {
     float f_currentPosition;
 
     f_currentPosition = get_left_motor_location();
+    f_leftTargetPosition = f_currentPosition + f_revolutions;
+    u8_leftAtTarget = 0;
+
     if (f_revolutions > 0) {
-        f_leftTargetPosition = f_currentPosition + f_revolutions;
-        u8_leftMotorDirection = FORWARD_MOVEMENT;
         left_motor_fwd(f_duty);
     }
     else if (f_revolutions < 0) {
-        f_leftTargetPosition = f_currentPosition - f_revolutions;
-        u8_leftMotorDirection = BACKWARD_MOVEMENT;
         left_motor_reverse(f_duty);
     }
     #ifdef DEBUG_BUILD
     printf("Current left position: %f\n", (double) f_currentPosition);
-    printf("New left target: %f\n", (double) f_rightTargetPosition);
+    printf("New left target: %f\n", (double) f_leftTargetPosition);
     #endif
-    u8_leftAtTarget = 0;
 }
 
 // Move right motor by mm

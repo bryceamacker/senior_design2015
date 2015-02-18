@@ -26,7 +26,7 @@
 #ifndef SENSOR_ARRAY_2_H_
 #define SENSOR_ARRAY_2_H_
 
-#define EMITTER_LINE2                   _RD8
+#define EMITTER_LINE2                   _RF5
 
 #define SENSOR0_LINE2_IN                _RB15
 #define SENSOR1_LINE2_IN                _RB9

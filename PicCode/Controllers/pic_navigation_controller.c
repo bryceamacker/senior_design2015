@@ -121,9 +121,11 @@ void navigation_serial_command(uint8_t u8_command) {
             u8_c = inChar();
 
             if (u8_c == 'r') {
+                printf("Turning 90 degrees right\n");
                 turn_90_degrees(0.15, RIGHT_DIRECTION);
             }
             else if (u8_c == 'l') {
+                printf("Turning 90 degrees left\n");
                 turn_90_degrees(0.15, LEFT_DIRECTION);
             }
             else {

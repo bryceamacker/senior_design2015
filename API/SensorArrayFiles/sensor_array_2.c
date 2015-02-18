@@ -29,7 +29,7 @@ uint16_t u16_maxValueLine2 = 0x7FFF;
 
 // Initializes sensor array
 void sensor_array_init_line2() {
-    CONFIG_RD8_AS_DIG_OUTPUT();
+    CONFIG_RF5_AS_DIG_OUTPUT();
 }
 
 // Configures pins as dig outputs

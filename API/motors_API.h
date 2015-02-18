@@ -52,6 +52,8 @@
 
 #define DEGREE_90_TURN_TIME             2600                    // At 15 % speed
 #define PREPARE_TURN_TIME               1500                    // At 15 % speed
+#define PREPARE_90_TURN_DISTANCE        160
+#define DEGREE_90_TURN_REVS             0.88
 
 #define M_PI                            3.14159265358979323846  // pi constant
 #define WHEEL_DIAMETER                  80                      // in milimeters
