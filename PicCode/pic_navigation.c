@@ -97,65 +97,66 @@ int main (void) {
     setup_start_button();
     setup_game_buttons();
 
-    // Start with the first game
-    u8_currentGame = 0;
+    while(1) {
+        // Start with the first game
+        u8_currentGame = 0;
 
-    if (STATIC_ORDER == 0) {
+        if (STATIC_ORDER == 0) {
+            #ifdef DEBUG_BUILD
+            printf("Waiting for game order\n");
+            #endif
+            get_game_order(pu8_gameOrder);
+
+            #ifdef DEBUG_BUILD
+            print_order(pu8_gameOrder);
+            #endif
+        } else {
+            pu8_gameOrder[0] = RUBIKS;
+            pu8_gameOrder[1] = ETCH;
+            pu8_gameOrder[2] = SIMON;
+        }
+
+        if (SKIP_START_BUTTON == 0) {
+            #ifdef DEBUG_BUILD
+            printf("Waiting for start button\n");
+            #endif
+            wait_for_start_button_push();
+        }
+
+        // Wait for the game player PIC to detect the start light to turn off
         #ifdef DEBUG_BUILD
-        printf("Waiting for game order\n");
+        printf("Waiting for start signal\n");
         #endif
-        get_game_order(pu8_gameOrder);
+        while (strcmp((char*) sz_recieveString, "Idle.") != 0) {
+            DELAY_MS(1000);
+            readNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *) sz_recieveString, 6);
+            doHeartbeat();
+        }
 
-        #ifdef DEBUG_BUILD
-        print_order(pu8_gameOrder);
-        #endif
-    } else {
-        pu8_gameOrder[0] = RUBIKS;
-        pu8_gameOrder[1] = ETCH;
-        pu8_gameOrder[2] = SIMON;
-    }
-
-    if (SKIP_START_BUTTON == 0) {
-        #ifdef DEBUG_BUILD
-        printf("Waiting for start button\n");
-        #endif
-        wait_for_start_button_push();
-    }
-
-    // Wait for the game player PIC to detect the start light to turn off
-    #ifdef DEBUG_BUILD
-    printf("Waiting for start signal\n");
-    #endif
-    while (strcmp((char*) sz_recieveString, "Idle.") != 0) {
-        DELAY_MS(1000);
-        readNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *) sz_recieveString, 6);
-        doHeartbeat();
-    }
-
-    // Get out of the starting box
-    motors_move_forward(0.15);
-    DELAY_MS(3000);
-    motors_stop();
-
-    // Play Rubiks, Etch, and Simon then stop
-    while(u8_currentGame <= 2) {
-        #ifdef DEBUG_BUILD
-        printf("Following line to box\n");
-        #endif
-
-        // Find a box
-        follow_line_to_box(0.15);
-
-        // Tell the game player to play a game
-        play_game(pu8_gameOrder[u8_currentGame]);
-
-        // Back up for a few seconds, increment the current game, and start over
-        motors_move_reverse(0.15);
-        DELAY_MS(2500);
+        // Get out of the starting box
+        motors_move_forward(0.15);
+        DELAY_MS(3000);
         motors_stop();
-        u8_currentGame++;
-    }
 
+        // Play Rubiks, Etch, and Simon then stop
+        while(u8_currentGame <= 2) {
+            #ifdef DEBUG_BUILD
+            printf("Following line to box\n");
+            #endif
+
+            // Find a box
+            follow_line_to_box(0.15);
+
+            // Tell the game player to play a game
+            play_game(pu8_gameOrder[u8_currentGame]);
+
+            // Back up for a few seconds, increment the current game, and start over
+            motors_move_reverse(0.15);
+            DELAY_MS(2500);
+            motors_stop();
+            u8_currentGame++;
+        }
+    }
     // After all games have been played just sit
     while(1) doHeartbeat();
 }
