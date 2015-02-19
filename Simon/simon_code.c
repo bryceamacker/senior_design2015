@@ -101,7 +101,7 @@ void play_simon() {
         // If it's the first round, hit the start button
         if (u8_roundNum == 1) {
             // Push the start button and record the colors
-            simon_push_button(START_BUTTON);
+            simon_push_button(START_SIMON_BUTTON);
             record_colors(u8_roundNum);
 
             #ifdef DEBUG_BUILD
@@ -323,7 +323,7 @@ void record_colors(uint8_t u8_numberOfButtons) {
         DELAY_MS(RESPONSE_WAIT);
         if (u8_roundNum == 1) {
             u16_currentStartPushPulse -= PULSE_INCREASE;
-            simon_push_button(START_BUTTON);
+            simon_push_button(START_SIMON_BUTTON);
         }
     }
 
@@ -552,7 +552,7 @@ void simon_retract_button(buttonID button) {
         case GREEN_BUTTON:
             turn_servo_by_pulse(SIMON_GREEN, GREEN_RETRACT);
             break;
-        case START_BUTTON:
+        case START_SIMON_BUTTON:
             turn_servo_by_pulse(SIMON_YELLOW, YELLOW_RETRACT);
             break;
         default:
@@ -575,7 +575,7 @@ void simon_hover_button(buttonID button) {
         case GREEN_BUTTON:
             turn_servo_by_pulse(SIMON_GREEN, GREEN_HOVER);
             break;
-        case START_BUTTON:
+        case START_SIMON_BUTTON:
             turn_servo_by_pulse(SIMON_YELLOW, YELLOW_HOVER);
             break;
         default:
@@ -598,7 +598,7 @@ void simon_push_button(buttonID button) {
         case GREEN_BUTTON:
             turn_servo_by_pulse(SIMON_GREEN, u16_currentGreenPushPulse);
             break;
-        case START_BUTTON:
+        case START_SIMON_BUTTON:
             turn_servo_by_pulse(SIMON_YELLOW, u16_currentStartPushPulse);
             break;
         default:

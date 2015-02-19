@@ -19,7 +19,7 @@
 *********************************************************************/
 
 #include "servos_API.h"
-#include "port_mapping.h"
+#include "game_player_port_mapping.h"
 
 #ifndef PLATFORM_CONTROL_H_
 #define PLATFORM_CONTROL_H_

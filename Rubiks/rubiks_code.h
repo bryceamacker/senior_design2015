@@ -18,7 +18,7 @@
 *********************************************************************/
 
 #include "servos_API.h"
-#include "port_mapping.h"
+#include "game_player_port_mapping.h"
 #include "platform_control.h"
 #include "game_arm_control.h"
 

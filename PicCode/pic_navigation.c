@@ -22,6 +22,7 @@
 #include "pic24_all.h"
 #include "line_follower_API.h"
 #include <string.h>
+#include "navigation_port_mapping.h"
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>
@@ -30,11 +31,6 @@
 
 #define PIC_GAME_PLAYER_ADDR    0x20
 #define BUFFSIZE                64
-#define START_BUTTON            _RF4
-#define SIMON_BUTTON            _RG6
-#define ETCH_BUTTON             _RG7
-#define CARD_BUTTON             _RG8
-#define RUBIKS_BUTTON           _RG9
 
 #define STATIC_ORDER            1
 #define SKIP_START_LIGHT        1

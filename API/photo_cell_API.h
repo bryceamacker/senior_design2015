@@ -18,7 +18,7 @@
 *********************************************************************/
 
 #include "pic24_all.h"
-#include "port_mapping.h"
+#include "game_player_port_mapping.h"
 #include "ADC_API.h"
 
 #ifdef DEBUG_BUILD
@@ -36,7 +36,7 @@ typedef enum {
     START_CELL =    4
 } photoTrans;
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Photocell usage
 //
@@ -49,7 +49,7 @@ void  photo_cell_init();
 
 /**
  * @brief Read the value from a photo transistor
- * 
+ *
  * @param color Photo transistor to be read
  * @return the value of the photo transistor
  */

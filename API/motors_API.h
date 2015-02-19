@@ -19,6 +19,7 @@
 
 #include "pic24_all.h"
 #include <stdbool.h>
+#include "navigation_port_mapping.h"
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>
@@ -32,11 +33,6 @@
 
 #define CONFIG_LEFT_MOTOR_IN1()         CONFIG_RD3_AS_DIG_OUTPUT()
 #define CONFIG_LEFT_MOTOR_IN2()         CONFIG_RD4_AS_DIG_OUTPUT()
-
-#define LIN1_PULSE                      OC2RS                   // Pin D1
-#define LIN2_PULSE                      OC3RS                   // Pin D2
-#define RIN1_PULSE                      OC4RS                   // Pin D3
-#define RIN2_PULSE                      OC5RS                   // Pin D4
 
 #define ROT_MAX                         1120 - 1                // Max encoder value
 #define ENCODER_INTERRUPT_PERIOD        100                     // microseconds

@@ -18,7 +18,7 @@
 *********************************************************************/
 
 #include "pic24_all.h"
-#include "port_mapping.h"
+#include "game_player_port_mapping.h"
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>

@@ -18,7 +18,7 @@
 *********************************************************************/
 
 #include "pic24_all.h"
-#include "port_mapping.h"
+#include "game_player_port_mapping.h"
 
 #ifndef SERVOS_API_H_
 #define SERVOS_API_H_

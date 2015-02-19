@@ -19,32 +19,14 @@
 
 #include "pic24_all.h"
 #include "sensor_array_common.h"
+#include "navigation_port_mapping.h"
+
 #ifdef DEBUG_BUILD
 #include <stdio.h>
 #endif
 
 #ifndef SENSOR_ARRAY_1_H_
 #define SENSOR_ARRAY_1_H_
-
-#define EMITTER_LINE1                   _RB8
-
-#define SENSOR0_LINE1_IN                _RB0
-#define SENSOR1_LINE1_IN                _RB1
-#define SENSOR2_LINE1_IN                _RB2
-#define SENSOR3_LINE1_IN                _RB3
-#define SENSOR4_LINE1_IN                _RB4
-#define SENSOR5_LINE1_IN                _RB5
-#define SENSOR6_LINE1_IN                _RB6
-#define SENSOR7_LINE1_IN                _RB7
-
-#define SENSOR0_LINE1_OUT               _LATB0
-#define SENSOR1_LINE1_OUT               _LATB1
-#define SENSOR2_LINE1_OUT               _LATB2
-#define SENSOR3_LINE1_OUT               _LATB3
-#define SENSOR4_LINE1_OUT               _LATB4
-#define SENSOR5_LINE1_OUT               _LATB5
-#define SENSOR6_LINE1_OUT               _LATB6
-#define SENSOR7_LINE1_OUT               _LATB7
 
 ///////////////////////////////////////////////
 //

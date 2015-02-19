@@ -10,7 +10,7 @@
 * Company: Mississippi State University/ECE
 *
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-* MODULE FUNCTION: Functions and constants to draw IEEE on an 
+* MODULE FUNCTION: Functions and constants to draw IEEE on an
 * etch-a-sketch using servos
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * Author                Date                    Comment
@@ -19,7 +19,7 @@
 *********************************************************************/
 
 #include "servos_API.h"
-#include "port_mapping.h"
+#include "game_player_port_mapping.h"
 #include "platform_control.h"
 #include "game_arm_control.h"
 
@@ -36,7 +36,7 @@
 #define VERTICAL_ADJUSTMENT         1.0         // Vertical adjustment factor
 #define HORIZ_ADJUSTMENT            1.0         // Horizontal adjustment factor
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Etch Usage
 //
@@ -51,7 +51,7 @@ void etch_init(void);
  */
 void play_etch(void);
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Etch primitives
 //
@@ -59,7 +59,7 @@ void play_etch(void);
 /**
  * @brief Turn the vertical nob of the etch-a-sketch
  * @details This function is custom tuned to the etch-a-sketch nobs
- * 
+ *
  * @param distance Distance in millimeters to move the cursor in the vertical direction
  */
 void turn_servo_vertical_etch_distance(float distance);
@@ -67,7 +67,7 @@ void turn_servo_vertical_etch_distance(float distance);
 /**
  * @brief Turn the horizontal nob of the etch-a-sketch
  * @details This function is custom tuned to the etch-a-sketch nobs
- * 
+ *
  * @param distance Distance in millimeters to move the cursor in the horizontal direction
  */
 void turn_servo_horizontal_etch_distance(float distance);
@@ -94,7 +94,7 @@ void draw_IEEE(void);
 
 /**
  * @brief Underlines IEEE and goes back to beginning
- * 
+ *
  * @description Sort of test code, probably won't ever use this
  */
 void underline_to_reset(void);

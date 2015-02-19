@@ -21,7 +21,7 @@
 #include "servos_API.h"
 #include "photo_cell_API.h"
 #include "game_arm_control.h"
-#include "port_mapping.h"
+#include "game_player_port_mapping.h"
 #include "platform_control.h"
 
 #ifndef SIMON_CODE_H_
@@ -70,7 +70,7 @@ typedef enum {
     BLUE_BUTTON =   1,
     RED_BUTTON =    2,
     GREEN_BUTTON =  3,
-    START_BUTTON =  4
+    START_SIMON_BUTTON =  4
 } buttonID;
 
 
