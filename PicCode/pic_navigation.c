@@ -38,7 +38,7 @@
 
 #define STATIC_ORDER            1
 #define SKIP_START_LIGHT        1
-#define SKIP_START_BUTTON       1
+#define SKIP_START_BUTTON       0
 
 #define START_BUTTON_PUSHED     (_RF4 == 0)
 #define START_BUTTON_RELEASED   (_RF4 == 1)
