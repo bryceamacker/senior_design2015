@@ -33,6 +33,8 @@
 #define TRIPLE_SENSOR_NUM               SENSOR_NUM * 3
 #define TRIPLE_HI_RES_SENSOR_NUM        SENSOR_NUM * 4
 
+#define NUM_OF_REQUIRED_DETECTIONS      3
+
 /**
  * @brief Initialize everything it takes to follow a line using a sensor array
  */

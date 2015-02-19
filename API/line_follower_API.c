@@ -20,6 +20,9 @@
 
 #include "line_follower_API.h"
 
+uint8_t u8_leftTurnDetection = 0;
+uint8_t u8_rightTurnDetection = 0;
+
 void line_follower_init() {
     sensor_array_init();
     motors_init();
@@ -37,7 +40,12 @@ float get_line(uint16_t* pau16_sensorValues) {
 
     // Add up all the sensors that see something
     for(u16_i = 0; u16_i < TRIPLE_HI_RES_SENSOR_NUM; u16_i++) {
-        f_line += pau16_sensorValues[u16_i] * (u16_i+1);
+        if ((u16_i >= 8) && (u16_i <= 23)) {
+            f_line += (pau16_sensorValues[u16_i] * (u16_i+1)) / 2;
+        }
+        else {
+            f_line += pau16_sensorValues[u16_i] * (u16_i+1);
+        }
     }
     if(f_line == 0.0) {
         return 0.0;
@@ -65,7 +73,7 @@ void follow_line_to_box(float f_maxSpeed) {
     #endif
 
     // Find the center of the line we are constantly trying to stay at
-    i16_lineCenter = ((1000 * (TRIPLE_HI_RES_SENSOR_NUM - 1)) / 2);
+    i16_lineCenter = ((1000 * (TRIPLE_SENSOR_NUM - 1)) / 2);
 
     while(1) {
         // Get the average position of the line
@@ -237,25 +245,27 @@ void follow_line_back(uint16_t* pau16_sensorValues, float f_maxSpeed) {
 
 // Check for a box
 uint8_t check_for_box(void) {
-    uint16_t pau16_sensorValues[TRIPLE_SENSOR_NUM];
+    uint16_t pau16_sensorValues[SENSOR_NUM];
     uint8_t u8_detectingSensors;
     uint8_t i;
 
     u8_detectingSensors = 0;
+    read_sensor_array(pau16_sensorValues, QTR_EMITTERS_ON, MAIN_LINE);
 
-    read_sensor_triple(pau16_sensorValues, QTR_EMITTERS_ON);
-
-    for (i = 0; i < TRIPLE_SENSOR_NUM; i++) {
+    for (i = 0; i < SENSOR_NUM; i++) {
         if (pau16_sensorValues[i] == 1) {
             u8_detectingSensors++;
         }
     }
 
-    if (u8_detectingSensors >= TRIPLE_SENSOR_NUM - 8) {
+    if (u8_detectingSensors >= SENSOR_NUM - 1) {
+        u8_rightTurnDetection = 0;
+        u8_leftTurnDetection = 0;
         return 1;
     } else {
         return 0;
     }
+
 }
 
 // Check for a left turn
@@ -275,10 +285,18 @@ uint8_t check_for_left_turn(void) {
     }
 
     if (u8_detectingSensors >= SENSOR_NUM - 1) {
+        u8_leftTurnDetection++;
+    } else {
+        u8_leftTurnDetection = 0;
+    }
+
+    if (u8_leftTurnDetection >= NUM_OF_REQUIRED_DETECTIONS) {
+        u8_leftTurnDetection = 0;
         return 1;
     } else {
         return 0;
     }
+
 }
 
 // Check for a right turn
@@ -298,6 +316,13 @@ uint8_t check_for_right_turn(void) {
     }
 
     if (u8_detectingSensors >= SENSOR_NUM - 1) {
+        u8_rightTurnDetection++;
+    } else {
+        u8_rightTurnDetection = 0;
+    }
+
+    if (u8_rightTurnDetection >= NUM_OF_REQUIRED_DETECTIONS) {
+        u8_rightTurnDetection = 0;
         return 1;
     } else {
         return 0;

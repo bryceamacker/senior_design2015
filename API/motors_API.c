@@ -43,6 +43,8 @@ uint8_t u8_leftAtTarget = 1;
 uint16_t u16_90DegreeTurnTime;
 uint16_t u16_prepareTurnDelayTime;
 
+// Flag for routine blocking
+uint8_t u8_routineBlock = 0;
 
 ///////////////////////////////////////////////
 //
@@ -293,7 +295,9 @@ void process_right_rotary_data() {
         if ((get_right_motor_location() >= f_rightTargetPosition) && (u8_rightAtTarget == 0)){
             u8_rightAtTarget = 1;
             right_motor_stop();
-            printf("Right reached target\n");
+            if (u8_routineBlock == 1) {
+                u8_routineBlock = 0;
+            }
         }
     }
 
@@ -303,7 +307,9 @@ void process_right_rotary_data() {
         if ((get_right_motor_location() <= f_rightTargetPosition) && (u8_rightAtTarget == 0)){
             u8_rightAtTarget = 1;
             right_motor_stop();
-            printf("Right reached target\n");
+            if (u8_routineBlock == 1) {
+                u8_routineBlock = 0;
+            }
         }
     }
 
@@ -329,7 +335,9 @@ void process_left_rotary_data() {
         if ((get_left_motor_location() >= f_leftTargetPosition) && (u8_leftAtTarget == 0)) {
             u8_leftAtTarget = 1;
             left_motor_stop();
-            printf("Left reached target\n");
+            if (u8_routineBlock == 1) {
+                u8_routineBlock = 0;
+            }
         }
     }
 
@@ -340,7 +348,9 @@ void process_left_rotary_data() {
         if ((get_left_motor_location() <= f_leftTargetPosition) && (u8_leftAtTarget == 0)) {
             u8_leftAtTarget = 1;
             left_motor_stop();
-            printf("Left reached target\n");
+            if (u8_routineBlock == 1) {
+                u8_routineBlock = 0;
+            }
         }
     }
 
@@ -455,14 +465,17 @@ void prepare_for_90_degree_turn(float f_duty) {
 
 // Turn robot 90 degrees by time
 void turn_90_degrees(float f_duty, uint8_t u8_direction) {
-    prepare_for_90_degree_turn(f_duty);
-    if (u8_direction == RIGHT_DIRECTION) {
-        move_right_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_duty);
-        move_left_motor_by_revolutions(DEGREE_90_TURN_REVS, f_duty);
-    }
-    if (u8_direction == LEFT_DIRECTION) {
-        move_right_motor_by_revolutions(DEGREE_90_TURN_REVS, f_duty);
-        move_left_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_duty);
+    if (u8_routineBlock == 0) {
+        u8_routineBlock = 1;
+        prepare_for_90_degree_turn(f_duty);
+        if (u8_direction == RIGHT_DIRECTION) {
+            move_right_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_duty);
+            move_left_motor_by_revolutions(DEGREE_90_TURN_REVS, f_duty);
+        }
+        if (u8_direction == LEFT_DIRECTION) {
+            move_right_motor_by_revolutions(DEGREE_90_TURN_REVS, f_duty);
+            move_left_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_duty);
+        }
     }
     DELAY_MS(DEGREE_90_TURN_TIME + 500);
 }
