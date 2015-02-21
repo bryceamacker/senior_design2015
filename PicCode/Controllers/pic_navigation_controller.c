@@ -78,8 +78,6 @@ void pic_navigation_init() {
 void navigation_serial_command(uint8_t u8_command) {
     uint8_t u8_function;
     uint8_t u8_sensorArray;
-    uint16_t u16_newTime;
-    char sz_buf[32];
 
     switch(u8_command) {
         case 'l':
@@ -131,18 +129,6 @@ void navigation_serial_command(uint8_t u8_command) {
             else {
                 printf("Invalid Choice\n");
             }
-            break;
-        case 't':
-            printf("\nEnter new turn time delay in us: ");
-            inStringEcho(sz_buf,31);
-            sscanf(sz_buf,"%hhu",(uint8_t *) &u16_newTime);
-            set_turn_time(u16_newTime);
-            break;
-        case 'd':
-            printf("\nEnter new prepare time delay in us: ");
-            inStringEcho(sz_buf,31);
-            sscanf(sz_buf,"%hhu",(uint8_t *) &u16_newTime);
-            set_prepare_time(u16_newTime);
             break;
         default:
             printf("Invalid Choice\n");
@@ -272,8 +258,6 @@ void navigation_serial_menu() {
     printf("   Press 'g' to get line continuously and print line value\n");
     printf("   Press 'n' to navigate to a box\n");
     printf("   Press 'h' to turn 90 degrees\n");
-    printf("   Press 't' to set a new turn time\n");
-    printf("   Press 'd' to set a new prepare time\n");
 }
 
 void single_motor_function_menu() {

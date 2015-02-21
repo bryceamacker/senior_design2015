@@ -45,6 +45,8 @@ uint16_t u16_prepareTurnDelayTime;
 
 // Flag for routine blocking
 uint8_t u8_routineBlock = 0;
+routineID u8_currentRoutine = 0;
+stack_t navigationRoutineStack;
 
 ///////////////////////////////////////////////
 //
@@ -83,6 +85,9 @@ void motors_init(void)
     // Set up some constants that we can set from serial menu
     u16_90DegreeTurnTime = DEGREE_90_TURN_TIME;
     u16_prepareTurnDelayTime = PREPARE_TURN_TIME;
+
+    navigationRoutineStack.top = 0;
+    push(navigationRoutineStack, 0);
 }
 
 void config_motor_timer2(void) {
@@ -324,6 +329,11 @@ void process_right_rotary_data() {
         i16_rightCounterROT = ROT_MAX;
         i16_rightRevolutionCount--;
     }
+
+    // Check for a routine
+    if (u8_routineBlock == 0) {
+        check_for_routine();
+    }
 }
 
 // Process the left encoder's data
@@ -364,6 +374,11 @@ void process_left_rotary_data() {
     if (i16_leftCounterROT < 0 ) {
         i16_leftCounterROT = ROT_MAX;
         i16_leftRevolutionCount--;
+    }
+
+    // Check for a routine
+    if (u8_routineBlock == 0) {
+        check_for_routine();
     }
 }
 
@@ -420,6 +435,7 @@ float get_left_motor_location() {
     }
     return f_total;
 }
+
 ///////////////////////////////////////////////
 //
 // Motor usage
@@ -454,30 +470,6 @@ void motors_move_forward(float f_duty) {
 void motors_move_reverse(float f_duty) {
     right_motor_reverse(f_duty);
     left_motor_reverse(f_duty);
-}
-
-// Prepare robot for 90 degree turn by time
-void prepare_for_90_degree_turn(float f_duty) {
-    move_by_distance(PREPARE_90_TURN_DISTANCE, f_duty);
-    DELAY_MS(PREPARE_TURN_TIME + 500);
-    motors_stop();
-}
-
-// Turn robot 90 degrees by time
-void turn_90_degrees(float f_duty, uint8_t u8_direction) {
-    if (u8_routineBlock == 0) {
-        u8_routineBlock = 1;
-        prepare_for_90_degree_turn(f_duty);
-        if (u8_direction == RIGHT_DIRECTION) {
-            move_right_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_duty);
-            move_left_motor_by_revolutions(DEGREE_90_TURN_REVS, f_duty);
-        }
-        if (u8_direction == LEFT_DIRECTION) {
-            move_right_motor_by_revolutions(DEGREE_90_TURN_REVS, f_duty);
-            move_left_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_duty);
-        }
-    }
-    DELAY_MS(DEGREE_90_TURN_TIME + 500);
 }
 
 // Move right motor by revolutions
@@ -542,12 +534,98 @@ void move_by_distance(float f_distance, float f_duty) {
     move_left_motor_by_distance(f_distance, f_duty);
 }
 
-#ifdef DEBUG_BUILD
-void set_prepare_time(uint16_t u16_newTime) {
-    u16_prepareTurnDelayTime = u16_newTime;
+///////////////////////////////////////////////
+//
+// Motor routines
+//
+///////////////////////////////////////////////
+
+// Prepare robot for 90 degree turn by time
+void prepare_for_90_degree_turn(float f_duty) {
+    move_by_distance(PREPARE_90_TURN_DISTANCE, f_duty);
 }
 
-void set_turn_time(uint16_t u16_newTime) {
-    u16_90DegreeTurnTime = u16_newTime;
+// Turn robot 90 degrees by time
+void turn_90_degrees(float f_duty, uint8_t u8_direction) {
+    // prepare_for_90_degree_turn(f_duty);
+    if (u8_direction == RIGHT_DIRECTION) {
+        move_right_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_duty);
+        move_left_motor_by_revolutions(DEGREE_90_TURN_REVS, f_duty);
+    }
+    if (u8_direction == LEFT_DIRECTION) {
+        move_right_motor_by_revolutions(DEGREE_90_TURN_REVS, f_duty);
+        move_left_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_duty);
+    }
 }
-#endif
+
+// Reverse after turning 90 degrees to compensate for the preparing movement
+void finish_90_degree_turn(float f_duty) {
+    move_by_distance((-1.0 * PREPARE_90_TURN_DISTANCE), f_duty);
+}
+
+// Prepare for a reverse 90 degree turn by moving forward
+void prepare_for_reverse_90_degree_turn(float f_duty) {
+    move_by_distance(PREPARE_90_TURN_DISTANCE, f_duty);
+}
+
+// Reverse after reverse turning 90 degrees to compensate for the preparing movement
+void finish_reverse_90_degree_turn(float f_duty) {
+    move_by_distance((-1.0 * PREPARE_90_TURN_DISTANCE), f_duty);
+}
+
+void back_away_from_box(float f_duty) {
+    move_by_distance(LINE_WIDTH, f_duty);
+}
+
+void move_past_start_box(float f_duty) {
+    move_by_distance(200, f_duty);
+}
+
+void move_past_branch(float f_duty) {
+    move_by_distance(LINE_WIDTH, f_duty);
+}
+
+void handle_routine(routineID routine) {
+    switch(routine) {
+        case RIGHT_TURN:
+            turn_90_degrees(BASE_SPEED, RIGHT_DIRECTION);
+            break;
+        case LEFT_TURN:
+            turn_90_degrees(BASE_SPEED, LEFT_DIRECTION);
+            break;
+        case PREPARE_TURN:
+            prepare_for_90_degree_turn(BASE_SPEED);
+            break;
+        case FINISH_TURN:
+            finish_90_degree_turn(BASE_SPEED);
+            break;
+        case PREPARE_REVERSE_TURN:
+            prepare_for_reverse_90_degree_turn(BASE_SPEED);
+            break;
+        case FINISH_REVERSE_TURN:
+            finish_reverse_90_degree_turn(BASE_SPEED);
+            break;
+        case BACK_AWAY_FROM_BOX:
+            back_away_from_box(BASE_SPEED);
+            break;
+        case MOVE_PAST_START_BOX:
+            move_past_start_box(BASE_SPEED);
+            break;
+        case MOVE_PAST_BRANCH:
+            move_past_branch(BASE_SPEED);
+            break;
+        default:
+            break;
+    }
+}
+
+uint8_t check_for_routine() {
+    if ((peek(navigationRoutineStack) == 0)) {
+        return 0;
+    } else {
+        u8_routineBlock = 1;
+        u8_currentRoutine = pop(navigationRoutineStack);
+        handle_routine(u8_currentRoutine);
+        return u8_currentRoutine;
+    }
+}

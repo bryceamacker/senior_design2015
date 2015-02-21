@@ -55,6 +55,8 @@ float get_line(uint16_t* pau16_sensorValues);
  */
 void follow_line_to_box(float f_maxSpeed);
 
+void follow_line_back_to_main_line(float f_maxSpeed);
+
 /**
  * @brief Follow a line
  *
@@ -71,9 +73,16 @@ void follow_line(uint16_t* pau16_sensorValues, float f_maxSpeed);
  */
 void follow_line_back(uint16_t* pau16_sensorValues, float f_maxSpeed);
 
+void correct_line_error(float f_maxSpeed);
+
 uint8_t check_for_box(void);
 uint8_t check_for_left_turn(void);
+void handle_left_turn(void);
+void handle_reverse_left_turn(void);
 uint8_t check_for_right_turn(void);
+void handle_right_turn(void);
+void handle_reverse_right_turn(void);
+uint8_t check_for_line(void);
 
 /**
  * @brief Print the sensor array values

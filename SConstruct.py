@@ -164,7 +164,7 @@ Help(opts.GenerateHelpText(env))
 Help("""Builds all of the 2015 SECON PIC code.""")
 
 
-cppdefines = ['HARDWARE_PLATFORM=HARDMAPPED_UART']
+cppdefines = ['HARDWARE_PLATFORM=HARDMAPPED_UART', 'SECON_BUILD=SECON_BUILD']
 debugBuild = False
 
 for key, value in ARGLIST:

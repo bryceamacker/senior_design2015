@@ -72,6 +72,8 @@ char sz_recieveString[BUFFSIZE];
 // Game counter
 uint8_t u8_currentGame;
 
+extern stack_t navigationRoutineStack;
+
 // Function declarations
 void pic_navigation_init(void);
 void play_game(gameID game);
@@ -146,9 +148,8 @@ int main (void) {
         // Tell the game player to play a game
         play_game(pu8_gameOrder[u8_currentGame]);
 
-        // Back up for a few seconds, increment the current game, and start over
-        motors_move_reverse(0.15);
-        DELAY_MS(2500);
+        // Get back to the main line
+        follow_line_back_to_main_line(0.15);
         motors_stop();
         u8_currentGame++;
     }

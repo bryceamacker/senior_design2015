@@ -3,7 +3,7 @@
 * Mississippi State University
 *
 *********************************************************************
-* FileName:   .h
+* FileName:   navigation_port_mapping.h
 * Dependenies: See INCLUDES setion below
 * Proessor: PIC33EP512GP806
 * Compiler: gcc-pic33

@@ -66,3 +66,7 @@
 #include "pic24_ecan.h"
 #include "pic24_flash.h"
 #include "pic24_comparator.h"
+
+#ifdef SECON_BUILD
+#include "secon_common.h"
+#endif

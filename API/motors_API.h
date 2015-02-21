@@ -55,6 +55,22 @@
 #define WHEEL_DIAMETER                  80                      // in milimeters
 #define WHEEL_CIRCUMFERENCE             (WHEEL_DIAMETER * M_PI) // in milimeters
 
+#define BASE_SPEED                      0.15
+
+#define LINE_WIDTH                      25
+
+typedef enum {
+    RIGHT_TURN = 1,
+    LEFT_TURN = 2,
+    PREPARE_TURN = 3,
+    FINISH_TURN =  4,
+    FINISH_REVERSE_TURN = 5,
+    BACK_AWAY_FROM_BOX = 6,
+    MOVE_PAST_START_BOX = 7,
+    MOVE_PAST_BRANCH = 8,
+    PREPARE_REVERSE_TURN = 9
+} routineID;
+
 ///////////////////////////////////////////////
 //
 // Motor config
@@ -224,20 +240,6 @@ void prepare_for_90_degree_turn(float f_duty);
 void turn_90_degrees(float f_duty, uint8_t u8_direction);
 
 /**
- * @brief Set the time to wait when preparing the robot for 90 degree turns
- *
- * @param u16_newTime the new time
-**/
-void set_prepare_time(uint16_t u16_newTime);
-
-/**
- * @brief Set the time to wait when turning the robot 90 degrees
- *
- * @param u16_newTime the new time
-**/
-void set_turn_time(uint16_t u16_newTime);
-
-/**
  * @brief Turn the left motor by a number of revolutions
  *
  * @param f_revolutions Number of revolutions to turn
@@ -284,5 +286,8 @@ void move_by_revolutions(float f_revolutions, float f_duty);
  * @param f_duty Speed to turn the robot
 **/
 void move_by_distance(float f_distance, float f_duty);
+
+uint8_t check_for_routine(void);
+void handle_routine(routineID routine);
 
 #endif
