@@ -69,13 +69,11 @@ char sz_idleString[BUFFSIZE] =          "Idle.";
 char sz_waitString[BUFFSIZE] =          "Wait.";
 char sz_recieveString[BUFFSIZE];
 
-// Game counter
-uint8_t u8_currentGame;
-
-extern stack_t navigationRoutineStack;
+extern queue_t navigationRoutineQueue;
 
 // Function declarations
 void pic_navigation_init(void);
+void navigate_course(uint8_t pu8_gameOrder[4]);
 void play_game(gameID game);
 void setup_start_button(void);
 void wait_for_start_button_push(void);
@@ -94,9 +92,6 @@ int main (void) {
     pic_navigation_init();
     setup_start_button();
     setup_game_buttons();
-
-    // Start with the first game
-    u8_currentGame = 0;
 
     if (STATIC_ORDER == 0) {
         #ifdef DEBUG_BUILD
@@ -131,30 +126,10 @@ int main (void) {
         doHeartbeat();
     }
 
-    // Get out of the starting box
-    motors_move_forward(0.15);
-    DELAY_MS(3000);
-    motors_stop();
+    // Navigate the whole course
+    navigate_course(pu8_gameOrder);
 
-    // Play Rubiks, Etch, and Simon then stop
-    while(u8_currentGame <= 3) {
-        #ifdef DEBUG_BUILD
-        printf("Following line to box\n");
-        #endif
-
-        // Find a box
-        follow_line_to_box(0.15);
-
-        // Tell the game player to play a game
-        play_game(pu8_gameOrder[u8_currentGame]);
-
-        // Get back to the main line
-        follow_line_back_to_main_line(0.15);
-        motors_stop();
-        u8_currentGame++;
-    }
-
-    // After all games have been played just sit
+    // After the finish line has been reached just sit and relax
     while(1) doHeartbeat();
 }
 
@@ -168,6 +143,38 @@ void pic_navigation_init() {
 
     // I2C Config
     configI2C1(400);
+}
+
+// Navigate the whole course
+void navigate_course(uint8_t pu8_gameOrder[4]) {
+    // Game counter
+    uint8_t u8_currentGame;
+
+    u8_currentGame = 0;
+
+    enqueue(&navigationRoutineQueue, MOVE_PAST_START_BOX);
+    check_for_routine();
+
+    // Play Rubiks, Etch, and Simon then stop
+    while(u8_currentGame <= 3) {
+        #ifdef DEBUG_BUILD
+        printf("Following line to box\n");
+        #endif
+
+        // Find a box
+        follow_line_to_box(BASE_SPEED);
+
+        // Tell the game player to play a game
+        play_game(pu8_gameOrder[u8_currentGame]);
+
+        // Get back to the main line
+        follow_line_back_to_main_line(BASE_SPEED);
+        motors_stop();
+        u8_currentGame++;
+    }
+
+    // Get to the finish line
+    follow_line_to_box(BASE_SPEED);
 }
 
 // Function to send I2C commands to play games

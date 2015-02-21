@@ -46,8 +46,6 @@
 #define FORWARD_MOVEMENT                1                       // Forward motion
 #define BACKWARD_MOVEMENT               2                       // Backward motion
 
-#define DEGREE_90_TURN_TIME             2600                    // At 15 % speed
-#define PREPARE_TURN_TIME               1500                    // At 15 % speed
 #define PREPARE_90_TURN_DISTANCE        160
 #define DEGREE_90_TURN_REVS             0.88
 
@@ -58,6 +56,8 @@
 #define BASE_SPEED                      0.15
 
 #define LINE_WIDTH                      25
+
+#define START_BOX_DRIVE_DISTANCE        200
 
 typedef enum {
     RIGHT_TURN = 1,

@@ -39,14 +39,10 @@ float f_leftTargetPosition = 5000.0;
 uint8_t u8_rightAtTarget = 1;
 uint8_t u8_leftAtTarget = 1;
 
-// Delay time for 90 degreen turns
-uint16_t u16_90DegreeTurnTime;
-uint16_t u16_prepareTurnDelayTime;
-
 // Flag for routine blocking
 uint8_t u8_routineBlock = 0;
 routineID u8_currentRoutine = 0;
-stack_t navigationRoutineStack;
+queue_t navigationRoutineQueue;
 
 ///////////////////////////////////////////////
 //
@@ -82,12 +78,7 @@ void motors_init(void)
     // Stop both motors
     motors_stop();
 
-    // Set up some constants that we can set from serial menu
-    u16_90DegreeTurnTime = DEGREE_90_TURN_TIME;
-    u16_prepareTurnDelayTime = PREPARE_TURN_TIME;
-
-    navigationRoutineStack.top = 0;
-    push(navigationRoutineStack, 0);
+    init_queue(&navigationRoutineQueue);
 }
 
 void config_motor_timer2(void) {
@@ -578,7 +569,7 @@ void back_away_from_box(float f_duty) {
 }
 
 void move_past_start_box(float f_duty) {
-    move_by_distance(200, f_duty);
+    move_by_distance(START_BOX_DRIVE_DISTANCE, f_duty);
 }
 
 void move_past_branch(float f_duty) {
@@ -620,11 +611,11 @@ void handle_routine(routineID routine) {
 }
 
 uint8_t check_for_routine() {
-    if ((peek(navigationRoutineStack) == 0)) {
+    if (queue_is_empty(navigationRoutineQueue)) {
         return 0;
     } else {
         u8_routineBlock = 1;
-        u8_currentRoutine = pop(navigationRoutineStack);
+        u8_currentRoutine = dequeue(&navigationRoutineQueue);
         handle_routine(u8_currentRoutine);
         return u8_currentRoutine;
     }

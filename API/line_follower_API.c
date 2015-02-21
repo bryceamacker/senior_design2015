@@ -23,27 +23,32 @@
 uint8_t u8_leftTurnDetection = 0;
 uint8_t u8_rightTurnDetection = 0;
 stack_t branchedTurnStack;
-extern stack_t navigationRoutineStack;
+extern queue_t navigationRoutineQueue;
 extern uint8_t u8_routineBlock;
 
 void line_follower_init() {
     sensor_array_init();
     motors_init();
+
     branchedTurnStack.top = 0;
-    push(branchedTurnStack, 0);
+    push(&branchedTurnStack, 0);
 }
 
 float get_line(uint16_t* pau16_sensorValues) {
     float f_line;
+    float f_weight;
     uint16_t u16_i;
     uint16_t u16_sum;
 
     f_line = 0;
+    f_weight = 0;
 
     // Read the hi-res triple
     read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
 
     // Add up all the sensors that see something
+    // Old safe way
+    /*
     for(u16_i = 0; u16_i < TRIPLE_HI_RES_SENSOR_NUM; u16_i++) {
         if ((u16_i >= 8) && (u16_i <= 23)) {
             f_line += (pau16_sensorValues[u16_i] * (u16_i+1)) / 2;
@@ -52,6 +57,20 @@ float get_line(uint16_t* pau16_sensorValues) {
             f_line += pau16_sensorValues[u16_i] * (u16_i+1);
         }
     }
+    */
+
+    // New more exciting way
+    for (u16_i = 0; u16_i < 8; u16_i++) {
+        f_line += (pau16_sensorValues[u16_i] * (++f_weight));
+    }
+    for (u16_i = 8; u16_i < 24; u16_i++) {
+        f_line += (pau16_sensorValues[u16_i] * f_weight);
+        f_weight += 0.5;
+    }
+    for (u16_i = 24; u16_i < 32; u16_i++) {
+        f_line += (pau16_sensorValues[u16_i] * (++f_weight));
+    }
+
     if(f_line == 0.0) {
         return 0.0;
     }
@@ -64,8 +83,6 @@ float get_line(uint16_t* pau16_sensorValues) {
 }
 
 void follow_line_to_box(float f_maxSpeed) {
-    uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
-
     uint8_t u8_lineContinuationDetected = 0;
     uint8_t u8_turnRan = 0;
     uint8_t u8_branchedFromMainLine = 0;
@@ -105,7 +122,7 @@ void follow_line_to_box(float f_maxSpeed) {
 
                 // If we've branched from the mainline, keep up with the turns we make
                 if (u8_branchedFromMainLine == 1) {
-                    push(branchedTurnStack, LEFT_TURN);
+                    push(&branchedTurnStack, LEFT_TURN);
                 }
 
                 // Handle the left turn, flag that we are turning
@@ -120,7 +137,7 @@ void follow_line_to_box(float f_maxSpeed) {
 
                 // If we've branched from the mainline, keep up with the turns we make
                 if (u8_branchedFromMainLine == 1) {
-                    push(branchedTurnStack, RIGHT_TURN);
+                    push(&branchedTurnStack, RIGHT_TURN);
                 }
 
                 // Handle the right turn, flag that we are turning
@@ -159,7 +176,7 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
                     return;
                 }
                 else {
-                    pop(branchedTurnStack);
+                    pop(&branchedTurnStack);
                 }
                 handle_reverse_left_turn();
             }
@@ -174,7 +191,7 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
                     return;
                 }
                 else {
-                    pop(branchedTurnStack);
+                    pop(&branchedTurnStack);
                 }
 
                 handle_reverse_right_turn();
@@ -201,7 +218,9 @@ void follow_line_to_box_pid(float f_maxSpeed) {
     uint8_t u8_detectingSensors;
     uint8_t i;
 
-    const int max = 1;
+    const int max = f_maxSpeed;
+    i16_last_proportional = 0;
+    i16_integral = 0;
 
     // Find the center of the line we are constantly trying to stay at
     i16_lineCenter = ((1000 * (SENSOR_NUM - 1)) / 2);
@@ -236,8 +255,10 @@ void follow_line_to_box_pid(float f_maxSpeed) {
             // turn to the left, and the magnitude of the number determines
             // the sharpness of the turn.
             int power_difference = i16_proportional/20 + i16_integral/10000 + i16_derivative*3/2;
+            #ifdef DEBUG_BUILD
             printf("Power: %i Prop: %i Int: %i, Der: %i\n", power_difference, i16_proportional, i16_integral, i16_derivative);
-             power_difference = power_difference / 2;
+            #endif
+            power_difference = power_difference / 2;
             // Compute the actual motor settings.  We never set either motor
             // to a negative value.
             if(power_difference > max)
@@ -245,12 +266,16 @@ void follow_line_to_box_pid(float f_maxSpeed) {
             if(power_difference < -max)
                 power_difference = -max;
             if(power_difference < 0){
+                #ifdef DEBUG_BUILD
                 printf("Max + power: %i", max+power_difference);
+                #endif
                 right_motor_fwd(max+power_difference);
                 left_motor_fwd(max);
             }
             else{
+                #ifdef DEBUG_BUILD
                 printf("Max - power: %i", max-power_difference);
+                #endif
                 right_motor_fwd(max);
                 left_motor_fwd(max-power_difference);
             }
@@ -333,12 +358,14 @@ uint8_t check_for_left_turn(void) {
         }
     }
 
+    // Check to see if we're detecting a turn
     if (u8_detectingSensors >= SENSOR_NUM - 1) {
         u8_leftTurnDetection++;
     } else {
         u8_leftTurnDetection = 0;
     }
 
+    // If we've detected it enough times then turn
     if (u8_leftTurnDetection >= NUM_OF_REQUIRED_DETECTIONS) {
         u8_leftTurnDetection = 0;
         return 1;
@@ -352,10 +379,10 @@ uint8_t check_for_left_turn(void) {
 void handle_left_turn(void) {
     motors_stop();
 
-    // Push all the routines for a left turn
-    push(navigationRoutineStack, FINISH_TURN);
-    push(navigationRoutineStack, LEFT_TURN);
-    push(navigationRoutineStack, PREPARE_TURN);
+    // Queue all the routines for a left turn
+    enqueue(&navigationRoutineQueue, PREPARE_TURN);
+    enqueue(&navigationRoutineQueue, LEFT_TURN);
+    enqueue(&navigationRoutineQueue, FINISH_TURN);
 
     // Initiate these routines
     check_for_routine();
@@ -366,9 +393,9 @@ void handle_reverse_left_turn(void) {
     motors_stop();
 
     // Detecting a left turn while moving backwards means turning right
-    push(navigationRoutineStack, FINISH_REVERSE_TURN);
-    push(navigationRoutineStack, RIGHT_TURN);
-    push(navigationRoutineStack, PREPARE_REVERSE_TURN);
+    enqueue(&navigationRoutineQueue, PREPARE_REVERSE_TURN);
+    enqueue(&navigationRoutineQueue, RIGHT_TURN);
+    enqueue(&navigationRoutineQueue, FINISH_REVERSE_TURN);
 
     // Initiate these routines
     check_for_routine();
@@ -390,12 +417,14 @@ uint8_t check_for_right_turn(void) {
         }
     }
 
+    // Check to see if we're detecting a turn
     if (u8_detectingSensors >= SENSOR_NUM - 1) {
         u8_rightTurnDetection++;
     } else {
         u8_rightTurnDetection = 0;
     }
 
+    // If we've detected it enough times then turn
     if (u8_rightTurnDetection >= NUM_OF_REQUIRED_DETECTIONS) {
         u8_rightTurnDetection = 0;
         return 1;
@@ -408,10 +437,10 @@ uint8_t check_for_right_turn(void) {
 void handle_right_turn(void) {
     motors_stop();
 
-    // Push all the routines for a right turn
-    push(navigationRoutineStack, FINISH_TURN);
-    push(navigationRoutineStack, RIGHT_TURN);
-    push(navigationRoutineStack, PREPARE_TURN);
+    // Queue all the routines for a right turn
+    enqueue(&navigationRoutineQueue, PREPARE_TURN);
+    enqueue(&navigationRoutineQueue, RIGHT_TURN);
+    enqueue(&navigationRoutineQueue, FINISH_TURN);
 
     // Initiate these routines
     check_for_routine();
@@ -422,9 +451,9 @@ void handle_reverse_right_turn(void) {
     motors_stop();
 
     // Detecting a right turn while moving backwards means turning left
-    push(navigationRoutineStack, FINISH_REVERSE_TURN);
-    push(navigationRoutineStack, LEFT_TURN);
-    push(navigationRoutineStack, PREPARE_REVERSE_TURN);
+    enqueue(&navigationRoutineQueue, PREPARE_REVERSE_TURN);
+    enqueue(&navigationRoutineQueue, LEFT_TURN);
+    enqueue(&navigationRoutineQueue, FINISH_REVERSE_TURN);
 
     // Initiate these routines
     check_for_routine();

@@ -26,6 +26,8 @@
 // Variable to hold user input
 char u8_c;
 
+extern queue_t navigationRoutineQueue;
+
 // Function declarations
 void pic_navigation_init();
 void navigation_serial_command(uint8_t u8_motor);
@@ -36,6 +38,7 @@ void double_motor_function_menu(void);
 void sensor_array_menu(void);
 void sensor_array_print(uint8_t u8_sensorArray);
 void print_get_line(void);
+void navigate_course(void);
 
 // Main loop for the navigation PIC controller using serial commands
 int main (void) {
@@ -110,7 +113,7 @@ void navigation_serial_command(uint8_t u8_command) {
             print_get_line();
             break;
         case 'n':
-            follow_line_to_box(0.15);
+            follow_line_to_box(BASE_SPEED);
             break;
         case 'h':
             printf("\nChoose a direction to turn\n");
@@ -120,15 +123,18 @@ void navigation_serial_command(uint8_t u8_command) {
 
             if (u8_c == 'r') {
                 printf("Turning 90 degrees right\n");
-                turn_90_degrees(0.15, RIGHT_DIRECTION);
+                turn_90_degrees(BASE_SPEED, RIGHT_DIRECTION);
             }
             else if (u8_c == 'l') {
                 printf("Turning 90 degrees left\n");
-                turn_90_degrees(0.15, LEFT_DIRECTION);
+                turn_90_degrees(BASE_SPEED, LEFT_DIRECTION);
             }
             else {
                 printf("Invalid Choice\n");
             }
+            break;
+        case 'w':
+            navigate_course();
             break;
         default:
             printf("Invalid Choice\n");
@@ -258,6 +264,7 @@ void navigation_serial_menu() {
     printf("   Press 'g' to get line continuously and print line value\n");
     printf("   Press 'n' to navigate to a box\n");
     printf("   Press 'h' to turn 90 degrees\n");
+    printf("   Press 'w' to navigate the whole course (skips the game stuff)\n");
 }
 
 void single_motor_function_menu() {
@@ -340,4 +347,31 @@ void print_get_line() {
         u16_position = 1000 * get_line(pau16_sensorValues);
         printf("Line position: %u\n", u16_position);
     }
+}
+
+void navigate_course() {
+    // Game counter
+    uint8_t u8_currentGame;
+
+    u8_currentGame = 0;
+
+    enqueue(&navigationRoutineQueue, MOVE_PAST_START_BOX);
+    check_for_routine();
+
+    // Play Rubiks, Etch, and Simon then stop
+    while(u8_currentGame <= 3) {
+        // Find a box
+        follow_line_to_box(BASE_SPEED);
+
+        // Just a delay to make it obvious that we've reached a box
+        DELAY_MS(2500);
+
+        // Get back to the main line
+        follow_line_back_to_main_line(BASE_SPEED);
+        motors_stop();
+        u8_currentGame++;
+    }
+
+    // Get to the finish line
+    follow_line_to_box(BASE_SPEED);
 }
