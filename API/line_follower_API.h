@@ -30,9 +30,6 @@
 #ifndef _LINE_FOLLOWER_API_H_
 #define _LINE_FOLLOWER_API_H_
 
-#define TRIPLE_SENSOR_NUM               SENSOR_NUM * 3
-#define TRIPLE_HI_RES_SENSOR_NUM        SENSOR_NUM * 4
-
 #define NUM_OF_REQUIRED_DETECTIONS      3
 
 /**
@@ -43,10 +40,10 @@ void line_follower_init(void);
 /**
  * @brief Gets values from the sensor array representing a line
  *
- * @param pau16_sensorValues Contains the values from the sensor array
+ * @param pau16_sensorValues The values of the triple hi res sensors
  * @return A floating point representation of the line
  */
-float get_line(uint16_t* pau16_sensorValues);
+ float get_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
 
 /**
  * @brief Follow  line until the line sensor sees a box
@@ -55,34 +52,77 @@ float get_line(uint16_t* pau16_sensorValues);
  */
 void follow_line_to_box(float f_maxSpeed);
 
+/**
+ * @brief Follow until the robot gets back to wehre it branched from
+ *
+ * @param f_maxSpeed the max speed the robot will move at, specified by duty cycle
+ */
 void follow_line_back_to_main_line(float f_maxSpeed);
 
 /**
- * @brief Follow a line
+ * @brief Recenter the robot over the line while moving forward
  *
- * @param pau16_sensorValues The current sensor array values
- * @param f_maxSpeed the max speed to move the robot
- */
-void follow_line(uint16_t* pau16_sensorValues, float f_maxSpeed);
+ * @param f_maxSpeed Max speed the robot will travel
+ * @param pau16_sensorValues Values of the triple hi res sensor array
+**/
+void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
 
 /**
- * @brief Follow a line back
+ * @brief Recenter the robot over the line while moving reverse
  *
- * @param pau16_sensorValues The current sensor array values
- * @param f_maxSpeed the max speed to move the robot
- */
-void follow_line_back(uint16_t* pau16_sensorValues, float f_maxSpeed);
+ * @param f_maxSpeed Max speed the robot will travel
+ * @param pau16_sensorValues Values of the triple hi res sensor array
+**/
+void correct_line_error_reverse(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
 
-void correct_line_error(float f_maxSpeed);
+/**
+ * @brief Determine whether or not the robot has reached a box
+ *
+ * @param pau16_sensorValues The values of the triple hi res sensors
+ * @return Whether or not there is a box
+**/
+uint8_t check_for_box(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
 
-uint8_t check_for_box(void);
-uint8_t check_for_left_turn(void);
+/**
+ * @brief Determine whether or not the robot has reached a left turn
+ *
+ * @param pau16_sensorValues The values of the triple hi res sensors
+ * @return Whether or not there is a left turn
+**/
+uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
+
+/**
+ * @brief Handle a right angle left turn
+**/
 void handle_left_turn(void);
+
+/**
+ * @brief Handle a reverse right angle left turn
+**/
 void handle_reverse_left_turn(void);
-uint8_t check_for_right_turn(void);
+
+/**
+* @brief Determine whether or not the robot has reached a right turn
+*
+* @param pau16_sensorValues The values of the triple hi res sensors
+* @return Whether or not there is a right turn
+**/
+uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
+
+/**
+ * @brief Handle a right angle right turn
+**/
 void handle_right_turn(void);
+
+/**
+ * @brief Handle a reverse right angle right turn
+**/
 void handle_reverse_right_turn(void);
-uint8_t check_for_line(void);
+
+/**
+ * @brief Check for a line, used when turning to see if we're branching from the main line
+**/
+uint8_t check_for_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
 
 /**
  * @brief Print the sensor array values

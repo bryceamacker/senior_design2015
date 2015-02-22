@@ -56,6 +56,10 @@ static inline uint8_t pop(stack_t * stack) {
     return u8_retVal;
 }
 
+static inline uint8_t getSize(stack_t stack) {
+    return stack.top;
+}
+
 static inline uint8_t peek(stack_t stack) {
     uint8_t u8_retVal;
 

@@ -123,11 +123,17 @@ void navigation_serial_command(uint8_t u8_command) {
 
             if (u8_c == 'r') {
                 printf("Turning 90 degrees right\n");
-                turn_90_degrees(BASE_SPEED, RIGHT_DIRECTION);
+                enqueue(&navigationRoutineQueue, PREPARE_TURN);
+                enqueue(&navigationRoutineQueue, RIGHT_TURN);
+                enqueue(&navigationRoutineQueue, FINISH_TURN);
+                check_for_routine();
             }
             else if (u8_c == 'l') {
                 printf("Turning 90 degrees left\n");
-                turn_90_degrees(BASE_SPEED, LEFT_DIRECTION);
+                enqueue(&navigationRoutineQueue, PREPARE_TURN);
+                enqueue(&navigationRoutineQueue, LEFT_TURN);
+                enqueue(&navigationRoutineQueue, FINISH_TURN);
+                check_for_routine();
             }
             else {
                 printf("Invalid Choice\n");
@@ -145,8 +151,10 @@ void navigation_serial_command(uint8_t u8_command) {
 void motor_control(uint8_t u8_motor, uint8_t u8_function) {
     uint8_t u8_percentage;
     uint8_t u8_c2;
+
     uint16_t u16_revolutions;
     uint16_t u16_distance;
+
     int16_t i16_revolutions;
     int16_t i16_distance;
 
@@ -344,6 +352,7 @@ void print_get_line() {
     uint16_t u16_position;
 
     while(isCharReady() == 0) {
+        read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
         u16_position = 1000 * get_line(pau16_sensorValues);
         printf("Line position: %u\n", u16_position);
     }

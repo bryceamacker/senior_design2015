@@ -38,6 +38,10 @@
 #define TRIPLE_RIGHT_LINE       4
 #define BACK_LINE               5
 
+#define TRIPLE_SENSOR_NUM               SENSOR_NUM * 3
+#define TRIPLE_HI_RES_SENSOR_NUM        SENSOR_NUM * 4
+
+
 ///////////////////////////////////////////////
 //
 // Sensor config
