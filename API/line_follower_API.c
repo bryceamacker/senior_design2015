@@ -188,7 +188,7 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
             // Finding a box while reversing means we've reached the main line
             if (check_for_box(pau16_sensorValues)) {
                 #ifdef DEBUG_BUILD
-                printf("Back to the main line\n");
+                printf("Back at the main line\n");
                 #endif
 
                 // Handle our last turn
@@ -204,7 +204,7 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
             // Check for a left turn
             else if (check_for_left_turn(pau16_sensorValues) == 1) {
                 #ifdef DEBUG_BUILD
-                printf("Left turn!\n");
+                printf("Reverse left turn!\n");
                 #endif
 
                 // Pop off a past turn and handle it
@@ -214,7 +214,7 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
             // Check for a right turn
             else if (check_for_right_turn(pau16_sensorValues) == 1) {
                 #ifdef DEBUG_BUILD
-                printf("Right turn!\n");
+                printf("Reverse right turn!\n");
                 #endif
 
                 // Pop off a past turn and handle it
@@ -524,14 +524,3 @@ uint8_t check_for_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
         return 0;
     }
 }
-
-#ifdef DEBUG_BUILD
-// Print line follower data
-void print_line_data(uint16_t* pau16_sensorValues) {
-    int i;
-    for (i = 0 ; i < SENSOR_NUM ; ++i)
-    {
-        printf("%d-", pau16_sensorValues[i]);
-    }
-}
-#endif

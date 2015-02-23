@@ -78,6 +78,7 @@ void pic_navigation_init() {
 //
 ///////////////////////////////////////////////
 
+// Handle top level serial commands
 void navigation_serial_command(uint8_t u8_command) {
     uint8_t u8_function;
     uint8_t u8_sensorArray;
@@ -148,6 +149,7 @@ void navigation_serial_command(uint8_t u8_command) {
     }
 }
 
+// Handle motor control functions
 void motor_control(uint8_t u8_motor, uint8_t u8_function) {
     uint8_t u8_percentage;
     uint8_t u8_c2;
@@ -172,27 +174,27 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
     switch(u8_function) {
         case 'f':
             if (u8_motor == 'l') {
-                left_motor_fwd(u8_percentage/100.0);
+                left_motor_fwd(u8_percentage);
             } else if (u8_motor == 'r') {
-                right_motor_fwd(u8_percentage/100.0);
+                right_motor_fwd(u8_percentage);
             } else if (u8_motor == 'b') {
-                motors_move_forward(u8_percentage/100.0);
+                motors_move_forward(u8_percentage);
             }
             break;
         case 'b':
             if (u8_motor == 'l') {
-                left_motor_reverse(u8_percentage/100.0);
+                left_motor_reverse(u8_percentage);
             } else if (u8_motor == 'r') {
-                right_motor_reverse(u8_percentage/100.0);
+                right_motor_reverse(u8_percentage);
             } else if (u8_motor == 'b') {
-                motors_move_reverse(u8_percentage/100.0);
+                motors_move_reverse(u8_percentage);
             }
             break;
         case 'r':
-            motors_turn_right(u8_percentage/100.0);
+            motors_turn_right(u8_percentage);
             break;
         case 'l':
-            motors_turn_left(u8_percentage/100.0);
+            motors_turn_left(u8_percentage);
             break;
         case 'o':
             printf("\nEnter number of tenths of revolutions\n");
@@ -212,13 +214,13 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
 
             if (u8_motor == 'l') {
                 printf("Turning left motor by %u tenths of revolutions\n", u16_revolutions);
-                move_left_motor_by_revolutions(i16_revolutions/10.0, u8_percentage/100.0);
+                move_left_motor_by_revolutions(i16_revolutions/10.0, u8_percentage);
             } else if (u8_motor == 'r') {
                 printf("Turning left motor by %u tenths of revolutions\n", u16_revolutions);
-                move_right_motor_by_revolutions(i16_revolutions/10.0, u8_percentage/100.0);
+                move_right_motor_by_revolutions(i16_revolutions/10.0, u8_percentage);
             } else if (u8_motor == 'b') {
                 printf("Turning motors by %u tenths of revolutions\n", u16_revolutions);
-                move_by_revolutions(i16_revolutions/10.0, u8_percentage/100.0);
+                move_by_revolutions(i16_revolutions/10.0, u8_percentage);
             }
             break;
         case 'd':
@@ -239,13 +241,13 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
 
             if (u8_motor == 'l') {
                 printf("Turning left motor by %u mm\n", u16_distance);
-                move_left_motor_by_distance(i16_distance*1.0, u8_percentage/100.0);
+                move_left_motor_by_distance(i16_distance*1.0, u8_percentage);
             } else if (u8_motor == 'r') {
                 printf("Turning right motor by %u mm\n", u16_distance);
-                move_right_motor_by_distance(i16_distance*1.0, u8_percentage/100.0);
+                move_right_motor_by_distance(i16_distance*1.0, u8_percentage);
             } else if (u8_motor == 'b') {
                 printf("Turning motors by %u mm\n", u16_distance);
-                move_by_distance(i16_distance*1.0, u8_percentage/100.0);
+                move_by_distance(i16_distance*1.0, u8_percentage);
             }
             break;
         case 's':
@@ -262,6 +264,7 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
     }
 }
 
+// Main serial menu for navigation pic
 void navigation_serial_menu() {
     printf("\nChoose a command\n");
     printf("   Press 'l' to control the left motor\n");
@@ -275,6 +278,7 @@ void navigation_serial_menu() {
     printf("   Press 'w' to navigate the whole course (skips the game stuff)\n");
 }
 
+// Menu for contorlling a single motor
 void single_motor_function_menu() {
     printf("\nChoose a motor function\n");
     printf("   Press 'f' for forward\n");
@@ -284,6 +288,7 @@ void single_motor_function_menu() {
     printf("   Press 's' for stop\n");
 }
 
+// Menu for contorlling both motors
 void double_motor_function_menu() {
     printf("\nChoose a motor function\n");
     printf("   Press 'f' for forward\n");
@@ -295,6 +300,7 @@ void double_motor_function_menu() {
     printf("   Press 's' for stop\n");
 }
 
+// Menu for all the sensor arrays
 void sensor_array_menu() {
     printf("\nChoose a sensor array to print\n");
     printf("   Press 'a' for forward\n");
@@ -309,6 +315,7 @@ void sensor_array_menu() {
     printf("   Press 'b' for back line\n");
 }
 
+// Print a certain line sensor array over and over
 void sensor_array_print(uint8_t u8_sensorArray) {
     while(isCharReady() == 0) {
         switch(u8_sensorArray) {
@@ -347,6 +354,7 @@ void sensor_array_print(uint8_t u8_sensorArray) {
     }
 }
 
+// Print the calculated line position
 void print_get_line() {
     uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
     uint16_t u16_position;
@@ -358,6 +366,7 @@ void print_get_line() {
     }
 }
 
+// Navigate an entire course to the finish line
 void navigate_course() {
     // Game counter
     uint8_t u8_currentGame;

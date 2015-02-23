@@ -124,11 +124,4 @@ void handle_reverse_right_turn(void);
 **/
 uint8_t check_for_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
 
-/**
- * @brief Print the sensor array values
- *
- * @param pau16_sensorValues The array values
- */
-void print_line_data(uint16_t* pau16_sensorValues);
-
 #endif

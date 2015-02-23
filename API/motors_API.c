@@ -240,14 +240,18 @@ void _ISRFAST _INT1Interrupt (void) {
 ///////////////////////////////////////////////
 
 // Left motor primitive movements
-void left_motor_reverse (float f_duty) {
+void left_motor_reverse (float f_speed) {
+    float f_duty = f_speed/100.0;
+
     LIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits));
     LIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1-f_duty);
 
     u8_leftMotorDirection = BACKWARD_MOVEMENT;
 }
 
-void left_motor_fwd (float f_duty) {
+void left_motor_fwd (float f_speed) {
+    float f_duty = f_speed/100.0;
+
     LIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1-f_duty);
     LIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits));
 
@@ -262,14 +266,18 @@ void left_motor_stop() {
 }
 
 // Right motor primitive movements
-void right_motor_reverse (float f_duty) {
+void right_motor_reverse (float f_speed) {
+    float f_duty = f_speed/100.0;
+
     RIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits));
     RIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1-f_duty);
 
     u8_rightMotorDirection = BACKWARD_MOVEMENT;
 }
 
-void right_motor_fwd (float f_duty) {
+void right_motor_fwd (float f_speed) {
+    float f_duty = f_speed/100.0;
+
     RIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1-f_duty);
     RIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits));
 
@@ -440,31 +448,31 @@ void motors_stop(void) {
 }
 
 // Turn robot right
-void motors_turn_right(float f_duty) {
-    right_motor_reverse(f_duty);
-    left_motor_fwd(f_duty);
+void motors_turn_right(float f_speed) {
+    right_motor_reverse(f_speed);
+    left_motor_fwd(f_speed);
 }
 
 // Turn robot left
-void motors_turn_left(float f_duty) {
-    right_motor_fwd(f_duty);
-    left_motor_reverse(f_duty);
+void motors_turn_left(float f_speed) {
+    right_motor_fwd(f_speed);
+    left_motor_reverse(f_speed);
 }
 
 // Move robot forward
-void motors_move_forward(float f_duty) {
-    right_motor_fwd(f_duty);
-    left_motor_fwd(f_duty);
+void motors_move_forward(float f_speed) {
+    right_motor_fwd(f_speed);
+    left_motor_fwd(f_speed);
 }
 
 // Move robot in reverse
-void motors_move_reverse(float f_duty) {
-    right_motor_reverse(f_duty);
-    left_motor_reverse(f_duty);
+void motors_move_reverse(float f_speed) {
+    right_motor_reverse(f_speed);
+    left_motor_reverse(f_speed);
 }
 
 // Move right motor by revolutions
-void move_right_motor_by_revolutions(float f_revolutions, float f_duty) {
+void move_right_motor_by_revolutions(float f_revolutions, float f_speed) {
     float f_currentPosition;
 
     f_currentPosition = get_right_motor_location();
@@ -472,19 +480,15 @@ void move_right_motor_by_revolutions(float f_revolutions, float f_duty) {
     u8_rightAtTarget = 0;
 
     if (f_revolutions > 0) {
-        right_motor_fwd(f_duty);
+        right_motor_fwd(f_speed);
     }
     else if (f_revolutions < 0) {
-        right_motor_reverse(f_duty);
+        right_motor_reverse(f_speed);
     }
-    #ifdef DEBUG_BUILD
-    printf("Current right position: %f\n", (double) f_currentPosition);
-    printf("New right target: %f\n", (double) f_rightTargetPosition);
-    #endif
 }
 
 // Move left motor by revolutions
-void move_left_motor_by_revolutions(float f_revolutions, float f_duty) {
+void move_left_motor_by_revolutions(float f_revolutions, float f_speed) {
     float f_currentPosition;
 
     f_currentPosition = get_left_motor_location();
@@ -492,37 +496,33 @@ void move_left_motor_by_revolutions(float f_revolutions, float f_duty) {
     u8_leftAtTarget = 0;
 
     if (f_revolutions > 0) {
-        left_motor_fwd(f_duty);
+        left_motor_fwd(f_speed);
     }
     else if (f_revolutions < 0) {
-        left_motor_reverse(f_duty);
+        left_motor_reverse(f_speed);
     }
-    #ifdef DEBUG_BUILD
-    printf("Current left position: %f\n", (double) f_currentPosition);
-    printf("New left target: %f\n", (double) f_leftTargetPosition);
-    #endif
 }
 
 // Move right motor by mm
-void move_right_motor_by_distance(float f_distance, float f_duty) {
-    move_right_motor_by_revolutions(f_distance/WHEEL_CIRCUMFERENCE, f_duty);
+void move_right_motor_by_distance(float f_distance, float f_speed) {
+    move_right_motor_by_revolutions(f_distance/WHEEL_CIRCUMFERENCE, f_speed);
 }
 
 // Move left motor by mm
-void move_left_motor_by_distance(float f_distance, float f_duty) {
-    move_left_motor_by_revolutions(f_distance/WHEEL_CIRCUMFERENCE, f_duty);
+void move_left_motor_by_distance(float f_distance, float f_speed) {
+    move_left_motor_by_revolutions(f_distance/WHEEL_CIRCUMFERENCE, f_speed);
 }
 
 // Move entire robot by revolutions
-void move_by_revolutions(float f_revolutions, float f_duty) {
-    move_right_motor_by_revolutions(f_revolutions, f_duty);
-    move_left_motor_by_revolutions(f_revolutions, f_duty);
+void move_by_revolutions(float f_revolutions, float f_speed) {
+    move_right_motor_by_revolutions(f_revolutions, f_speed);
+    move_left_motor_by_revolutions(f_revolutions, f_speed);
 }
 
 // Move entire robot by mm
-void move_by_distance(float f_distance, float f_duty) {
-    move_right_motor_by_distance(f_distance, f_duty);
-    move_left_motor_by_distance(f_distance, f_duty);
+void move_by_distance(float f_distance, float f_speed) {
+    move_right_motor_by_distance(f_distance, f_speed);
+    move_left_motor_by_distance(f_distance, f_speed);
 }
 
 ///////////////////////////////////////////////
@@ -532,77 +532,104 @@ void move_by_distance(float f_distance, float f_duty) {
 ///////////////////////////////////////////////
 
 // Prepare robot for 90 degree turn by time
-void prepare_for_90_degree_turn(float f_duty) {
-    move_by_distance(PREPARE_90_TURN_DISTANCE, f_duty);
+void prepare_for_90_degree_turn(float f_speed) {
+    move_by_distance(PREPARE_90_TURN_DISTANCE, f_speed);
 }
 
 // Turn robot 90 degrees by time
-void turn_90_degrees(float f_duty, uint8_t u8_direction) {
-    // prepare_for_90_degree_turn(f_duty);
+void turn_90_degrees(float f_speed, uint8_t u8_direction) {
+    // prepare_for_90_degree_turn(f_speed);
     if (u8_direction == RIGHT_DIRECTION) {
-        move_right_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_duty);
-        move_left_motor_by_revolutions(DEGREE_90_TURN_REVS, f_duty);
+        move_right_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_speed);
+        move_left_motor_by_revolutions(DEGREE_90_TURN_REVS, f_speed);
     }
     if (u8_direction == LEFT_DIRECTION) {
-        move_right_motor_by_revolutions(DEGREE_90_TURN_REVS, f_duty);
-        move_left_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_duty);
+        move_right_motor_by_revolutions(DEGREE_90_TURN_REVS, f_speed);
+        move_left_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_speed);
     }
 }
 
 // Reverse after turning 90 degrees to compensate for the preparing movement
-void finish_90_degree_turn(float f_duty) {
-    move_by_distance((-1.0 * PREPARE_90_TURN_DISTANCE), f_duty);
+void finish_90_degree_turn(float f_speed) {
+    move_by_distance((-1.0 * PREPARE_90_TURN_DISTANCE), f_speed);
 }
 
 // Prepare for a reverse 90 degree turn by moving forward
-void prepare_for_reverse_90_degree_turn(float f_duty) {
-    move_by_distance(PREPARE_90_TURN_DISTANCE, f_duty);
+void prepare_for_reverse_90_degree_turn(float f_speed) {
+    move_by_distance(PREPARE_90_TURN_DISTANCE, f_speed);
 }
 
 // Reverse after reverse turning 90 degrees to compensate for the preparing movement
-void finish_reverse_90_degree_turn(float f_duty) {
-    move_by_distance((-1.0 * PREPARE_90_TURN_DISTANCE), f_duty);
+void finish_reverse_90_degree_turn(float f_speed) {
+    move_by_distance((-1.0 * PREPARE_90_TURN_DISTANCE), f_speed);
 }
 
-void back_away_from_box(float f_duty) {
-    move_by_distance(LINE_WIDTH, f_duty);
+void back_away_from_box(float f_speed) {
+    move_by_distance(LINE_WIDTH, f_speed);
 }
 
-void move_past_start_box(float f_duty) {
-    move_by_distance(START_BOX_DRIVE_DISTANCE, f_duty);
+void move_past_start_box(float f_speed) {
+    move_by_distance(START_BOX_DRIVE_DISTANCE, f_speed);
 }
 
-void move_past_branch(float f_duty) {
-    move_by_distance(LINE_WIDTH, f_duty);
+void move_past_branch(float f_speed) {
+    move_by_distance(LINE_WIDTH, f_speed);
 }
 
 void handle_routine(routineID routine) {
     switch(routine) {
         case RIGHT_TURN:
+            #ifdef DEBUG_BUILD
+            printf("Routine: turning right\n");
+            #endif
             turn_90_degrees(BASE_SPEED, RIGHT_DIRECTION);
             break;
         case LEFT_TURN:
+            #ifdef DEBUG_BUILD
+            printf("Routine: turning left\n");
+            #endif
             turn_90_degrees(BASE_SPEED, LEFT_DIRECTION);
             break;
         case PREPARE_TURN:
+            #ifdef DEBUG_BUILD
+            printf("Routine: preparing for normal turn\n");
+            #endif
             prepare_for_90_degree_turn(BASE_SPEED);
             break;
         case FINISH_TURN:
+            #ifdef DEBUG_BUILD
+            printf("Routine: finishing normal turn\n");
+            #endif
             finish_90_degree_turn(BASE_SPEED);
             break;
         case PREPARE_REVERSE_TURN:
+            #ifdef DEBUG_BUILD
+            printf("Routine: preparing for reverse turn\n");
+            #endif
             prepare_for_reverse_90_degree_turn(BASE_SPEED);
             break;
         case FINISH_REVERSE_TURN:
+            #ifdef DEBUG_BUILD
+            printf("Routine: finishing reverse turn\n");
+            #endif
             finish_reverse_90_degree_turn(BASE_SPEED);
             break;
         case BACK_AWAY_FROM_BOX:
+            #ifdef DEBUG_BUILD
+            printf("Routine: backing away from game box\n");
+            #endif
             back_away_from_box(BASE_SPEED);
             break;
         case MOVE_PAST_START_BOX:
+            #ifdef DEBUG_BUILD
+            printf("Routine: moving past start box\n");
+            #endif
             move_past_start_box(BASE_SPEED);
             break;
         case MOVE_PAST_BRANCH:
+            #ifdef DEBUG_BUILD
+            printf("Routine: moving past branch\n");
+            #endif
             move_past_branch(BASE_SPEED);
             break;
         default:

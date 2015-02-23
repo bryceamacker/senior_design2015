@@ -53,7 +53,7 @@
 #define WHEEL_DIAMETER                  80                      // in milimeters
 #define WHEEL_CIRCUMFERENCE             (WHEEL_DIAMETER * M_PI) // in milimeters
 
-#define BASE_SPEED                      0.15
+#define BASE_SPEED                      15
 
 #define LINE_WIDTH                      25
 
@@ -130,14 +130,14 @@ void motor_config_output_compare5(void);
  *
  * @param duty speed for the left motor PWM
  */
-void left_motor_fwd(float f_duty);
+void left_motor_fwd(float f_speed);
 
 /**
  * @brief Drive the left motor reverse
  *
  * @param duty speed for the left motor PWM
  */
-void left_motor_reverse(float f_duty);
+void left_motor_reverse(float f_speed);
 
 /**
  * @brief Stop the left motor
@@ -149,14 +149,14 @@ void left_motor_stop(void);
  *
  * @param duty speed for the right motor PWM
  */
-void right_motor_fwd(float f_duty);
+void right_motor_fwd(float f_speed);
 
 /**
  * @brief Drive the right motor reverse
  *
  * @param duty speed for the right motor PWM
  */
-void right_motor_reverse(float f_duty);
+void right_motor_reverse(float f_speed);
 
 /**
  * @brief Stop the right motor
@@ -200,92 +200,92 @@ void motors_stop(void);
 /**
  * @brief Turn the robot right
  *
- * @param f_duty speed to the turn the robot at
+ * @param f_speed speed to the turn the robot at
  */
-void motors_turn_right(float f_duty);
+void motors_turn_right(float f_speed);
 
 /**
  * @brief Turn the robot left
  *
- * @param f_duty speed to the turn the robot at
+ * @param f_speed speed to the turn the robot at
  */
-void motors_turn_left(float f_duty);
+void motors_turn_left(float f_speed);
 
 /**
  * @brief Move the robot forward
  *
- * @param f_duty speed to move the robot forward at
+ * @param f_speed speed to move the robot forward at
  */
-void motors_move_forward(float f_duty);
+void motors_move_forward(float f_speed);
 
 /**
  * @brief Move the robot back
  *
- * @param f_duty speed to move the robot back at
+ * @param f_speed speed to move the robot back at
  */
-void motors_move_reverse(float f_duty);
+void motors_move_reverse(float f_speed);
 
 /**
  * @brief Prepare the robot for a 90 degree turn using delays
  *
- * @param f_duty speed to move the robot
+ * @param f_speed speed to move the robot
 **/
-void prepare_for_90_degree_turn(float f_duty);
+void prepare_for_90_degree_turn(float f_speed);
 
 /**
  * @brief Turn the robot by 90 degrees
  *
- * @param f_duty speed to move the robot
+ * @param f_speed speed to move the robot
 **/
-void turn_90_degrees(float f_duty, uint8_t u8_direction);
+void turn_90_degrees(float f_speed, uint8_t u8_direction);
 
 /**
  * @brief Turn the left motor by a number of revolutions
  *
  * @param f_revolutions Number of revolutions to turn
- * @param f_duty Speed to turn the motor
+ * @param f_speed Speed to turn the motor
 **/
-void move_right_motor_by_revolutions(float f_revolutions, float f_duty);
+void move_right_motor_by_revolutions(float f_revolutions, float f_speed);
 
 /**
  * @brief Turn the right motor by a number of revolutions
  *
  * @param f_revolutions Number of revolutions to turn
- * @param f_duty Speed to turn the motor
+ * @param f_speed Speed to turn the motor
 **/
-void move_left_motor_by_revolutions(float f_revolutions, float f_duty);
+void move_left_motor_by_revolutions(float f_revolutions, float f_speed);
 
 /**
  * @brief Move the right motor by mm
  *
  * @param f_distance Milimeters to move the motor
- * @param f_duty Speed to turn the motor
+ * @param f_speed Speed to turn the motor
 **/
-void move_right_motor_by_distance(float f_distance, float f_duty);
+void move_right_motor_by_distance(float f_distance, float f_speed);
 
 /**
  * @brief Move the left motor by mm
  *
  * @param f_distance Milimeters to move the motor
- * @param f_duty Speed to turn the motor
+ * @param f_speed Speed to turn the motor
 **/
-void move_left_motor_by_distance(float f_distance, float f_duty);
+void move_left_motor_by_distance(float f_distance, float f_speed);
 
 /**
  * @brief Turn the robot by a number of revolutions
  *
  * @param f_revolutions Number of revolutions to turn
- * @param f_duty Speed to turn the robot
+ * @param f_speed Speed to turn the robot
 **/
-void move_by_revolutions(float f_revolutions, float f_duty);
+void move_by_revolutions(float f_revolutions, float f_speed);
 
 /**
  * @brief Move the robot by mm
  *
  * @param f_distance Milimeters to move the robot
- * @param f_duty Speed to turn the robot
+ * @param f_speed Speed to turn the robot
 **/
-void move_by_distance(float f_distance, float f_duty);
+void move_by_distance(float f_distance, float f_speed);
 
 uint8_t check_for_routine(void);
 void handle_routine(routineID routine);
