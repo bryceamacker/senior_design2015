@@ -22,6 +22,7 @@
 #include "sensor_array_API.h"
 #include "motors_API.h"
 #include <stdint.h>
+#include "static_course_info.h"
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>
@@ -30,7 +31,7 @@
 #ifndef _LINE_FOLLOWER_API_H_
 #define _LINE_FOLLOWER_API_H_
 
-#define NUM_OF_REQUIRED_DETECTIONS      3
+#define NUM_OF_REQUIRED_DETECTIONS      20
 
 /**
  * @brief Initialize everything it takes to follow a line using a sensor array
@@ -99,7 +100,7 @@ void handle_left_turn(void);
 /**
  * @brief Handle a reverse right angle left turn
 **/
-void handle_reverse_left_turn(void);
+void handle_reverse_left_turn(uint8_t u8_final);
 
 /**
 * @brief Determine whether or not the robot has reached a right turn
@@ -117,7 +118,7 @@ void handle_right_turn(void);
 /**
  * @brief Handle a reverse right angle right turn
 **/
-void handle_reverse_right_turn(void);
+void handle_reverse_right_turn(uint8_t u8_final);
 
 /**
  * @brief Check for a line, used when turning to see if we're branching from the main line

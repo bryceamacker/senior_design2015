@@ -41,8 +41,9 @@ uint8_t u8_leftAtTarget = 1;
 
 // Flag for routine blocking
 uint8_t u8_routineBlock = 0;
-routineID u8_currentRoutine = 0;
+uint8_t u8_currentRoutine = 0;
 queue_t navigationRoutineQueue;
+queue_t navigationMoveDistanceQueue;
 
 ///////////////////////////////////////////////
 //
@@ -79,6 +80,7 @@ void motors_init(void)
     motors_stop();
 
     init_queue(&navigationRoutineQueue);
+    init_queue(&navigationMoveDistanceQueue);
 }
 
 void config_motor_timer2(void) {
@@ -241,7 +243,7 @@ void _ISRFAST _INT1Interrupt (void) {
 
 // Left motor primitive movements
 void left_motor_reverse (float f_speed) {
-    float f_duty = f_speed/100.0;
+    float f_duty = (f_speed/100.0) * LEFT_MOTOR_ADJUSTMENT;
 
     LIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits));
     LIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1-f_duty);
@@ -250,7 +252,7 @@ void left_motor_reverse (float f_speed) {
 }
 
 void left_motor_fwd (float f_speed) {
-    float f_duty = f_speed/100.0;
+    float f_duty = (f_speed/100.0) * LEFT_MOTOR_ADJUSTMENT;
 
     LIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1-f_duty);
     LIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits));
@@ -267,7 +269,7 @@ void left_motor_stop() {
 
 // Right motor primitive movements
 void right_motor_reverse (float f_speed) {
-    float f_duty = f_speed/100.0;
+    float f_duty = (f_speed/100.0) * RIGHT_MOTOR_ADJUSTMENT;
 
     RIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits));
     RIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1-f_duty);
@@ -276,7 +278,7 @@ void right_motor_reverse (float f_speed) {
 }
 
 void right_motor_fwd (float f_speed) {
-    float f_duty = f_speed/100.0;
+    float f_duty = (f_speed/100.0) * RIGHT_MOTOR_ADJUSTMENT;
 
     RIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1-f_duty);
     RIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits));
@@ -346,6 +348,9 @@ void process_left_rotary_data() {
             left_motor_stop();
             if (u8_routineBlock == 1) {
                 u8_routineBlock = 0;
+                #ifdef DEBUG_BUILD
+                printf("Finished routine\n");
+                #endif
             }
         }
     }
@@ -359,6 +364,9 @@ void process_left_rotary_data() {
             left_motor_stop();
             if (u8_routineBlock == 1) {
                 u8_routineBlock = 0;
+                #ifdef DEBUG_BUILD
+                printf("Finished routine\n");
+                #endif
             }
         }
     }
@@ -565,7 +573,7 @@ void finish_reverse_90_degree_turn(float f_speed) {
 }
 
 void back_away_from_box(float f_speed) {
-    move_by_distance(LINE_WIDTH, f_speed);
+    move_by_distance((-2.0 * LINE_WIDTH), f_speed);
 }
 
 void move_past_start_box(float f_speed) {
@@ -576,7 +584,10 @@ void move_past_branch(float f_speed) {
     move_by_distance(LINE_WIDTH, f_speed);
 }
 
-void handle_routine(routineID routine) {
+void handle_routine(uint8_t routine) {
+    uint16_t u16_distance;
+    int16_t i16_distance;
+
     switch(routine) {
         case RIGHT_TURN:
             #ifdef DEBUG_BUILD
@@ -632,6 +643,20 @@ void handle_routine(routineID routine) {
             #endif
             move_past_branch(BASE_SPEED);
             break;
+        case MOVE_FORWARD_DISTANCE:
+            u16_distance = dequeue(&navigationMoveDistanceQueue);
+            i16_distance = u16_distance;
+            #ifdef DEBUG_BUILD
+            printf("Routine: moving forward %u mm\n", u16_distance);
+            #endif
+            move_by_distance(i16_distance*1.0, BASE_SPEED);
+        case MOVE_REVERSE_DISTANCE:
+            u16_distance = dequeue(&navigationMoveDistanceQueue);
+            i16_distance = 0 - u16_distance;
+            #ifdef DEBUG_BUILD
+            printf("Routine: moving reverse %u mm\n", u16_distance);
+            #endif
+            move_by_distance(i16_distance*1.0, BASE_SPEED);
         default:
             break;
     }

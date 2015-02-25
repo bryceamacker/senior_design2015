@@ -369,12 +369,12 @@ void read_sensor_hi_res(uint16_t* pau16_hiResSensorValues, char u8_readMode) {
 
     // Back sensors go in the even slots
     for(i = 0; i < SENSOR_NUM; i++) {
-        pau16_hiResSensorValues[i*2] = pau16_backSensorValues[SENSOR_NUM - 1 - i];
+        pau16_hiResSensorValues[i*2] = pau16_frontSensorValues[SENSOR_NUM - 1 - i];
     }
 
     // Front sensors go in the odd slots
     for(i = 0; i < SENSOR_NUM; i++) {
-        pau16_hiResSensorValues[(i*2)+1] = pau16_frontSensorValues[SENSOR_NUM - 1 - i];
+        pau16_hiResSensorValues[(i*2)+1] = pau16_backSensorValues[SENSOR_NUM - 1 - i];
     }
 }
 

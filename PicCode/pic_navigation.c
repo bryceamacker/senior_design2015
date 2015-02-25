@@ -167,6 +167,9 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
         // Tell the game player to play a game
         play_game(pu8_gameOrder[u8_currentGame]);
 
+        // Back away from the box a bit
+        enqueue(&navigationRoutineQueue, BACK_AWAY_FROM_BOX);
+
         // Get back to the main line
         follow_line_back_to_main_line(BASE_SPEED);
         motors_stop();

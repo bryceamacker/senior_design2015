@@ -81,9 +81,9 @@ static inline void display_stack(stack_t stack) {
 
 struct queue
 {
-    uint8_t theQueue[MAX_SIZE];
-    int8_t head;
-    int8_t tail;
+    uint16_t theQueue[MAX_SIZE];
+    uint16_t head;
+    uint16_t tail;
 };
 typedef struct queue queue_t;
 
@@ -103,7 +103,7 @@ static inline int queue_is_full(queue_t queue) {
     return ((queue.tail - MAX_SIZE) == queue.head);
 }
 
-static inline uint8_t enqueue(queue_t * queue, uint8_t u8_newVal) {
+static inline uint16_t enqueue(queue_t * queue, uint16_t u8_newVal) {
     // Check to see if the Queue is full
     if(queue_is_full(*queue)) {
         return FALSE;
@@ -116,8 +116,8 @@ static inline uint8_t enqueue(queue_t * queue, uint8_t u8_newVal) {
     return TRUE;
 }
 
-static inline uint8_t dequeue(queue_t * queue) {
-    uint8_t u8_val;
+static inline uint16_t dequeue(queue_t * queue) {
+    uint16_t u8_val;
 
     // Check for empty Queue
     if(queue_is_empty(*queue)) {
@@ -131,7 +131,7 @@ static inline uint8_t dequeue(queue_t * queue) {
 
 #ifdef DEBUG_BUILD
 static inline void display_queue(queue_t queue) {
-    int i;
+    uint8_t i;
 
     if (queue_is_empty(queue)) {
         printf("EMPTY");

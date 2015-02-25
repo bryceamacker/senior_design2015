@@ -39,6 +39,9 @@
 
 #define MOTOR_PWM_PERIOD                20000                   // desired period, in us
 
+#define RIGHT_MOTOR_ADJUSTMENT          1.0
+#define LEFT_MOTOR_ADJUSTMENT           1.01
+
 #define LEFT_DIRECTION                  0                       // Boolean for left turning direction
 #define RIGHT_DIRECTION                 1                       // Boolean for left turning direction
 
@@ -59,17 +62,17 @@
 
 #define START_BOX_DRIVE_DISTANCE        200
 
-typedef enum {
-    RIGHT_TURN = 1,
-    LEFT_TURN = 2,
-    PREPARE_TURN = 3,
-    FINISH_TURN =  4,
-    FINISH_REVERSE_TURN = 5,
-    BACK_AWAY_FROM_BOX = 6,
-    MOVE_PAST_START_BOX = 7,
-    MOVE_PAST_BRANCH = 8,
-    PREPARE_REVERSE_TURN = 9
-} routineID;
+#define RIGHT_TURN                      1
+#define LEFT_TURN                       2
+#define PREPARE_TURN                    3
+#define FINISH_TURN                     4
+#define FINISH_REVERSE_TURN             5
+#define BACK_AWAY_FROM_BOX              6
+#define MOVE_PAST_START_BOX             7
+#define MOVE_PAST_BRANCH                8
+#define PREPARE_REVERSE_TURN            9
+#define MOVE_FORWARD_DISTANCE           10
+#define MOVE_REVERSE_DISTANCE           11
 
 ///////////////////////////////////////////////
 //
@@ -288,6 +291,6 @@ void move_by_revolutions(float f_revolutions, float f_speed);
 void move_by_distance(float f_distance, float f_speed);
 
 uint8_t check_for_routine(void);
-void handle_routine(routineID routine);
+void handle_routine(uint8_t routine);
 
 #endif

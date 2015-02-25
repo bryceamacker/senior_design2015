@@ -27,6 +27,7 @@
 char u8_c;
 
 extern queue_t navigationRoutineQueue;
+extern queue_t navigationMoveDistanceQueue;
 
 // Function declarations
 void pic_navigation_init();
@@ -36,9 +37,11 @@ void navigation_serial_menu(void);
 void single_motor_function_menu(void);
 void double_motor_function_menu(void);
 void sensor_array_menu(void);
+void navigation_queue_menu(void);
 void sensor_array_print(uint8_t u8_sensorArray);
 void print_get_line(void);
 void navigate_course(void);
+void handle_navigation_queue_command(uint8_t u8_function);
 
 // Main loop for the navigation PIC controller using serial commands
 int main (void) {
@@ -139,6 +142,11 @@ void navigation_serial_command(uint8_t u8_command) {
             else {
                 printf("Invalid Choice\n");
             }
+            break;
+        case 'q':
+            navigation_queue_menu();
+            u8_function = inChar();
+            handle_navigation_queue_command(u8_function);
             break;
         case 'w':
             navigate_course();
@@ -275,6 +283,7 @@ void navigation_serial_menu() {
     printf("   Press 'g' to get line continuously and print line value\n");
     printf("   Press 'n' to navigate to a box\n");
     printf("   Press 'h' to turn 90 degrees\n");
+    printf("   Press 'q' to use the navigation queue\n");
     printf("   Press 'w' to navigate the whole course (skips the game stuff)\n");
 }
 
@@ -313,6 +322,20 @@ void sensor_array_menu() {
     printf("   Press 'h' for the hi-res\n");
     printf("   Press 'p' for the triple plus the hi-res\n");
     printf("   Press 'b' for back line\n");
+}
+
+// Menu for navigation queue stuff
+void navigation_queue_menu() {
+    printf("\nChoose a queue function\n");
+    printf("   Press 'i' to initiate routines\n");
+    printf("   Press 'r' to load right turn\n");
+    printf("   Press 'l' to load left turn\n");
+    printf("   Press 'p' to load prepare turn\n");
+    printf("   Press 'f' to load finish turn\n");
+    printf("   Press 'b' to load back away from box\n");
+    printf("   Press 'm' to load move past branch\n");
+    printf("   Press 'e' to load move forward distance\n");
+    printf("   Press 'd' to load move back distance\n");
 }
 
 // Print a certain line sensor array over and over
@@ -354,6 +377,52 @@ void sensor_array_print(uint8_t u8_sensorArray) {
     }
 }
 
+void handle_navigation_queue_command(uint8_t u8_function) {
+    uint8_t u8_c2;
+    uint16_t u16_distance;
+    char sz_buf[32];
+
+    if ((u8_function == 'e') || (u8_function == 'd')) {
+        printf("\nEnter distance in mm\n");
+        inStringEcho(sz_buf,31);
+        sscanf(sz_buf,"%u", (uint16_t *) &u16_distance);
+        u8_c2 = inChar();
+    }
+
+    switch (u8_function) {
+        case 'i':
+            check_for_routine();
+            break;
+        case 'r':
+            enqueue(&navigationRoutineQueue, RIGHT_TURN);
+            break;
+        case 'l':
+            enqueue(&navigationRoutineQueue, LEFT_TURN);
+            break;
+        case 'p':
+            enqueue(&navigationRoutineQueue, PREPARE_TURN);
+            break;
+        case 'f':
+            enqueue(&navigationRoutineQueue, FINISH_TURN);
+            break;
+        case 'b':
+            enqueue(&navigationRoutineQueue, BACK_AWAY_FROM_BOX);
+            break;
+        case 'm':
+            enqueue(&navigationRoutineQueue, MOVE_PAST_START_BOX);
+            break;
+        case 'e':
+            enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+            enqueue(&navigationMoveDistanceQueue, u16_distance);
+            break;
+        case 'd':
+            enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+            enqueue(&navigationMoveDistanceQueue, u16_distance);
+            break;
+
+    }
+}
+
 // Print the calculated line position
 void print_get_line() {
     uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
@@ -384,9 +453,12 @@ void navigate_course() {
         // Just a delay to make it obvious that we've reached a box
         DELAY_MS(2500);
 
+        // Back away from the box a bit
+        enqueue(&navigationRoutineQueue, BACK_AWAY_FROM_BOX);
+        check_for_routine();
+
         // Get back to the main line
         follow_line_back_to_main_line(BASE_SPEED);
-        motors_stop();
         u8_currentGame++;
     }
 
