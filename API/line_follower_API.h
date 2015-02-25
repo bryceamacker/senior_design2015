@@ -31,7 +31,7 @@
 #ifndef _LINE_FOLLOWER_API_H_
 #define _LINE_FOLLOWER_API_H_
 
-#define NUM_OF_REQUIRED_DETECTIONS      20
+#define NUM_OF_REQUIRED_DETECTIONS      80
 
 /**
  * @brief Initialize everything it takes to follow a line using a sensor array

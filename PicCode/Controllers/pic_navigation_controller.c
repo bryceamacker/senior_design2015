@@ -452,6 +452,7 @@ void navigate_course() {
 
         // Just a delay to make it obvious that we've reached a box
         DELAY_MS(2500);
+        printf("Reached game %u\n", ++u8_currentGame);
 
         // Back away from the box a bit
         enqueue(&navigationRoutineQueue, BACK_AWAY_FROM_BOX);
@@ -459,7 +460,6 @@ void navigate_course() {
 
         // Get back to the main line
         follow_line_back_to_main_line(BASE_SPEED);
-        u8_currentGame++;
     }
 
     // Get to the finish line

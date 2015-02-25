@@ -37,8 +37,7 @@ void line_follower_init() {
     sensor_array_init();
     motors_init();
 
-    branchedTurnStack.top = 0;
-    push(&branchedTurnStack, 0);
+    init_stack(&branchedTurnStack);
 }
 
 float get_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
@@ -122,7 +121,7 @@ void follow_line_to_box(float f_maxSpeed) {
                     push(&branchedTurnStack, LEFT_TURN);
                 }
                 else {
-                    u8_lastTurn = LEFT_DIRECTION;
+                    u8_lastTurn = LEFT_TURN;
                 }
 
                 // Handle the left turn, flag that we are turning
@@ -139,7 +138,7 @@ void follow_line_to_box(float f_maxSpeed) {
                     push(&branchedTurnStack, RIGHT_TURN);
                 }
                 else {
-                    u8_lastTurn = RIGHT_DIRECTION;
+                    u8_lastTurn = RIGHT_TURN;
                 }
 
                 // Handle the right turn, flag that we are turning
@@ -180,10 +179,10 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
 
                 // Handle our last turn
                 u8_lastTurn = pop(&branchedTurnStack);
-                if (u8_lastTurn == LEFT_DIRECTION) {
+                if (u8_lastTurn == LEFT_TURN) {
                     handle_reverse_left_turn(1);
                 }
-                if (u8_lastTurn == RIGHT_DIRECTION) {
+                if (u8_lastTurn == RIGHT_TURN) {
                     handle_reverse_right_turn(1);
                 }
                 return;
@@ -294,37 +293,7 @@ void follow_line_to_box_pid(float f_maxSpeed) {
         }
     }
 }
-/*
-// Recenter the robot over the line while moving forwards
-void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
-    uint8_t u8_detectingSensors;
-    uint8_t i;
 
-    uint16_t u16_position;
-
-    int16_t i16_error;
-
-    // Get the average position of the line
-    u16_position = 1000 * get_line(pau16_sensorValues);
-    i16_error = u16_position - i16_lineCenter;
-    u8_detectingSensors = 0;
-
-    // Sum up the array
-    for (i = 0; i < TRIPLE_HI_RES_SENSOR_NUM; i++) {
-        u8_detectingSensors += pau16_sensorValues[i];
-    }
-
-    if (i16_error > 1000) {
-        motors_turn_right(f_maxSpeed);
-    }
-    if (i16_error < -1000) {
-        motors_turn_left(f_maxSpeed);
-    }
-    if ((i16_error >= -1000) && (i16_error <= 1000)) {
-        motors_move_forward(f_maxSpeed);
-    }
-}
-*/
 // Recenter the robot over the line while moving forwards
 void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
     uint8_t u8_moveForward;
@@ -347,13 +316,13 @@ void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_
     // Check left of the center
     for (i = 8; i <= 14; i++) {
         if (pau16_sensorValues[i] == 1) {
-            u8_turnLeft = 1;
+            u8_turnLeft++;
         }
     }
     // Check right of the center
     for (i = 17; i <= 23; i++) {
         if (pau16_sensorValues[i] == 1) {
-            u8_turnRight = 1;
+            u8_turnRight++;
         }
     }
 
@@ -361,44 +330,14 @@ void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_
     if (u8_moveForward == 1) {
         motors_move_forward(f_maxSpeed);
     }
-    else if (u8_turnLeft == 1) {
+    else if (u8_turnLeft >= 2) {
         motors_turn_left(f_maxSpeed);
     }
-    else if (u8_turnRight == 1) {
+    else if (u8_turnRight >= 2) {
         motors_turn_right(f_maxSpeed);
     }
 }
-/*
-// Recenter the robot over the line while moving backwards
-void correct_line_error_reverse(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
-    uint8_t u8_detectingSensors;
-    uint8_t i;
 
-    uint16_t u16_position;
-
-    int16_t i16_error;
-
-    // Get the average position of the line
-    u16_position = 1000 * get_line(pau16_sensorValues);
-    i16_error = u16_position - i16_lineCenter;
-    u8_detectingSensors = 0;
-
-    // Sum up the array
-    for (i = 0; i < TRIPLE_HI_RES_SENSOR_NUM; i++) {
-        u8_detectingSensors += pau16_sensorValues[i];
-    }
-
-    if (i16_error > 1000) {
-        motors_turn_right(f_maxSpeed);
-    }
-    if (i16_error < -1000) {
-        motors_turn_left(f_maxSpeed);
-    }
-    if ((i16_error >= -1000) && (i16_error <= 1000)) {
-        motors_move_reverse(f_maxSpeed);
-    }
-}
-*/
 // Recenter the robot over the line while moving forwards
 void correct_line_error_reverse(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
     uint8_t u8_moveForward;
@@ -419,13 +358,13 @@ void correct_line_error_reverse(float f_maxSpeed, uint16_t pau16_sensorValues[TR
     }
 
     // Check left of the center
-    for (i = 8; i <= 14; i++) {
+    for (i = 8; i <= 13; i++) {
         if (pau16_sensorValues[i] == 1) {
             u8_turnLeft = 1;
         }
     }
     // Check right of the center
-    for (i = 17; i <= 23; i++) {
+    for (i = 18; i <= 23; i++) {
         if (pau16_sensorValues[i] == 1) {
             u8_turnRight = 1;
         }
@@ -478,7 +417,6 @@ uint8_t check_for_box(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
     if ((u8_leftDetectingSensors >= 1) && (u8_centerDetectingSensors >= SENSOR_NUM - 3) && (u8_rightDetectingSensors >= 1)) {
         u8_rightTurnDetection = 0;
         u8_leftTurnDetection = 0;
-        print_array_once(pau16_sensorValues);
         return 1;
     } else {
         return 0;
@@ -510,7 +448,6 @@ uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM
     // If we've detected it enough times then turn
     if (u8_leftTurnDetection >= NUM_OF_REQUIRED_DETECTIONS) {
         u8_leftTurnDetection = 0;
-        print_array_once(pau16_sensorValues);
         return 1;
     } else {
         return 0;
@@ -570,7 +507,6 @@ uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NU
     // If we've detected it enough times then turn
     if (u8_rightTurnDetection >= NUM_OF_REQUIRED_DETECTIONS) {
         u8_rightTurnDetection = 0;
-        print_array_once(pau16_sensorValues);
         return 1;
     } else {
         return 0;
@@ -624,16 +560,4 @@ uint8_t check_for_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
     } else {
         return 0;
     }
-}
-
-void print_array_once(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
-    uint8_t i;
-
-    for (i=0; i<TRIPLE_HI_RES_SENSOR_NUM; i++) {
-        printf("%u", pau16_sensorValues[i]);
-        if ((i==7) || (i==23)) {
-            printf("-");
-        }
-    }
-    printf("\n");
 }

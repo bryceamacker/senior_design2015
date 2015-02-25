@@ -41,6 +41,25 @@ struct stack
 };
 typedef struct stack stack_t;
 
+#ifdef DEBUG_BUILD
+static inline void display_stack(stack_t stack) {
+    uint8_t i;
+
+    for (i=0;i<stack.top;i++) {
+        printf("%u", stack.theStack[i]);
+
+        if (i == stack.top - 1) {
+            printf ("<--");
+        }
+        printf("\n");
+    }
+}
+#endif
+
+static inline void init_stack(stack_t * stack) {
+    stack->top = 0;
+}
+
 static inline void push(stack_t * stack, uint8_t u8_newVal) {
     stack->theStack[stack->top] = u8_newVal;
     stack->top++;
@@ -49,9 +68,9 @@ static inline void push(stack_t * stack, uint8_t u8_newVal) {
 static inline uint8_t pop(stack_t * stack) {
     uint8_t u8_retVal;
 
+    stack->top--;
     u8_retVal = stack->theStack[stack->top];
     stack->theStack[stack->top] = 0;
-    stack->top--;
 
     return u8_retVal;
 }
@@ -63,15 +82,9 @@ static inline uint8_t getSize(stack_t stack) {
 static inline uint8_t peek(stack_t stack) {
     uint8_t u8_retVal;
 
-    u8_retVal = stack.theStack[stack.top];
+    u8_retVal = stack.theStack[stack.top-1];
     return u8_retVal;
 }
-
-#ifdef DEBUG_BUILD
-static inline void display_stack(stack_t stack) {
-    printf("%u", stack.top);
-}
-#endif
 
 ///////////////////////////////////////////////
 //
