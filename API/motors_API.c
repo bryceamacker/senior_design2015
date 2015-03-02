@@ -36,11 +36,11 @@ float f_rightTargetPosition = 5000.0;
 float f_leftTargetPosition = 5000.0;
 
 // Whether or not the motors have reached their target location
-uint8_t u8_rightAtTarget = 1;
-uint8_t u8_leftAtTarget = 1;
+volatile uint8_t u8_rightAtTarget = 1;
+volatile uint8_t u8_leftAtTarget = 1;
 
 // Flag for routine blocking
-uint8_t u8_routineBlock = 0;
+volatile uint8_t u8_routineBlock = 0;
 uint8_t u8_currentRoutine = 0;
 queue_t navigationRoutineQueue;
 queue_t navigationMoveDistanceQueue;
@@ -650,6 +650,7 @@ void handle_routine(uint8_t routine) {
             printf("Routine: moving forward %u mm\n", u16_distance);
             #endif
             move_by_distance(i16_distance*1.0, BASE_SPEED);
+            break;
         case MOVE_REVERSE_DISTANCE:
             u16_distance = dequeue(&navigationMoveDistanceQueue);
             i16_distance = 0 - u16_distance;
@@ -657,6 +658,12 @@ void handle_routine(uint8_t routine) {
             printf("Routine: moving reverse %u mm\n", u16_distance);
             #endif
             move_by_distance(i16_distance*1.0, BASE_SPEED);
+            break;
+        case PLAY_GAME_PAUSE:
+            #ifdef DEBUG_BUILD
+            printf("Routine: game pause\n");
+            #endif
+            break;
         default:
             break;
     }

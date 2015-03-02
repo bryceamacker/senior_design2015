@@ -65,6 +65,7 @@ char sz_playCardsString[BUFFSIZE] =     "Cards";
 char sz_playEtchString[BUFFSIZE] =      "Etch.";
 char sz_idleString[BUFFSIZE] =          "Idle.";
 char sz_waitString[BUFFSIZE] =          "Wait.";
+char sz_dispString[BUFFSIZE] =          "Dis";
 
 // Variables to keep up with I2C messages coming in
 volatile char  sz_i2cInString[BUFFSIZE+1];
@@ -150,6 +151,17 @@ void pic_game_player_init() {
 
 // Check incoming I2C messages
 void I2C_check_command(volatile char *psz_s1) {
+    uint8_t i;
+    uint8_t u8_tens;
+    uint8_t u8_ones;
+    uint8_t u8_displayNumber;
+    char sz_dispStringCheck[3];
+
+    // Weird display string check
+    for (i=0;i<3;i++) {
+        sz_dispStringCheck[i] = psz_s1[i];
+    }
+
     // Etch
     if (strcmp((char*) psz_s1, sz_playEtchString) == 0) {
         e_picState = PLAY_ETCH;
@@ -165,6 +177,14 @@ void I2C_check_command(volatile char *psz_s1) {
     // Cards
     else if(strcmp((char*) psz_s1, sz_playCardsString) == 0) {
         e_picState = PLAY_CARDS;
+    }
+    // Display command
+    else if(strcmp((char*) sz_dispStringCheck, sz_dispString) == 0) {
+        u8_tens = psz_s1[3];
+        u8_ones = psz_s1[4];
+
+        u8_displayNumber = (u8_tens * 10) + u8_ones;
+        display_draw_number(u8_displayNumber);
     }
     // Idle
     else {

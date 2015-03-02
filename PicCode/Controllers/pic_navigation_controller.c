@@ -28,6 +28,7 @@ char u8_c;
 
 extern queue_t navigationRoutineQueue;
 extern queue_t navigationMoveDistanceQueue;
+extern uint8_t u8_currentRoutine;
 
 // Function declarations
 void pic_navigation_init();
@@ -328,6 +329,7 @@ void sensor_array_menu() {
 void navigation_queue_menu() {
     printf("\nChoose a queue function\n");
     printf("   Press 'i' to initiate routines\n");
+    printf("   Press 's' to queue up static course routines\n");
     printf("   Press 'r' to load right turn\n");
     printf("   Press 'l' to load left turn\n");
     printf("   Press 'p' to load prepare turn\n");
@@ -380,6 +382,7 @@ void sensor_array_print(uint8_t u8_sensorArray) {
 void handle_navigation_queue_command(uint8_t u8_function) {
     uint8_t u8_c2;
     uint16_t u16_distance;
+    uint8_t u8_courseNumber;
     char sz_buf[32];
 
     if ((u8_function == 'e') || (u8_function == 'd')) {
@@ -388,11 +391,31 @@ void handle_navigation_queue_command(uint8_t u8_function) {
         sscanf(sz_buf,"%u", (uint16_t *) &u16_distance);
         u8_c2 = inChar();
     }
+    if (u8_function == 's') {
+        printf("\nEnter course number\n");
+        inStringEcho(sz_buf,31);
+        sscanf(sz_buf,"%u", (uint8_t *) &u8_courseNumber);
+        u8_c2 = inChar();
+    }
 
     switch (u8_function) {
         case 'i':
             check_for_routine();
             break;
+        case 's':
+            if (prepare_course_routines(u8_courseNumber) == 1) {
+                printf("Running course %u\n", u8_courseNumber);
+                check_for_routine();
+                while(1) {
+                    if (u8_currentRoutine == PLAY_GAME_PAUSE) {
+                        DELAY_MS(2500);
+                        check_for_routine();
+                    }
+                }
+            }
+            else {
+                printf("Invalid course number\n");
+            }
         case 'r':
             enqueue(&navigationRoutineQueue, RIGHT_TURN);
             break;

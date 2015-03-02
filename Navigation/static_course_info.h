@@ -30,34 +30,54 @@ extern queue_t navigationRoutineQueue;
 extern queue_t navigationMoveDistanceQueue;
 
 static inline void prepare_course_routines_one(void) {
+    // Game 1
     enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-    enqueue(&navigationMoveDistanceQueue, 1000);
+    enqueue(&navigationMoveDistanceQueue, 840);
+    enqueue(&navigationRoutineQueue, LEFT_TURN);
+    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+    enqueue(&navigationMoveDistanceQueue, 150);
+    enqueue(&navigationRoutineQueue, PLAY_GAME_PAUSE);
+
+    // Game 2
+    enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+    enqueue(&navigationMoveDistanceQueue, 150);
+    enqueue(&navigationRoutineQueue, RIGHT_TURN);
+    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+    enqueue(&navigationMoveDistanceQueue, 320);
+    enqueue(&navigationRoutineQueue, RIGHT_TURN);
+    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+    enqueue(&navigationMoveDistanceQueue, 80);
+    enqueue(&navigationRoutineQueue, PLAY_GAME_PAUSE);
+
+    // Game 3
+    enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+    enqueue(&navigationMoveDistanceQueue, 80);
+    enqueue(&navigationRoutineQueue, LEFT_TURN);
+    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+    enqueue(&navigationMoveDistanceQueue, 300);
+    enqueue(&navigationRoutineQueue, LEFT_TURN);
+    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+    enqueue(&navigationMoveDistanceQueue, 150);
+    enqueue(&navigationRoutineQueue, PLAY_GAME_PAUSE);
+
+    // Game 4
+    enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+    enqueue(&navigationMoveDistanceQueue, 150);
+    enqueue(&navigationRoutineQueue, RIGHT_TURN);
+    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+    enqueue(&navigationMoveDistanceQueue, 160);
+    enqueue(&navigationRoutineQueue, RIGHT_TURN);
+    enqueue(&navigationRoutineQueue, PLAY_GAME_PAUSE);
+
+    // Finish Line
+    enqueue(&navigationRoutineQueue, LEFT_TURN);
+    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+    enqueue(&navigationMoveDistanceQueue, 470);
+    enqueue(&navigationRoutineQueue, RIGHT_TURN);
+    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+    enqueue(&navigationMoveDistanceQueue, 230);
 }
 
-static inline void prepare_course_routines_two(void) {
-    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-    enqueue(&navigationMoveDistanceQueue, 1000);
-}
-
-static inline void prepare_course_routines_three(void) {
-    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-    enqueue(&navigationMoveDistanceQueue, 1000);
-}
-
-static inline void prepare_course_routines_four(void) {
-    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-    enqueue(&navigationMoveDistanceQueue, 1000);
-}
-
-static inline void prepare_course_routines_five(void) {
-    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-    enqueue(&navigationMoveDistanceQueue, 1000);
-}
-
-static inline void prepare_course_routines_six(void) {
-    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-    enqueue(&navigationMoveDistanceQueue, 1000);
-}
 
 static inline uint8_t prepare_course_routines(uint8_t u8_course) {
     uint8_t u8_setCourse;
@@ -67,21 +87,6 @@ static inline uint8_t prepare_course_routines(uint8_t u8_course) {
     switch(u8_course) {
         case 1:
             prepare_course_routines_one();
-            break;
-        case 2:
-            prepare_course_routines_two();
-            break;
-        case 3:
-            prepare_course_routines_three();
-            break;
-        case 4:
-            prepare_course_routines_four();
-            break;
-        case 5:
-            prepare_course_routines_five();
-            break;
-        case 6:
-            prepare_course_routines_six();
             break;
         default:
             u8_setCourse = 0;

@@ -23,6 +23,7 @@
 #include "line_follower_API.h"
 #include <string.h>
 #include "navigation_port_mapping.h"
+#include <stdlib.h>
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>
@@ -51,6 +52,14 @@
 #define RUBIKS_BUTTON_PUSHED    (_RG9 == 0)
 #define RUBIKS_BUTTON_RELEASED  (_RG9 == 1)
 
+#define UP_BUTTON_PUSHED        (_RG9 == 0)
+#define UP_BUTTON_RELEASED      (_RG9 == 1)
+
+#define DOWN_BUTTON_PUSHED      (_RG7 == 0)
+#define DOWN_BUTTON_RELEASED    (_RG7 == 1)
+
+#define SET_BUTTON_PUSHED       (_RG6 == 0)
+#define SET_BUTTON_RELEASED     (_RG6 == 1)
 
 // Game enumeration
 typedef enum {
@@ -67,14 +76,21 @@ char sz_playCardsString[BUFFSIZE] =     "Cards";
 char sz_playEtchString[BUFFSIZE] =      "Etch.";
 char sz_idleString[BUFFSIZE] =          "Idle.";
 char sz_waitString[BUFFSIZE] =          "Wait.";
+char sz_dispString[BUFFSIZE] =          "Dis";
 char sz_recieveString[BUFFSIZE];
 
 extern queue_t navigationRoutineQueue;
+extern uint8_t u8_currentRoutine;
+uint8_t u8_gameBlock;
+uint8_t pu8_gameOrder[4];
+uint8_t u8_staticCourseNumber;
 
 // Function declarations
 void pic_navigation_init(void);
+void run_static_course(pu8_gameOrder);
 void navigate_course(uint8_t pu8_gameOrder[4]);
 void play_game(gameID game);
+void configure_robot(void);
 void setup_start_button(void);
 void wait_for_start_button_push(void);
 void setup_game_buttons(void);
@@ -85,7 +101,8 @@ void print_order(uint8_t pu8_gameOrder[4]);
 
 // Main loop for the navigation PIC using I2C commands
 int main (void) {
-    uint8_t pu8_gameOrder[4];
+    u8_gameBlock = 0;
+    u8_staticCourseNumber = 0;
 
     // Configure the motor controller PIC
     configBasic(HELLO_MSG);
@@ -93,21 +110,7 @@ int main (void) {
     setup_start_button();
     setup_game_buttons();
 
-    if (STATIC_ORDER == 0) {
-        #ifdef DEBUG_BUILD
-        printf("Waiting for game order\n");
-        #endif
-        get_game_order(pu8_gameOrder);
-
-        #ifdef DEBUG_BUILD
-        print_order(pu8_gameOrder);
-        #endif
-    } else {
-        pu8_gameOrder[0] = SIMON;
-        pu8_gameOrder[1] = RUBIKS;
-        pu8_gameOrder[2] = ETCH;
-        pu8_gameOrder[3] = CARD;
-    }
+    configure_robot();
 
     if (SKIP_START_BUTTON == 0) {
         #ifdef DEBUG_BUILD
@@ -126,8 +129,13 @@ int main (void) {
         doHeartbeat();
     }
 
-    // Navigate the whole course
-    navigate_course(pu8_gameOrder);
+    if (prepare_course_routines(u8_staticCourseNumber) == 1) {
+        // Navigate the whole course
+        navigate_course(pu8_gameOrder);
+    }
+    else {
+        run_static_course(pu8_gameOrder);
+    }
 
     // After the finish line has been reached just sit and relax
     while(1) doHeartbeat();
@@ -178,6 +186,30 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
 
     // Get to the finish line
     follow_line_to_box(BASE_SPEED);
+}
+
+void run_static_course(uint8_t pu8_gameOrder[4]) {
+    // Game counter
+    uint8_t u8_currentGame;
+
+    u8_currentGame = 0;
+
+    check_for_routine();
+
+    #ifdef DEBUG_BUILD
+    printf("Running a static course\n");
+    #endif
+
+    while(u8_currentGame <= 3) {
+        if (u8_currentRoutine == PLAY_GAME_PAUSE) {
+            play_game(pu8_gameOrder[u8_currentGame]);
+            u8_gameBlock = 0;
+            check_for_routine();
+        } else {
+            doHeartbeat();
+        }
+
+    }
 }
 
 // Function to send I2C commands to play games
@@ -263,6 +295,78 @@ void setup_game_buttons() {
     CONFIG_RG9_AS_DIG_INPUT();
     ENABLE_RG9_PULLUP();
     DELAY_US(1);
+}
+
+void configure_robot(void) {
+    char tempBuffer[4];
+    char numBuffer[2];
+    char sz_sendString[BUFFSIZE];
+
+    if (STATIC_ORDER == 0) {
+        #ifdef DEBUG_BUILD
+        printf("Waiting for game order\n");
+        #endif
+        get_game_order(pu8_gameOrder);
+
+        #ifdef DEBUG_BUILD
+        print_order(pu8_gameOrder);
+        #endif
+    } else {
+        pu8_gameOrder[0] = SIMON;
+        pu8_gameOrder[1] = RUBIKS;
+        pu8_gameOrder[2] = ETCH;
+        pu8_gameOrder[3] = CARD;
+    }
+
+    while (SET_BUTTON_RELEASED) {
+        if (DOWN_BUTTON_PUSHED) {
+            if (u8_staticCourseNumber == 0) {
+                u8_staticCourseNumber = 99;
+            } else {
+                u8_staticCourseNumber--;
+            }
+            strncpy(tempBuffer, sz_dispString, 4);
+            itoa (numBuffer, u8_staticCourseNumber, 10);
+
+            if (u8_staticCourseNumber < 10) {
+                numBuffer[0] = '0';
+            }
+
+            strcat(tempBuffer, numBuffer);
+            strncpy(sz_sendString, tempBuffer, BUFFSIZE);
+            writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
+
+            #ifdef DEBUG_BUILD
+            printf("Static course %u\n", u8_staticCourseNumber);
+            printf("Created string %s\n", sz_sendString);
+            #endif
+        }
+        if (UP_BUTTON_PUSHED) {
+            if (u8_staticCourseNumber == 99) {
+                u8_staticCourseNumber = 0;
+            } else {
+                u8_staticCourseNumber++;
+            }
+            strncpy(tempBuffer, sz_dispString, 4);
+            itoa (numBuffer, u8_staticCourseNumber, 10);
+
+            if (u8_staticCourseNumber < 10) {
+                numBuffer[0] = '0';
+            }
+
+            strcat(tempBuffer, numBuffer);
+            strncpy(sz_sendString, tempBuffer, BUFFSIZE);
+            writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
+
+            #ifdef DEBUG_BUILD
+            printf("Static course %u\n", u8_staticCourseNumber);
+            printf("Created string %s\n", sz_sendString);
+            #endif
+        }
+
+        // Simple debounce
+        DELAY_MS(10);
+    }
 }
 
 // Wait until buttons for every game have been pressed

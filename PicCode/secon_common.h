@@ -17,7 +17,7 @@
 * Steven Calhoun        2/18/2015               SECON 2015
 *********************************************************************/
 
-#define MAX_SIZE 20
+#define MAX_SIZE 40
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>
