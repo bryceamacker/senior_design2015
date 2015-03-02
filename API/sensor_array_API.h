@@ -58,6 +58,7 @@ void sensor_array_init(void);
  * @param u8_line Line to calibrate
  */
 void calibrate(char u8_readMode, uint8_t u8_line);
+void calibrateAllSensorArrays();
 
 ///////////////////////////////////////////////
 //

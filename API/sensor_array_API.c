@@ -50,7 +50,7 @@ void calibrate(char u8_readMode, uint8_t u8_line) {
     uint16_t i;
     uint16_t j;
 
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 400; i++) {
         read(pau16_sensorValues, u8_readMode, u8_line);
         u16_minValue = pau16_sensorValues[0];
 
@@ -62,6 +62,14 @@ void calibrate(char u8_readMode, uint8_t u8_line) {
         set_line_max_value(u16_minValue*2.5, u8_line);
     }
 }
+
+void calibrateAllSensorArrays() {
+    calibrate(QTR_EMITTERS_ON, 1);
+    calibrate(QTR_EMITTERS_ON, 2);
+    calibrate(QTR_EMITTERS_ON, 3);
+    calibrate(QTR_EMITTERS_ON, 4);
+}
+
 ///////////////////////////////////////////////
 //
 // Sensor primitives

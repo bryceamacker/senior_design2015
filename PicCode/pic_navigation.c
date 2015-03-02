@@ -30,12 +30,13 @@
 #warning "Navigation: DEBUG BUILD"
 #endif
 
-#define PIC_GAME_PLAYER_ADDR    0x20
-#define BUFFSIZE                64
+#define PIC_GAME_PLAYER_ADDR            0x20
+#define BUFFSIZE                        64
 
-#define STATIC_ORDER            1
-#define SKIP_START_LIGHT        1
-#define SKIP_START_BUTTON       1
+#define STATIC_ORDER                    1
+#define SKIP_START_LIGHT                1
+#define SKIP_START_BUTTON               1
+#define SKIP_STATIC_COURSE_SELECTION    1
 
 #define START_BUTTON_PUSHED     (_RF4 == 0)
 #define START_BUTTON_RELEASED   (_RF4 == 1)
@@ -119,6 +120,8 @@ int main (void) {
         wait_for_start_button_push();
     }
 
+    calibrateAllSensorArrays();
+
     // Wait for the game player PIC to detect the start light to turn off
     #ifdef DEBUG_BUILD
     printf("Waiting for start signal\n");
@@ -131,10 +134,11 @@ int main (void) {
 
     if (prepare_course_routines(u8_staticCourseNumber) == 1) {
         // Navigate the whole course
-        navigate_course(pu8_gameOrder);
+        run_static_course(pu8_gameOrder);
     }
     else {
-        run_static_course(pu8_gameOrder);
+        calibrateAllSensorArrays();
+        navigate_course(pu8_gameOrder);
     }
 
     // After the finish line has been reached just sit and relax
@@ -165,23 +169,22 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
 
     // Play Rubiks, Etch, and Simon then stop
     while(u8_currentGame <= 3) {
-        #ifdef DEBUG_BUILD
-        printf("Following line to box\n");
-        #endif
-
         // Find a box
         follow_line_to_box(BASE_SPEED);
 
         // Tell the game player to play a game
         play_game(pu8_gameOrder[u8_currentGame]);
+        u8_currentGame++;
+        #ifdef DEBUG_BUILD
+        printf("Reached game %u\n", u8_currentGame);
+        #endif
 
         // Back away from the box a bit
         enqueue(&navigationRoutineQueue, BACK_AWAY_FROM_BOX);
+        check_for_routine();
 
         // Get back to the main line
         follow_line_back_to_main_line(BASE_SPEED);
-        motors_stop();
-        u8_currentGame++;
     }
 
     // Get to the finish line
@@ -318,54 +321,56 @@ void configure_robot(void) {
         pu8_gameOrder[3] = CARD;
     }
 
-    while (SET_BUTTON_RELEASED) {
-        if (DOWN_BUTTON_PUSHED) {
-            if (u8_staticCourseNumber == 0) {
-                u8_staticCourseNumber = 99;
-            } else {
-                u8_staticCourseNumber--;
+    if (SKIP_STATIC_COURSE_SELECTION == 0) {
+        while (SET_BUTTON_RELEASED) {
+            if (DOWN_BUTTON_PUSHED) {
+                if (u8_staticCourseNumber == 0) {
+                    u8_staticCourseNumber = 99;
+                } else {
+                    u8_staticCourseNumber--;
+                }
+                strncpy(tempBuffer, sz_dispString, 4);
+                itoa (numBuffer, u8_staticCourseNumber, 10);
+
+                if (u8_staticCourseNumber < 10) {
+                    numBuffer[0] = '0';
+                }
+
+                strcat(tempBuffer, numBuffer);
+                strncpy(sz_sendString, tempBuffer, BUFFSIZE);
+                writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
+
+                #ifdef DEBUG_BUILD
+                printf("Static course %u\n", u8_staticCourseNumber);
+                printf("Created string %s\n", sz_sendString);
+                #endif
             }
-            strncpy(tempBuffer, sz_dispString, 4);
-            itoa (numBuffer, u8_staticCourseNumber, 10);
+            if (UP_BUTTON_PUSHED) {
+                if (u8_staticCourseNumber == 99) {
+                    u8_staticCourseNumber = 0;
+                } else {
+                    u8_staticCourseNumber++;
+                }
+                strncpy(tempBuffer, sz_dispString, 4);
+                itoa (numBuffer, u8_staticCourseNumber, 10);
 
-            if (u8_staticCourseNumber < 10) {
-                numBuffer[0] = '0';
+                if (u8_staticCourseNumber < 10) {
+                    numBuffer[0] = '0';
+                }
+
+                strcat(tempBuffer, numBuffer);
+                strncpy(sz_sendString, tempBuffer, BUFFSIZE);
+                writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
+
+                #ifdef DEBUG_BUILD
+                printf("Static course %u\n", u8_staticCourseNumber);
+                printf("Created string %s\n", sz_sendString);
+                #endif
             }
 
-            strcat(tempBuffer, numBuffer);
-            strncpy(sz_sendString, tempBuffer, BUFFSIZE);
-            writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
-
-            #ifdef DEBUG_BUILD
-            printf("Static course %u\n", u8_staticCourseNumber);
-            printf("Created string %s\n", sz_sendString);
-            #endif
+            // Simple debounce
+            DELAY_MS(10);
         }
-        if (UP_BUTTON_PUSHED) {
-            if (u8_staticCourseNumber == 99) {
-                u8_staticCourseNumber = 0;
-            } else {
-                u8_staticCourseNumber++;
-            }
-            strncpy(tempBuffer, sz_dispString, 4);
-            itoa (numBuffer, u8_staticCourseNumber, 10);
-
-            if (u8_staticCourseNumber < 10) {
-                numBuffer[0] = '0';
-            }
-
-            strcat(tempBuffer, numBuffer);
-            strncpy(sz_sendString, tempBuffer, BUFFSIZE);
-            writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
-
-            #ifdef DEBUG_BUILD
-            printf("Static course %u\n", u8_staticCourseNumber);
-            printf("Created string %s\n", sz_sendString);
-            #endif
-        }
-
-        // Simple debounce
-        DELAY_MS(10);
     }
 }
 
