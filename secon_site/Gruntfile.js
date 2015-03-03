@@ -316,20 +316,24 @@ module.exports = function (grunt) {
         ]
       }
     },
-    scp: {
+    rsync: {
       options: {
-        host: 'yavin.ece.msstate.edu',
-        username: 'sac302',
-        password: 'tiaUp4m1720'
+        args: ['-pavzP'],
+        exclude: ["*.gitkeep",".DS_Store"],
+        recursive: true
       },
-      target: {
-        files:[{
-          cwd: '<%= yeoman.dist %>',
-          src: '**/*',
-          filter: 'isFile',
-          dest: '/data/www/htdocs/courses/design/2014/team_amacker/'
+      stage: {
+        options: {
+          src: './dist/',
+          dest: '~/Desktop/TestDeploy/'
         }
-        ]
+      },
+      deploy: {
+        options: {
+          src: './dist/',
+          dest: '/data/www/htdocs/courses/design/2014/team_amacker/',
+          host: 'sac302@yavin.ece.msstate.edu'
+        }
       }
     },
     jshint: {
@@ -400,11 +404,10 @@ module.exports = function (grunt) {
     'csslint:check'
   ]);
 
-  // No real tests yet. Add your own.
-  grunt.registerTask('test', [
-    // 'clean:server',
-    // 'concurrent:test',
-    // 'connect:test'
+  // Stage dist to a local directory
+  grunt.registerTask('stage', [
+    'build',
+    'rsync:stage'
   ]);
 
   grunt.registerTask('build', [
@@ -427,7 +430,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('deploy', [
     'build',
-    'scp'
+    'rsync:deploy'
   ]);
 
   grunt.registerTask('default', [
