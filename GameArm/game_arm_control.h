@@ -29,10 +29,12 @@
 #define ARM_POSITION_UP             1500
 #define ARM_POSITION_DOWN           550
 
+// Left arm constants
 #define ARM_SLIDE_LEFT_BACK         1450
 #define ARM_SLIDE_LEFT_FORWARD      700
 #define ARM_SLIDE_LEFT_DIFFERENCE   (ARM_SLIDE_LEFT_BACK - ARM_SLIDE_LEFT_FORWARD)
 
+// Right arm constants
 #define ARM_SLIDE_RIGHT_BACK        1350
 #define ARM_SLIDE_RIGHT_FORWARD     2100
 #define ARM_SLIDE_RIGHT_DIFFERENCE  (ARM_SLIDE_RIGHT_FORWARD - ARM_SLIDE_RIGHT_BACK)
@@ -101,6 +103,10 @@ void game_arm_slide_forward(void);
  */
 void game_arm_slide_back(void);
 
+/**
+ * @brief Slide the game arm to a certain position
+ * @param u8_percentage Percentage of the arm's length to move the arm
+**/
 void game_arm_slide(uint8_t u8_percentage);
 
 

@@ -108,198 +108,240 @@ void game_player_serial_command(uint8_t u8_c) {
     char sz_buf[32];
     uint8_t u8_percentage;
 
-    if (u8_c == 'e') {
-        play_etch();
-    } else if (u8_c == 'c') {
-        play_rubiks();
-    } else if (u8_c == 's') {
-        play_simon();
-    } else if (u8_c == 'd') {
-        play_card();
-    } else if (u8_c == 'p') {
-        if (u8_platformPos == 0) {
-            u8_platformPos = 1;
-            printf("\n*** Lowering platform ***\n");
-            platform_rubiks();
-        } else {
-            u8_platformPos = 0;
-            printf("\n*** Raising platform ***\n");
-            platform_up();
-        }
-    } else if (u8_c == 't') {
-        printf("\n*** Twisting rubiks twist ***\n");
-        if (u8_twistPos == 0) {
-            u8_twistPos = 1;
-            twist_rubiks_clock();
-        } else {
-            u8_twistPos = 0;
-            twist_rubiks_counter();
-        }
-    } else if (u8_c == 'f') {
-        if (u8_platformFlipped == 0) {
-            u8_platformFlipped = 1;
-            printf("\n*** Flipping back platform for Etch ***\n");
-            platform_etch();
-        } else {
-            u8_platformFlipped = 0;
-            printf("\n*** Reseting platform to original position ***\n");
-            platform_etch_undo();
-        }
-    } else if (u8_c == 'r') {
-        simon_menu();
-        u8_servo = inChar();
+    switch(u8_c) {
+        case 'e':
+            play_etch();
+            break;
+        case 'c':
+            play_rubiks();
+            break;
+        case 's':
+            play_simon();
+            break;
+        case 'd':
+            play_card();
+            break;
+        case 'p':
+            if (u8_platformPos == 0) {
+                u8_platformPos = 1;
+                printf("\n*** Lowering platform ***\n");
+                platform_rubiks();
+            } else {
+                u8_platformPos = 0;
+                printf("\n*** Raising platform ***\n");
+                platform_up();
+            }
+            break;
+        case 't':
+            printf("\n*** Twisting rubiks twist ***\n");
+            if (u8_twistPos == 0) {
+                u8_twistPos = 1;
+                twist_rubiks_clock();
+            } else {
+                u8_twistPos = 0;
+                twist_rubiks_counter();
+            }
+            break;
+        case 'f':
+            if (u8_platformFlipped == 0) {
+                u8_platformFlipped = 1;
+                printf("\n*** Flipping back platform for Etch ***\n");
+                platform_etch();
+            } else {
+                u8_platformFlipped = 0;
+                printf("\n*** Reseting platform to original position ***\n");
+                platform_etch_undo();
+            }
+            break;
+        case 'r':
+            simon_menu();
+            u8_servo = inChar();
 
-        if (u8_servo == 'a') {
-            printf("\n*** Retracting all buttons ***\n");
-            simon_retract_buttons();
-        } else if (u8_servo == 'y') {
-            printf("\n*** Retracting yellow button ***\n");
-            simon_retract_button(YELLOW_BUTTON);
-        } else if (u8_servo == 'b') {
-            printf("\n*** Retracting blue button ***\n");
-            simon_retract_button(BLUE_BUTTON);
-        } else if (u8_servo == 'r') {
-            printf("\n*** Retracting red button ***\n");
-            simon_retract_button(RED_BUTTON);
-        } else if (u8_servo == 'g') {
-            printf("\n*** Retracting green button ***\n");
-            simon_retract_button(GREEN_BUTTON);
-        } else if (u8_servo == 's') {
-            printf("\n*** Retracting start button ***\n");
-            simon_retract_button(START_BUTTON);
-        } else {
+            switch(u8_servo) {
+                case 'a':
+                    printf("\n*** Retracting all buttons ***\n");
+                    simon_retract_buttons();
+                    break;
+                case 'y':
+                    printf("\n*** Retracting yellow button ***\n");
+                    simon_retract_button(YELLOW_BUTTON);
+                    break;
+                case 'b':
+                    printf("\n*** Retracting blue button ***\n");
+                    simon_retract_button(BLUE_BUTTON);
+                    break;
+                case 'r':
+                    printf("\n*** Retracting red button ***\n");
+                    simon_retract_button(RED_BUTTON);
+                    break;
+                case 'g':
+                    printf("\n*** Retracting green button ***\n");
+                    simon_retract_button(GREEN_BUTTON);
+                    break;
+                case 's':
+                    printf("\n*** Retracting start button ***\n");
+                    simon_retract_button(START_BUTTON);
+                    break;
+                default:
+                    printf("Invalid command");
+                    break;
+            }
+            break;
+        case 'h':
+            simon_menu();
+            u8_servo = inChar();
+
+            switch(u8_servo) {
+                case 'a':
+                    printf("\n*** Hovering all buttons ***\n");
+                    simon_hover_buttons();
+                    break;
+                case 'y':
+                    printf("\n*** Hovering yellow button ***\n");
+                    simon_hover_button(YELLOW_BUTTON);
+                    break;
+                case 'b':
+                    printf("\n*** Hovering blue button ***\n");
+                    simon_hover_button(BLUE_BUTTON);
+                    break;
+                case 'r':
+                    printf("\n*** Hovering red button ***\n");
+                    simon_hover_button(RED_BUTTON);
+                    break;
+                case 'g':
+                    printf("\n*** Hovering green button ***\n");
+                    simon_hover_button(GREEN_BUTTON);
+                    break;
+                case 's':
+                    printf("\n*** Hovering start button ***\n");
+                    simon_hover_button(START_BUTTON);
+                    break;
+                default:
+                    printf("Invalid command");
+                    break;
+            }
+            break;
+        case 'b':
+            simon_menu();
+            u8_servo = inChar();
+
+            switch(u8_servo) {
+                case 'a':
+                    printf("\n*** Pushing all buttons ***\n");
+                    simon_push_buttons();
+                    break;
+                case 'y':
+                    printf("\n*** Pushing yellow button ***\n");
+                    simon_push_button(YELLOW_BUTTON);
+                    break;
+                case 'b':
+                    printf("\n*** Pushing blue button ***\n");
+                    simon_push_button(BLUE_BUTTON);
+                    break;
+                case 'r':
+                    printf("\n*** Pushing red button ***\n");
+                    simon_push_button(RED_BUTTON);
+                    break;
+                case 'g':
+                    printf("\n*** Pushing green button ***\n");
+                    simon_push_button(GREEN_BUTTON);
+                    break;
+                case 's':
+                    printf("\n*** Pushing start button ***\n");
+                    simon_push_button(START_BUTTON);
+                    break;
+                default:
+                    printf("Invalid command");
+                    break;
+            }
+            break;
+        case 'a':
+            if (u8_armSlide == 0) {
+                // Slide arm forward
+                game_arm_slide_forward();
+                u8_armSlide = 1;
+            } else {
+                // Slide arm back
+                game_arm_slide_back();
+                u8_armSlide = 0;
+            }
+            break;
+        case 'o':
+            if (u8_armPivot == 0) {
+                // Lower the arm
+                game_arm_lower();
+                u8_armPivot = 1;
+            } else {
+                // Raise the arm
+                game_arm_raise();
+                u8_armPivot = 0;
+            }
+            break;
+        case 'y':
+            printf("\nEnter percentage to slide arm: ");
+            inStringEcho(sz_buf,31);
+            sscanf(sz_buf,"%hhu",(uint8_t *) &u8_percentage);
+
+            game_arm_slide(u8_percentage);
+        case 'z':
+            while (isCharReady() == 0) {
+                photo_trans_print();
+                doHeartbeat();
+            }
+            break;
+        case 'l':
+            start_light_print();
+            break;
+        case 'v':
+            test_ss_displays();
+            break;
+        case 'x':
+            // Set a sepcific servo
+            game_player_servo_menu();
+            u8_servo = inChar();
+            game_player_set_servo(u8_servo);
+            break;
+        default:
             printf("Invalid command");
-        }
-    } else if (u8_c == 'h') {
-        simon_menu();
-        u8_servo = inChar();
-
-        if (u8_servo == 'a') {
-            printf("\n*** Hovering all buttons ***\n");
-            simon_hover_buttons();
-        } else if (u8_servo == 'y') {
-            printf("\n*** Hovering yellow button ***\n");
-            simon_hover_button(YELLOW_BUTTON);
-        } else if (u8_servo == 'b') {
-            printf("\n*** Hovering blue button ***\n");
-            simon_hover_button(BLUE_BUTTON);
-        } else if (u8_servo == 'r') {
-            printf("\n*** Hovering red button ***\n");
-            simon_hover_button(RED_BUTTON);
-        } else if (u8_servo == 'g') {
-            printf("\n*** Hovering green button ***\n");
-            simon_hover_button(GREEN_BUTTON);
-        } else if (u8_servo == 's') {
-            printf("\n*** Hovering start button ***\n");
-            simon_hover_button(START_BUTTON);
-        } else {
-            printf("Invalid command");
-        }
-    } else if (u8_c == 'b') {
-        simon_menu();
-        u8_servo = inChar();
-
-        if (u8_servo == 'a') {
-            printf("\n*** Pushing all buttons ***\n");
-            simon_push_buttons();
-        } else if (u8_servo == 'y') {
-            printf("\n*** Pushing yellow button ***\n");
-            simon_push_button(YELLOW_BUTTON);
-        } else if (u8_servo == 'b') {
-            printf("\n*** Pushing blue button ***\n");
-            simon_push_button(BLUE_BUTTON);
-        } else if (u8_servo == 'r') {
-            printf("\n*** Pushing red button ***\n");
-            simon_push_button(RED_BUTTON);
-        } else if (u8_servo == 'g') {
-            printf("\n*** Pushing green button ***\n");
-            simon_push_button(GREEN_BUTTON);
-        } else if (u8_servo == 's') {
-            printf("\n*** Pushing start button ***\n");
-            simon_push_button(START_BUTTON);
-        } else {
-            printf("Invalid command");
-        }
-    } else if (u8_c == 'a') {
-        if (u8_armSlide == 0) {
-            // Slide arm forward
-            game_arm_slide_forward();
-            u8_armSlide = 1;
-        } else {
-            // Slide arm back
-            game_arm_slide_back();
-            u8_armSlide = 0;
-        }
-    } else if (u8_c == 'o') {
-        if (u8_armPivot == 0) {
-            // Lower the arm
-            game_arm_lower();
-            u8_armPivot = 1;
-        } else {
-            // Raise the arm
-            game_arm_raise();
-            u8_armPivot = 0;
-        }
-    } else if (u8_c == 'y') {
-        printf("\nEnter percentage to slide arm ");
-        inStringEcho(sz_buf,31);
-        sscanf(sz_buf,"%hhu",(uint8_t *) &u8_percentage);
-
-        game_arm_slide(u8_percentage);
-    } else if (u8_c == 'z') {
-        while (isCharReady() == 0) {
-            photo_trans_print();
-            doHeartbeat();
-        }
-    } else if (u8_c == 'l') {
-        start_light_print();
-    } else if (u8_c == 'v') {
-        test_ss_displays();
-    } else if (u8_c == 'x') {
-        // Set a sepcific servo
-        game_player_servo_menu();
-        u8_servo = inChar();
-        game_player_set_servo(u8_servo);
-    } else {
-        printf("Invalid command");
+            break;
     }
 }
 
 void game_player_serial_menu(void) {
     printf("\nChoose a command\n");
-    printf("   Press 'e' to play Etch-a-Sketch\n");
-    printf("   Press 'c' to spin Rubiks\n");
-    printf("   Press 's' to play Simon\n");
-    printf("   Press 'd' to pick up a card from the deck\n");
+    printf("   e) play Etch-a-Sketch\n");
+    printf("   c) spin Rubiks\n");
+    printf("   s) play Simon\n");
+    printf("   d) pick up a card from the deck\n");
     if (u8_platformPos == 0) {
-        printf("   Press 'p' to raise platform\n");
+        printf("   p) raise platform\n");
     } else {
-        printf("   Press 'p' to lower platform\n");
+        printf("   p) lower platform\n");
     }
-    printf("   Press 't' to spin rubiks twist servo\n");
+    printf("   t) spin rubiks twist servo\n");
     if (u8_platformFlipped == 0) {
-        printf("   Press 'f' to prepare for etch\n");
+        printf("   f) prepare for etch\n");
     } else {
-        printf("   Press 'f' to reset platform to init\n");
+        printf("   f) reset platform to init\n");
     }
-    printf("   Press 'r' to retract Simon arms\n");
-    printf("   Press 'h' to hover Simon arms\n");
-    printf("   Press 'b' to push Simon buttons\n");
+    printf("   r)retract Simon arms\n");
+    printf("   h)hover Simon arms\n");
+    printf("   b)push Simon buttons\n");
     if (u8_armSlide == 0) {
-        printf("   Press 'a' to slide arm forward\n");
+        printf("   a) slide arm forward\n");
     } else {
-        printf("   Press 'a' to slide arm back\n");
+        printf("   a) slide arm back\n");
     }
     if (u8_armPivot == 0) {
-        printf("   Press 'o' to lower arm\n");
+        printf("   o) lower arm\n");
     } else {
-        printf("   Press 'o' to raise arm\n");
+        printf("   o) raise arm\n");
     }
-    printf("   Press 'y' to slide the arm by a percentage\n");
-    printf("   Press 'z' to read photo transistors\n");
-    printf("   Press 'l' to read start light resistor\n");
-    printf("   Press 'v' to test the displays\n");
-    printf("   Press 'x' to set a servo\n");
+    printf("   y) slide the arm by a percentage\n");
+    printf("   z) read photo transistors\n");
+    printf("   l) read start light resistor\n");
+    printf("   v) test the displays\n");
+    printf("   x) set a servo\n");
 }
 
 void game_player_servo_menu(void) {
@@ -312,9 +354,9 @@ void game_player_servo_menu(void) {
     printf("   b) Simon blue\n");
     printf("   r) Simon red\n");
     printf("   g) Simon green\n");
-    printf("   s) Arm slide\n");
-    printf("   2) Arm slide\n");
-    printf("   a) Arm positions\n");
+    printf("   l) Arm slide left\n");
+    printf("   ;) Arm slide right\n");
+    printf("   a) Arm position\n");
 }
 
 void simon_menu(void) {
@@ -341,59 +383,72 @@ void game_player_set_servo(char u8_servo) {
     }
 
     // Set servo appropriately
-    if (u8_servo == 'v') {
-        printf("\nUse 'a' and 'd' to move servo clockwise and counter clockwise and 'q' to quit");
-        while (u8_c != 'q') {
-            u8_c = inChar();
-            if (u8_c == 'a') {
-                step_servo(0, ETCH_VERTICAL);
-            } else if (u8_c == 'd') {
-                step_servo(1, ETCH_VERTICAL);
-            } else {
-                stop_servo(ETCH_VERTICAL);
+    switch(u8_servo) {
+        case 'v':
+            printf("\nUse 'a' and 'd' to move servo clockwise and counter clockwise and 'q' to quit");
+            while (u8_c != 'q') {
+                u8_c = inChar();
+                if (u8_c == 'a') {
+                    step_servo(0, ETCH_VERTICAL);
+                } else if (u8_c == 'd') {
+                    step_servo(1, ETCH_VERTICAL);
+                } else {
+                    stop_servo(ETCH_VERTICAL);
+                }
             }
-        }
-    } else if (u8_servo == 'h') {
-        printf("\nUse 'a' and 'd' to move servo and 'q' to quit");
-        while (u8_c != 'q') {
-            u8_c = inChar();
-            if (u8_c == 'a') {
-                step_servo(0, ETCH_HORIZ);
-            } else if (u8_c == 'd') {
-                step_servo(1, ETCH_HORIZ);
-            } else {
-                stop_servo(ETCH_HORIZ);
+            break;
+        case 'h':
+            printf("\nUse 'a' and 'd' to move servo and 'q' to quit");
+            while (u8_c != 'q') {
+                u8_c = inChar();
+                if (u8_c == 'a') {
+                    step_servo(0, ETCH_HORIZ);
+                } else if (u8_c == 'd') {
+                    step_servo(1, ETCH_HORIZ);
+                } else {
+                    stop_servo(ETCH_HORIZ);
+                }
             }
-        }
-    } else if (u8_servo == 'p') {
-        turn_servo_by_pulse(RUBIKS_PLATFORM, u16_pwm);
-        printf("\n*** Setting platform to %u ***\n", u16_pwm);
-    } else if (u8_servo == 't') {
-        turn_servo_by_pulse(RUBIKS_TWIST, u16_pwm);
-        printf("\n*** Setting rubiks twist to %u ***\n", u16_pwm);
-    } else if (u8_servo == 'y') {
-        turn_servo_by_pulse(SIMON_YELLOW, u16_pwm);
-        printf("\n*** Setting simon yellow to %u ***\n", u16_pwm);
-    } else if (u8_servo == 'b') {
-        turn_servo_by_pulse(SIMON_BLUE, u16_pwm);
-        printf("\n*** Setting simon blue to %u ***\n", u16_pwm);
-    } else if (u8_servo == 'r') {
-        turn_servo_by_pulse(SIMON_RED, u16_pwm);
-        printf("\n*** Setting simon red to %u ***\n", u16_pwm);
-    } else if (u8_servo == 'g') {
-        turn_servo_by_pulse(SIMON_GREEN, u16_pwm);
-        printf("\n*** Setting simon green to %u ***\n", u16_pwm);
-    } else if (u8_servo == 's') {
-        turn_servo_by_pulse(ARM_SLIDE_LEFT, u16_pwm);
-        printf("\n*** Setting arm extend to %u ***\n", u16_pwm);
-    } else if (u8_servo == '2') {
-        turn_servo_by_pulse(ARM_SLIDE_RIGHT, u16_pwm);
-        printf("\n*** Setting arm extend 2 to %u ***\n", u16_pwm);
-    } else if (u8_servo == 'a') {
-        turn_servo_by_pulse(ARM_POSITION, u16_pwm);
-        printf("\n*** Setting arm pivot to %u ***\n", u16_pwm);
-    } else {
-        printf("Invalid choice\n");
+            break;
+        case 'p':
+            turn_servo_by_pulse(RUBIKS_PLATFORM, u16_pwm);
+            printf("\n*** Setting platform to %u ***\n", u16_pwm);
+            break;
+        case 't':
+            turn_servo_by_pulse(RUBIKS_TWIST, u16_pwm);
+            printf("\n*** Setting rubiks twist to %u ***\n", u16_pwm);
+            break;
+        case 'y':
+            turn_servo_by_pulse(SIMON_YELLOW, u16_pwm);
+            printf("\n*** Setting simon yellow to %u ***\n", u16_pwm);
+            break;
+        case 'b':
+            turn_servo_by_pulse(SIMON_BLUE, u16_pwm);
+            printf("\n*** Setting simon blue to %u ***\n", u16_pwm);
+            break;
+        case 'r':
+            turn_servo_by_pulse(SIMON_RED, u16_pwm);
+            printf("\n*** Setting simon red to %u ***\n", u16_pwm);
+            break;
+        case 'g':
+            turn_servo_by_pulse(SIMON_GREEN, u16_pwm);
+            printf("\n*** Setting simon green to %u ***\n", u16_pwm);
+            break;
+        case 's':
+            turn_servo_by_pulse(ARM_SLIDE_LEFT, u16_pwm);
+            printf("\n*** Setting arm extend to %u ***\n", u16_pwm);
+            break;
+        case '2':
+            turn_servo_by_pulse(ARM_SLIDE_RIGHT, u16_pwm);
+            printf("\n*** Setting arm extend 2 to %u ***\n", u16_pwm);
+            break;
+        case 'a':
+            turn_servo_by_pulse(ARM_POSITION, u16_pwm);
+            printf("\n*** Setting arm pivot to %u ***\n", u16_pwm);
+            break;
+        default:
+            printf("Invalid choice\n");
+            break;
     }
 }
 

@@ -141,7 +141,6 @@ void game_arm_hold_etch() {
 }
 
 void game_arm_lower() {
-    // Step down the arm so it's not too sudden
     turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_DOWN);
     DELAY_MS(ARM_WAIT);
 }

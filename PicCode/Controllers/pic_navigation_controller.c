@@ -276,68 +276,68 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
 // Main serial menu for navigation pic
 void navigation_serial_menu() {
     printf("\nChoose a command\n");
-    printf("   Press 'l' to control the left motor\n");
-    printf("   Press 'r' to control the right motor\n");
-    printf("   Press 'b' to control both motors\n");
-    printf("   Press 'a' to print out the sensor array values\n");
-    printf("   Press 'c' to recalibrate all the sensor arrays\n");
-    printf("   Press 'g' to get line continuously and print line value\n");
-    printf("   Press 'n' to navigate to a box\n");
-    printf("   Press 'h' to turn 90 degrees\n");
-    printf("   Press 'q' to use the navigation queue\n");
-    printf("   Press 'w' to navigate the whole course (skips the game stuff)\n");
+    printf("   l) control the left motor\n");
+    printf("   r) control the right motor\n");
+    printf("   b) control both motors\n");
+    printf("   a) print out the sensor array values\n");
+    printf("   c) recalibrate all the sensor arrays\n");
+    printf("   g) get line continuously and print line value\n");
+    printf("   n) navigate to a box\n");
+    printf("   h) turn 90 degrees\n");
+    printf("   q) use the navigation queue\n");
+    printf("   w) navigate the whole course (skips the game stuff)\n");
 }
 
 // Menu for contorlling a single motor
 void single_motor_function_menu() {
     printf("\nChoose a motor function\n");
-    printf("   Press 'f' for forward\n");
-    printf("   Press 'b' for back\n");
-    printf("   Press 'o' to move by revolution\n");
-    printf("   Press 'd' to move by distance\n");
-    printf("   Press 's' for stop\n");
+    printf("   f) forward\n");
+    printf("   b) back\n");
+    printf("   o) move by revolution\n");
+    printf("   d) move by distance\n");
+    printf("   s) stop\n");
 }
 
 // Menu for contorlling both motors
 void double_motor_function_menu() {
     printf("\nChoose a motor function\n");
-    printf("   Press 'f' for forward\n");
-    printf("   Press 'b' for back\n");
-    printf("   Press 'r' for right turn\n");
-    printf("   Press 'l' for left turn\n");
-    printf("   Press 'o' to move by revolution\n");
-    printf("   Press 'd' to move by distance\n");
-    printf("   Press 's' for stop\n");
+    printf("   f) forward\n");
+    printf("   b) back\n");
+    printf("   r) right turn\n");
+    printf("   l) left turn\n");
+    printf("   o) move by revolution\n");
+    printf("   d) move by distance\n");
+    printf("   s) stop\n");
 }
 
 // Menu for all the sensor arrays
 void sensor_array_menu() {
     printf("\nChoose a sensor array to print\n");
-    printf("   Press 'a' for forward\n");
-    printf("   Press '1' for line 1\n");
-    printf("   Press '2' for line 2\n");
-    printf("   Press '3' for line 3\n");
-    printf("   Press '4' for line 4\n");
-    printf("   Press '5' for line 5\n");
-    printf("   Press 't' for the triple\n");
-    printf("   Press 'h' for the hi-res\n");
-    printf("   Press 'p' for the triple plus the hi-res\n");
-    printf("   Press 'b' for back line\n");
+    printf("   a) all\n");
+    printf("   1) line 1\n");
+    printf("   2) line 2\n");
+    printf("   3) line 3\n");
+    printf("   4) line 4\n");
+    printf("   5) line 5\n");
+    printf("   t) the triple\n");
+    printf("   h) the hi-res\n");
+    printf("   p) the triple plus the hi-res\n");
+    printf("   b) back line\n");
 }
 
 // Menu for navigation queue stuff
 void navigation_queue_menu() {
     printf("\nChoose a queue function\n");
-    printf("   Press 'i' to initiate routines\n");
-    printf("   Press 's' to queue up static course routines\n");
-    printf("   Press 'r' to load right turn\n");
-    printf("   Press 'l' to load left turn\n");
-    printf("   Press 'p' to load prepare turn\n");
-    printf("   Press 'f' to load finish turn\n");
-    printf("   Press 'b' to load back away from box\n");
-    printf("   Press 'm' to load move past branch\n");
-    printf("   Press 'e' to load move forward distance\n");
-    printf("   Press 'd' to load move back distance\n");
+    printf("   i) initiate routines\n");
+    printf("   s) queue up static course routines\n");
+    printf("   r) load right turn\n");
+    printf("   l) load left turn\n");
+    printf("   p) load prepare turn\n");
+    printf("   f) load finish turn\n");
+    printf("   b) load back away from box\n");
+    printf("   m) load move past branch\n");
+    printf("   e) load move forward distance\n");
+    printf("   d) load move back distance\n");
 }
 
 // Print a certain line sensor array over and over
