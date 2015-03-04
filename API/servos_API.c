@@ -46,7 +46,8 @@ void servo_init() {
     SIMON_GREEN_PIN = 0;
 
     ARM_POSITION_PIN = 0;
-    ARM_SLIDE_PIN = 0;
+    ARM_SLIDE_LEFT_PIN = 0;
+    ARM_SLIDE_RIGHT_PIN = 0;
 
     ETCH_VERTICAL_PIN = 0;
     ETCH_HORIZ_PIN = 0;
@@ -217,10 +218,10 @@ void set_servo_output (uint8_t u8_servo, uint8_t u8_val) {
             SIMON_GREEN_PIN = u8_val;
             break;
         case 9:
-            ARM_SLIDE_PIN = u8_val;
+            ARM_SLIDE_LEFT_PIN = u8_val;
             break;
         case 10:
-            ARM_SLIDE_PIN2 = u8_val;
+            ARM_SLIDE_RIGHT_PIN = u8_val;
         default:
             break;
     }

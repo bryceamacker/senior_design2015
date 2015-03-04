@@ -88,7 +88,7 @@ uint8_t u8_staticCourseNumber;
 
 // Function declarations
 void pic_navigation_init(void);
-void run_static_course(pu8_gameOrder);
+void run_static_course(uint8_t pu8_gameOrder[4]);
 void navigate_course(uint8_t pu8_gameOrder[4]);
 void play_game(gameID game);
 void configure_robot(void);

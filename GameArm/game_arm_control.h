@@ -27,21 +27,16 @@
 #define GAME_ARM_CONTROL_H_
 
 #define ARM_POSITION_UP             1500
-#define ARM_POSITION_DOWN_STEP_1    950
-#define ARM_POSITION_DOWN_STEP_2    800
-#define ARM_POSITION_DOWN_STEP_3    600
+#define ARM_POSITION_DOWN           550
 
-#define ARM_SLIDE_BACK              1350
-#define ARM_SLIDE_FORWARD           2100
-#define ARM_SLIDE_SIMON             1350
-#define ARM_SLIDE_RUBIKS            1300
-#define ARM_SLIDE_ETCH              2000
+#define ARM_SLIDE_LEFT_BACK         1450
+#define ARM_SLIDE_LEFT_FORWARD      700
+#define ARM_SLIDE_LEFT_DIFFERENCE   (ARM_SLIDE_LEFT_BACK - ARM_SLIDE_LEFT_FORWARD)
 
-#define DUAL_ARMS                   1
-#define ARM_SLIDE_BACK2             1450
-#define ARM_SLIDE_FORWARD2          700
+#define ARM_SLIDE_RIGHT_BACK        1350
+#define ARM_SLIDE_RIGHT_FORWARD     2100
+#define ARM_SLIDE_RIGHT_DIFFERENCE  (ARM_SLIDE_RIGHT_FORWARD - ARM_SLIDE_RIGHT_BACK)
 
-#define ARM_SLIDE_DELAY             1
 #define ARM_WAIT                    1000
 
 ///////////////////////////////////////////////
@@ -105,6 +100,8 @@ void game_arm_slide_forward(void);
  * @brief Slide game arm all the way back
  */
 void game_arm_slide_back(void);
+
+void game_arm_slide(uint8_t u8_percentage);
 
 
 #endif

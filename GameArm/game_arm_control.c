@@ -70,8 +70,10 @@ void game_arm_pull_simon() {
     game_arm_lower();
 
     // Grab the Simon
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_SIMON);
-    DELAY_MS(ARM_WAIT);
+    game_arm_slide_back();
+
+    // Release Simon, we don't need to hold it
+    game_arm_release();
 }
 
 void game_arm_pull_rubiks() {
@@ -86,31 +88,17 @@ void game_arm_pull_rubiks() {
     game_arm_lower();
 
     // This will jostle the cube into the MFGP
-    turn_servo_by_pulse(ARM_SLIDE, 1900);
-    DELAY_MS(ARM_WAIT);
-    turn_servo_by_pulse(ARM_SLIDE, 2100);
-    DELAY_MS(ARM_WAIT);
-    turn_servo_by_pulse(ARM_SLIDE, 1700);
-    DELAY_MS(ARM_WAIT);
-    turn_servo_by_pulse(ARM_SLIDE, 1800);
-    DELAY_MS(ARM_WAIT);
-    turn_servo_by_pulse(ARM_SLIDE, 1500);
-    DELAY_MS(ARM_WAIT);
-    turn_servo_by_pulse(ARM_SLIDE, 1700);
-    DELAY_MS(ARM_WAIT);
+    game_arm_slide(80);
+    game_arm_slide(100);
+    game_arm_slide(60);
+    game_arm_slide(80);
+    game_arm_slide(40);
+    game_arm_slide(60);
+    game_arm_slide(20);
+    game_arm_slide(40);
+    game_arm_slide(0);
 
-    // Final pull on the rubiks
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_RUBIKS);
-    DELAY_MS(ARM_WAIT);
-
-    // Slide forward
-    game_arm_slide_forward();
-
-    // Raise the arm
-    game_arm_raise();
-
-    // Slide it back
-    game_arm_slide_back();
+    game_arm_release();
 }
 
 void game_arm_pull_etch() {
@@ -124,9 +112,8 @@ void game_arm_pull_etch() {
     // Put the arm down
     game_arm_lower();
 
-    // Jostle it in
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_ETCH);
-    DELAY_MS(ARM_WAIT);
+    // Grab Etch
+    game_arm_slide(60);
 
     // Slide forward
     game_arm_slide_forward();
@@ -150,17 +137,12 @@ void game_arm_hold_etch() {
     game_arm_lower();
 
     // Hold the etch
-    turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_ETCH);
-    DELAY_MS(ARM_WAIT);
+    game_arm_slide(80);
 }
 
 void game_arm_lower() {
     // Step down the arm so it's not too sudden
-    turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_DOWN_STEP_1);
-    DELAY_MS(ARM_WAIT);
-    turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_DOWN_STEP_2);
-    DELAY_MS(ARM_WAIT);
-    turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_DOWN_STEP_3);
+    turn_servo_by_pulse(ARM_POSITION, ARM_POSITION_DOWN);
     DELAY_MS(ARM_WAIT);
 }
 
@@ -170,63 +152,26 @@ void game_arm_raise() {
 }
 
 void game_arm_slide_forward() {
-    uint16_t u16_arm1Diff;
-    uint16_t u16_arm2Diff;
-    uint16_t u16_arm1Step;
-    uint16_t u16_arm2Step;
-    uint8_t u8_numSteps;
-    // uint8_t u8_i;
-
-    u8_numSteps = 80;
-
-    if (DUAL_ARMS == 0) {
-        turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
-    } else {
-        u16_arm1Diff = ARM_SLIDE_FORWARD - ARM_SLIDE_BACK;
-        u16_arm2Diff = ARM_SLIDE_BACK2 - ARM_SLIDE_FORWARD2;
-
-        u16_arm1Step = u16_arm1Diff/u8_numSteps;
-        u16_arm2Step = u16_arm2Diff/u8_numSteps;
-
-        // for (u8_i=1;u8_i<=u8_numSteps;u8_i++) {
-        //     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK + (u16_arm1Step*u8_i));
-        //     turn_servo_by_pulse(ARM_SLIDE2, ARM_SLIDE_BACK2 - (u16_arm2Step*u8_i));
-        //     DELAY_MS(ARM_SLIDE_DELAY);
-        // }
-
-        turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD);
-        turn_servo_by_pulse(ARM_SLIDE2, ARM_SLIDE_FORWARD2);
-    }
-    DELAY_MS(ARM_WAIT);
+    game_arm_slide(100);
 }
 
 void game_arm_slide_back() {
-    uint16_t u16_arm1Diff;
-    uint16_t u16_arm2Diff;
-    uint16_t u16_arm1Step;
-    uint16_t u16_arm2Step;
-    uint8_t u8_numSteps;
-    // uint8_t u8_i;
+    game_arm_slide(0);
+}
 
-    u8_numSteps = 80;
+void game_arm_slide(uint8_t u8_percentage) {
+    uint16_t u16_newLeftPulse;
+    uint16_t u16_newRightPulse;
+    uint16_t u16_leftPulseDifference;
+    uint16_t u16_rightPulseDifference;
 
-    if (DUAL_ARMS == 0) {
-        turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
-    } else {
-        u16_arm1Diff = ARM_SLIDE_FORWARD - ARM_SLIDE_BACK;
-        u16_arm2Diff = ARM_SLIDE_BACK2 - ARM_SLIDE_FORWARD2;
+    u16_leftPulseDifference = (u8_percentage/100.0) * ARM_SLIDE_LEFT_DIFFERENCE;
+    u16_rightPulseDifference = (u8_percentage/100.0) * ARM_SLIDE_RIGHT_DIFFERENCE;
 
-        u16_arm1Step = u16_arm1Diff/u8_numSteps;
-        u16_arm2Step = u16_arm2Diff/u8_numSteps;
+    u16_newLeftPulse = ARM_SLIDE_LEFT_BACK - u16_leftPulseDifference;
+    u16_newRightPulse = ARM_SLIDE_RIGHT_BACK + u16_rightPulseDifference;
 
-        // for (u8_i=1;u8_i<=u8_numSteps;u8_i++) {
-        //     turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_FORWARD - (u16_arm1Step*u8_i));
-        //     turn_servo_by_pulse(ARM_SLIDE2, ARM_SLIDE_FORWARD2 + (u16_arm2Step*u8_i));
-        //     DELAY_MS(ARM_SLIDE_DELAY);
-        // }
-
-        turn_servo_by_pulse(ARM_SLIDE, ARM_SLIDE_BACK);
-        turn_servo_by_pulse(ARM_SLIDE2, ARM_SLIDE_BACK2);
-    }
+    turn_servo_by_pulse(ARM_SLIDE_LEFT, u16_newLeftPulse);
+    turn_servo_by_pulse(ARM_SLIDE_RIGHT, u16_newRightPulse);
     DELAY_MS(ARM_WAIT);
 }

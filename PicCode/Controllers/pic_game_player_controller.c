@@ -105,6 +105,9 @@ void pic_game_player_init() {
 
 void game_player_serial_command(uint8_t u8_c) {
     char u8_servo;
+    char sz_buf[32];
+    uint8_t u8_percentage;
+
     if (u8_c == 'e') {
         play_etch();
     } else if (u8_c == 'c') {
@@ -237,6 +240,12 @@ void game_player_serial_command(uint8_t u8_c) {
             game_arm_raise();
             u8_armPivot = 0;
         }
+    } else if (u8_c == 'y') {
+        printf("\nEnter percentage to slide arm ");
+        inStringEcho(sz_buf,31);
+        sscanf(sz_buf,"%hhu",(uint8_t *) &u8_percentage);
+
+        game_arm_slide(u8_percentage);
     } else if (u8_c == 'z') {
         while (isCharReady() == 0) {
             photo_trans_print();
@@ -286,7 +295,7 @@ void game_player_serial_menu(void) {
     } else {
         printf("   Press 'o' to raise arm\n");
     }
-
+    printf("   Press 'y' to slide the arm by a percentage\n");
     printf("   Press 'z' to read photo transistors\n");
     printf("   Press 'l' to read start light resistor\n");
     printf("   Press 'v' to test the displays\n");
@@ -304,9 +313,7 @@ void game_player_servo_menu(void) {
     printf("   r) Simon red\n");
     printf("   g) Simon green\n");
     printf("   s) Arm slide\n");
-    if (DUAL_ARMS == 1) {
-        printf("   2) Arm slide\n");
-    }
+    printf("   2) Arm slide\n");
     printf("   a) Arm positions\n");
 }
 
@@ -377,10 +384,10 @@ void game_player_set_servo(char u8_servo) {
         turn_servo_by_pulse(SIMON_GREEN, u16_pwm);
         printf("\n*** Setting simon green to %u ***\n", u16_pwm);
     } else if (u8_servo == 's') {
-        turn_servo_by_pulse(ARM_SLIDE, u16_pwm);
+        turn_servo_by_pulse(ARM_SLIDE_LEFT, u16_pwm);
         printf("\n*** Setting arm extend to %u ***\n", u16_pwm);
     } else if (u8_servo == '2') {
-        turn_servo_by_pulse(ARM_SLIDE2, u16_pwm);
+        turn_servo_by_pulse(ARM_SLIDE_RIGHT, u16_pwm);
         printf("\n*** Setting arm extend 2 to %u ***\n", u16_pwm);
     } else if (u8_servo == 'a') {
         turn_servo_by_pulse(ARM_POSITION, u16_pwm);

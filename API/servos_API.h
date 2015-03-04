@@ -49,8 +49,8 @@ typedef enum {
     SIMON_BLUE =        6,
     SIMON_RED =         7,
     SIMON_GREEN =       8,
-    ARM_SLIDE =         9,
-    ARM_SLIDE2 =        10
+    ARM_SLIDE_LEFT =    9,
+    ARM_SLIDE_RIGHT =   10
 } servoIDs;
 
 ///////////////////////////////////////////////

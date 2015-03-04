@@ -135,7 +135,6 @@ void play_simon() {
     }
 
     // Let go of the simon and pull the arms back
-    game_arm_release();
     platform_up();
     DELAY_MS(PLATFORM_WAIT);
     simon_retract_buttons();
@@ -155,7 +154,7 @@ void calibrate_sensors() {
     int16_t i16_tempGreenValue = read_photo_cell(GREEN_LIGHT);
 
     // Find the lowest value for each sensor over a short period of time
-    for (i = 0; i < 200; i++) {
+    for (i = 0; i < 100; i++) {
         i16_tempYellowValue = read_photo_cell(YELLOW_TRANS);
         i16_tempBlueValue = read_photo_cell(BLUE_TRANS);
         i16_tempRedValue = read_photo_cell(RED_TRANS);

@@ -394,7 +394,7 @@ void handle_navigation_queue_command(uint8_t u8_function) {
     if (u8_function == 's') {
         printf("\nEnter course number\n");
         inStringEcho(sz_buf,31);
-        sscanf(sz_buf,"%u", (uint8_t *) &u8_courseNumber);
+        sscanf(sz_buf,"%hhu", (uint8_t *) &u8_courseNumber);
         u8_c2 = inChar();
     }
 
