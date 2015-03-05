@@ -38,8 +38,11 @@
 
 #define MOTOR_PWM_PERIOD                20000                   // desired period, in us
 
-#define RIGHT_MOTOR_ADJUSTMENT          1.0
-#define LEFT_MOTOR_ADJUSTMENT           1.09
+#define RIGHT_MOTOR_ADJUSTMENT          1.0                     // Speed adjustment for the right motor
+#define LEFT_MOTOR_ADJUSTMENT           1.09                    // Speed adjustment for the left motor
+
+#define RIGHT_ENCODER_ADJUSTMENT        1.0                     // Encoder adjustment for the right motor
+#define LEFT_ENCODER_ADJUSTMENT         1.0                     // Encoder adjustment for the left motor
 
 #define LEFT_DIRECTION                  0                       // Boolean for left turning direction
 #define RIGHT_DIRECTION                 1                       // Boolean for left turning direction
@@ -48,27 +51,27 @@
 #define FORWARD_MOVEMENT                1                       // Forward motion
 #define BACKWARD_MOVEMENT               2                       // Backward motion
 
-#define PREPARE_90_TURN_DISTANCE        180
-#define DEGREE_90_TURN_REVS             1.0
+#define PREPARE_90_TURN_DISTANCE        180                     // mm to travel before turning 90 degrees
+#define DEGREE_90_TURN_REVS             1.0                     // Revolutions that equal a 90 degree turn
 
-#define FINISH_180_TURN_DISTANCE        220
+#define FINISH_180_TURN_DISTANCE        220                     // mm to compensate for a 180 degree turn
 
-#define BACK_AWAY_FROM_GAME_DISTANCE    100
-#define MOVE_INTO_BOX_DISTANCE          160
+#define BACK_AWAY_FROM_GAME_DISTANCE    100                     // Backing away from games distance
+#define MOVE_INTO_BOX_DISTANCE          160                     // Moving into the box distance
 
-#define MOVE_INTO_SIMON_DISTANCE        160
-#define MOVE_INTO_RUBIKS_DISTANCE       130
-#define MOVE_INTO_ETCH_DISTANCE         120
+#define MOVE_INTO_SIMON_DISTANCE        160                     // Move into Simon
+#define MOVE_INTO_RUBIKS_DISTANCE       130                     // Move into Rubiks
+#define MOVE_INTO_ETCH_DISTANCE         120                     // Move into Etch
 
 #define M_PI                            3.14159265358979323846  // pi constant
 #define WHEEL_DIAMETER                  80.65                   // in milimeters
 #define WHEEL_CIRCUMFERENCE             (WHEEL_DIAMETER * M_PI) // in milimeters
 
-#define BASE_SPEED_DEFAULT              20
+#define BASE_SPEED_DEFAULT              20                      // Base speed duty cycle
 
-#define LINE_WIDTH                      25
+#define LINE_WIDTH                      25                      // Width of the line in mm
 
-#define START_BOX_DRIVE_DISTANCE        200
+#define START_BOX_DRIVE_DISTANCE        200                     // mm to get out of the start box before following a line
 
 extern float BASE_SPEED;
 

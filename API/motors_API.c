@@ -486,7 +486,7 @@ void move_right_motor_by_revolutions(float f_revolutions, float f_speed) {
     float f_currentPosition;
 
     f_currentPosition = get_right_motor_location();
-    f_rightTargetPosition = f_currentPosition + f_revolutions;
+    f_rightTargetPosition = f_currentPosition + (f_revolutions * RIGHT_ENCODER_ADJUSTMENT);
     u8_rightAtTarget = 0;
 
     if (f_revolutions > 0) {
@@ -502,7 +502,7 @@ void move_left_motor_by_revolutions(float f_revolutions, float f_speed) {
     float f_currentPosition;
 
     f_currentPosition = get_left_motor_location();
-    f_leftTargetPosition = f_currentPosition + f_revolutions;
+    f_leftTargetPosition = f_currentPosition + (f_revolutions * LEFT_ENCODER_ADJUSTMENT);
     u8_leftAtTarget = 0;
 
     if (f_revolutions > 0) {
