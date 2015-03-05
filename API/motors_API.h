@@ -56,6 +56,10 @@
 #define BACK_AWAY_FROM_GAME_DISTANCE    100
 #define MOVE_INTO_BOX_DISTANCE          160
 
+#define MOVE_INTO_SIMON_DISTANCE        160
+#define MOVE_INTO_RUBIKS_DISTANCE       130
+#define MOVE_INTO_ETCH_DISTANCE         120
+
 #define M_PI                            3.14159265358979323846  // pi constant
 #define WHEEL_DIAMETER                  80.65                   // in milimeters
 #define WHEEL_CIRCUMFERENCE             (WHEEL_DIAMETER * M_PI) // in milimeters
@@ -317,6 +321,23 @@ void move_by_revolutions(float f_revolutions, float f_speed);
  * @param f_speed Speed to turn the robot
 **/
 void move_by_distance(float f_distance, float f_speed);
+
+/**
+ * @brief Final movements before playing a game
+ *
+ * @param f_speed What speed to drive at
+ * @param u8_game Which game is about to be played
+**/
+void final_game_preparations(uint8_t u8_game);
+
+/**
+ * @brief Final movements after playing a game
+ *
+ * @param f_speed What speed to drive at
+ * @param u8_game Which game we just played
+**/
+void prepare_to_leave_game(uint8_t u8_game);
+
 
 /**
  * @brief Check for a new routine in the navigation queue

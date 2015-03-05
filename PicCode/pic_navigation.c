@@ -21,22 +21,15 @@
 
 #include "pic24_all.h"
 #include "line_follower_API.h"
-#include <string.h>
 #include "navigation_port_mapping.h"
+#include "secon_robot_configuration.h"
+#include <string.h>
 #include <stdlib.h>
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>
 #warning "Navigation: DEBUG BUILD"
 #endif
-
-#define PIC_GAME_PLAYER_ADDR            0x20
-#define BUFFSIZE                        64
-
-#define STATIC_ORDER                    1
-#define SKIP_START_LIGHT                0
-#define SKIP_START_BUTTON               1
-#define SKIP_STATIC_COURSE_SELECTION    1
 
 #define START_BUTTON_PUSHED     (_RF4 == 0)
 #define START_BUTTON_RELEASED   (_RF4 == 1)
@@ -62,30 +55,19 @@
 #define SET_BUTTON_PUSHED       (_RG6 == 0)
 #define SET_BUTTON_RELEASED     (_RG6 == 1)
 
-extern uint8_t u8_routineBlock;
-
-// Game enumeration
-typedef enum {
-    SIMON =     0,
-    RUBIKS =    1,
-    ETCH =      2,
-    CARD =      3
-} gameID;
-
-// I2C Messages
-char sz_playSimonString[BUFFSIZE] =     "Simon";
-char sz_playRubiksString[BUFFSIZE] =    "Rubik";
-char sz_playCardsString[BUFFSIZE] =     "Cards";
-char sz_playEtchString[BUFFSIZE] =      "Etch.";
-char sz_idleString[BUFFSIZE] =          "Idle.";
-char sz_waitString[BUFFSIZE] =          "Wait.";
-char sz_dispString[BUFFSIZE] =          "Dis";
+// I2C buffer
 char sz_recieveString[BUFFSIZE];
 
+// Navigation externs
+extern uint8_t u8_routineBlock;
 extern queue_t navigationRoutineQueue;
 extern uint8_t u8_currentRoutine;
+
+// Game stuff
 uint8_t u8_gameBlock;
 uint8_t pu8_gameOrder[4];
+
+// Info for static courses
 uint8_t u8_staticCourseNumber;
 
 // Function declarations
@@ -174,14 +156,8 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
         // Find a box
         follow_line_to_box(BASE_SPEED);
 
-        if (u8_currentGame != 3) {
-            // Move into the box
-            enqueue(&navigationRoutineQueue, MOVE_INTO_BOX);
-            check_for_routine();
-
-            // Wait until this finishes
-            block_until_all_routines_done();
-        }
+        // Make our final preperations
+        final_game_preparations(u8_currentGame);
 
         // Tell the game player to play a game
         play_game(pu8_gameOrder[u8_currentGame]);
@@ -190,17 +166,8 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
         printf("Reached game %u\n", u8_currentGame);
         #endif
 
-        // Get out of the box and turn around
-        enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
-        enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
-        enqueue(&navigationRoutineQueue, TURN_180);
-        enqueue(&navigationRoutineQueue, FINISH_180_TURN);
-
-        // Initiate this
-        check_for_routine();
-
-        // Wait until this finishes
-        block_until_all_routines_done();
+        // Leave the game box in preperation to follow the line back
+        prepare_to_leave_game(u8_currentGame);
 
         // Get back to the main line
         follow_line_back_to_main_line(BASE_SPEED);
@@ -213,9 +180,9 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
 void run_static_course(uint8_t pu8_gameOrder[4]) {
     // Game counter
     uint8_t u8_currentGame;
-
     u8_currentGame = 0;
 
+    // Start the routines
     check_for_routine();
 
     #ifdef DEBUG_BUILD
@@ -230,7 +197,6 @@ void run_static_course(uint8_t pu8_gameOrder[4]) {
         } else {
             doHeartbeat();
         }
-
     }
 }
 

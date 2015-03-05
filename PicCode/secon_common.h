@@ -29,6 +29,14 @@
 #define FALSE (0)
 #define TRUE (!FALSE)
 
+// Game enumeration
+typedef enum {
+    SIMON =     0,
+    RUBIKS =    1,
+    ETCH =      2,
+    CARD =      3
+} gameID;
+
 ///////////////////////////////////////////////
 //
 // Stack data structure

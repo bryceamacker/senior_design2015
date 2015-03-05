@@ -29,7 +29,6 @@ extern queue_t navigationRoutineQueue;
 extern uint8_t u8_routineBlock;
 extern uint8_t u8_currentRoutine;
 
-
 // Find the center of the line we are constantly trying to stay at
 int16_t i16_lineCenter = ((1000 * (TRIPLE_SENSOR_NUM - 1)) / 2);
 
@@ -423,7 +422,7 @@ void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_
     }
 }
 
-// Recenter the robot over the line while moving forwards
+// Recenter the robot over the line while moving backwards
 void correct_line_error_reverse(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
     uint8_t u8_moveBack;
 

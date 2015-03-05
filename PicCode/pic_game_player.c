@@ -27,18 +27,13 @@
 #include "card_code.h"
 #include "platform_control.h"
 #include "game_arm_control.h"
+#include "secon_robot_configuration.h"
 #include <string.h>
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>
 #warning "Game Player: DEBUG BUILD"
 #endif
-
-// I2C buffer size and address
-#define BUFFSIZE            64
-#define PIC_I2C_ADDR        0x20
-
-#define SKIP_START_LIGHT    0
 
 // States for the game player PIC
 typedef enum {
@@ -57,15 +52,6 @@ typedef enum  {
     STATE_SEND_READ_DATA,
     STATE_SEND_READ_LAST
 } I2C_STATE;
-
-// I2C Messages
-char sz_playSimonString[BUFFSIZE] =     "Simon";
-char sz_playRubiksString[BUFFSIZE] =    "Rubik";
-char sz_playCardsString[BUFFSIZE] =     "Cards";
-char sz_playEtchString[BUFFSIZE] =      "Etch.";
-char sz_idleString[BUFFSIZE] =          "Idle.";
-char sz_waitString[BUFFSIZE] =          "Wait.";
-char sz_dispString[BUFFSIZE] =          "Dis";
 
 // Variables to keep up with I2C messages coming in
 volatile char  sz_i2cInString[BUFFSIZE+1];
@@ -143,7 +129,7 @@ void pic_game_player_init() {
 
     // I2C init
     configI2C1(400);
-    I2C1ADD = PIC_I2C_ADDR >> 1;
+    I2C1ADD = PIC_GAME_PLAYER_ADDR >> 1;
     _SI2C1IF = 0;
     _SI2C1IP = 1;
     _SI2C1IE = 1;

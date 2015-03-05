@@ -605,6 +605,64 @@ void move_into_box(float f_speed) {
     move_by_distance(MOVE_INTO_BOX_DISTANCE, f_speed);
 }
 
+void final_game_preparations(uint8_t u8_game) {
+    // Move forward different distances based on which game it is
+    switch(u8_game) {
+        case SIMON:
+            enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+            enqueue(&navigationMoveDistanceQueue, MOVE_INTO_SIMON_DISTANCE);
+            break;
+        case RUBIKS:
+            enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+            enqueue(&navigationMoveDistanceQueue, MOVE_INTO_RUBIKS_DISTANCE);
+            break;
+        case ETCH:
+            enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+            enqueue(&navigationMoveDistanceQueue, MOVE_INTO_ETCH_DISTANCE);
+            break;
+        case CARD:
+            break;
+    }
+    // Initiate this
+    check_for_routine();
+
+    // Wait until this finishes
+    block_until_all_routines_done();
+}
+
+void prepare_to_leave_game(uint8_t u8_game) {
+    // Get out of the box and turn around, different for each game
+    switch(u8_game) {
+        case SIMON:
+            enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+            enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
+            enqueue(&navigationRoutineQueue, TURN_180);
+            enqueue(&navigationRoutineQueue, FINISH_180_TURN);
+            break;
+        case RUBIKS:
+            enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+            enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
+            enqueue(&navigationRoutineQueue, TURN_180);
+            enqueue(&navigationRoutineQueue, FINISH_180_TURN);
+            break;
+        case ETCH:
+            enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+            enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
+            enqueue(&navigationRoutineQueue, TURN_180);
+            enqueue(&navigationRoutineQueue, FINISH_180_TURN);
+            break;
+        case CARD:
+            enqueue(&navigationRoutineQueue, TURN_180);
+            enqueue(&navigationRoutineQueue, FINISH_180_TURN);
+            break;
+    }
+    // Initiate this
+    check_for_routine();
+
+    // Wait until this finishes
+    block_until_all_routines_done();
+}
+
 void handle_routine(uint8_t routine) {
     uint16_t u16_distance;
     int16_t i16_distance;
