@@ -106,8 +106,16 @@ void follow_line_to_box(float f_maxSpeed) {
                 printf("Yay a box!\n");
                 #endif
 
-                // Found a box, we're done here
+                // Leeeet's play
                 motors_stop();
+
+                // Move into the box
+                enqueue(&navigationRoutineQueue, MOVE_INTO_BOX);
+                check_for_routine();
+
+                // Wait until this finishes
+                block_until_all_routines_done();
+
                 return;
             }
             // Check for a left turn
@@ -155,12 +163,90 @@ void follow_line_to_box(float f_maxSpeed) {
             if (check_for_line(pau16_sensorValues) == 0) {
                 u8_lineContinuationDetected = 0;
             }
+            // At any time if we've hit a box while in a turn then we've mistaken a box as a turn
+            else if ((check_for_box(pau16_sensorValues) == 1) && (u8_branchedFromMainLine == 1)){
+                // Forget the last turn since it was a mistake
+                pop(&branchedTurnStack);
+
+                // Clear out the routine queue and stop
+                clear_routines();
+
+                // Move into the box
+                enqueue(&navigationRoutineQueue, MOVE_INTO_BOX);
+                check_for_routine();
+
+                // Wait until this finishes
+                block_until_all_routines_done();
+
+                // Leeeet's play
+                return;
+            }
             u8_turnRan = 1;
         }
     } // while(1)
 } // follow_line_to_box
 
 void follow_line_back_to_main_line(float f_maxSpeed) {
+    uint8_t u8_lastTurn;
+    uint8_t u8_nextTurn;
+    uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
+
+    #ifdef DEBUG_BUILD
+    printf("Headed back to the main line\n");
+    #endif
+
+    while(1) {
+        read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
+        if (u8_routineBlock == 0) {
+            // Finding a box means we've reached the main line
+            if (check_for_box(pau16_sensorValues)){
+                #ifdef DEBUG_BUILD
+                printf("Back at the main line\n");
+                #endif
+
+                // Handle our last turn
+                u8_lastTurn = pop(&branchedTurnStack);
+                if (u8_lastTurn == LEFT_TURN) {
+                    handle_left_turn();
+                }
+                if (u8_lastTurn == RIGHT_TURN) {
+                    handle_right_turn();
+                }
+                return;
+            }
+            // We've encountered a turn
+            else if ((check_for_left_turn(pau16_sensorValues) == 1) || (check_for_right_turn(pau16_sensorValues) == 1)) {
+                #ifdef DEBUG_BUILD
+                printf("Left turn!\n");
+                #endif
+
+                // Pop off a past turn and handle it
+                u8_nextTurn = pop(&branchedTurnStack);
+
+                // Check which type of turn it is and handle it
+                if (u8_nextTurn == RIGHT_TURN) {
+                    handle_right_turn();
+                }
+                else if (u8_nextTurn == LEFT_TURN) {
+                    handle_left_turn();
+                }
+
+                // Maybe the sensors missed the box, check to see if the stack is depleted
+                if (stack_is_empty(branchedTurnStack) == 1) {
+                    // Wait until this last turn has finished
+                    block_until_all_routines_done();
+                    return;
+                }
+            }
+            // Otherwise just continue along the line correcting movement as needed
+            else {
+                correct_line_error(f_maxSpeed, pau16_sensorValues);
+            }
+        }
+    } // while(1)
+} // follow_line_back_to_main_line
+
+void follow_line_back_to_main_line_reverse(float f_maxSpeed) {
     uint8_t u8_lastTurn;
     uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
 
@@ -195,7 +281,14 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
 
                 // Pop off a past turn and handle it
                 pop(&branchedTurnStack);
-                handle_reverse_left_turn(0);
+
+                // Maybe the sensors missed the box, check to see if the stack is depleted
+                if (stack_is_empty(branchedTurnStack) == 1) {
+                    handle_reverse_left_turn(1);
+                }
+                else {
+                    handle_reverse_left_turn(0);
+                }
             }
             // Check for a right turn
             else if (check_for_right_turn(pau16_sensorValues) == 1) {
@@ -205,7 +298,14 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
 
                 // Pop off a past turn and handle it
                 pop(&branchedTurnStack);
-                handle_reverse_right_turn(0);
+
+                // Maybe the sensors missed the box, check to see if the stack is depleted
+                if (stack_is_empty(branchedTurnStack) == 1) {
+                    handle_reverse_right_turn(1);
+                }
+                else {
+                    handle_reverse_right_turn(0);
+                }
             }
             // Otherwise just continue along the line correcting movement as needed
             else {
@@ -297,13 +397,13 @@ void follow_line_to_box_pid(float f_maxSpeed) {
 // Recenter the robot over the line while moving forwards
 void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
     uint8_t u8_moveForward;
-    uint8_t u8_turnLeft;
-    uint8_t u8_turnRight;
+    uint8_t u8_veeredLeft;
+    uint8_t u8_veeredRight;
     uint8_t i;
 
     u8_moveForward = 0;
-    u8_turnLeft = 0;
-    u8_turnRight = 0;
+    u8_veeredLeft = 0;
+    u8_veeredRight = 0;
 
     // 8   10    12    14    16    18    20    22
     //   9    11    13    15    17    19    21    23
@@ -316,13 +416,13 @@ void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_
     // Check left of the center
     for (i = 8; i <= 14; i++) {
         if (pau16_sensorValues[i] == 1) {
-            u8_turnLeft++;
+            u8_veeredLeft++;
         }
     }
     // Check right of the center
     for (i = 17; i <= 23; i++) {
         if (pau16_sensorValues[i] == 1) {
-            u8_turnRight++;
+            u8_veeredRight++;
         }
     }
 
@@ -330,55 +430,95 @@ void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_
     if (u8_moveForward == 1) {
         motors_move_forward(f_maxSpeed);
     }
-    else if (u8_turnLeft >= 2) {
+    else if (u8_veeredLeft >= 2) {
         motors_turn_left(f_maxSpeed);
     }
-    else if (u8_turnRight >= 2) {
+    else if (u8_veeredRight >= 2) {
         motors_turn_right(f_maxSpeed);
     }
 }
 
 // Recenter the robot over the line while moving forwards
 void correct_line_error_reverse(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
-    uint8_t u8_moveForward;
-    uint8_t u8_turnLeft;
-    uint8_t u8_turnRight;
+    uint8_t u8_moveBack;
+
+    uint8_t u8_veeredLeft;
+    static uint8_t u8_correctedLeft;
+
+    uint8_t u8_veeredRight;
+    static uint8_t u8_correctedRight;
+
     uint8_t i;
 
-    u8_moveForward = 0;
-    u8_turnLeft = 0;
-    u8_turnRight = 0;
+    u8_moveBack = 0;
+
+    u8_veeredLeft = 0;
+    u8_correctedLeft = 1;
+
+    u8_veeredRight = 0;
+    u8_correctedRight = 1;
 
     // 8   10    12    14    16    18    20    22
     //   9    11    13    15    17    19    21    23
 
     // If our center ones are seeing a line, just move forward
     if ((pau16_sensorValues[14] == 1) && (pau16_sensorValues[15] == 1) && (pau16_sensorValues[16] == 1) && (pau16_sensorValues[17] == 1)) {
-        u8_moveForward = 1;
+        u8_moveBack = 1;
     }
 
     // Check left of the center
     for (i = 8; i <= 13; i++) {
         if (pau16_sensorValues[i] == 1) {
-            u8_turnLeft = 1;
+            u8_veeredLeft++;
         }
     }
     // Check right of the center
     for (i = 18; i <= 23; i++) {
         if (pau16_sensorValues[i] == 1) {
-            u8_turnRight = 1;
+            u8_veeredRight++;
         }
     }
 
+    // Once we've no longer veered, we've corrected our path
+    if (u8_veeredLeft == 0) {
+        if (u8_veeredLeft == 0) {
+            motors_turn_left(f_maxSpeed);
+            DELAY_MS(50);
+        }
+        u8_correctedLeft = 1;
+    }
+    if (u8_veeredRight == 0) {
+        if (u8_correctedRight == 0) {
+            motors_turn_right(f_maxSpeed);
+            DELAY_MS(50);
+        }
+        u8_correctedRight = 1;
+    }
+
     // Handle what to do
-    if (u8_moveForward == 1) {
+    if (u8_moveBack == 1) {
         motors_move_reverse(f_maxSpeed);
     }
-    else if (u8_turnLeft == 1) {
-        motors_turn_left(f_maxSpeed);
-    }
-    else if (u8_turnRight == 1) {
+    else if ((u8_veeredLeft >= 2) && (u8_correctedLeft == 1)) {
+        // queue routine to turn right
         motors_turn_right(f_maxSpeed);
+        // do I need routines? try delays
+        DELAY_MS(50);
+        motors_stop();
+        // set as uncrorrected
+        u8_correctedLeft = 0;
+    }
+    else if ((u8_veeredRight >= 2) && (u8_correctedRight == 1)) {
+        // queue routine to turn left
+        motors_turn_left(f_maxSpeed);
+        // do I need routines? try delays
+        DELAY_MS(50);
+        motors_stop();
+        // set as uncrorrected
+        u8_correctedRight = 0;
+    }
+    else {
+        motors_move_reverse(f_maxSpeed);
     }
 }
 
@@ -414,7 +554,7 @@ uint8_t check_for_box(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
         }
     }
 
-    if ((u8_leftDetectingSensors >= 1) && (u8_centerDetectingSensors >= SENSOR_NUM - 3) && (u8_rightDetectingSensors >= 1)) {
+    if ((u8_leftDetectingSensors >= 4) && (u8_centerDetectingSensors >= SENSOR_NUM - 3) && (u8_rightDetectingSensors >= 4)) {
         u8_rightTurnDetection = 0;
         u8_leftTurnDetection = 0;
         return 1;
@@ -440,19 +580,10 @@ uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM
 
     // Check to see if we're detecting a turn
     if (u8_detectingSensors >= SENSOR_NUM - 1) {
-        u8_leftTurnDetection++;
-    } else {
-        u8_leftTurnDetection = 0;
-    }
-
-    // If we've detected it enough times then turn
-    if (u8_leftTurnDetection >= NUM_OF_REQUIRED_DETECTIONS) {
-        u8_leftTurnDetection = 0;
         return 1;
     } else {
         return 0;
     }
-
 }
 
 // Handle left turn
@@ -499,14 +630,6 @@ uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NU
 
     // Check to see if we're detecting a turn
     if (u8_detectingSensors >= SENSOR_NUM - 1) {
-        u8_rightTurnDetection++;
-    } else {
-        u8_rightTurnDetection = 0;
-    }
-
-    // If we've detected it enough times then turn
-    if (u8_rightTurnDetection >= NUM_OF_REQUIRED_DETECTIONS) {
-        u8_rightTurnDetection = 0;
         return 1;
     } else {
         return 0;

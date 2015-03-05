@@ -25,9 +25,11 @@
 
 // Variable to hold user input
 char u8_c;
+char u8_c2;
 
 extern queue_t navigationRoutineQueue;
 extern queue_t navigationMoveDistanceQueue;
+extern uint8_t u8_routineBlock;
 extern uint8_t u8_currentRoutine;
 
 // Function declarations
@@ -86,6 +88,8 @@ void pic_navigation_init() {
 void navigation_serial_command(uint8_t u8_command) {
     uint8_t u8_function;
     uint8_t u8_sensorArray;
+    uint8_t u8_newBase;
+    char sz_buf[32];
 
     switch(u8_command) {
         case 'l':
@@ -120,6 +124,9 @@ void navigation_serial_command(uint8_t u8_command) {
         case 'n':
             follow_line_to_box(BASE_SPEED);
             break;
+        case 'm':
+            follow_line_back_to_main_line(BASE_SPEED);
+            break;
         case 'h':
             printf("\nChoose a direction to turn\n");
             printf("   Press 'l' turn left\n");
@@ -130,20 +137,32 @@ void navigation_serial_command(uint8_t u8_command) {
                 printf("Turning 90 degrees right\n");
                 enqueue(&navigationRoutineQueue, PREPARE_TURN);
                 enqueue(&navigationRoutineQueue, RIGHT_TURN);
-                enqueue(&navigationRoutineQueue, FINISH_TURN);
                 check_for_routine();
             }
             else if (u8_c == 'l') {
                 printf("Turning 90 degrees left\n");
                 enqueue(&navigationRoutineQueue, PREPARE_TURN);
                 enqueue(&navigationRoutineQueue, LEFT_TURN);
-                enqueue(&navigationRoutineQueue, FINISH_TURN);
                 check_for_routine();
             }
             else {
                 printf("Invalid Choice\n");
             }
             break;
+        case 't':
+            printf("\nChoose a direction to turn\n");
+            printf("   Press 'l' turn left\n");
+            printf("   Press 'r' turn right\n");
+            u8_c = inChar();
+
+            if (u8_c == 'r') {
+                printf("Turning 180 degrees right\n");
+                turn_180_degrees(BASE_SPEED, RIGHT_DIRECTION);
+            }
+            else if (u8_c == 'l') {
+                printf("Turning 180 degrees left\n");
+                turn_180_degrees(BASE_SPEED, LEFT_DIRECTION);
+            }
         case 'q':
             navigation_queue_menu();
             u8_function = inChar();
@@ -151,6 +170,14 @@ void navigation_serial_command(uint8_t u8_command) {
             break;
         case 'w':
             navigate_course();
+            break;
+        case 's':
+            printf("\nEnter distance in mm\n");
+            inStringEcho(sz_buf,31);
+            sscanf(sz_buf,"%hhu", (uint8_t *) &u8_newBase);
+            u8_c2 = inChar();
+
+            set_base_speed(u8_newBase*1.0);
             break;
         default:
             printf("Invalid Choice\n");
@@ -160,9 +187,6 @@ void navigation_serial_command(uint8_t u8_command) {
 
 // Handle motor control functions
 void motor_control(uint8_t u8_motor, uint8_t u8_function) {
-    uint8_t u8_percentage;
-    uint8_t u8_c2;
-
     uint16_t u16_revolutions;
     uint16_t u16_distance;
 
@@ -171,39 +195,31 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
 
     char sz_buf[32];
 
-    // Get the speed percentage and convert it to a duty cycle, unless it's a stop command
-    if (u8_function != 's') {
-        printf("\nEnter speed percentage: ");
-        inStringEcho(sz_buf,31);
-        sscanf(sz_buf,"%hhu",(uint8_t *) &u8_percentage);
-        u8_c2 = inChar();
-    }
-
     // Perform the given function on the given motor
     switch(u8_function) {
         case 'f':
             if (u8_motor == 'l') {
-                left_motor_fwd(u8_percentage);
+                left_motor_fwd(BASE_SPEED);
             } else if (u8_motor == 'r') {
-                right_motor_fwd(u8_percentage);
+                right_motor_fwd(BASE_SPEED);
             } else if (u8_motor == 'b') {
-                motors_move_forward(u8_percentage);
+                motors_move_forward(BASE_SPEED);
             }
             break;
         case 'b':
             if (u8_motor == 'l') {
-                left_motor_reverse(u8_percentage);
+                left_motor_reverse(BASE_SPEED);
             } else if (u8_motor == 'r') {
-                right_motor_reverse(u8_percentage);
+                right_motor_reverse(BASE_SPEED);
             } else if (u8_motor == 'b') {
-                motors_move_reverse(u8_percentage);
+                motors_move_reverse(BASE_SPEED);
             }
             break;
         case 'r':
-            motors_turn_right(u8_percentage);
+            motors_turn_right(BASE_SPEED);
             break;
         case 'l':
-            motors_turn_left(u8_percentage);
+            motors_turn_left(BASE_SPEED);
             break;
         case 'o':
             printf("\nEnter number of tenths of revolutions\n");
@@ -223,13 +239,13 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
 
             if (u8_motor == 'l') {
                 printf("Turning left motor by %u tenths of revolutions\n", u16_revolutions);
-                move_left_motor_by_revolutions(i16_revolutions/10.0, u8_percentage);
+                move_left_motor_by_revolutions(i16_revolutions/10.0, BASE_SPEED);
             } else if (u8_motor == 'r') {
                 printf("Turning left motor by %u tenths of revolutions\n", u16_revolutions);
-                move_right_motor_by_revolutions(i16_revolutions/10.0, u8_percentage);
+                move_right_motor_by_revolutions(i16_revolutions/10.0, BASE_SPEED);
             } else if (u8_motor == 'b') {
                 printf("Turning motors by %u tenths of revolutions\n", u16_revolutions);
-                move_by_revolutions(i16_revolutions/10.0, u8_percentage);
+                move_by_revolutions(i16_revolutions/10.0, BASE_SPEED);
             }
             break;
         case 'd':
@@ -250,13 +266,13 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
 
             if (u8_motor == 'l') {
                 printf("Turning left motor by %u mm\n", u16_distance);
-                move_left_motor_by_distance(i16_distance*1.0, u8_percentage);
+                move_left_motor_by_distance(i16_distance*1.0, BASE_SPEED);
             } else if (u8_motor == 'r') {
                 printf("Turning right motor by %u mm\n", u16_distance);
-                move_right_motor_by_distance(i16_distance*1.0, u8_percentage);
+                move_right_motor_by_distance(i16_distance*1.0, BASE_SPEED);
             } else if (u8_motor == 'b') {
                 printf("Turning motors by %u mm\n", u16_distance);
-                move_by_distance(i16_distance*1.0, u8_percentage);
+                move_by_distance(i16_distance*1.0, BASE_SPEED);
             }
             break;
         case 's':
@@ -283,7 +299,9 @@ void navigation_serial_menu() {
     printf("   c) recalibrate all the sensor arrays\n");
     printf("   g) get line continuously and print line value\n");
     printf("   n) navigate to a box\n");
+    printf("   m) navigate backwards to a mainline\n");
     printf("   h) turn 90 degrees\n");
+    printf("   t) turn 180 degrees\n");
     printf("   q) use the navigation queue\n");
     printf("   w) navigate the whole course (skips the game stuff)\n");
 }
@@ -477,9 +495,17 @@ void navigate_course() {
         DELAY_MS(2500);
         printf("Reached game %u\n", ++u8_currentGame);
 
-        // Back away from the box a bit
-        enqueue(&navigationRoutineQueue, BACK_AWAY_FROM_BOX);
+        // Get out of the box and turn around
+        enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+        enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
+        enqueue(&navigationRoutineQueue, TURN_180);
+        enqueue(&navigationRoutineQueue, FINISH_180_TURN);
+
+        // Initiate this
         check_for_routine();
+
+        // Wait until this finishes
+        block_until_all_routines_done();
 
         // Get back to the main line
         follow_line_back_to_main_line(BASE_SPEED);

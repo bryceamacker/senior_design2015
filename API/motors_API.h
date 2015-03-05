@@ -39,7 +39,7 @@
 #define MOTOR_PWM_PERIOD                20000                   // desired period, in us
 
 #define RIGHT_MOTOR_ADJUSTMENT          1.0
-#define LEFT_MOTOR_ADJUSTMENT           1.1
+#define LEFT_MOTOR_ADJUSTMENT           1.09
 
 #define LEFT_DIRECTION                  0                       // Boolean for left turning direction
 #define RIGHT_DIRECTION                 1                       // Boolean for left turning direction
@@ -48,21 +48,28 @@
 #define FORWARD_MOVEMENT                1                       // Forward motion
 #define BACKWARD_MOVEMENT               2                       // Backward motion
 
-#define PREPARE_90_TURN_DISTANCE        160
+#define PREPARE_90_TURN_DISTANCE        180
 #define DEGREE_90_TURN_REVS             1.0
+
+#define FINISH_180_TURN_DISTANCE        220
+
+#define BACK_AWAY_FROM_GAME_DISTANCE    100
+#define MOVE_INTO_BOX_DISTANCE          160
 
 #define M_PI                            3.14159265358979323846  // pi constant
 #define WHEEL_DIAMETER                  80.65                   // in milimeters
 #define WHEEL_CIRCUMFERENCE             (WHEEL_DIAMETER * M_PI) // in milimeters
 
-#define BASE_SPEED                      15
+#define BASE_SPEED_DEFAULT              20
 
 #define LINE_WIDTH                      25
 
 #define START_BOX_DRIVE_DISTANCE        200
 
+extern float BASE_SPEED;
+
 typedef enum {
-    RIGHT_TURN =                    0,
+    RIGHT_TURN =                    1,
     LEFT_TURN =                     2,
     PREPARE_TURN =                  3,
     FINISH_TURN =                   4,
@@ -73,7 +80,10 @@ typedef enum {
     PREPARE_REVERSE_TURN =          9,
     MOVE_FORWARD_DISTANCE =         10,
     MOVE_REVERSE_DISTANCE =         11,
-    PLAY_GAME_PAUSE =               12
+    PLAY_GAME_PAUSE =               12,
+    FINISH_180_TURN =               13,
+    MOVE_INTO_BOX =                 14,
+    TURN_180 =                      15
 } motorRoutines;
 
 ///////////////////////////////////////////////
@@ -241,8 +251,24 @@ void prepare_for_90_degree_turn(float f_speed);
  * @brief Turn the robot by 90 degrees
  *
  * @param f_speed speed to move the robot
+ * @param u8_direction Direction to turn
 **/
 void turn_90_degrees(float f_speed, uint8_t u8_direction);
+
+/**
+ * @brief Turn the robot by 180 degrees
+ *
+ * @param f_speed speed to move the robot
+ * @param u8_direction Direction to turn
+**/
+void turn_180_degrees(float f_speed, uint8_t u8_direction);
+
+/**
+ * @brief Move back to compensate for a 180 turn
+ *
+ * @param f_speed speed to move the robot
+**/
+void finish_180_degree_turn(float f_speed);
 
 /**
  * @brief Turn the left motor by a number of revolutions
@@ -292,7 +318,35 @@ void move_by_revolutions(float f_revolutions, float f_speed);
 **/
 void move_by_distance(float f_distance, float f_speed);
 
+/**
+ * @brief Check for a new routine in the navigation queue
+ *
+ * @return dequeue the routine that is in the front of the queue and return it
+**/
 uint8_t check_for_routine(void);
+
+/**
+ * @brief Handle a routine by changing the targets for the left and right motors
+ *
+ * @param routine The routine to be handled
+**/
 void handle_routine(uint8_t routine);
+
+/**
+ * @brief Sort of an emergency stop on the routines, stop the motors, clear the queue, reset targets
+**/
+void clear_routines(void);
+
+/**
+ * @brief Set the speed at which all motor funcitons operate
+ *
+ * @param f_newBase New base speed
+**/
+void set_base_speed(float f_newBase);
+
+/**
+ * @brief Block until all routines have been finished
+**/
+void block_until_all_routines_done();
 
 #endif

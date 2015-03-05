@@ -62,6 +62,8 @@
 #define SET_BUTTON_PUSHED       (_RG6 == 0)
 #define SET_BUTTON_RELEASED     (_RG6 == 1)
 
+extern uint8_t u8_routineBlock;
+
 // Game enumeration
 typedef enum {
     SIMON =     0,
@@ -179,9 +181,17 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
         printf("Reached game %u\n", u8_currentGame);
         #endif
 
-        // Back away from the box a bit
-        enqueue(&navigationRoutineQueue, BACK_AWAY_FROM_BOX);
+        // Get out of the box and turn around
+        enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+        enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
+        enqueue(&navigationRoutineQueue, TURN_180);
+        enqueue(&navigationRoutineQueue, FINISH_180_TURN_DISTANCE);
+
+        // Initiate this
         check_for_routine();
+
+        // Wait until this finishes
+        block_until_all_routines_done();
 
         // Get back to the main line
         follow_line_back_to_main_line(BASE_SPEED);

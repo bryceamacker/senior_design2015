@@ -31,8 +31,6 @@
 #ifndef _LINE_FOLLOWER_API_H_
 #define _LINE_FOLLOWER_API_H_
 
-#define NUM_OF_REQUIRED_DETECTIONS      60
-
 /**
  * @brief Initialize everything it takes to follow a line using a sensor array
  */
@@ -49,16 +47,23 @@ void line_follower_init(void);
 /**
  * @brief Follow  line until the line sensor sees a box
  *
- * @param f_maxSpeed the max speed the robot will move at, specified by duty cycle
+ * @param f_maxSpeed the max speed the robot will move at
  */
 void follow_line_to_box(float f_maxSpeed);
 
 /**
- * @brief Follow until the robot gets back to wehre it branched from
+ * @brief Follow in reverse until the robot gets back to wehre it branched from
  *
- * @param f_maxSpeed the max speed the robot will move at, specified by duty cycle
+ * @param f_maxSpeed the max speed the robot will move at
  */
 void follow_line_back_to_main_line(float f_maxSpeed);
+
+/**
+ * @brief Follow in until the robot gets back to wehre it branched from
+ *
+ * @param f_maxSpeed the max speed the robot will move at
+ */
+void follow_line_back_to_main_line_reverse(float f_maxSpeed);
 
 /**
  * @brief Recenter the robot over the line while moving forward

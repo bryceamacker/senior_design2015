@@ -45,6 +45,8 @@ uint8_t u8_currentRoutine = 0;
 queue_t navigationRoutineQueue;
 queue_t navigationMoveDistanceQueue;
 
+float BASE_SPEED = BASE_SPEED_DEFAULT;
+
 ///////////////////////////////////////////////
 //
 // Motor config
@@ -572,6 +574,21 @@ void finish_reverse_90_degree_turn(float f_speed) {
     move_by_distance((-1.0 * PREPARE_90_TURN_DISTANCE), f_speed);
 }
 
+void turn_180_degrees(float f_speed, uint8_t u8_direction) {
+    if (u8_direction == RIGHT_DIRECTION) {
+        move_right_motor_by_revolutions((-2.0 * DEGREE_90_TURN_REVS), f_speed);
+        move_left_motor_by_revolutions((2.0 * DEGREE_90_TURN_REVS), f_speed);
+    }
+    if (u8_direction == LEFT_DIRECTION) {
+        move_right_motor_by_revolutions((2.0 * DEGREE_90_TURN_REVS), f_speed);
+        move_left_motor_by_revolutions((-2.0 * DEGREE_90_TURN_REVS), f_speed);
+    }
+}
+
+void finish_180_degree_turn(float f_speed) {
+    move_by_distance((-1.0 * FINISH_180_TURN_DISTANCE), f_speed);
+}
+
 void back_away_from_box(float f_speed) {
     move_by_distance((-2.0 * LINE_WIDTH), f_speed);
 }
@@ -582,6 +599,10 @@ void move_past_start_box(float f_speed) {
 
 void move_past_branch(float f_speed) {
     move_by_distance(LINE_WIDTH, f_speed);
+}
+
+void move_into_box(float f_speed) {
+    move_by_distance(MOVE_INTO_BOX_DISTANCE, f_speed);
 }
 
 void handle_routine(uint8_t routine) {
@@ -624,6 +645,24 @@ void handle_routine(uint8_t routine) {
             printf("Routine: finishing reverse turn\n");
             #endif
             finish_reverse_90_degree_turn(BASE_SPEED);
+            break;
+        case MOVE_INTO_BOX:
+            #ifdef DEBUG_BUILD
+            printf("Routine: moving into box\n");
+            #endif
+            move_into_box(BASE_SPEED);
+            break;
+        case TURN_180:
+            #ifdef DEBUG_BUILD
+            printf("Routine: 180 turn\n");
+            #endif
+            turn_180_degrees(BASE_SPEED, RIGHT_DIRECTION);
+            break;
+        case FINISH_180_TURN:
+            #ifdef DEBUG_BUILD
+            printf("Routine: finishing 180 turn\n");
+            #endif
+            finish_180_degree_turn(BASE_SPEED);
             break;
         case BACK_AWAY_FROM_BOX:
             #ifdef DEBUG_BUILD
@@ -677,5 +716,30 @@ uint8_t check_for_routine() {
         u8_currentRoutine = dequeue(&navigationRoutineQueue);
         handle_routine(u8_currentRoutine);
         return u8_currentRoutine;
+    }
+}
+
+void clear_routines() {
+    // Stop the robot
+    motors_stop();
+
+    // Clear out the nav queue
+    clear_queue(&navigationRoutineQueue);
+
+    // Reset targets
+    u8_leftAtTarget = 1;
+    u8_rightAtTarget = 1;
+    u8_routineBlock = 0;
+}
+
+void set_base_speed(float f_newBase) {
+    BASE_SPEED = f_newBase;
+}
+
+void block_until_all_routines_done() {
+    while(1) {
+        if (u8_routineBlock == 0) {
+            return;
+        }
     }
 }
