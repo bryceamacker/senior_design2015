@@ -47,6 +47,7 @@ void game_player_servo_menu(void);
 void simon_menu(void);
 void game_player_set_servo(char u8_servo);
 void start_light_print(void);
+void block_until_start_light_off();
 
 // Main loop for the game player pic using I2C command
 int main(void) {
@@ -292,6 +293,9 @@ void game_player_serial_command(uint8_t u8_c) {
         case 'l':
             start_light_print();
             break;
+        case 'w':
+            block_until_start_light_off();
+            break;
         case 'v':
             test_ss_displays();
             break;
@@ -340,6 +344,7 @@ void game_player_serial_menu(void) {
     printf("   y) slide the arm by a percentage\n");
     printf("   z) read photo transistors\n");
     printf("   l) read start light resistor\n");
+    printf("   w) block until start light off\n");
     printf("   v) test the displays\n");
     printf("   x) set a servo\n");
 }
@@ -461,4 +466,44 @@ void start_light_print() {
 
         doHeartbeat();
     }
+}
+
+void block_until_start_light_off() {
+    uint16_t i16_ledMaxOnvalue;
+    uint16_t i16_ledMinOnvalue;
+    uint16_t i16_ledThreshold;
+    uint16_t u16_tempLedvalue;
+    uint8_t i;
+
+    i16_ledMaxOnvalue = 0;
+    i16_ledMinOnvalue = 65535;
+    i16_ledThreshold = 0;
+    u16_tempLedvalue = 0;
+
+    printf("Calibrating\n");
+
+    // Sample a few values from the on LED
+    for (i = 0; i < 100; ++i) {
+        u16_tempLedvalue = read_photo_cell(START_CELL);
+        if (u16_tempLedvalue < i16_ledMinOnvalue) {
+            i16_ledMinOnvalue = u16_tempLedvalue;
+        }
+        if (u16_tempLedvalue > i16_ledMaxOnvalue) {
+            i16_ledMaxOnvalue = u16_tempLedvalue;
+        }
+        DELAY_MS(10);
+    }
+
+    // Calculate the threshold
+    i16_ledThreshold = i16_ledMaxOnvalue - i16_ledMinOnvalue;
+
+    // Wait until the start light turns off
+    printf("Waiting for start signal\n");
+    u16_tempLedvalue = read_photo_cell(START_CELL);
+    while(u16_tempLedvalue >= (i16_ledMinOnvalue - i16_ledThreshold)) {
+        u16_tempLedvalue = read_photo_cell(START_CELL);
+        doHeartbeat();
+    }
+
+    printf("Start signal detected\n");
 }

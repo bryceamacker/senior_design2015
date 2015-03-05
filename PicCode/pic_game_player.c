@@ -38,7 +38,7 @@
 #define BUFFSIZE            64
 #define PIC_I2C_ADDR        0x20
 
-#define SKIP_START_LIGHT    1
+#define SKIP_START_LIGHT    0
 
 // States for the game player PIC
 typedef enum {

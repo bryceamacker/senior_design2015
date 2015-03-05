@@ -108,14 +108,6 @@ void follow_line_to_box(float f_maxSpeed) {
 
                 // Leeeet's play
                 motors_stop();
-
-                // Move into the box
-                enqueue(&navigationRoutineQueue, MOVE_INTO_BOX);
-                check_for_routine();
-
-                // Wait until this finishes
-                block_until_all_routines_done();
-
                 return;
             }
             // Check for a left turn
@@ -170,13 +162,6 @@ void follow_line_to_box(float f_maxSpeed) {
 
                 // Clear out the routine queue and stop
                 clear_routines();
-
-                // Move into the box
-                enqueue(&navigationRoutineQueue, MOVE_INTO_BOX);
-                check_for_routine();
-
-                // Wait until this finishes
-                block_until_all_routines_done();
 
                 // Leeeet's play
                 return;

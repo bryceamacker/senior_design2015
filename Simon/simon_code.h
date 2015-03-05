@@ -35,7 +35,7 @@
 
 // Hover pulse width constants
 #define YELLOW_HOVER    900
-#define BLUE_HOVER      1035
+#define BLUE_HOVER      1020
 #define RED_HOVER       970
 #define GREEN_HOVER     910
 #define START_HOVER     YELLOW_HOVER
@@ -49,8 +49,8 @@
 
 // Light thresholds
 #define YELLOW_LIGHT_THRESH_HOLD    90
-#define BLUE_LIGHT_THRESH_HOLD      150
-#define RED_LIGHT_THRESH_HOLD       150
+#define BLUE_LIGHT_THRESH_HOLD      90 // 125
+#define RED_LIGHT_THRESH_HOLD       90 // 125
 #define GREEN_LIGHT_THRESH_HOLD     90
 #define OFF_THRESH_HOLD             20
 

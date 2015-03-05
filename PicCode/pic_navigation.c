@@ -34,7 +34,7 @@
 #define BUFFSIZE                        64
 
 #define STATIC_ORDER                    1
-#define SKIP_START_LIGHT                1
+#define SKIP_START_LIGHT                0
 #define SKIP_START_BUTTON               1
 #define SKIP_STATIC_COURSE_SELECTION    1
 
@@ -174,6 +174,15 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
         // Find a box
         follow_line_to_box(BASE_SPEED);
 
+        if (u8_currentGame != 3) {
+            // Move into the box
+            enqueue(&navigationRoutineQueue, MOVE_INTO_BOX);
+            check_for_routine();
+
+            // Wait until this finishes
+            block_until_all_routines_done();
+        }
+
         // Tell the game player to play a game
         play_game(pu8_gameOrder[u8_currentGame]);
         u8_currentGame++;
@@ -185,7 +194,7 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
         enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
         enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
         enqueue(&navigationRoutineQueue, TURN_180);
-        enqueue(&navigationRoutineQueue, FINISH_180_TURN_DISTANCE);
+        enqueue(&navigationRoutineQueue, FINISH_180_TURN);
 
         // Initiate this
         check_for_routine();
