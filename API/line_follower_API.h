@@ -100,7 +100,7 @@ uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM
 /**
  * @brief Handle a right angle left turn
 **/
-void handle_left_turn(void);
+void handle_left_turn(uint8_t u8_final);
 
 /**
  * @brief Handle a reverse right angle left turn
@@ -118,7 +118,7 @@ uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NU
 /**
  * @brief Handle a right angle right turn
 **/
-void handle_right_turn(void);
+void handle_right_turn(uint8_t u8_final);
 
 /**
  * @brief Handle a reverse right angle right turn

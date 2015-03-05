@@ -124,7 +124,7 @@ void follow_line_to_box(float f_maxSpeed) {
                 }
 
                 // Handle the left turn, flag that we are turning
-                handle_left_turn();
+                handle_left_turn(1);
             }
             // Check for a right turn
             else if (check_for_right_turn(pau16_sensorValues) == 1) {
@@ -141,7 +141,7 @@ void follow_line_to_box(float f_maxSpeed) {
                 }
 
                 // Handle the right turn, flag that we are turning
-                handle_right_turn();
+                handle_right_turn(1);
             }
             // Otherwise just continue along the line correcting movement as needed
             else {
@@ -172,6 +172,7 @@ void follow_line_to_box(float f_maxSpeed) {
 
 void follow_line_back_to_main_line(float f_maxSpeed) {
     uint8_t u8_lastTurn;
+    uint8_t u8_lastTurnType;
     uint8_t u8_nextTurn;
     uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
 
@@ -189,30 +190,37 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
                 #endif
 
                 // Handle our last turn
-                u8_lastTurn = pop(&branchedTurnStack);
-                if (u8_lastTurn == LEFT_TURN) {
-                    handle_left_turn();
+                u8_lastTurnType = pop(&branchedTurnStack);
+                if (u8_lastTurnType == LEFT_TURN) {
+                    handle_left_turn(1);
                 }
-                if (u8_lastTurn == RIGHT_TURN) {
-                    handle_right_turn();
+                if (u8_lastTurnType == RIGHT_TURN) {
+                    handle_right_turn(1);
                 }
                 return;
             }
             // We've encountered a turn
             else if ((check_for_left_turn(pau16_sensorValues) == 1) || (check_for_right_turn(pau16_sensorValues) == 1)) {
-                #ifdef DEBUG_BUILD
-                printf("Left turn!\n");
-                #endif
-
                 // Pop off a past turn and handle it
                 u8_nextTurn = pop(&branchedTurnStack);
 
+                // Check to see if it's the last turn
+                u8_lastTurn = (stack_is_empty(branchedTurnStack) == 1) ? 1 : 0;
+
                 // Check which type of turn it is and handle it
                 if (u8_nextTurn == RIGHT_TURN) {
-                    handle_right_turn();
+                    #ifdef DEBUG_BUILD
+                    printf("Right turn!\n");
+                    #endif
+
+                    handle_right_turn(u8_lastTurn);
                 }
                 else if (u8_nextTurn == LEFT_TURN) {
-                    handle_left_turn();
+                    #ifdef DEBUG_BUILD
+                    printf("Left turn!\n");
+                    #endif
+
+                    handle_left_turn(u8_lastTurn);
                 }
 
                 // Maybe the sensors missed the box, check to see if the stack is depleted
@@ -232,6 +240,8 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
 
 void follow_line_back_to_main_line_reverse(float f_maxSpeed) {
     uint8_t u8_lastTurn;
+    uint8_t u8_lastTurnType;
+    uint8_t u8_nextTurn;
     uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
 
     #ifdef DEBUG_BUILD
@@ -248,47 +258,44 @@ void follow_line_back_to_main_line_reverse(float f_maxSpeed) {
                 #endif
 
                 // Handle our last turn
-                u8_lastTurn = pop(&branchedTurnStack);
-                if (u8_lastTurn == LEFT_TURN) {
+                u8_lastTurnType = pop(&branchedTurnStack);
+                if (u8_lastTurnType == LEFT_TURN) {
                     handle_reverse_left_turn(1);
                 }
-                if (u8_lastTurn == RIGHT_TURN) {
+                if (u8_lastTurnType == RIGHT_TURN) {
                     handle_reverse_right_turn(1);
                 }
                 return;
             }
             // Check for a left turn
-            else if (check_for_left_turn(pau16_sensorValues) == 1) {
-                #ifdef DEBUG_BUILD
-                printf("Reverse left turn!\n");
-                #endif
-
+            else if ((check_for_left_turn(pau16_sensorValues) == 1) || (check_for_right_turn(pau16_sensorValues) == 1)) {
                 // Pop off a past turn and handle it
-                pop(&branchedTurnStack);
+                u8_nextTurn = pop(&branchedTurnStack);
+
+                // Check to see if it's the last turn
+                u8_lastTurn = (stack_is_empty(branchedTurnStack) == 1) ? 1 : 0;
+
+                // Check which type of turn it is and handle it
+                if (u8_nextTurn == RIGHT_TURN) {
+                    #ifdef DEBUG_BUILD
+                    printf("Reverse right turn!\n");
+                    #endif
+
+                    handle_reverse_right_turn(u8_lastTurn);
+                }
+                else if (u8_nextTurn == LEFT_TURN) {
+                    #ifdef DEBUG_BUILD
+                    printf("Reverse left turn!\n");
+                    #endif
+
+                    handle_reverse_left_turn(u8_lastTurn);
+                }
 
                 // Maybe the sensors missed the box, check to see if the stack is depleted
                 if (stack_is_empty(branchedTurnStack) == 1) {
-                    handle_reverse_left_turn(1);
-                }
-                else {
-                    handle_reverse_left_turn(0);
-                }
-            }
-            // Check for a right turn
-            else if (check_for_right_turn(pau16_sensorValues) == 1) {
-                #ifdef DEBUG_BUILD
-                printf("Reverse right turn!\n");
-                #endif
-
-                // Pop off a past turn and handle it
-                pop(&branchedTurnStack);
-
-                // Maybe the sensors missed the box, check to see if the stack is depleted
-                if (stack_is_empty(branchedTurnStack) == 1) {
-                    handle_reverse_right_turn(1);
-                }
-                else {
-                    handle_reverse_right_turn(0);
+                    // Wait until this last turn has finished
+                    block_until_all_routines_done();
+                    return;
                 }
             }
             // Otherwise just continue along the line correcting movement as needed
@@ -465,17 +472,9 @@ void correct_line_error_reverse(float f_maxSpeed, uint16_t pau16_sensorValues[TR
 
     // Once we've no longer veered, we've corrected our path
     if (u8_veeredLeft == 0) {
-        if (u8_veeredLeft == 0) {
-            motors_turn_left(f_maxSpeed);
-            DELAY_MS(50);
-        }
         u8_correctedLeft = 1;
     }
     if (u8_veeredRight == 0) {
-        if (u8_correctedRight == 0) {
-            motors_turn_right(f_maxSpeed);
-            DELAY_MS(50);
-        }
         u8_correctedRight = 1;
     }
 
@@ -484,21 +483,21 @@ void correct_line_error_reverse(float f_maxSpeed, uint16_t pau16_sensorValues[TR
         motors_move_reverse(f_maxSpeed);
     }
     else if ((u8_veeredLeft >= 2) && (u8_correctedLeft == 1)) {
-        // queue routine to turn right
+        // Turn right a bit
         motors_turn_right(f_maxSpeed);
-        // do I need routines? try delays
         DELAY_MS(50);
         motors_stop();
-        // set as uncrorrected
+
+        // Set as uncrorrected
         u8_correctedLeft = 0;
     }
     else if ((u8_veeredRight >= 2) && (u8_correctedRight == 1)) {
-        // queue routine to turn left
+        // Turn left a bit
         motors_turn_left(f_maxSpeed);
-        // do I need routines? try delays
         DELAY_MS(50);
         motors_stop();
-        // set as uncrorrected
+
+        // Set as uncrorrected
         u8_correctedRight = 0;
     }
     else {
@@ -571,13 +570,15 @@ uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM
 }
 
 // Handle left turn
-void handle_left_turn(void) {
+void handle_left_turn(uint8_t u8_final) {
     motors_stop();
 
     // Queue all the routines for a left turn
     enqueue(&navigationRoutineQueue, PREPARE_TURN);
     enqueue(&navigationRoutineQueue, LEFT_TURN);
-    // enqueue(&navigationRoutineQueue, FINISH_TURN);
+    if (u8_final == 0) {
+        enqueue(&navigationRoutineQueue, FINISH_TURN);
+    }
 
     // Initiate these routines
     check_for_routine();
@@ -621,13 +622,15 @@ uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NU
 }
 
 // Handle right turn
-void handle_right_turn(void) {
+void handle_right_turn(uint8_t u8_final) {
     motors_stop();
 
     // Queue all the routines for a right turn
     enqueue(&navigationRoutineQueue, PREPARE_TURN);
     enqueue(&navigationRoutineQueue, RIGHT_TURN);
-    // enqueue(&navigationRoutineQueue, FINISH_TURN);
+    if (u8_final == 0) {
+        enqueue(&navigationRoutineQueue, FINISH_TURN);
+    }
 
     // Initiate these routines
     check_for_routine();
