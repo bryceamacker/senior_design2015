@@ -19,12 +19,17 @@
 
 #include "card_code.h"
 
-/////////////////////////////////////////////// 
+///////////////////////////////////////////////
 //
 // Card Usage
 //
 ///////////////////////////////////////////////
 void play_card() {
+    display_draw_number(CARD_NUMBER);
+    #ifdef DEBUG_BUILD
+    printf("\n*** Grabbing Card ***\n");
+    #endif
+
     // Slide arm forward
     game_arm_slide_forward();
 

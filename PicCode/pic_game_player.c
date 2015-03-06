@@ -77,6 +77,7 @@ int main(void) {
 
     if (SKIP_START_LIGHT == 0) {
         // Wait for the start signal
+        display_draw_number(START_LIGHT_NUMBER);
         wait_for_start_signal();
     } else {
         DELAY_MS(5000);
@@ -105,11 +106,15 @@ int main(void) {
             printf("Waiting for a new game command\n");
             #endif
         }
+        display_draw_number(NAVIGATING_NUMBER);
         doHeartbeat();
     }
 }
 
 void pic_game_player_init() {
+    // SSD Init
+    ssd_init();
+
     // Initialize all the timers and comparators for the servos
     servo_init();
 

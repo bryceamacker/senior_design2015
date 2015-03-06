@@ -19,30 +19,75 @@
 
 #include "SSDisplayAPI.h"
 
-
 ///////////////////////////////////////////////
 //
 // SSD config
 //
 ///////////////////////////////////////////////
 void ssd_init(void) {
-  // Display 1
-  CONFIG_RG15_AS_DIG_OUTPUT();
-  CONFIG_RC1_AS_DIG_OUTPUT();
-  CONFIG_RC2_AS_DIG_OUTPUT();
-  CONFIG_RG6_AS_DIG_OUTPUT();
-  CONFIG_RG7_AS_DIG_OUTPUT();
-  CONFIG_RG8_AS_DIG_OUTPUT();
-  CONFIG_RG9_AS_DIG_OUTPUT();
+    // Display 1
+    CONFIG_RG15_AS_DIG_OUTPUT();
+    CONFIG_RC1_AS_DIG_OUTPUT();
+    CONFIG_RC2_AS_DIG_OUTPUT();
+    CONFIG_RG6_AS_DIG_OUTPUT();
+    CONFIG_RG7_AS_DIG_OUTPUT();
+    CONFIG_RG8_AS_DIG_OUTPUT();
+    CONFIG_RG9_AS_DIG_OUTPUT();
 
-  // Display 2
-  CONFIG_RB6_AS_DIG_OUTPUT();
-  CONFIG_RB7_AS_DIG_OUTPUT();
-  CONFIG_RB8_AS_DIG_OUTPUT();
-  CONFIG_RB9_AS_DIG_OUTPUT();
-  CONFIG_RB10_AS_DIG_OUTPUT();
-  CONFIG_RB11_AS_DIG_OUTPUT();
-  CONFIG_RB12_AS_DIG_OUTPUT();
+    // Display 2
+    CONFIG_RB6_AS_DIG_OUTPUT();
+    CONFIG_RB7_AS_DIG_OUTPUT();
+    CONFIG_RB8_AS_DIG_OUTPUT();
+    CONFIG_RB9_AS_DIG_OUTPUT();
+    CONFIG_RB10_AS_DIG_OUTPUT();
+    CONFIG_RB11_AS_DIG_OUTPUT();
+    CONFIG_RB12_AS_DIG_OUTPUT();
+
+    init_sequence();
+    display_draw_number(00);
+}
+
+void init_sequence() {
+    display_all_off();
+    DELAY_MS(100);
+    turn_on_display1_segment(A);
+    turn_on_display2_segment(A);
+    DELAY_MS(100);
+    turn_off_display1_segment(A);
+    turn_off_display2_segment(A);
+    turn_on_display1_segment(B);
+    turn_on_display2_segment(B);
+    DELAY_MS(100);
+    turn_off_display1_segment(B);
+    turn_off_display2_segment(B);
+    turn_on_display1_segment(C);
+    turn_on_display2_segment(C);
+    DELAY_MS(100);
+    turn_off_display1_segment(C);
+    turn_off_display2_segment(C);
+    turn_on_display1_segment(D);
+    turn_on_display2_segment(D);
+    DELAY_MS(100);
+    turn_off_display1_segment(D);
+    turn_off_display2_segment(D);
+    turn_on_display1_segment(E);
+    turn_on_display2_segment(E);
+    DELAY_MS(100);
+    turn_off_display1_segment(E);
+    turn_off_display2_segment(E);
+    turn_on_display1_segment(F);
+    turn_on_display2_segment(F);
+    DELAY_MS(100);
+    turn_off_display1_segment(F);
+    turn_off_display2_segment(F);
+    turn_on_display1_segment(G);
+    turn_on_display2_segment(G);
+    DELAY_MS(100);
+    turn_off_display1_segment(G);
+    turn_off_display2_segment(G);
+    DELAY_MS(100);
+    display_all_on();
+    DELAY_MS(100);
 }
 
 ///////////////////////////////////////////////
@@ -381,6 +426,52 @@ void draw_nine(uint8_t u8_display) {
     set_display2_segment(F, ON_VALUE);
     set_display2_segment(G, ON_VALUE);
   }
+}
+
+void display_all_on() {
+    turn_on_display1_segment(A);
+    turn_on_display2_segment(A);
+
+    turn_on_display1_segment(B);
+    turn_on_display2_segment(B);
+
+    turn_on_display1_segment(C);
+    turn_on_display2_segment(C);
+
+    turn_on_display1_segment(D);
+    turn_on_display2_segment(D);
+
+    turn_on_display1_segment(E);
+    turn_on_display2_segment(E);
+
+    turn_on_display1_segment(F);
+    turn_on_display2_segment(F);
+
+    turn_on_display1_segment(G);
+    turn_on_display2_segment(G);
+}
+
+void display_all_off() {
+    turn_off_display1_segment(A);
+    turn_off_display2_segment(A);
+
+    turn_off_display1_segment(B);
+    turn_off_display2_segment(B);
+
+    turn_off_display1_segment(C);
+    turn_off_display2_segment(C);
+
+    turn_off_display1_segment(D);
+    turn_off_display2_segment(D);
+
+    turn_off_display1_segment(E);
+    turn_off_display2_segment(E);
+
+    turn_off_display1_segment(F);
+    turn_off_display2_segment(F);
+
+    turn_off_display1_segment(G);
+    turn_off_display2_segment(G);
 }
 
 ///////////////////////////////////////////////

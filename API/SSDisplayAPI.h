@@ -24,6 +24,23 @@
 #include <stdio.h>
 #endif
 
+#ifndef SSD_DISPLAY_API_H_
+#define SSD_DISPLAY_API_H_
+
+#define START_LIGHT_NUMBER      1
+
+#define SIMON_NUMBER            10
+
+#define ETCH_NUMBER             20
+#define ETCH_I_NUMBER           21
+#define ETCH_E1_NUMBER          22
+#define ETCH_E2_NUMBER          23
+#define ETCH_E3_NUMBER          24
+
+#define RUBIKS_NUMBER           30
+#define CARD_NUMBER             40
+#define NAVIGATING_NUMBER       99
+
 #define ON_VALUE  0
 #define OFF_VALUE 1
 
@@ -46,6 +63,11 @@ typedef enum {
  * @brief Initializes every thing for both SSDs
 */
 void ssd_init(void);
+
+/**
+ * @brief Silly little light seqence showing of SSDs
+*/
+void init_sequence(void);
 
 ///////////////////////////////////////////////
 //
@@ -150,6 +172,16 @@ void set_display1_segment(SSDsegments segment, uint8_t u8_value);
 **/
 void set_display2_segment(SSDsegments segment, uint8_t u8_value);
 
+/**
+ * @brief Turn everything on
+**/
+void display_all_on(void);
+
+/**
+ * @brief Turn everything off
+**/
+void display_all_off(void);
+
 ///////////////////////////////////////////////
 //
 // SSD usage
@@ -178,4 +210,5 @@ void display_draw_number(uint8_t u8_number);
  * @brief Helps test the ss displays
 **/
 void test_ss_displays(void);
+#endif
 #endif

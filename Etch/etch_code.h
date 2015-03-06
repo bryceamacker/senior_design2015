@@ -22,6 +22,7 @@
 #include "game_player_port_mapping.h"
 #include "platform_control.h"
 #include "game_arm_control.h"
+#include "SSDisplayAPI.h"
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>

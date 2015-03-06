@@ -31,9 +31,11 @@ void rubik_init() {
 }
 
 void play_rubiks() {
+    display_draw_number(RUBIKS_NUMBER);
     #ifdef DEBUG_BUILD
     printf("\n*** Spinng Rubiks ***\n");
     #endif
+
     // Pull in Rubiks
     game_arm_pull_rubiks();
 

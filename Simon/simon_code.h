@@ -23,6 +23,7 @@
 #include "game_arm_control.h"
 #include "game_player_port_mapping.h"
 #include "platform_control.h"
+#include "SSDisplayAPI.h"
 
 #ifndef SIMON_CODE_H_
 #define SIMON_CODE_H_
