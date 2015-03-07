@@ -288,23 +288,15 @@ module.exports = function (grunt) {
           patterns: [
             {
               match: /("|'?)\/?styles\//g,
-              replacement: '$1http://www.ece.msstate.edu/courses/design/2014/team_amacker/styles/'
+              replacement: 'styles/'
             },
             {
               match: /("|'?)\/?scripts\//g,
-              replacement: '$1http://www.ece.msstate.edu/courses/design/2014/team_amacker/scripts/'
+              replacement: 'scripts/'
             },
             {
               match: /("|'?)\/?fonts\//g,
-              replacement: '$1http://www.ece.msstate.edu/courses/design/2014/team_amacker/fonts/'
-            },
-            {
-              match: /(<a[^>]*href="?)(\/)/g,
-              replacement: '$1http://www.ece.msstate.edu/courses/design/2014/team_amacker/'
-            },
-            {
-              match: /(<form[^>]*action="?)(\/)/g,
-              replacement: '$1http://www.ece.msstate.edu/courses/design/2014/team_amacker/'
+              replacement: 'fonts/'
             }
           ]
         },
