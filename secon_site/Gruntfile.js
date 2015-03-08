@@ -241,9 +241,10 @@ module.exports = function (grunt) {
             // Like Jekyll, exclude files & folders prefixed with an underscore
             '!**/_*{,/**}',
             // Explicitly add any files your site needs for distribution here
-            //'./vendor/jquery/jquery.js',
+            './vendor/jquery/dist/jquery.js',
             'favicon.ico',
             // 'apple-touch*.png'
+            'scripts/galleria/**/*'
           ],
           dest: '<%= yeoman.dist %>'
         }]
@@ -263,6 +264,7 @@ module.exports = function (grunt) {
         files: {
           src: [
             '<%= yeoman.dist %>/scripts/**/*.js',
+            '!<%= yeoman.dist %>/scripts/galleria/**/*.js',
             '<%= yeoman.dist %>/styles/**/*.css',
             '<%= yeoman.dist %>/images/**/*.{gif,jpg,jpeg,png,svg,webp}',
             '<%= yeoman.dist %>/fonts/**/*.{eot*,otf,svg,ttf,woff}'
@@ -287,16 +289,16 @@ module.exports = function (grunt) {
         options: {
           patterns: [
             {
-              match: /("|'?)\/?styles\//g,
-              replacement: 'styles/'
+              match: /\/?styles\//g,
+              replacement: './styles/'
             },
             {
-              match: /("|'?)\/?scripts\//g,
-              replacement: 'scripts/'
+              match: /\/?scripts\//g,
+              replacement: './scripts/'
             },
             {
-              match: /("|'?)\/?fonts\//g,
-              replacement: 'fonts/'
+              match: /\/?fonts\//g,
+              replacement: './fonts/'
             }
           ]
         },
@@ -399,6 +401,14 @@ module.exports = function (grunt) {
   // Stage dist to a local directory
   grunt.registerTask('stage', [
     'build',
+    // 'clean:dist',
+    // // Jekyll cleans files from the target directory, so must run first
+    // 'jekyll:dist',
+    // 'concurrent:dist',
+    // 'copy:assemble',
+    // 'useminPrepare',
+    // 'concat',
+    // 'replace',
     'rsync:stage'
   ]);
 

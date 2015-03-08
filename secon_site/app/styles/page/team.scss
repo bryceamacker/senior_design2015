@@ -5,7 +5,7 @@
 }
 
 .picture {
-	@include size(250px 250px);	
+	@include size(250px 250px);
 	margin-top: 10px;
 	border-style: solid;
 	border-width: 1px;
@@ -26,45 +26,45 @@
 #bruce {
 	.picture {
 		@include size(150px 216px);
-		@include retina-image('../images/bruce', 150px 216px);
+		@include retina-image('../images/team/bruce', 150px 216px);
 	}
 }
 
 #bryce {
 	.picture {
-		@include retina-image('../images/bryce', 250px 250px);
+		@include retina-image('../images/team/bryce', 250px 250px);
 	}
 }
 
 #faith {
 	.picture {
-		@include retina-image('../images/faith', 250px 250px);
+		@include retina-image('../images/team/faith', 250px 250px);
 	}
 }
 
 #dexter {
 	.picture {
-		@include retina-image('../images/dexter', 250px 250px);
+		@include retina-image('../images/team/dexter', 250px 250px);
 	}
 }
 #steven {
 	.picture {
-		@include retina-image('../images/steven', 250px 250px);
+		@include retina-image('../images/team/steven', 250px 250px);
 	}
 }
 #ryant {
 	.picture {
-		@include retina-image('../images/ryant', 250px 250px);
+		@include retina-image('../images/team/ryant', 250px 250px);
 	}
 }
 #tran {
 	.picture {
-		@include retina-image('../images/tran', 250px 250px);
+		@include retina-image('../images/team/tran', 250px 250px);
 	}
 }
 #ben {
 	.picture {
 		@include size(188px 250px);
-		@include retina-image('../images/ben',  150px 200px);
+		@include retina-image('../images/team/ben',  150px 200px);
 	}
 }
