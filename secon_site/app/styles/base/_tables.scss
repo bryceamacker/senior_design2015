@@ -4,7 +4,8 @@ table {
   table-layout: fixed;
   width: 100%;
   border: 1px solid darken($base-border-color, 15%);
-  margin-top: 75px;
+  margin-top: 25px;
+  // display: inline-block;
 }
 
 th {
@@ -21,7 +22,15 @@ td {
   text-align: middle;
 }
 
+tbody {
+  // display: table;
+}
+
 tr, td, th {
   padding-left: 8px;
   vertical-align: middle;
+}
+
+.table-div {
+  display: inline-block;
 }
