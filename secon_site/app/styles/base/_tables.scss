@@ -3,6 +3,8 @@ table {
   margin: ($base-line-height / 2) 0;
   table-layout: fixed;
   width: 100%;
+  border: 1px solid darken($base-border-color, 15%);
+  margin-top: 75px;
 }
 
 th {
@@ -15,8 +17,11 @@ th {
 td {
   border-bottom: 1px solid $base-border-color;
   padding: ($base-line-height / 2) 0;
+  padding-right: 8px;
+  text-align: middle;
 }
 
 tr, td, th {
+  padding-left: 8px;
   vertical-align: middle;
 }

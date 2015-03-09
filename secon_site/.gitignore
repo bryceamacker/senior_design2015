@@ -43,3 +43,6 @@ Thumbs.db
 # Ignore PDFs
 *.pdf
 *.pptx
+*.zip
+*.brd
+*.sch
