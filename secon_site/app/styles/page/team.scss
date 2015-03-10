@@ -23,9 +23,16 @@
     font-size: $body-font-size;
 }
 
+.header {
+	h2, p {
+		display: inline;
+		padding-right: 10px;
+	}
+}
+
 #bruce {
 	.picture {
-		@include size(150px 216px);
+		@include size(148px 214px);
 		@include retina-image('../images/team/bruce', 150px 216px);
 	}
 }
