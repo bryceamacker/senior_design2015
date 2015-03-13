@@ -213,14 +213,22 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
                     printf("Right turn!\n");
                     #endif
 
-                    handle_right_turn(u8_lastTurn);
+                    if (u8_lastTurn == 1) {
+                        handle_right_turn(1);
+                    } else {
+                        handle_left_turn(1);
+                    }
                 }
                 else if (u8_nextTurn == LEFT_TURN) {
                     #ifdef DEBUG_BUILD
                     printf("Left turn!\n");
                     #endif
 
-                    handle_left_turn(u8_lastTurn);
+                    if (u8_lastTurn == 1) {
+                        handle_left_turn(1);
+                    } else {
+                        handle_right_turn(1);
+                    }
                 }
 
                 // Maybe the sensors missed the box, check to see if the stack is depleted

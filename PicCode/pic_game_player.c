@@ -92,13 +92,29 @@ int main(void) {
         // If we're out of the Idle state then there's something to be done
         if (e_picState != IDLE) {
             if (e_picState == PLAY_ETCH) {
-                play_etch();
+                if (SKIP_ETCH == 0) {
+                    play_etch();
+                } else {
+                    DELAY_MS(2000);
+                }
             } else if (e_picState == PLAY_RUBIK) {
-                play_rubiks();
+                if (SKIP_RUBIKS == 0) {
+                    play_rubiks();
+                } else {
+                    DELAY_MS(2000);
+                }
             } else if (e_picState == PLAY_SIMON) {
-                play_simon();
+                if (SKIP_SIMON == 0) {
+                    play_simon();
+                } else {
+                    DELAY_MS(2000);
+                }
             } else if (e_picState == PLAY_CARDS) {
-                play_card();
+                if (SKIP_CARD == 0) {
+                    play_card();
+                } else {
+                    DELAY_MS(2000);
+                }
             }
             e_picState = IDLE;
             strncpy((char *) sz_currentStateString, sz_idleString, BUFFSIZE);

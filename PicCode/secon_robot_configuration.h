@@ -28,6 +28,11 @@
 #define SKIP_START_BUTTON               1
 #define SKIP_STATIC_COURSE_SELECTION    1
 
+#define SKIP_SIMON                      0
+#define SKIP_ETCH                       0
+#define SKIP_RUBIKS                     0
+#define SKIP_CARD                       0
+
 // I2C Messages
 char sz_playSimonString[BUFFSIZE] =     "Simon";
 char sz_playRubiksString[BUFFSIZE] =    "Rubik";

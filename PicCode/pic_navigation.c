@@ -157,20 +157,22 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
         follow_line_to_box(BASE_SPEED);
 
         // Make our final preperations
-        final_game_preparations(u8_currentGame);
+        final_game_preparations(pu8_gameOrder[u8_currentGame]);
 
         // Tell the game player to play a game
         play_game(pu8_gameOrder[u8_currentGame]);
-        u8_currentGame++;
         #ifdef DEBUG_BUILD
         printf("Reached game %u\n", u8_currentGame);
         #endif
 
         // Leave the game box in preperation to follow the line back
-        prepare_to_leave_game(u8_currentGame);
+        prepare_to_leave_game(pu8_gameOrder[u8_currentGame]);
 
         // Get back to the main line
         follow_line_back_to_main_line(BASE_SPEED);
+
+        // Increment to the next game
+        u8_currentGame++;
     }
 
     // Get to the finish line

@@ -649,7 +649,8 @@ void prepare_to_leave_game(uint8_t u8_game) {
             enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
             enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
             enqueue(&navigationRoutineQueue, TURN_180);
-            enqueue(&navigationRoutineQueue, FINISH_180_TURN);
+            enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+            enqueue(&navigationMoveDistanceQueue, FINISH_180_TURN_DISTANCE/2);
             break;
         case CARD:
             enqueue(&navigationRoutineQueue, TURN_180);
