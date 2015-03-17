@@ -159,6 +159,18 @@ void draw_eight(uint8_t u8_display);
 void draw_nine(uint8_t u8_display);
 
 /**
+* @brief Draw an 'L' on the display
+* @param u8_display Display to be drawn on
+**/
+void draw_L(uint8_t u8_display);
+
+/**
+* @brief Draw an 'r' on the display
+* @param u8_display Display to be drawn on
+**/
+void draw_R(uint8_t u8_display);
+
+/**
 * @brief Set a particular segment on display1
 * @param segment Segment to be set
 * @param u8_value Value to set the segment to

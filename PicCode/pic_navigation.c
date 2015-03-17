@@ -69,6 +69,7 @@ uint8_t pu8_gameOrder[4];
 
 // Info for static courses
 uint8_t u8_staticCourseNumber;
+char pu8_branchList[4];
 
 // Function declarations
 void pic_navigation_init(void);
@@ -154,7 +155,7 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
     // Play Rubiks, Etch, and Simon then stop
     while(u8_currentGame <= 3) {
         // Find a box
-        follow_line_to_box(BASE_SPEED);
+        follow_line_to_box(BASE_SPEED, pu8_branchList[u8_currentGame]);
 
         // Make our final preperations
         final_game_preparations(pu8_gameOrder[u8_currentGame]);
@@ -179,7 +180,7 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
     }
 
     // Get to the finish line
-    follow_line_to_box(BASE_SPEED);
+    follow_line_to_box(BASE_SPEED, 0);
 }
 
 void run_static_course(uint8_t pu8_gameOrder[4]) {
@@ -293,7 +294,14 @@ void setup_game_buttons() {
 void configure_robot(void) {
     char tempBuffer[4];
     char numBuffer[2];
+    char branchBuffer[2];
     char sz_sendString[BUFFSIZE];
+    char currentDirection;
+
+    uint8_t u8_branchCount;
+    currentDirection = 'L';
+
+    u8_branchCount = 0;
 
     if (STATIC_ORDER == 0) {
         #ifdef DEBUG_BUILD
@@ -361,6 +369,66 @@ void configure_robot(void) {
             // Simple debounce
             DELAY_MS(10);
         }
+    }
+    if (SKIP_BRANCH_LIST_SETUP == 0) {
+        while (u8_branchCount <= 3) {
+            if (UP_BUTTON_PUSHED) {
+                currentDirection = 'R';
+                strncpy(tempBuffer, sz_dispString, 4);
+
+                branchBuffer[0] = (char)(((uint8_t)'0') + u8_branchCount+1);
+                branchBuffer[1] = currentDirection;
+
+                strcat(tempBuffer, branchBuffer);
+                strncpy(sz_sendString, tempBuffer, BUFFSIZE);
+                writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
+
+                #ifdef DEBUG_BUILD
+                printf("Branch %u: %c\n", u8_branchCount, currentDirection);
+                printf("Created string %s\n", sz_sendString);
+                #endif
+            }
+            if (DOWN_BUTTON_PUSHED) {
+                currentDirection = 'L';
+                strncpy(tempBuffer, sz_dispString, 4);
+
+                branchBuffer[0] = (char)(((uint8_t)'0') + u8_branchCount+1);
+                branchBuffer[1] = currentDirection;
+
+                strcat(tempBuffer, branchBuffer);
+                strncpy(sz_sendString, tempBuffer, BUFFSIZE);
+                writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
+
+                #ifdef DEBUG_BUILD
+                printf("Branch %u: %c\n", u8_branchCount, currentDirection);
+                printf("Created string %s\n", sz_sendString);
+                #endif
+            }
+            if (SET_BUTTON_PUSHED) {
+                pu8_branchList[u8_branchCount] = currentDirection;
+
+                strncpy(tempBuffer, sz_dispString, 4);
+
+                branchBuffer[0] = (char)(((uint8_t)'0') + u8_branchCount+1);
+                branchBuffer[1] = currentDirection;
+
+                strcat(tempBuffer, branchBuffer);
+                strncpy(sz_sendString, tempBuffer, BUFFSIZE);
+                writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
+
+                #ifdef DEBUG_BUILD
+                printf("Branch set %u: %c\n", u8_branchCount, currentDirection);
+                printf("Created string %s\n", sz_sendString);
+                #endif
+
+                u8_branchCount++;
+            }
+        }
+    } else {
+        pu8_branchList[0] = 'L';
+        pu8_branchList[1] = 'R';
+        pu8_branchList[2] = 'L';
+        pu8_branchList[3] = 'R';
     }
 }
 

@@ -48,8 +48,9 @@ void line_follower_init(void);
  * @brief Follow  line until the line sensor sees a box
  *
  * @param f_maxSpeed the max speed the robot will move at
+ * @param u8_expectedTurn What type of turn to expect off of main line
  */
-void follow_line_to_box(float f_maxSpeed);
+void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn);
 
 /**
  * @brief Follow in reverse until the robot gets back to wehre it branched from

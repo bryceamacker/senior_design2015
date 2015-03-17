@@ -184,11 +184,23 @@ void I2C_check_command(volatile char *psz_s1) {
     }
     // Display command
     else if(strcmp((char*) sz_dispStringCheck, sz_dispString) == 0) {
-        u8_tens = psz_s1[3];
-        u8_ones = psz_s1[4];
+        if ((psz_s1[4] == 'L') || (psz_s1[4] == 'R')) {
+            u8_tens = psz_s1[3] - '0';
 
-        u8_displayNumber = (u8_tens * 10) + u8_ones;
-        display_draw_number(u8_displayNumber);
+            display1_draw_number(u8_tens);
+
+            if (psz_s1[4] == 'L') {
+                draw_L(2);
+            } else if (psz_s1[4] == 'R') {
+                draw_R(2);
+            }
+        } else {
+            u8_tens = psz_s1[3] - '0';
+            u8_ones = psz_s1[4] - '0';
+
+            u8_displayNumber = (u8_tens * 10) + u8_ones;
+            display_draw_number(u8_displayNumber);
+        }
     }
     // Idle
     else {

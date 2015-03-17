@@ -29,6 +29,7 @@ char u8_c2;
 
 // Game order
 uint8_t pu8_gameOrder[4];
+char pu8_branchList[4];
 
 extern queue_t navigationRoutineQueue;
 extern queue_t navigationMoveDistanceQueue;
@@ -59,6 +60,11 @@ int main (void) {
     pu8_gameOrder[1] = RUBIKS;
     pu8_gameOrder[2] = ETCH;
     pu8_gameOrder[3] = CARD;
+
+    pu8_branchList[0] = 'L';
+    pu8_branchList[1] = 'R';
+    pu8_branchList[2] = 'L';
+    pu8_branchList[3] = 'R';
 
     navigation_serial_menu();
 
@@ -130,7 +136,7 @@ void navigation_serial_command(uint8_t u8_command) {
             print_get_line();
             break;
         case 'n':
-            follow_line_to_box(BASE_SPEED);
+            follow_line_to_box(BASE_SPEED, 0);
             break;
         case 'm':
             follow_line_back_to_main_line(BASE_SPEED);
@@ -509,7 +515,7 @@ void navigate_course() {
     // Play Rubiks, Etch, and Simon then stop
     while(u8_currentGame <= 3) {
         // Find a box
-        follow_line_to_box(BASE_SPEED);
+        follow_line_to_box(BASE_SPEED, pu8_branchList[u8_currentGame]);
 
         // Make our final preperations
         final_game_preparations(pu8_gameOrder[u8_currentGame]);
@@ -535,5 +541,5 @@ void navigate_course() {
     }
 
     // Get to the finish line
-    follow_line_to_box(BASE_SPEED);
+    follow_line_to_box(BASE_SPEED, 0);
 }

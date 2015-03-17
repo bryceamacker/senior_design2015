@@ -22,6 +22,7 @@
 
 uint8_t u8_leftTurnDetection = 0;
 uint8_t u8_rightTurnDetection = 0;
+uint8_t u8_TIntersection = 0;
 
 stack_t branchedTurnStack;
 
@@ -71,7 +72,7 @@ float get_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
     return f_line;
 }
 
-void follow_line_to_box(float f_maxSpeed) {
+void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
     uint8_t u8_lineContinuationDetected = 0;
     uint8_t u8_turnRan = 0;
     uint8_t u8_branchedFromMainLine = 0;
@@ -110,9 +111,23 @@ void follow_line_to_box(float f_maxSpeed) {
                 printf("Yay a box!\n");
                 #endif
 
-                // Leeeet's play
-                motors_stop();
-                return;
+                // If we're not branched from the mainline, check what turn we should do and flag that we have branched, flag that we hit a T (used for reverse)
+                if (u8_branchedFromMainLine == 0) {
+                    // If the expected turn is left
+                    if (u8_expectedTurn == 'L') {
+                        handle_left_turn(1);
+                    } else {
+                        handle_right_turn(1);
+                    }
+                    u8_branchedFromMainLine = 1;
+                    u8_TIntersection = 1;
+                }
+                // If we are branched from the mainline, play a game
+                else {
+                    // Leeeet's play
+                    motors_stop();
+                    return;
+                }
             }
             // Check for a left turn
             else if (check_for_left_turn(pau16_sensorValues) == 1) {
@@ -169,14 +184,28 @@ void follow_line_to_box(float f_maxSpeed) {
             }
             // At any time if we've hit a box while in a turn then we've mistaken a box as a turn
             else if ((check_for_box(pau16_sensorValues) == 1) && (u8_branchedFromMainLine == 1)){
-                // Forget the last turn since it was a mistake
-                pop(&branchedTurnStack);
+                // If we're not branched from the mainline, check what turn we should do and flag that we have branched, flag that we hit a T (used for reverse)
+                if (u8_branchedFromMainLine == 0) {
+                    // If the expected turn is left
+                    if (u8_expectedTurn == 'L') {
+                        handle_left_turn(1);
+                    } else {
+                        handle_right_turn(1);
+                    }
+                    u8_branchedFromMainLine = 1;
+                    u8_TIntersection = 1;
+                }
+                // If we are branched from the mainline, play a game
+                else {
+                    // Forget the last turn since it was a mistake
+                    pop(&branchedTurnStack);
 
-                // Clear out the routine queue and stop
-                clear_routines();
+                    // Clear out the routine queue and stop
+                    clear_routines();
 
-                // Leeeet's play
-                return;
+                    // Leeeet's play
+                    return;
+                }
             }
             u8_turnRan = 1;
         }
@@ -221,7 +250,12 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
                 u8_lastTurn = (stack_is_empty(branchedTurnStack) == 1) ? 1 : 0;
 
                 // Check which type of turn it is and handle it
-                if (u8_nextTurn == RIGHT_TURN) {
+                if ((u8_lastTurn == 1) && (u8_TIntersection == 1)) {
+                    u8_TIntersection = 0;
+                    enqueue(&navigationRoutineQueue, TURN_180);
+                    check_for_routine();
+                }
+                else if (u8_nextTurn == RIGHT_TURN) {
                     #ifdef DEBUG_BUILD
                     printf("Right turn!\n");
                     #endif
@@ -250,6 +284,11 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
 
                 // Maybe the sensors missed the box, check to see if the stack is depleted
                 if (stack_is_empty(branchedTurnStack) == 1) {
+                    // Compensate for the last turn, don't want to miss anything on the main line
+                    enqueue(&navigationRoutineQueue, FINISH_TURN);
+                    check_for_routine();
+                    block_until_all_routines_done();
+
                     // We're back at the main line
                     return;
                 }

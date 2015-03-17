@@ -27,6 +27,7 @@
 #define SKIP_START_LIGHT                0
 #define SKIP_START_BUTTON               1
 #define SKIP_STATIC_COURSE_SELECTION    1
+#define SKIP_BRANCH_LIST_SETUP          1
 
 #define SKIP_SIMON                      0
 #define SKIP_ETCH                       0

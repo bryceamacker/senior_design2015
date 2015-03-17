@@ -303,7 +303,7 @@ void process_right_rotary_data() {
         if ((get_right_motor_location() >= f_rightTargetPosition) && (u8_rightAtTarget == 0)){
             u8_rightAtTarget = 1;
             right_motor_stop();
-            if ((u8_routineBlock == 1) && (u8_leftAtTarget == 1)) {
+            if ((u8_routineBlock == 1)) {
                 u8_routineBlock = 0;
             }
         }
@@ -315,7 +315,7 @@ void process_right_rotary_data() {
         if ((get_right_motor_location() <= f_rightTargetPosition) && (u8_rightAtTarget == 0)){
             u8_rightAtTarget = 1;
             right_motor_stop();
-            if ((u8_routineBlock == 1) && (u8_leftAtTarget == 1)) {
+            if ((u8_routineBlock == 1)) {
                 u8_routineBlock = 0;
             }
         }
@@ -348,7 +348,7 @@ void process_left_rotary_data() {
         if ((get_left_motor_location() >= f_leftTargetPosition) && (u8_leftAtTarget == 0)) {
             u8_leftAtTarget = 1;
             left_motor_stop();
-            if ((u8_routineBlock == 1) && (u8_rightAtTarget == 1)) {
+            if ((u8_routineBlock == 1)) {
                 u8_routineBlock = 0;
                 #ifdef DEBUG_BUILD
                 printf("Finished routine\n");
@@ -364,7 +364,7 @@ void process_left_rotary_data() {
         if ((get_left_motor_location() <= f_leftTargetPosition) && (u8_leftAtTarget == 0)) {
             u8_leftAtTarget = 1;
             left_motor_stop();
-            if ((u8_routineBlock == 1) && (u8_rightAtTarget == 1)) {
+            if ((u8_routineBlock == 1)) {
                 u8_routineBlock = 0;
                 #ifdef DEBUG_BUILD
                 printf("Finished routine\n");
