@@ -134,9 +134,6 @@ void pic_game_player_init() {
     // Initialize all the timers and comparators for the servos
     servo_init();
 
-    // Delay to let the configurations to take place
-    DELAY_MS(500);
-
     // Initialize the game arm
     game_arm_init();
 
