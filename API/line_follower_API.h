@@ -99,13 +99,17 @@ uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM
 
 /**
  * @brief Handle a right angle left turn
+ *
+ * @param u8_curve Whether or not to use a curved turn
 **/
-void handle_left_turn(uint8_t u8_final);
+void handle_left_turn(uint8_t u8_curve);
 
 /**
  * @brief Handle a reverse right angle left turn
+ *
+ * @param u8_curve Whether or not to use a curved turn
 **/
-void handle_reverse_left_turn(uint8_t u8_final);
+void handle_reverse_left_turn(uint8_t u8_curve);
 
 /**
 * @brief Determine whether or not the robot has reached a right turn
@@ -117,13 +121,17 @@ uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NU
 
 /**
  * @brief Handle a right angle right turn
+ *
+ * @param u8_curve Whether or not to use a curved turn
 **/
-void handle_right_turn(uint8_t u8_final);
+void handle_right_turn(uint8_t u8_curve);
 
 /**
  * @brief Handle a reverse right angle right turn
+ *
+ * @param u8_curve Whether or not to use a curved turn
 **/
-void handle_reverse_right_turn(uint8_t u8_final);
+void handle_reverse_right_turn(uint8_t u8_curve);
 
 /**
  * @brief Reverse until the robot gets back on a line

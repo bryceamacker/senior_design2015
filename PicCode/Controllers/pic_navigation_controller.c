@@ -27,6 +27,9 @@
 char u8_c;
 char u8_c2;
 
+// Game order
+uint8_t pu8_gameOrder[4];
+
 extern queue_t navigationRoutineQueue;
 extern queue_t navigationMoveDistanceQueue;
 extern uint8_t u8_routineBlock;
@@ -51,6 +54,11 @@ int main (void) {
     // Initialize pic and print out serial menu
     configBasic(HELLO_MSG);
     pic_navigation_init();
+
+    pu8_gameOrder[0] = SIMON;
+    pu8_gameOrder[1] = RUBIKS;
+    pu8_gameOrder[2] = ETCH;
+    pu8_gameOrder[3] = CARD;
 
     navigation_serial_menu();
 
@@ -507,21 +515,13 @@ void navigate_course() {
         final_game_preparations(pu8_gameOrder[u8_currentGame]);
 
         // Tell the game player to play a game
-        play_game(pu8_gameOrder[u8_currentGame]);
         #ifdef DEBUG_BUILD
         printf("Reached game %u\n", u8_currentGame);
         #endif
+        DELAY_MS(2500);
 
-        // Get out of the box and turn around
-        enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
-        enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
-        enqueue(&navigationRoutineQueue, TURN_180);
-
-        // Initiate this
-        check_for_routine();
-
-        // Wait until this finishes
-        block_until_all_routines_done();
+        // Leave the game box in preperation to follow the line back
+        prepare_to_leave_game(pu8_gameOrder[u8_currentGame]);
 
         // Get back on the line after spining around
         reverse_until_line();
@@ -531,6 +531,7 @@ void navigate_course() {
 
         // Increment to the next game
         u8_currentGame++;
+
     }
 
     // Get to the finish line

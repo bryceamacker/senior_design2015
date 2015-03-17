@@ -128,8 +128,12 @@ void follow_line_to_box(float f_maxSpeed) {
                     u8_lastTurn = LEFT_TURN;
                 }
 
-                // Handle the left turn, flag that we are turning
-                handle_left_turn(1);
+                // Handle the left turn, curve turn if we've branched
+                if (u8_branchedFromMainLine == 1) {
+                    handle_left_turn(1);
+                } else {
+                    handle_left_turn(0);
+                }
             }
             // Check for a right turn
             else if (check_for_right_turn(pau16_sensorValues) == 1) {
@@ -145,8 +149,12 @@ void follow_line_to_box(float f_maxSpeed) {
                     u8_lastTurn = RIGHT_TURN;
                 }
 
-                // Handle the right turn, flag that we are turning
-                handle_right_turn(1);
+                // Handle the right turn, curve turn if we've branched
+                if (u8_branchedFromMainLine == 1) {
+                    handle_right_turn(1);
+                } else {
+                    handle_right_turn(0);
+                }
             }
             // Otherwise just continue along the line correcting movement as needed
             else {
@@ -236,10 +244,13 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
                     }
                 }
 
+                // Wait until we turn, then get back on the line
+                block_until_all_routines_done();
+                reverse_until_line();
+
                 // Maybe the sensors missed the box, check to see if the stack is depleted
                 if (stack_is_empty(branchedTurnStack) == 1) {
-                    // Wait until this last turn has finished
-                    block_until_all_routines_done();
+                    // We're back at the main line
                     return;
                 }
             }
@@ -317,86 +328,7 @@ void follow_line_back_to_main_line_reverse(float f_maxSpeed) {
             }
         }
     } // while(1)
-} // follow_line_back_to_main_line
-
-void follow_line_to_box_pid(float f_maxSpeed) {
-    uint16_t pau16_sensorValues[SENSOR_NUM];
-    uint16_t u16_position;
-
-    int16_t i16_proportional;
-    int16_t i16_derivative;
-    int16_t i16_last_proportional;
-    int16_t i16_integral;
-    int16_t i16_error;
-    int16_t i16_lineCenter;
-
-    uint8_t u8_detectingSensors;
-    uint8_t i;
-
-    const int max = f_maxSpeed;
-    i16_last_proportional = 0;
-    i16_integral = 0;
-
-    // Find the center of the line we are constantly trying to stay at
-    i16_lineCenter = ((1000 * (SENSOR_NUM - 1)) / 2);
-
-    while(1) {
-        // Get the average position of the line
-        u16_position = 1000 * get_line(pau16_sensorValues);
-        i16_proportional = ((int)u16_position) - 2000;
-
-        // Compute the derivative (change) and integral (sum) of the
-        // position.
-        i16_derivative = i16_proportional - i16_last_proportional;
-        i16_integral += i16_proportional;
-
-        i16_last_proportional = i16_proportional;
-
-        i16_error = u16_position - i16_lineCenter;
-        u8_detectingSensors = 0;
-
-        // Sum up the array
-        for (i = 0; i < SENSOR_NUM; i++) {
-            u8_detectingSensors += pau16_sensorValues[i];
-        }
-
-        if (u8_detectingSensors >= SENSOR_NUM - 2) {
-            motors_stop();
-            return;
-        } else {
-            // Compute the difference between the two motor power settings,
-            // m1 - m2.  If this is a positive number the robot will turn
-            // to the right.  If it is a negative number, the robot will
-            // turn to the left, and the magnitude of the number determines
-            // the sharpness of the turn.
-            int power_difference = i16_proportional/20 + i16_integral/10000 + i16_derivative*3/2;
-            #ifdef DEBUG_BUILD
-            printf("Power: %i Prop: %i Int: %i, Der: %i\n", power_difference, i16_proportional, i16_integral, i16_derivative);
-            #endif
-            power_difference = power_difference / 2;
-            // Compute the actual motor settings.  We never set either motor
-            // to a negative value.
-            if(power_difference > max)
-                power_difference = max;
-            if(power_difference < -max)
-                power_difference = -max;
-            if(power_difference < 0){
-                #ifdef DEBUG_BUILD
-                printf("Max + power: %i", max+power_difference);
-                #endif
-                right_motor_fwd(max+power_difference);
-                left_motor_fwd(max);
-            }
-            else{
-                #ifdef DEBUG_BUILD
-                printf("Max - power: %i", max-power_difference);
-                #endif
-                right_motor_fwd(max);
-                left_motor_fwd(max-power_difference);
-            }
-        }
-    }
-}
+} // follow_line_back_to_main_line_reverse
 
 // Recenter the robot over the line while moving forwards
 void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
@@ -583,14 +515,16 @@ uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM
 }
 
 // Handle left turn
-void handle_left_turn(uint8_t u8_final) {
+void handle_left_turn(uint8_t u8_curve) {
     motors_stop();
 
     // Queue all the routines for a left turn
-    enqueue(&navigationRoutineQueue, PREPARE_TURN);
-    enqueue(&navigationRoutineQueue, LEFT_TURN);
-    if (u8_final == 2) {                                /// THIS NEVER HAPPENS, SHOULD BE REMOVED FROM THE CODE
-        enqueue(&navigationRoutineQueue, FINISH_TURN);
+    if (u8_curve == 0) {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN);
+        enqueue(&navigationRoutineQueue, LEFT_TURN);
+    } else {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
+        enqueue(&navigationRoutineQueue, LEFT_CURVE_TURN);
     }
 
     // Initiate these routines
@@ -598,14 +532,16 @@ void handle_left_turn(uint8_t u8_final) {
 }
 
 // Handle a reverse left turn
-void handle_reverse_left_turn(uint8_t u8_final) {
+void handle_reverse_left_turn(uint8_t u8_curve) {
     motors_stop();
 
     // Detecting a left turn while moving backwards means turning right
-    enqueue(&navigationRoutineQueue, PREPARE_REVERSE_TURN);
-    enqueue(&navigationRoutineQueue, RIGHT_TURN);
-    if (u8_final == 2) {                                /// THIS NEVER HAPPENS, SHOULD BE REMOVED FROM THE CODE
-        enqueue(&navigationRoutineQueue, FINISH_REVERSE_TURN);
+    if (u8_curve == 0) {
+        enqueue(&navigationRoutineQueue, PREPARE_REVERSE_TURN);
+        enqueue(&navigationRoutineQueue, RIGHT_TURN);
+    } else {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
+        enqueue(&navigationRoutineQueue, RIGHT_CURVE_TURN);
     }
 
     // Initiate these routines
@@ -635,14 +571,16 @@ uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NU
 }
 
 // Handle right turn
-void handle_right_turn(uint8_t u8_final) {
+void handle_right_turn(uint8_t u8_curve) {
     motors_stop();
 
     // Queue all the routines for a right turn
-    enqueue(&navigationRoutineQueue, PREPARE_TURN);
-    enqueue(&navigationRoutineQueue, RIGHT_TURN);
-    if (u8_final == 0) {
-        enqueue(&navigationRoutineQueue, FINISH_TURN);
+    if (u8_curve == 0) {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN);
+        enqueue(&navigationRoutineQueue, RIGHT_TURN);
+    } else {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
+        enqueue(&navigationRoutineQueue, RIGHT_CURVE_TURN);
     }
 
     // Initiate these routines
@@ -650,14 +588,16 @@ void handle_right_turn(uint8_t u8_final) {
 }
 
 // Handle a reverse right turn
-void handle_reverse_right_turn(uint8_t u8_final) {
+void handle_reverse_right_turn(uint8_t u8_curve) {
     motors_stop();
 
     // Detecting a right turn while moving backwards means turning left
-    enqueue(&navigationRoutineQueue, PREPARE_REVERSE_TURN);
-    enqueue(&navigationRoutineQueue, LEFT_TURN);
-    if (u8_final == 0) {
-        enqueue(&navigationRoutineQueue, FINISH_REVERSE_TURN);
+    if (u8_curve == 0) {
+        enqueue(&navigationRoutineQueue, PREPARE_REVERSE_TURN);
+        enqueue(&navigationRoutineQueue, LEFT_TURN);
+    } else {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
+        enqueue(&navigationRoutineQueue, LEFT_CURVE_TURN);
     }
 
     // Initiate these routines
