@@ -168,6 +168,9 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
         // Leave the game box in preperation to follow the line back
         prepare_to_leave_game(pu8_gameOrder[u8_currentGame]);
 
+        // Get back on the line after spining around
+        reverse_until_line();
+
         // Get back to the main line
         follow_line_back_to_main_line(BASE_SPEED);
 

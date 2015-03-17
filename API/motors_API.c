@@ -558,6 +558,11 @@ void turn_90_degrees(float f_speed, uint8_t u8_direction) {
     }
 }
 
+// Prepare for a curved turn
+void prepare_for_curve_turn(float f_speed) {
+    move_by_distance(PREPARE_CURVE_TURN_DISTANCE, f_speed);
+}
+
 // Turn robot 90 degrees in a curve
 void turn_90_degree_curve(float f_speed, uint8_t u8_direction) {
     if (u8_direction == RIGHT_DIRECTION) {
@@ -645,24 +650,24 @@ void prepare_to_leave_game(uint8_t u8_game) {
             enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
             enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
             enqueue(&navigationRoutineQueue, TURN_180);
-            enqueue(&navigationRoutineQueue, FINISH_180_TURN);
+            // enqueue(&navigationRoutineQueue, FINISH_180_TURN);
             break;
         case RUBIKS:
             enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
             enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
             enqueue(&navigationRoutineQueue, TURN_180);
-            enqueue(&navigationRoutineQueue, FINISH_180_TURN);
+            // enqueue(&navigationRoutineQueue, FINISH_180_TURN);
             break;
         case ETCH:
             enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
             enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
             enqueue(&navigationRoutineQueue, TURN_180);
-            enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
-            enqueue(&navigationMoveDistanceQueue, FINISH_180_TURN_DISTANCE/2);
+            // enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+            // enqueue(&navigationMoveDistanceQueue, FINISH_180_TURN_DISTANCE/2);
             break;
         case CARD:
             enqueue(&navigationRoutineQueue, TURN_180);
-            enqueue(&navigationRoutineQueue, FINISH_180_TURN);
+            // enqueue(&navigationRoutineQueue, FINISH_180_TURN);
             break;
     }
     // Initiate this
@@ -776,6 +781,12 @@ void handle_routine(uint8_t routine) {
             printf("Routine: turning left curve\n");
             #endif
             turn_90_degree_curve(BASE_SPEED, LEFT_DIRECTION);
+            break;
+        case PREPARE_TURN_CURVE:
+            #ifdef DEBUG_BUILD
+            printf("Routine: prepare for curve turn\n");
+            #endif
+            prepare_for_curve_turn(BASE_SPEED);
             break;
         case PLAY_GAME_PAUSE:
             #ifdef DEBUG_BUILD

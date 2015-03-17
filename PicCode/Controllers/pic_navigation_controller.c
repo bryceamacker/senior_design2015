@@ -503,15 +503,19 @@ void navigate_course() {
         // Find a box
         follow_line_to_box(BASE_SPEED);
 
-        // Just a delay to make it obvious that we've reached a box
-        DELAY_MS(2500);
-        printf("Reached game %u\n", ++u8_currentGame);
+        // Make our final preperations
+        final_game_preparations(pu8_gameOrder[u8_currentGame]);
+
+        // Tell the game player to play a game
+        play_game(pu8_gameOrder[u8_currentGame]);
+        #ifdef DEBUG_BUILD
+        printf("Reached game %u\n", u8_currentGame);
+        #endif
 
         // Get out of the box and turn around
         enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
         enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
         enqueue(&navigationRoutineQueue, TURN_180);
-        enqueue(&navigationRoutineQueue, FINISH_180_TURN);
 
         // Initiate this
         check_for_routine();
@@ -519,8 +523,14 @@ void navigate_course() {
         // Wait until this finishes
         block_until_all_routines_done();
 
+        // Get back on the line after spining around
+        reverse_until_line();
+
         // Get back to the main line
         follow_line_back_to_main_line(BASE_SPEED);
+
+        // Increment to the next game
+        u8_currentGame++;
     }
 
     // Get to the finish line

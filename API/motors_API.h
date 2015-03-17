@@ -54,6 +54,8 @@
 #define PREPARE_90_TURN_DISTANCE        180                     // mm to travel before turning 90 degrees
 #define DEGREE_90_TURN_REVS             1.0                     // Revolutions that equal a 90 degree turn
 
+#define PREPARE_CURVE_TURN_DISTANCE     50                      // mm to prepare for curve turns
+
 #define FINISH_180_TURN_DISTANCE        220                     // mm to compensate for a 180 degree turn
 
 #define BACK_AWAY_FROM_GAME_DISTANCE    100                     // Backing away from games distance
@@ -92,7 +94,8 @@ typedef enum {
     MOVE_INTO_BOX =                 14,
     TURN_180 =                      15,
     RIGHT_CURVE_TURN =              16,
-    LEFT_CURVE_TURN =               17
+    LEFT_CURVE_TURN =               17,
+    PREPARE_TURN_CURVE =            18
 } motorRoutines;
 
 ///////////////////////////////////////////////
@@ -250,7 +253,7 @@ void motors_move_forward(float f_speed);
 void motors_move_reverse(float f_speed);
 
 /**
- * @brief Prepare the robot for a 90 degree turn using delays
+ * @brief Prepare the robot for a 90 degree turn
  *
  * @param f_speed speed to move the robot
 **/
@@ -263,6 +266,13 @@ void prepare_for_90_degree_turn(float f_speed);
  * @param u8_direction Direction to turn
 **/
 void turn_90_degrees(float f_speed, uint8_t u8_direction);
+
+/**
+ * @brief Prepare the robot for a 90 degree curve turn
+ *
+ * @param f_speed speed to move the robot
+**/
+void prepare_for_curve_turn(float f_speed);
 
 /**
  * @brief Turn the robot by 90 degrees in a curve

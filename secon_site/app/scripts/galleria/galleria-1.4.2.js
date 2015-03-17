@@ -2656,7 +2656,7 @@ Galleria.prototype = {
                 portrait: 0,
                 color: 'aaaaaa'
             },
-            wait: 5000, // 1.2.7
+            wait: true, // 1.2.7
             width: 'auto',
             youtube: {
                 modestbranding: 1,

@@ -126,6 +126,11 @@ void handle_right_turn(uint8_t u8_final);
 void handle_reverse_right_turn(uint8_t u8_final);
 
 /**
+ * @brief Reverse until the robot gets back on a line
+**/
+void reverse_until_line();
+
+/**
  * @brief Check for a line, used when turning to see if we're branching from the main line
 **/
 uint8_t check_for_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);

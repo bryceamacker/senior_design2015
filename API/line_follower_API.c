@@ -86,16 +86,21 @@ void follow_line_to_box(float f_maxSpeed) {
     while(1) {
         read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
         if (u8_routineBlock == 0) {
-            // If we just got out of a turn and we saw a line during it, we've branched from main line
-            if ((u8_turnRan == 1) && (u8_lineContinuationDetected == 1)) {
-                #ifdef DEBUG_BUILD
-                printf("Branched from the main line\n");
-                #endif
+            if (u8_turnRan == 1) {
+                // Get back on a line after turning
+                reverse_until_line();
 
-                // Keep up with our first turn away from the main line
-                push(&branchedTurnStack, u8_lastTurn);
+                // If we just got out of a turn and we saw a line during it, we've branched from main line
+                if (u8_lineContinuationDetected == 1) {
+                    #ifdef DEBUG_BUILD
+                    printf("Branched from the main line\n");
+                    #endif
 
-                u8_branchedFromMainLine = 1;
+                    // Keep up with our first turn away from the main line
+                    push(&branchedTurnStack, u8_lastTurn);
+
+                    u8_branchedFromMainLine = 1;
+                }
             }
             u8_turnRan = 0;
 
@@ -150,7 +155,7 @@ void follow_line_to_box(float f_maxSpeed) {
             u8_lineContinuationDetected = 1;
         }
         // We're reparing for a turn, check to see if the line continues on
-        else if (u8_currentRoutine == PREPARE_TURN) {
+        else if ((u8_currentRoutine == PREPARE_TURN) || (u8_currentRoutine == PREPARE_TURN_CURVE)) {
             if (check_for_line(pau16_sensorValues) == 0) {
                 u8_lineContinuationDetected = 0;
             }
@@ -584,7 +589,7 @@ void handle_left_turn(uint8_t u8_final) {
     // Queue all the routines for a left turn
     enqueue(&navigationRoutineQueue, PREPARE_TURN);
     enqueue(&navigationRoutineQueue, LEFT_TURN);
-    if (u8_final == 0) {
+    if (u8_final == 2) {                                /// THIS NEVER HAPPENS, SHOULD BE REMOVED FROM THE CODE
         enqueue(&navigationRoutineQueue, FINISH_TURN);
     }
 
@@ -599,7 +604,7 @@ void handle_reverse_left_turn(uint8_t u8_final) {
     // Detecting a left turn while moving backwards means turning right
     enqueue(&navigationRoutineQueue, PREPARE_REVERSE_TURN);
     enqueue(&navigationRoutineQueue, RIGHT_TURN);
-    if (u8_final == 0) {
+    if (u8_final == 2) {                                /// THIS NEVER HAPPENS, SHOULD BE REMOVED FROM THE CODE
         enqueue(&navigationRoutineQueue, FINISH_REVERSE_TURN);
     }
 
@@ -657,6 +662,29 @@ void handle_reverse_right_turn(uint8_t u8_final) {
 
     // Initiate these routines
     check_for_routine();
+}
+
+// Reverse until the robot gets back on a line
+void reverse_until_line() {
+    uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
+
+    #ifdef DEBUG_BUILD
+    printf("Getting back to a line\n");
+    #endif
+
+    motors_move_reverse(BASE_SPEED);
+
+    while(1) {
+        read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
+
+        // If we see a line, no box, and no turns, then we are back on a line
+        if ((check_for_line(pau16_sensorValues) == 1)
+        && (check_for_left_turn(pau16_sensorValues) == 0)
+        && (check_for_right_turn(pau16_sensorValues) == 0)
+        && (check_for_box(pau16_sensorValues) == 0)) {
+            return;
+        }
+    }
 }
 
 // Check for a line in the center
