@@ -22,7 +22,6 @@
 #include "sensor_array_2.h"
 #include "sensor_array_3.h"
 #include "sensor_array_4.h"
-#include "sensor_array_5.h"
 #ifdef DEBUG_BUILD
 #include <stdio.h>
 #endif
@@ -58,6 +57,10 @@ void sensor_array_init(void);
  * @param u8_line Line to calibrate
  */
 void calibrate(char u8_readMode, uint8_t u8_line);
+
+/**
+ * @brief Calibrate all the sensor arrays
+ */
 void calibrateAllSensorArrays();
 
 ///////////////////////////////////////////////

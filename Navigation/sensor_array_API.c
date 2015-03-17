@@ -38,9 +38,6 @@ void sensor_array_init() {
 
     sensor_array_init_line4();
     calibrate(QTR_EMITTERS_ON, 4);
-
-    // sensor_array_init_line5();
-    // calibrate(QTR_EMITTERS_ON, 5);
 }
 
 // Calibrate a sensor
@@ -91,8 +88,10 @@ void config_outputs(uint8_t u8_line) {
         case 4:
             config_outputs_line4();
             break;
-        case 5:
-            config_outputs_line5();
+        default:
+            #ifdef DEBUG_BUILD
+            printf("NOT GOOD CAP'N\n");
+            #endif
             break;
     }
 }
@@ -112,8 +111,10 @@ void config_inputs(uint8_t u8_line) {
         case 4:
             config_inputs_line4();
             break;
-        case 5:
-            config_inputs_line5();
+        default:
+            #ifdef DEBUG_BUILD
+            printf("NOT GOOD CAP'N\n");
+            #endif
             break;
     }
 }
@@ -133,8 +134,10 @@ void set_sensors_high(uint8_t u8_line) {
         case 4:
             set_sensors_high_line4();
             break;
-        case 5:
-            set_sensors_high_line5();
+        default:
+            #ifdef DEBUG_BUILD
+            printf("NOT GOOD CAP'N\n");
+            #endif
             break;
     }
 }
@@ -154,8 +157,10 @@ void check_sensor_values(uint16_t* pau16_sensorValues, uint16_t u16_delta, uint8
         case 4:
             check_sensor_values_line4(pau16_sensorValues, u16_delta);
             break;
-        case 5:
-            check_sensor_values_line5(pau16_sensorValues, u16_delta);
+        default:
+            #ifdef DEBUG_BUILD
+            printf("NOT GOOD CAP'N\n");
+            #endif
             break;
     }
 }
@@ -175,8 +180,10 @@ void emitters_on(uint8_t u8_line) {
         case 4:
             emitters_on_line4();
             break;
-        case 5:
-            emitters_on_line5();
+        default:
+            #ifdef DEBUG_BUILD
+            printf("NOT GOOD CAP'N\n");
+            #endif
             break;
     }
 }
@@ -196,8 +203,10 @@ void emitters_off(uint8_t u8_line) {
         case 4:
             emitters_off_line4();
             break;
-        case 5:
-            emitters_off_line5();
+        default:
+            #ifdef DEBUG_BUILD
+            printf("NOT GOOD CAP'N\n");
+            #endif
             break;
     }
 }
@@ -216,9 +225,6 @@ uint16_t get_line_max_value(uint8_t u8_line) {
             break;
         case 4:
             return get_line_max_value_line4();
-            break;
-        case 5:
-            return get_line_max_value_line5();
             break;
         default:
             #ifdef DEBUG_BUILD
@@ -244,8 +250,10 @@ void set_line_max_value(uint16_t u16_maxValue, uint8_t u8_line) {
         case 4:
             set_line_max_value_line4(u16_maxValue);
             break;
-        case 5:
-            set_line_max_value_line5(u16_maxValue);
+        default:
+            #ifdef DEBUG_BUILD
+            printf("NOT GOOD CAP'N\n");
+            #endif
             break;
     }
 }
