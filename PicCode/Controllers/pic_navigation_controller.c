@@ -131,6 +131,8 @@ void navigation_serial_command(uint8_t u8_command) {
             printf("\nChoose a direction to turn\n");
             printf("   Press 'l' turn left\n");
             printf("   Press 'r' turn right\n");
+            printf("   Press 'e' turn left curve\n");
+            printf("   Press 'k' turn right curve\n");
             u8_c = inChar();
 
             if (u8_c == 'r') {
@@ -143,6 +145,16 @@ void navigation_serial_command(uint8_t u8_command) {
                 printf("Turning 90 degrees left\n");
                 enqueue(&navigationRoutineQueue, PREPARE_TURN);
                 enqueue(&navigationRoutineQueue, LEFT_TURN);
+                check_for_routine();
+            }
+            else if (u8_c == 'e') {
+                printf("Turning 90 degrees right in a curve\n");
+                enqueue(&navigationRoutineQueue, RIGHT_CURVE_TURN);
+                check_for_routine();
+            }
+            else if (u8_c == 'k') {
+                printf("Turning 90 degrees left in a curve\n");
+                enqueue(&navigationRoutineQueue, LEFT_CURVE_TURN);
                 check_for_routine();
             }
             else {

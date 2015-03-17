@@ -90,7 +90,9 @@ typedef enum {
     PLAY_GAME_PAUSE =               12,
     FINISH_180_TURN =               13,
     MOVE_INTO_BOX =                 14,
-    TURN_180 =                      15
+    TURN_180 =                      15,
+    RIGHT_CURVE_TURN =              16,
+    LEFT_CURVE_TURN =               17
 } motorRoutines;
 
 ///////////////////////////////////////////////
@@ -261,6 +263,14 @@ void prepare_for_90_degree_turn(float f_speed);
  * @param u8_direction Direction to turn
 **/
 void turn_90_degrees(float f_speed, uint8_t u8_direction);
+
+/**
+ * @brief Turn the robot by 90 degrees in a curve
+ *
+ * @param f_speed speed to move the robot
+ * @param u8_direction Direction to turn
+**/
+void turn_90_degree_curve(float f_speed, uint8_t u8_direction);
 
 /**
  * @brief Turn the robot by 180 degrees

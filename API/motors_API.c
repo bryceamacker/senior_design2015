@@ -303,7 +303,7 @@ void process_right_rotary_data() {
         if ((get_right_motor_location() >= f_rightTargetPosition) && (u8_rightAtTarget == 0)){
             u8_rightAtTarget = 1;
             right_motor_stop();
-            if (u8_routineBlock == 1) {
+            if ((u8_routineBlock == 1) && (u8_leftAtTarget == 1)) {
                 u8_routineBlock = 0;
             }
         }
@@ -315,7 +315,7 @@ void process_right_rotary_data() {
         if ((get_right_motor_location() <= f_rightTargetPosition) && (u8_rightAtTarget == 0)){
             u8_rightAtTarget = 1;
             right_motor_stop();
-            if (u8_routineBlock == 1) {
+            if ((u8_routineBlock == 1) && (u8_leftAtTarget == 1)) {
                 u8_routineBlock = 0;
             }
         }
@@ -348,7 +348,7 @@ void process_left_rotary_data() {
         if ((get_left_motor_location() >= f_leftTargetPosition) && (u8_leftAtTarget == 0)) {
             u8_leftAtTarget = 1;
             left_motor_stop();
-            if (u8_routineBlock == 1) {
+            if ((u8_routineBlock == 1) && (u8_rightAtTarget == 1)) {
                 u8_routineBlock = 0;
                 #ifdef DEBUG_BUILD
                 printf("Finished routine\n");
@@ -364,7 +364,7 @@ void process_left_rotary_data() {
         if ((get_left_motor_location() <= f_leftTargetPosition) && (u8_leftAtTarget == 0)) {
             u8_leftAtTarget = 1;
             left_motor_stop();
-            if (u8_routineBlock == 1) {
+            if ((u8_routineBlock == 1) && (u8_rightAtTarget == 1)) {
                 u8_routineBlock = 0;
                 #ifdef DEBUG_BUILD
                 printf("Finished routine\n");
@@ -546,9 +546,8 @@ void prepare_for_90_degree_turn(float f_speed) {
     move_by_distance(PREPARE_90_TURN_DISTANCE, f_speed);
 }
 
-// Turn robot 90 degrees by time
+// Turn robot 90 degrees
 void turn_90_degrees(float f_speed, uint8_t u8_direction) {
-    // prepare_for_90_degree_turn(f_speed);
     if (u8_direction == RIGHT_DIRECTION) {
         move_right_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_speed);
         move_left_motor_by_revolutions(DEGREE_90_TURN_REVS, f_speed);
@@ -559,6 +558,15 @@ void turn_90_degrees(float f_speed, uint8_t u8_direction) {
     }
 }
 
+// Turn robot 90 degrees in a curve
+void turn_90_degree_curve(float f_speed, uint8_t u8_direction) {
+    if (u8_direction == RIGHT_DIRECTION) {
+        move_left_motor_by_revolutions((DEGREE_90_TURN_REVS*2), f_speed);
+    }
+    if (u8_direction == LEFT_DIRECTION) {
+        move_right_motor_by_revolutions((DEGREE_90_TURN_REVS*2), f_speed);
+    }
+}
 // Reverse after turning 90 degrees to compensate for the preparing movement
 void finish_90_degree_turn(float f_speed) {
     move_by_distance((-1.0 * PREPARE_90_TURN_DISTANCE), f_speed);
@@ -756,6 +764,18 @@ void handle_routine(uint8_t routine) {
             printf("Routine: moving reverse %u mm\n", u16_distance);
             #endif
             move_by_distance(i16_distance*1.0, BASE_SPEED);
+            break;
+        case RIGHT_CURVE_TURN:
+            #ifdef DEBUG_BUILD
+            printf("Routine: turning right curve\n");
+            #endif
+            turn_90_degree_curve(BASE_SPEED, RIGHT_DIRECTION);
+            break;
+        case LEFT_CURVE_TURN:
+            #ifdef DEBUG_BUILD
+            printf("Routine: turning left curve\n");
+            #endif
+            turn_90_degree_curve(BASE_SPEED, LEFT_DIRECTION);
             break;
         case PLAY_GAME_PAUSE:
             #ifdef DEBUG_BUILD
