@@ -596,8 +596,8 @@ void display_draw_number(uint8_t u8_number) {
     u8_tensDigit = u8_number/10;
     u8_onesDigit = u8_number - (10*u8_tensDigit);
 
-    display1_draw_number(u8_tensDigit);
-    display2_draw_number(u8_onesDigit);
+    display1_draw_number(u8_onesDigit);
+    display2_draw_number(u8_tensDigit);
 }
 
 #ifdef DEBUG_BUILD
@@ -614,7 +614,7 @@ void test_ss_displays(void) {
             return;
         }
 
-        DELAY_MS(500);
+        DELAY_MS(100);
     }
 }
 #endif

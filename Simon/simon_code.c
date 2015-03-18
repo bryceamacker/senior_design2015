@@ -651,7 +651,7 @@ void _ISRFAST _T5Interrupt (void) {
     if (u16_milliSeconds >= (SIMON_DURATION * 1000)) {
         u8_simonFinished = 1;
     }
-    display_draw_number(u16_milliSeconds % 1000);
+    display_draw_number(u16_milliSeconds / 1000);
     _T5IF = 0;  //clear interrupt flag
 }
 

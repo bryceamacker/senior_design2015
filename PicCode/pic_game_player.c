@@ -42,7 +42,8 @@ typedef enum {
     PLAY_RUBIK,
     PLAY_CARDS,
     IDLE,
-    WAIT
+    WAIT,
+    CONF
 } picGamePlayerState;
 
 // States for the I2C interrupt
@@ -60,6 +61,7 @@ volatile uint16_t u16_index;
 volatile picGamePlayerState e_picState;
 volatile I2C_STATE e_mystate = STATE_WAIT_FOR_ADDR;
 
+
 // Function declarations
 void pic_game_player_init(void);
 void I2C_check_command(volatile char *psz_s1);
@@ -68,14 +70,32 @@ void wait_for_start_signal(void);
 // Main loop for the game player PIC using I2C commands
 int main(void) {
     // Start off in wait state, waiting for the LED to turn off
-    strncpy((char *) sz_currentStateString, sz_waitString, BUFFSIZE);
-    e_picState = IDLE;
+    strncpy((char *) sz_currentStateString, sz_confString, BUFFSIZE);
+    e_picState = CONF;
 
     // Initialize pic and print out serial menu
     configBasic(HELLO_MSG);
     pic_game_player_init();
 
+    display_draw_number(50);
+
+    #ifdef DEBUG_BUILD
+    printf("Waiting for configuration\n");
+    #endif
+
+    while(e_picState == CONF) {
+        doHeartbeat();
+    }
+
+    #ifdef DEBUG_BUILD
+    printf("Finished configuration\n");
+    #endif
+
     if (SKIP_START_LIGHT == 0) {
+        // Move to the idle state, letting the motor controller know that it's time to move
+        strncpy((char *) sz_currentStateString, sz_waitString, BUFFSIZE);
+        e_picState = WAIT;
+
         // Wait for the start signal
         display_draw_number(START_LIGHT_NUMBER);
         wait_for_start_signal();
@@ -182,17 +202,21 @@ void I2C_check_command(volatile char *psz_s1) {
     else if(strcmp((char*) psz_s1, sz_playCardsString) == 0) {
         e_picState = PLAY_CARDS;
     }
+    // Wait
+    else if(strcmp((char*) psz_s1, sz_waitString) == 0) {
+        e_picState = WAIT;
+    }
     // Display command
     else if(strcmp((char*) sz_dispStringCheck, sz_dispString) == 0) {
         if ((psz_s1[4] == 'L') || (psz_s1[4] == 'R')) {
             u8_tens = psz_s1[3] - '0';
 
-            display1_draw_number(u8_tens);
+            display2_draw_number(u8_tens);
 
             if (psz_s1[4] == 'L') {
-                draw_L(2);
+                draw_L(1);
             } else if (psz_s1[4] == 'R') {
-                draw_R(2);
+                draw_R(1);
             }
         } else {
             u8_tens = psz_s1[3] - '0';
@@ -204,7 +228,7 @@ void I2C_check_command(volatile char *psz_s1) {
     }
     // Idle
     else {
-        e_picState = IDLE;
+        // e_picState = IDLE;
     }
     strncpy((char *) sz_currentStateString, (char *) psz_s1, BUFFSIZE);
 }

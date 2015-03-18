@@ -31,18 +31,19 @@
 
 #define SIMON_NUMBER            10
 
-#define ETCH_NUMBER             20
-#define ETCH_I_NUMBER           21
-#define ETCH_E1_NUMBER          22
-#define ETCH_E2_NUMBER          23
-#define ETCH_E3_NUMBER          24
+#define RUBIKS_NUMBER           20
 
-#define RUBIKS_NUMBER           30
+#define ETCH_NUMBER             30
+#define ETCH_I_NUMBER           31
+#define ETCH_E1_NUMBER          32
+#define ETCH_E2_NUMBER          33
+#define ETCH_E3_NUMBER          34
+
 #define CARD_NUMBER             40
 #define NAVIGATING_NUMBER       99
 
-#define ON_VALUE  0
-#define OFF_VALUE 1
+#define ON_VALUE  1
+#define OFF_VALUE 0
 
 typedef enum {
   A = 0,

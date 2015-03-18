@@ -31,8 +31,8 @@
 #warning "Navigation: DEBUG BUILD"
 #endif
 
-#define START_BUTTON_PUSHED     (_RF4 == 0)
-#define START_BUTTON_RELEASED   (_RF4 == 1)
+#define START_BUTTON_PUSHED     (_RG9 == 0)
+#define START_BUTTON_RELEASED   (_RG9 == 1)
 
 #define SIMON_BUTTON_PUSHED     (_RG6 == 0)
 #define SIMON_BUTTON_RELEASED   (_RG6 == 1)
@@ -46,14 +46,16 @@
 #define RUBIKS_BUTTON_PUSHED    (_RG9 == 0)
 #define RUBIKS_BUTTON_RELEASED  (_RG9 == 1)
 
-#define UP_BUTTON_PUSHED        (_RG9 == 0)
-#define UP_BUTTON_RELEASED      (_RG9 == 1)
+#define UP_BUTTON_PUSHED        (_RG7 == 0)
+#define UP_BUTTON_RELEASED      (_RG7 == 1)
 
-#define DOWN_BUTTON_PUSHED      (_RG7 == 0)
-#define DOWN_BUTTON_RELEASED    (_RG7 == 1)
+#define DOWN_BUTTON_PUSHED      (_RG6 == 0)
+#define DOWN_BUTTON_RELEASED    (_RG6 == 1)
 
-#define SET_BUTTON_PUSHED       (_RG6 == 0)
-#define SET_BUTTON_RELEASED     (_RG6 == 1)
+#define SET_BUTTON_PUSHED       (_RG9 == 0)
+#define SET_BUTTON_RELEASED     (_RG9 == 1)
+
+#define DEBOUNCE_DELAY          10
 
 // I2C buffer
 char sz_recieveString[BUFFSIZE];
@@ -77,16 +79,22 @@ void run_static_course(uint8_t pu8_gameOrder[4]);
 void navigate_course(uint8_t pu8_gameOrder[4]);
 void play_game(gameID game);
 void configure_robot(void);
+void configure_game_order();
+void configure_static_course_selection();
+void configure_branch_order();
 void setup_start_button(void);
 void wait_for_start_button_push(void);
 void setup_game_buttons(void);
-void get_game_order(uint8_t pu8_gameOrder[4]);
+void send_display_number(uint8_t u8_number);
+void send_display_value(char sz_displayValueString[2]);
 #ifdef DEBUG_BUILD
 void print_order(uint8_t pu8_gameOrder[4]);
 #endif
 
 // Main loop for the navigation PIC using I2C commands
 int main (void) {
+    char sz_sendString[BUFFSIZE];
+
     u8_gameBlock = 0;
     u8_staticCourseNumber = 0;
 
@@ -104,6 +112,9 @@ int main (void) {
         #endif
         wait_for_start_button_push();
     }
+
+    strncpy(sz_sendString, sz_waitString, BUFFSIZE);
+    writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
 
     calibrateAllSensorArrays();
 
@@ -132,9 +143,6 @@ int main (void) {
 
 // Initialization for the navigation PIC
 void pic_navigation_init() {
-    // Allow the game player to boot up first
-    DELAY_MS(5000);
-
     // Initialize everything to follow a line
     line_follower_init();
 
@@ -260,8 +268,8 @@ void play_game(gameID game) {
 
 // Set up the start button
 void setup_start_button() {
-    CONFIG_RF4_AS_DIG_INPUT();
-    ENABLE_RF4_PULLUP();
+    CONFIG_RG15_AS_DIG_INPUT();
+    // ENABLE_RG15_PULLUP();
     DELAY_US(1);
 }
 
@@ -292,27 +300,14 @@ void setup_game_buttons() {
 }
 
 void configure_robot(void) {
-    char tempBuffer[4];
-    char numBuffer[2];
-    char branchBuffer[2];
-    char sz_sendString[BUFFSIZE];
-    char currentDirection;
-
-    uint8_t u8_branchCount;
-    currentDirection = 'L';
-
-    u8_branchCount = 0;
+    #ifdef DEBUG_BUILD
+    printf("Configuring robot\n");
+    #endif
 
     if (STATIC_ORDER == 0) {
-        #ifdef DEBUG_BUILD
-        printf("Waiting for game order\n");
-        #endif
-        get_game_order(pu8_gameOrder);
-
-        #ifdef DEBUG_BUILD
-        print_order(pu8_gameOrder);
-        #endif
-    } else {
+        configure_game_order();
+    }
+    else {
         pu8_gameOrder[0] = SIMON;
         pu8_gameOrder[1] = RUBIKS;
         pu8_gameOrder[2] = ETCH;
@@ -320,110 +315,11 @@ void configure_robot(void) {
     }
 
     if (SKIP_STATIC_COURSE_SELECTION == 0) {
-        while (SET_BUTTON_RELEASED) {
-            if (DOWN_BUTTON_PUSHED) {
-                if (u8_staticCourseNumber == 0) {
-                    u8_staticCourseNumber = 99;
-                } else {
-                    u8_staticCourseNumber--;
-                }
-                strncpy(tempBuffer, sz_dispString, 4);
-                itoa (numBuffer, u8_staticCourseNumber, 10);
-
-                if (u8_staticCourseNumber < 10) {
-                    numBuffer[0] = '0';
-                }
-
-                strcat(tempBuffer, numBuffer);
-                strncpy(sz_sendString, tempBuffer, BUFFSIZE);
-                writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
-
-                #ifdef DEBUG_BUILD
-                printf("Static course %u\n", u8_staticCourseNumber);
-                printf("Created string %s\n", sz_sendString);
-                #endif
-            }
-            if (UP_BUTTON_PUSHED) {
-                if (u8_staticCourseNumber == 99) {
-                    u8_staticCourseNumber = 0;
-                } else {
-                    u8_staticCourseNumber++;
-                }
-                strncpy(tempBuffer, sz_dispString, 4);
-                itoa (numBuffer, u8_staticCourseNumber, 10);
-
-                if (u8_staticCourseNumber < 10) {
-                    numBuffer[0] = '0';
-                }
-
-                strcat(tempBuffer, numBuffer);
-                strncpy(sz_sendString, tempBuffer, BUFFSIZE);
-                writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
-
-                #ifdef DEBUG_BUILD
-                printf("Static course %u\n", u8_staticCourseNumber);
-                printf("Created string %s\n", sz_sendString);
-                #endif
-            }
-
-            // Simple debounce
-            DELAY_MS(10);
-        }
+        configure_static_course_selection();
     }
+
     if (SKIP_BRANCH_LIST_SETUP == 0) {
-        while (u8_branchCount <= 3) {
-            if (UP_BUTTON_PUSHED) {
-                currentDirection = 'R';
-                strncpy(tempBuffer, sz_dispString, 4);
-
-                branchBuffer[0] = (char)(((uint8_t)'0') + u8_branchCount+1);
-                branchBuffer[1] = currentDirection;
-
-                strcat(tempBuffer, branchBuffer);
-                strncpy(sz_sendString, tempBuffer, BUFFSIZE);
-                writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
-
-                #ifdef DEBUG_BUILD
-                printf("Branch %u: %c\n", u8_branchCount, currentDirection);
-                printf("Created string %s\n", sz_sendString);
-                #endif
-            }
-            if (DOWN_BUTTON_PUSHED) {
-                currentDirection = 'L';
-                strncpy(tempBuffer, sz_dispString, 4);
-
-                branchBuffer[0] = (char)(((uint8_t)'0') + u8_branchCount+1);
-                branchBuffer[1] = currentDirection;
-
-                strcat(tempBuffer, branchBuffer);
-                strncpy(sz_sendString, tempBuffer, BUFFSIZE);
-                writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
-
-                #ifdef DEBUG_BUILD
-                printf("Branch %u: %c\n", u8_branchCount, currentDirection);
-                printf("Created string %s\n", sz_sendString);
-                #endif
-            }
-            if (SET_BUTTON_PUSHED) {
-                pu8_branchList[u8_branchCount] = currentDirection;
-
-                strncpy(tempBuffer, sz_dispString, 4);
-
-                branchBuffer[0] = (char)(((uint8_t)'0') + u8_branchCount+1);
-                branchBuffer[1] = currentDirection;
-
-                strcat(tempBuffer, branchBuffer);
-                strncpy(sz_sendString, tempBuffer, BUFFSIZE);
-                writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
-
-                #ifdef DEBUG_BUILD
-                printf("Branch set %u: %c\n", u8_branchCount, currentDirection);
-                printf("Created string %s\n", sz_sendString);
-                #endif
-
-                u8_branchCount++;
-            }
-        }
+        configure_branch_order();
     } else {
         pu8_branchList[0] = 'L';
         pu8_branchList[1] = 'R';
@@ -432,8 +328,7 @@ void configure_robot(void) {
     }
 }
 
-// Wait until buttons for every game have been pressed
-void get_game_order(uint8_t pu8_gameOrder[4]) {
+void configure_game_order() {
     uint8_t u8_simonSet;
     uint8_t u8_cardSet;
     uint8_t u8_etchSet;
@@ -446,6 +341,10 @@ void get_game_order(uint8_t pu8_gameOrder[4]) {
     u8_rubiksSet = 0;
 
     u8_position = 0;
+
+    #ifdef DEBUG_BUILD
+    printf("Waiting for game order\n");
+    #endif
 
     while (!(u8_simonSet && u8_cardSet && u8_etchSet && u8_rubiksSet)) {
         if (SIMON_BUTTON_PUSHED && (!u8_simonSet)) {
@@ -486,6 +385,155 @@ void get_game_order(uint8_t pu8_gameOrder[4]) {
         }
         doHeartbeat();
     }
+
+    #ifdef DEBUG_BUILD
+    print_order(pu8_gameOrder);
+    #endif
+}
+
+void configure_static_course_selection() {
+    #ifdef DEBUG_BUILD
+    printf("Selecting static course\n");
+    #endif
+
+    while (SET_BUTTON_RELEASED) {
+        if (DOWN_BUTTON_PUSHED) {
+            if (u8_staticCourseNumber == 0) {
+                u8_staticCourseNumber = 99;
+            } else {
+                u8_staticCourseNumber--;
+            }
+
+            send_display_number(u8_staticCourseNumber);
+
+            #ifdef DEBUG_BUILD
+            printf("Static course %u\n", u8_staticCourseNumber);
+            #endif
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(DOWN_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+        if (UP_BUTTON_PUSHED) {
+            if (u8_staticCourseNumber == 99) {
+                u8_staticCourseNumber = 0;
+            } else {
+                u8_staticCourseNumber++;
+            }
+
+            send_display_number(u8_staticCourseNumber);
+
+            #ifdef DEBUG_BUILD
+            printf("Static course %u\n", u8_staticCourseNumber);
+            #endif
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(UP_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+    }
+    DELAY_MS(DEBOUNCE_DELAY);
+    while(SET_BUTTON_PUSHED);
+    DELAY_MS(DEBOUNCE_DELAY);
+}
+
+void configure_branch_order() {
+    char branchBuffer[2];
+    char currentDirection;
+    uint8_t u8_branchCount;
+
+    u8_branchCount = 0;
+    currentDirection = 'L';
+
+    #ifdef DEBUG_BUILD
+    printf("Selecting branch order\n");
+    #endif
+
+    while (u8_branchCount <= 3) {
+        if (DOWN_BUTTON_PUSHED) {
+            currentDirection = 'L';
+
+            branchBuffer[0] = (char)(((int)'0') + u8_branchCount + 1);
+            branchBuffer[1] = currentDirection;
+
+            send_display_value(branchBuffer);
+
+            #ifdef DEBUG_BUILD
+            printf("Branch %u: %c\n", u8_branchCount+1, currentDirection);
+            #endif
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(DOWN_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+        if (UP_BUTTON_PUSHED) {
+            currentDirection = 'R';
+
+            branchBuffer[0] = (char)(((int)'0') + u8_branchCount + 1);
+            branchBuffer[1] = currentDirection;
+
+            send_display_value(branchBuffer);
+
+            #ifdef DEBUG_BUILD
+            printf("Branch %u: %c\n", u8_branchCount+1, currentDirection);
+            #endif
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(UP_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+        if (SET_BUTTON_PUSHED) {
+            pu8_branchList[u8_branchCount] = currentDirection;
+
+            branchBuffer[0] = (char)(((int)'0') + u8_branchCount + 1);
+            branchBuffer[1] = currentDirection;
+
+            send_display_value(branchBuffer);
+
+            #ifdef DEBUG_BUILD
+            printf("Branch set %u: %c\n", u8_branchCount+1, currentDirection);
+            #endif
+
+            u8_branchCount++;
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(SET_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+    }
+
+    DELAY_MS(DEBOUNCE_DELAY);
+    while(SET_BUTTON_PUSHED);
+    DELAY_MS(DEBOUNCE_DELAY);
+}
+
+void send_display_number(uint8_t u8_number) {
+    char numBuffer[2];
+
+    itoa(numBuffer, u8_number, 10);
+
+    if (u8_number < 10) {
+        numBuffer[1] = numBuffer[0];
+        numBuffer[0] = '0';
+    }
+
+    send_display_value(numBuffer);
+}
+
+void send_display_value(char sz_displayValueString[2]) {
+    char sz_sendString[BUFFSIZE];
+    char tempBuffer[BUFFSIZE];
+
+    strncpy(tempBuffer, sz_dispString, 4);
+    strcat(tempBuffer, sz_displayValueString);
+    strncpy(sz_sendString, tempBuffer, BUFFSIZE);
+
+    writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
+
+    #ifdef DEBUG_BUILD
+    printf("Sending display string %s\n", sz_sendString);
+    #endif
+    DELAY_MS(DEBOUNCE_DELAY);
 }
 
 #ifdef DEBUG_BUILD

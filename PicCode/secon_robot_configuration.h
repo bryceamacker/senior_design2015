@@ -25,9 +25,9 @@
 // Configurations
 #define STATIC_ORDER                    1
 #define SKIP_START_LIGHT                0
-#define SKIP_START_BUTTON               1
+#define SKIP_START_BUTTON               0
 #define SKIP_STATIC_COURSE_SELECTION    1
-#define SKIP_BRANCH_LIST_SETUP          1
+#define SKIP_BRANCH_LIST_SETUP          0
 
 #define SKIP_SIMON                      0
 #define SKIP_ETCH                       0
@@ -41,4 +41,5 @@ char sz_playCardsString[BUFFSIZE] =     "Cards";
 char sz_playEtchString[BUFFSIZE] =      "Etch.";
 char sz_idleString[BUFFSIZE] =          "Idle.";
 char sz_waitString[BUFFSIZE] =          "Wait.";
+char sz_confString[BUFFSIZE] =          "Conf.";
 char sz_dispString[BUFFSIZE] =          "Dis";

@@ -183,9 +183,12 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                 u8_lineContinuationDetected = 0;
             }
             // At any time if we've hit a box while in a turn then we've mistaken a box as a turn
-            else if ((check_for_box(pau16_sensorValues) == 1) && (u8_branchedFromMainLine == 1)){
+            else if (check_for_box(pau16_sensorValues) == 1){
                 // If we're not branched from the mainline, check what turn we should do and flag that we have branched, flag that we hit a T (used for reverse)
                 if (u8_branchedFromMainLine == 0) {
+                    // Clear out the routine queue and stop
+                    clear_routines();
+
                     // If the expected turn is left
                     if (u8_expectedTurn == 'L') {
                         handle_left_turn(1);
@@ -252,7 +255,8 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
                 // Check which type of turn it is and handle it
                 if ((u8_lastTurn == 1) && (u8_TIntersection == 1)) {
                     u8_TIntersection = 0;
-                    enqueue(&navigationRoutineQueue, TURN_180);
+                    enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+                    enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*2);
                     check_for_routine();
                 }
                 else if (u8_nextTurn == RIGHT_TURN) {
