@@ -77,6 +77,7 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
     uint8_t u8_turnRan = 0;
     uint8_t u8_branchedFromMainLine = 0;
     uint8_t u8_lastTurn = 0;
+    uint8_t u8_handlingTIntersection = 0;
 
     uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
 
@@ -100,6 +101,7 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                     // Keep up with our first turn away from the main line
                     push(&branchedTurnStack, u8_lastTurn);
 
+                    u8_handlingTIntersection = 0;
                     u8_branchedFromMainLine = 1;
                 }
             }
@@ -107,23 +109,30 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
 
             // Check for a box to stop at
             if (check_for_box(pau16_sensorValues) == 1) {
-                #ifdef DEBUG_BUILD
-                printf("Yay a box!\n");
-                #endif
-
                 // If we're not branched from the mainline, check what turn we should do and flag that we have branched, flag that we hit a T (used for reverse)
                 if (u8_branchedFromMainLine == 0) {
+                    #ifdef DEBUG_BUILD
+                    printf("T-intersection\n");
+                    #endif
+
                     // If the expected turn is left
                     if (u8_expectedTurn == 'L') {
-                        handle_left_turn(1);
+                        push(&branchedTurnStack, LEFT_TURN);
+                        handle_left_turn(0);
                     } else {
-                        handle_right_turn(1);
+                        push(&branchedTurnStack, RIGHT_TURN);
+                        handle_right_turn(0);
                     }
                     u8_branchedFromMainLine = 1;
                     u8_TIntersection = 1;
+                    u8_handlingTIntersection = 1;
                 }
                 // If we are branched from the mainline, play a game
                 else {
+                    #ifdef DEBUG_BUILD
+                    printf("Leeeet's play!\n");
+                    #endif
+
                     // Leeeet's play
                     motors_stop();
                     return;
@@ -185,21 +194,32 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
             // At any time if we've hit a box while in a turn then we've mistaken a box as a turn
             else if (check_for_box(pau16_sensorValues) == 1){
                 // If we're not branched from the mainline, check what turn we should do and flag that we have branched, flag that we hit a T (used for reverse)
-                if (u8_branchedFromMainLine == 0) {
+                if ((u8_branchedFromMainLine == 0)  && (u8_handlingTIntersection == 0)) {
+                    #ifdef DEBUG_BUILD
+                    printf("Wait no it's a T-intersection\n");
+                    #endif
+
                     // Clear out the routine queue and stop
                     clear_routines();
 
                     // If the expected turn is left
                     if (u8_expectedTurn == 'L') {
-                        handle_left_turn(1);
+                        push(&branchedTurnStack, LEFT_TURN);
+                        handle_left_turn(0);
                     } else {
-                        handle_right_turn(1);
+                        push(&branchedTurnStack, RIGHT_TURN);
+                        handle_right_turn(0);
                     }
                     u8_branchedFromMainLine = 1;
                     u8_TIntersection = 1;
+                    u8_handlingTIntersection = 1;
                 }
                 // If we are branched from the mainline, play a game
-                else {
+                else if (u8_handlingTIntersection == 0){
+                    #ifdef DEBUG_BUILD
+                    printf("Wait no, leeeet's play!\n");
+                    #endif
+
                     // Forget the last turn since it was a mistake
                     pop(&branchedTurnStack);
 
@@ -254,7 +274,10 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
 
                 // Check which type of turn it is and handle it
                 if ((u8_lastTurn == 1) && (u8_TIntersection == 1)) {
-                    u8_TIntersection = 0;
+                    #ifdef DEBUG_BUILD
+                    printf("Passing back over T\n");
+                    #endif
+
                     enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
                     enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*2);
                     check_for_routine();
@@ -281,6 +304,11 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
                         handle_right_turn(1);
                     }
                 }
+                else {
+                    #ifdef DEBUG_BUILD
+                    printf("Something went wrong, we shouldn't be here\n");
+                    #endif
+                }
 
                 // Wait until we turn, then get back on the line
                 block_until_all_routines_done();
@@ -288,10 +316,13 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
 
                 // Maybe the sensors missed the box, check to see if the stack is depleted
                 if (stack_is_empty(branchedTurnStack) == 1) {
-                    // Compensate for the last turn, don't want to miss anything on the main line
-                    enqueue(&navigationRoutineQueue, FINISH_TURN);
-                    check_for_routine();
-                    block_until_all_routines_done();
+                    if (u8_TIntersection == 0) {
+                        // Compensate for the last turn, don't want to miss anything on the main line
+                        enqueue(&navigationRoutineQueue, FINISH_TURN);
+                        check_for_routine();
+                        block_until_all_routines_done();
+                    }
+                    u8_TIntersection = 0;
 
                     // We're back at the main line
                     return;

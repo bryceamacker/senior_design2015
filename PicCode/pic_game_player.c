@@ -77,7 +77,7 @@ int main(void) {
     configBasic(HELLO_MSG);
     pic_game_player_init();
 
-    display_draw_number(50);
+    display_draw_number(00);
 
     #ifdef DEBUG_BUILD
     printf("Waiting for configuration\n");
@@ -176,10 +176,8 @@ void pic_game_player_init() {
 // Check incoming I2C messages
 void I2C_check_command(volatile char *psz_s1) {
     uint8_t i;
-    uint8_t u8_tens;
-    uint8_t u8_ones;
-    uint8_t u8_displayNumber;
     char sz_dispStringCheck[3];
+    char drawBuffer[2];
 
     // Weird display string check
     for (i=0;i<3;i++) {
@@ -207,28 +205,11 @@ void I2C_check_command(volatile char *psz_s1) {
         e_picState = WAIT;
     }
     // Display command
-    else if(strcmp((char*) sz_dispStringCheck, sz_dispString) == 0) {
-        if ((psz_s1[4] == 'L') || (psz_s1[4] == 'R')) {
-            u8_tens = psz_s1[3] - '0';
+    else if(strstr((char*) psz_s1, sz_dispString) == sz_dispString) {
+        drawBuffer[0] = psz_s1[3];
+        drawBuffer[1] = psz_s1[4];
 
-            display2_draw_number(u8_tens);
-
-            if (psz_s1[4] == 'L') {
-                draw_L(1);
-            } else if (psz_s1[4] == 'R') {
-                draw_R(1);
-            }
-        } else {
-            u8_tens = psz_s1[3] - '0';
-            u8_ones = psz_s1[4] - '0';
-
-            u8_displayNumber = (u8_tens * 10) + u8_ones;
-            display_draw_number(u8_displayNumber);
-        }
-    }
-    // Idle
-    else {
-        // e_picState = IDLE;
+        display_draw_buffer(drawBuffer);
     }
     strncpy((char *) sz_currentStateString, (char *) psz_s1, BUFFSIZE);
 }

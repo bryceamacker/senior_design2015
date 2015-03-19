@@ -44,7 +44,6 @@ void ssd_init(void) {
     CONFIG_RB12_AS_DIG_OUTPUT();
 
     init_sequence();
-    display_draw_number(00);
 }
 
 void init_sequence() {
@@ -88,6 +87,7 @@ void init_sequence() {
     DELAY_MS(100);
     display_all_on();
     DELAY_MS(100);
+    display_all_off();
 }
 
 ///////////////////////////////////////////////
@@ -95,6 +95,39 @@ void init_sequence() {
 // SSD primitives
 //
 ///////////////////////////////////////////////
+uint8_t check_if_character_alpha(char character) {
+    if ((character == 'A')
+    || (character == 'B')
+    || (character == 'C')
+    || (character == 'D')
+    || (character == 'E')
+    || (character == 'F')
+    || (character == 'G')
+    || (character == 'H')
+    || (character == 'I')
+    || (character == 'J')
+    || (character == 'K')
+    || (character == 'L')
+    || (character == 'M')
+    || (character == 'N')
+    || (character == 'O')
+    || (character == 'P')
+    || (character == 'Q')
+    || (character == 'R')
+    || (character == 'S')
+    || (character == 'T')
+    || (character == 'U')
+    || (character == 'V')
+    || (character == 'W')
+    || (character == 'X')
+    || (character == 'Y')
+    || (character == 'Z')) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 void turn_on_display1_segment(SSDsegments segment) {
   switch (segment) {
     case A:
@@ -428,6 +461,106 @@ void draw_nine(uint8_t u8_display) {
   }
 }
 
+void draw_C(uint8_t u8_display) {
+  if (u8_display == 1) {
+    set_display1_segment(A, ON_VALUE);
+    set_display1_segment(B, OFF_VALUE);
+    set_display1_segment(C, OFF_VALUE);
+    set_display1_segment(D, ON_VALUE);
+    set_display1_segment(E, ON_VALUE);
+    set_display1_segment(F, ON_VALUE);
+    set_display1_segment(G, OFF_VALUE);
+  } else if (u8_display == 2) {
+    set_display2_segment(A, ON_VALUE);
+    set_display2_segment(B, OFF_VALUE);
+    set_display2_segment(C, OFF_VALUE);
+    set_display2_segment(D, ON_VALUE);
+    set_display2_segment(E, ON_VALUE);
+    set_display2_segment(F, ON_VALUE);
+    set_display2_segment(G, OFF_VALUE);
+  }
+}
+
+void draw_E(uint8_t u8_display) {
+  if (u8_display == 1) {
+    set_display1_segment(A, ON_VALUE);
+    set_display1_segment(B, OFF_VALUE);
+    set_display1_segment(C, OFF_VALUE);
+    set_display1_segment(D, ON_VALUE);
+    set_display1_segment(E, ON_VALUE);
+    set_display1_segment(F, ON_VALUE);
+    set_display1_segment(G, ON_VALUE);
+  } else if (u8_display == 2) {
+    set_display2_segment(A, ON_VALUE);
+    set_display2_segment(B, OFF_VALUE);
+    set_display2_segment(C, OFF_VALUE);
+    set_display2_segment(D, ON_VALUE);
+    set_display2_segment(E, ON_VALUE);
+    set_display2_segment(F, ON_VALUE);
+    set_display2_segment(G, ON_VALUE);
+  }
+}
+
+void draw_F(uint8_t u8_display) {
+  if (u8_display == 1) {
+    set_display1_segment(A, ON_VALUE);
+    set_display1_segment(B, OFF_VALUE);
+    set_display1_segment(C, OFF_VALUE);
+    set_display1_segment(D, OFF_VALUE);
+    set_display1_segment(E, ON_VALUE);
+    set_display1_segment(F, ON_VALUE);
+    set_display1_segment(G, ON_VALUE);
+  } else if (u8_display == 2) {
+    set_display2_segment(A, ON_VALUE);
+    set_display2_segment(B, OFF_VALUE);
+    set_display2_segment(C, OFF_VALUE);
+    set_display2_segment(D, OFF_VALUE);
+    set_display2_segment(E, ON_VALUE);
+    set_display2_segment(F, ON_VALUE);
+    set_display2_segment(G, ON_VALUE);
+  }
+}
+
+void draw_H(uint8_t u8_display) {
+  if (u8_display == 1) {
+    set_display1_segment(A, OFF_VALUE);
+    set_display1_segment(B, ON_VALUE);
+    set_display1_segment(C, ON_VALUE);
+    set_display1_segment(D, OFF_VALUE);
+    set_display1_segment(E, ON_VALUE);
+    set_display1_segment(F, ON_VALUE);
+    set_display1_segment(G, ON_VALUE);
+  } else if (u8_display == 2) {
+    set_display2_segment(A, OFF_VALUE);
+    set_display2_segment(B, ON_VALUE);
+    set_display2_segment(C, ON_VALUE);
+    set_display2_segment(D, OFF_VALUE);
+    set_display2_segment(E, ON_VALUE);
+    set_display2_segment(F, ON_VALUE);
+    set_display2_segment(G, ON_VALUE);
+  }
+}
+
+void draw_J(uint8_t u8_display) {
+  if (u8_display == 1) {
+    set_display1_segment(A, OFF_VALUE);
+    set_display1_segment(B, ON_VALUE);
+    set_display1_segment(C, ON_VALUE);
+    set_display1_segment(D, ON_VALUE);
+    set_display1_segment(E, ON_VALUE);
+    set_display1_segment(F, OFF_VALUE);
+    set_display1_segment(G, OFF_VALUE);
+  } else if (u8_display == 2) {
+    set_display2_segment(A, OFF_VALUE);
+    set_display2_segment(B, ON_VALUE);
+    set_display2_segment(C, ON_VALUE);
+    set_display2_segment(D, ON_VALUE);
+    set_display2_segment(E, ON_VALUE);
+    set_display2_segment(F, OFF_VALUE);
+    set_display2_segment(G, OFF_VALUE);
+  }
+}
+
 void draw_L(uint8_t u8_display) {
   if (u8_display == 1) {
     set_display1_segment(A, OFF_VALUE);
@@ -448,7 +581,7 @@ void draw_L(uint8_t u8_display) {
   }
 }
 
-void draw_R(uint8_t u8_display) {
+void draw_P(uint8_t u8_display) {
   if (u8_display == 1) {
     set_display1_segment(A, ON_VALUE);
     set_display1_segment(B, ON_VALUE);
@@ -456,12 +589,52 @@ void draw_R(uint8_t u8_display) {
     set_display1_segment(D, OFF_VALUE);
     set_display1_segment(E, ON_VALUE);
     set_display1_segment(F, ON_VALUE);
-    set_display1_segment(G, OFF_VALUE);
+    set_display1_segment(G, ON_VALUE);
   } else if (u8_display == 2) {
     set_display2_segment(A, ON_VALUE);
     set_display2_segment(B, ON_VALUE);
     set_display2_segment(C, OFF_VALUE);
     set_display2_segment(D, OFF_VALUE);
+    set_display2_segment(E, ON_VALUE);
+    set_display2_segment(F, ON_VALUE);
+    set_display2_segment(G, ON_VALUE);
+  }
+}
+
+void draw_R(uint8_t u8_display) {
+  if (u8_display == 1) {
+    set_display1_segment(A, ON_VALUE);
+    set_display1_segment(B, OFF_VALUE);
+    set_display1_segment(C, OFF_VALUE);
+    set_display1_segment(D, OFF_VALUE);
+    set_display1_segment(E, ON_VALUE);
+    set_display1_segment(F, ON_VALUE);
+    set_display1_segment(G, OFF_VALUE);
+  } else if (u8_display == 2) {
+    set_display2_segment(A, ON_VALUE);
+    set_display2_segment(B, OFF_VALUE);
+    set_display2_segment(C, OFF_VALUE);
+    set_display2_segment(D, OFF_VALUE);
+    set_display2_segment(E, ON_VALUE);
+    set_display2_segment(F, ON_VALUE);
+    set_display2_segment(G, OFF_VALUE);
+  }
+}
+
+void draw_U(uint8_t u8_display) {
+  if (u8_display == 1) {
+    set_display1_segment(A, OFF_VALUE);
+    set_display1_segment(B, ON_VALUE);
+    set_display1_segment(C, ON_VALUE);
+    set_display1_segment(D, ON_VALUE);
+    set_display1_segment(E, ON_VALUE);
+    set_display1_segment(F, ON_VALUE);
+    set_display1_segment(G, OFF_VALUE);
+  } else if (u8_display == 2) {
+    set_display2_segment(A, OFF_VALUE);
+    set_display2_segment(B, ON_VALUE);
+    set_display2_segment(C, ON_VALUE);
+    set_display2_segment(D, ON_VALUE);
     set_display2_segment(E, ON_VALUE);
     set_display2_segment(F, ON_VALUE);
     set_display2_segment(G, OFF_VALUE);
@@ -589,6 +762,38 @@ void display2_draw_number(uint8_t u8_number) {
   }
 }
 
+void display_draw_char(char character, uint8_t u8_display) {
+    switch(character) {
+        case 'C':
+            draw_C(u8_display);
+            break;
+        case 'E':
+            draw_E(u8_display);
+            break;
+        case 'F':
+            draw_F(u8_display);
+            break;
+        case 'H':
+            draw_H(u8_display);
+            break;
+        case 'J':
+            draw_J(u8_display);
+            break;
+        case 'L':
+            draw_L(u8_display);
+            break;
+        case 'P':
+            draw_P(u8_display);
+            break;
+        case 'R':
+            draw_R(u8_display);
+            break;
+        case 'U':
+            draw_U(u8_display);
+            break;
+    }
+}
+
 void display_draw_number(uint8_t u8_number) {
     uint8_t u8_tensDigit;
     uint8_t u8_onesDigit;
@@ -598,6 +803,24 @@ void display_draw_number(uint8_t u8_number) {
 
     display1_draw_number(u8_onesDigit);
     display2_draw_number(u8_tensDigit);
+}
+
+void display_draw_buffer(char buffer[2]) {
+    uint8_t u8_number;
+
+    if (check_if_character_alpha(buffer[0]) == 1) {
+        display_draw_char(buffer[0], 2);
+    } else {
+        u8_number = buffer[0] - '0';
+        display2_draw_number(u8_number);
+    }
+
+    if (check_if_character_alpha(buffer[1]) == 1) {
+        display_draw_char(buffer[1], 1);
+    } else {
+        u8_number = buffer[1] - '0';
+        display1_draw_number(u8_number);
+    }
 }
 
 #ifdef DEBUG_BUILD

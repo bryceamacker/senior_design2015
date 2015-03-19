@@ -27,7 +27,8 @@
 #ifndef SSD_DISPLAY_API_H_
 #define SSD_DISPLAY_API_H_
 
-#define START_LIGHT_NUMBER      1
+#define START_BUTTON_NUMBER     1
+#define START_LIGHT_NUMBER      2
 
 #define SIMON_NUMBER            10
 
@@ -75,6 +76,14 @@ void init_sequence(void);
 // SSD primitives
 //
 ///////////////////////////////////////////////
+/**
+ * @brief Stupid little helper to draw characters
+ *
+ * @param character Character to be checked
+ * @return whether or not the character is alpha or not
+**/
+uint8_t check_if_character_alpha(char character);
+
 /**
  * @brief Turn on the given segment for display1
  * @param segment Segment to be turned on
@@ -160,16 +169,18 @@ void draw_eight(uint8_t u8_display);
 void draw_nine(uint8_t u8_display);
 
 /**
-* @brief Draw an 'L' on the display
+* @brief Draw various letters on the display
 * @param u8_display Display to be drawn on
 **/
+void draw_C(uint8_t u8_display);
+void draw_E(uint8_t u8_display);
+void draw_F(uint8_t u8_display);
+void draw_H(uint8_t u8_display);
+void draw_J(uint8_t u8_display);
 void draw_L(uint8_t u8_display);
-
-/**
-* @brief Draw an 'r' on the display
-* @param u8_display Display to be drawn on
-**/
+void draw_P(uint8_t u8_display);
 void draw_R(uint8_t u8_display);
+void draw_U(uint8_t u8_display);
 
 /**
 * @brief Set a particular segment on display1
@@ -213,10 +224,24 @@ void display1_draw_number(uint8_t u8_number);
 void display2_draw_number(uint8_t u8_number);
 
 /**
+* @brief Draw a letter on the display
+* @param character Character to draw
+* @param u8_display Display to be drawn on
+**/
+void display_draw_char(char character, uint8_t u8_display);
+
+/**
  * @brief Draw two digit number across the two displays
  * @param u8_number Number to be drawn
 **/
 void display_draw_number(uint8_t u8_number);
+
+/**
+ * @brief Draw a buffer of characters on the display
+ *
+ * @param buffer[2] Two characters to draw, 0 on 2 and 1 on 1
+*/
+void display_draw_buffer(char buffer[2]);
 
 #ifdef DEBUG_BUILD
 /**

@@ -23,6 +23,7 @@
 #include "line_follower_API.h"
 #include "navigation_port_mapping.h"
 #include "secon_robot_configuration.h"
+#include "SSDisplayAPI.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -56,6 +57,7 @@
 #define SET_BUTTON_RELEASED     (_RG9 == 1)
 
 #define DEBOUNCE_DELAY          10
+#define DISPLAY_DELAY           1500
 
 // I2C buffer
 char sz_recieveString[BUFFSIZE];
@@ -87,6 +89,7 @@ void wait_for_start_button_push(void);
 void setup_game_buttons(void);
 void send_display_number(uint8_t u8_number);
 void send_display_value(char sz_displayValueString[2]);
+void send_I2C_message(char sz_message[BUFFSIZE]);
 #ifdef DEBUG_BUILD
 void print_order(uint8_t pu8_gameOrder[4]);
 #endif
@@ -104,12 +107,17 @@ int main (void) {
     setup_start_button();
     setup_game_buttons();
 
+    send_display_value("CC");
+    DELAY_MS(DISPLAY_DELAY);
     configure_robot();
+    send_display_value("CF");
+    DELAY_MS(DISPLAY_DELAY);
 
     if (SKIP_START_BUTTON == 0) {
         #ifdef DEBUG_BUILD
         printf("Waiting for start button\n");
         #endif
+        send_display_number(START_BUTTON_NUMBER);
         wait_for_start_button_push();
     }
 
@@ -133,7 +141,6 @@ int main (void) {
         run_static_course(pu8_gameOrder);
     }
     else {
-        calibrateAllSensorArrays();
         navigate_course(pu8_gameOrder);
     }
 
@@ -305,6 +312,8 @@ void configure_robot(void) {
     #endif
 
     if (STATIC_ORDER == 0) {
+        send_display_value("C1");
+        DELAY_MS(DISPLAY_DELAY);
         configure_game_order();
     }
     else {
@@ -315,10 +324,14 @@ void configure_robot(void) {
     }
 
     if (SKIP_STATIC_COURSE_SELECTION == 0) {
+        send_display_value("C2");
+        DELAY_MS(DISPLAY_DELAY);
         configure_static_course_selection();
     }
 
     if (SKIP_BRANCH_LIST_SETUP == 0) {
+        send_display_value("C3");
+        DELAY_MS(DISPLAY_DELAY);
         configure_branch_order();
     } else {
         pu8_branchList[0] = 'L';
@@ -396,6 +409,8 @@ void configure_static_course_selection() {
     printf("Selecting static course\n");
     #endif
 
+    send_display_value("00");
+
     while (SET_BUTTON_RELEASED) {
         if (DOWN_BUTTON_PUSHED) {
             if (u8_staticCourseNumber == 0) {
@@ -442,6 +457,8 @@ void configure_branch_order() {
     char currentDirection;
     uint8_t u8_branchCount;
 
+    send_display_value("1L");
+
     u8_branchCount = 0;
     currentDirection = 'L';
 
@@ -485,7 +502,7 @@ void configure_branch_order() {
         if (SET_BUTTON_PUSHED) {
             pu8_branchList[u8_branchCount] = currentDirection;
 
-            branchBuffer[0] = (char)(((int)'0') + u8_branchCount + 1);
+            branchBuffer[0] = (char)(((int)'0') + u8_branchCount + 1 + 1);
             branchBuffer[1] = currentDirection;
 
             send_display_value(branchBuffer);
@@ -528,12 +545,16 @@ void send_display_value(char sz_displayValueString[2]) {
     strcat(tempBuffer, sz_displayValueString);
     strncpy(sz_sendString, tempBuffer, BUFFSIZE);
 
-    writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
+    send_I2C_message(sz_sendString);
 
     #ifdef DEBUG_BUILD
     printf("Sending display string %s\n", sz_sendString);
     #endif
     DELAY_MS(DEBOUNCE_DELAY);
+}
+
+void send_I2C_message(char sz_message[BUFFSIZE]) {
+    writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_message, 6);
 }
 
 #ifdef DEBUG_BUILD
