@@ -86,8 +86,6 @@ void init_sequence() {
     turn_off_display2_segment(G);
     DELAY_MS(100);
     display_all_on();
-    DELAY_MS(100);
-    display_all_off();
 }
 
 ///////////////////////////////////////////////

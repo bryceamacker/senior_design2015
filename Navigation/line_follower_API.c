@@ -288,7 +288,7 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
                     #endif
 
                     if (u8_lastTurn == 1) {
-                        handle_right_turn(1);
+                        handle_right_turn(0);
                     } else {
                         handle_left_turn(1);
                     }
@@ -299,7 +299,7 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
                     #endif
 
                     if (u8_lastTurn == 1) {
-                        handle_left_turn(1);
+                        handle_left_turn(0);
                     } else {
                         handle_right_turn(1);
                     }
@@ -312,13 +312,19 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
 
                 // Wait until we turn, then get back on the line
                 block_until_all_routines_done();
-                reverse_until_line();
+
+                if (stack_is_empty(branchedTurnStack) == 0) {
+                    reverse_until_line();
+                }
 
                 // Maybe the sensors missed the box, check to see if the stack is depleted
                 if (stack_is_empty(branchedTurnStack) == 1) {
                     if (u8_TIntersection == 0) {
                         // Compensate for the last turn, don't want to miss anything on the main line
-                        enqueue(&navigationRoutineQueue, FINISH_TURN);
+                        // enqueue(&navigationRoutineQueue, FINISH_TURN);
+                        reverse_until_branch();
+                        enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH);
                         check_for_routine();
                         block_until_all_routines_done();
                     }
@@ -686,9 +692,9 @@ void reverse_until_line() {
     printf("Getting back to a line\n");
     #endif
 
-    motors_move_reverse(BASE_SPEED);
 
     while(1) {
+        motors_move_reverse(BASE_SPEED);
         read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
 
         // If we see a line, no box, and no turns, then we are back on a line
@@ -696,6 +702,24 @@ void reverse_until_line() {
         && (check_for_left_turn(pau16_sensorValues) == 0)
         && (check_for_right_turn(pau16_sensorValues) == 0)
         && (check_for_box(pau16_sensorValues) == 0)) {
+            return;
+        }
+    }
+}
+void reverse_until_branch() {
+    uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
+
+    #ifdef DEBUG_BUILD
+    printf("Getting back to a branch\n");
+    #endif
+
+    while(1) {
+        motors_move_reverse(BASE_SPEED);
+        read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
+
+        // If we see a line, no box, and no turns, then we are back on a line
+        if ((check_for_line(pau16_sensorValues) == 1)
+        && ((check_for_left_turn(pau16_sensorValues) == 1) || (check_for_right_turn(pau16_sensorValues) == 1))) {
             return;
         }
     }

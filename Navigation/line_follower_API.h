@@ -138,6 +138,7 @@ void handle_reverse_right_turn(uint8_t u8_curve);
  * @brief Reverse until the robot gets back on a line
 **/
 void reverse_until_line();
+void reverse_until_branch();
 
 /**
  * @brief Check for a line, used when turning to see if we're branching from the main line

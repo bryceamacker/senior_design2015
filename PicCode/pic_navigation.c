@@ -359,8 +359,8 @@ void configure_game_order() {
     printf("Waiting for game order\n");
     #endif
 
-    while (!(u8_simonSet && u8_cardSet && u8_etchSet && u8_rubiksSet)) {
-        if (SIMON_BUTTON_PUSHED && (!u8_simonSet)) {
+    while ((u8_simonSet == 0) || (u8_cardSet == 0) || (u8_etchSet == 0) || (u8_rubiksSet == 0)) {
+        if (SIMON_BUTTON_PUSHED && (u8_simonSet == 0)) {
             #ifdef DEBUG_BUILD
             printf("Qeued Simon\n");
             #endif
@@ -368,8 +368,10 @@ void configure_game_order() {
             pu8_gameOrder[u8_position] = SIMON;
             u8_simonSet = 1;
             u8_position++;
+
+            send_display_number(SIMON_NUMBER);
         }
-        else if (CARD_BUTTON_PUSHED && (!u8_cardSet)) {
+        else if (CARD_BUTTON_PUSHED && (u8_cardSet == 0)) {
             #ifdef DEBUG_BUILD
             printf("Qeued Cards\n");
             #endif
@@ -377,8 +379,10 @@ void configure_game_order() {
             pu8_gameOrder[u8_position] = CARD;
             u8_cardSet = 1;
             u8_position++;
+
+            send_display_number(CARD_NUMBER);
         }
-        else if (ETCH_BUTTON_PUSHED && (!u8_etchSet)) {
+        else if (ETCH_BUTTON_PUSHED && (u8_etchSet == 0)) {
             #ifdef DEBUG_BUILD
             printf("Qeued Etch\n");
             #endif
@@ -386,8 +390,10 @@ void configure_game_order() {
             pu8_gameOrder[u8_position] = ETCH;
             u8_etchSet = 1;
             u8_position++;
+
+            send_display_number(ETCH_NUMBER);
         }
-        else if (RUBIKS_BUTTON_PUSHED && (!u8_rubiksSet)) {
+        else if (RUBIKS_BUTTON_PUSHED && (u8_rubiksSet == 0)) {
             #ifdef DEBUG_BUILD
             printf("Qeued Rubiks\n");
             #endif
@@ -395,10 +401,13 @@ void configure_game_order() {
             pu8_gameOrder[u8_position] = RUBIKS;
             u8_rubiksSet = 1;
             u8_position++;
+
+            send_display_number(RUBIKS_NUMBER);
         }
         doHeartbeat();
     }
 
+    DELAY_MS(DISPLAY_DELAY);
     #ifdef DEBUG_BUILD
     print_order(pu8_gameOrder);
     #endif
@@ -416,14 +425,14 @@ void configure_static_course_selection() {
             if (u8_staticCourseNumber == 0) {
                 u8_staticCourseNumber = 99;
             } else {
-                u8_staticCourseNumber--;
+                u8_staticCourseNumber = u8_staticCourseNumber - 1;
             }
 
             send_display_number(u8_staticCourseNumber);
 
-            #ifdef DEBUG_BUILD
-            printf("Static course %u\n", u8_staticCourseNumber);
-            #endif
+            // #ifdef DEBUG_BUILD
+            // printf("Static course %u\n", u8_staticCourseNumber);
+            // #endif
 
             DELAY_MS(DEBOUNCE_DELAY);
             while(DOWN_BUTTON_PUSHED);
@@ -433,14 +442,14 @@ void configure_static_course_selection() {
             if (u8_staticCourseNumber == 99) {
                 u8_staticCourseNumber = 0;
             } else {
-                u8_staticCourseNumber++;
+                u8_staticCourseNumber = u8_staticCourseNumber + 1;
             }
 
             send_display_number(u8_staticCourseNumber);
 
-            #ifdef DEBUG_BUILD
-            printf("Static course %u\n", u8_staticCourseNumber);
-            #endif
+            // #ifdef DEBUG_BUILD
+            // printf("Static course %u\n", u8_staticCourseNumber);
+            // #endif
 
             DELAY_MS(DEBOUNCE_DELAY);
             while(UP_BUTTON_PUSHED);
@@ -505,7 +514,9 @@ void configure_branch_order() {
             branchBuffer[0] = (char)(((int)'0') + u8_branchCount + 1 + 1);
             branchBuffer[1] = currentDirection;
 
-            send_display_value(branchBuffer);
+            if (u8_branchCount < 3) {
+                send_display_value(branchBuffer);
+            }
 
             #ifdef DEBUG_BUILD
             printf("Branch set %u: %c\n", u8_branchCount+1, currentDirection);
@@ -545,11 +556,12 @@ void send_display_value(char sz_displayValueString[2]) {
     strcat(tempBuffer, sz_displayValueString);
     strncpy(sz_sendString, tempBuffer, BUFFSIZE);
 
-    send_I2C_message(sz_sendString);
-
     #ifdef DEBUG_BUILD
     printf("Sending display string %s\n", sz_sendString);
     #endif
+
+    send_I2C_message(sz_sendString);
+
     DELAY_MS(DEBOUNCE_DELAY);
 }
 

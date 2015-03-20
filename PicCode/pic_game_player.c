@@ -175,14 +175,7 @@ void pic_game_player_init() {
 
 // Check incoming I2C messages
 void I2C_check_command(volatile char *psz_s1) {
-    uint8_t i;
-    char sz_dispStringCheck[3];
     char drawBuffer[2];
-
-    // Weird display string check
-    for (i=0;i<3;i++) {
-        sz_dispStringCheck[i] = psz_s1[i];
-    }
 
     // Etch
     if (strcmp((char*) psz_s1, sz_playEtchString) == 0) {
@@ -205,7 +198,7 @@ void I2C_check_command(volatile char *psz_s1) {
         e_picState = WAIT;
     }
     // Display command
-    else if(strstr((char*) psz_s1, sz_dispString) == sz_dispString) {
+    else if(strstr((char*) psz_s1, sz_dispString) != NULL) {
         drawBuffer[0] = psz_s1[3];
         drawBuffer[1] = psz_s1[4];
 
