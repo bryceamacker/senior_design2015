@@ -117,7 +117,15 @@ void game_player_serial_command(uint8_t u8_c) {
             play_rubiks();
             break;
         case 's':
-            play_simon();
+            printf("\nSimon play mode\n");
+            printf("   s) for 15 seconds\n");
+            printf("   i) infinitely\n");
+            u8_c = inChar();
+            if (u8_c == 's') {
+                play_simon();
+            } else if (u8_c == 'i') {
+                play_simon_infinitely();                
+            }
             break;
         case 'd':
             play_card();

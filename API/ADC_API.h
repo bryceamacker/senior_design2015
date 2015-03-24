@@ -27,10 +27,10 @@
 #ifndef ADC_API_H_
 #define ADC_API_H_
 
-#define YELLOW_LIGHT    1
-#define BLUE_LIGHT      0
-#define RED_LIGHT       3
-#define GREEN_LIGHT     2
+#define YELLOW_LIGHT    0
+#define BLUE_LIGHT      1
+#define RED_LIGHT       2
+#define GREEN_LIGHT     3
 
 ///////////////////////////////////////////////
 //

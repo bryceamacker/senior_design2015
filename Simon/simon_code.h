@@ -42,7 +42,7 @@
 #define START_HOVER     YELLOW_HOVER
 
 // Push pulse width constants
-#define YELLOW_PUSH     850
+#define YELLOW_PUSH     800
 #define BLUE_PUSH       990
 #define RED_PUSH        920
 #define GREEN_PUSH      900
@@ -90,6 +90,11 @@ void simon_init(void);
  * @brief Plays simon using servos and photo transistors
  */
 void play_simon(void);
+
+/**
+ * @brief Plays simon using servos and photo transistors infinitely
+ */
+void play_simon_infinitely();
 
 ///////////////////////////////////////////////
 //

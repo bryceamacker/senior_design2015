@@ -141,6 +141,51 @@ void play_simon() {
     simon_retract_buttons();
 }
 
+void play_simon_infinitely() {
+    display_draw_number(SIMON_NUMBER);
+    #ifdef DEBUG_BUILD
+    printf("\n*** Playing Simon ***\n");
+    #endif
+
+    // Grab the Simon and calibrate the sensors
+    game_arm_pull_simon();
+    simon_hover_buttons();
+    DELAY_MS(PLATFORM_WAIT);
+    platform_rubiks();
+    DELAY_MS(PLATFORM_WAIT);
+    calibrate_sensors(); // I don't think we need calibration with the new transistors
+
+    // Stop playing if we exceed 5 rounds
+    while (1) {
+        #ifdef DEBUG_BUILD
+        printf("\nROUND %i\n", u8_roundNum);
+        #endif
+
+        // If it's the first round, hit the start button
+        if (u8_roundNum == 1) {
+            // Push the start button and record the colors
+            simon_push_button(START_SIMON_BUTTON);
+            record_colors(u8_roundNum);
+
+            u8_simonFinished = 0;
+            u16_milliSeconds = 0;
+            simon_hover_button(YELLOW_BUTTON);
+        } else {
+            // Record a certain number of colors
+            record_colors(u8_roundNum);
+        }
+        // Play back the buttons
+        DELAY_MS(500);
+        play_buttons(u8_roundNum);
+        u8_roundNum++;
+    }
+
+    // Let go of the simon and pull the arms back
+    platform_up();
+    DELAY_MS(PLATFORM_WAIT);
+    simon_retract_buttons();
+}
+
 ///////////////////////////////////////////////
 //
 // Simon primitives

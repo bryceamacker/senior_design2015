@@ -39,16 +39,16 @@ void  photo_cell_init() {
 uint16_t read_photo_cell(photoTrans color) {
     switch (color) {
         case YELLOW_TRANS:
-            return adc_read(1);
-            break;
-        case BLUE_TRANS:
             return adc_read(0);
             break;
+        case BLUE_TRANS:
+            return adc_read(1);
+            break;
         case RED_TRANS:
-            return adc_read(3);
+            return adc_read(2);
             break;
         case GREEN_TRANS:
-            return adc_read(2);
+            return adc_read(3);
             break;
         case START_CELL:
             return adc_read(4);

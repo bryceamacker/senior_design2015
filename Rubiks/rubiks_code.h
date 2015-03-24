@@ -31,7 +31,7 @@
 #define RUBIKS_CODE_H_
 
 #define TWIST_CLOCK_PULSE       1000
-#define TWIST_COUNTER_PULSE     2100
+#define TWIST_COUNTER_PULSE     2150
 #define WAIT_TIME               1500
 
 ///////////////////////////////////////////////

@@ -34,18 +34,21 @@ void sensor_array_init_line2() {
 
 // Configures pins as dig outputs
 void config_outputs_line2() {
+    CONFIG_RC1_AS_DIG_OUTPUT();
     CONFIG_RB9_AS_DIG_OUTPUT();
     CONFIG_RB10_AS_DIG_OUTPUT();
     CONFIG_RB11_AS_DIG_OUTPUT();
     CONFIG_RB12_AS_DIG_OUTPUT();
     CONFIG_RB13_AS_DIG_OUTPUT();
     CONFIG_RB14_AS_DIG_OUTPUT();
-    CONFIG_RB15_AS_DIG_OUTPUT();
     CONFIG_RF4_AS_DIG_OUTPUT();
 }
 
 // Configures pins as dig inputs
 void config_inputs_line2() {
+    CONFIG_RC1_AS_DIG_INPUT();
+    DISABLE_RC1_PULLUP();
+
     CONFIG_RB9_AS_DIG_INPUT();
     DISABLE_RB9_PULLUP();
 
@@ -63,9 +66,6 @@ void config_inputs_line2() {
 
     CONFIG_RB14_AS_DIG_INPUT();
     DISABLE_RB14_PULLUP();
-
-    CONFIG_RB15_AS_DIG_INPUT();
-    DISABLE_RB15_PULLUP();
 
     CONFIG_RF4_AS_DIG_INPUT();
     DISABLE_RF4_PULLUP();
