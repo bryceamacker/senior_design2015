@@ -82,14 +82,8 @@ int main (void) {
 
 // Initialization for the navigation PIC
 void pic_navigation_init() {
-    // Allow the game player to boot up first
-    DELAY_MS(5000);
-
     // Initialize everything to follow a line
     line_follower_init();
-
-    // I2C Config
-    configI2C1(400);
 }
 
 ///////////////////////////////////////////////
@@ -137,6 +131,9 @@ void navigation_serial_command(uint8_t u8_command) {
             break;
         case 'n':
             follow_line_to_box(BASE_SPEED, 0);
+            break;
+        case 'p':
+            follow_line_to_box_pid(BASE_SPEED, 0);
             break;
         case 'm':
             follow_line_back_to_main_line(BASE_SPEED);
@@ -218,6 +215,9 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
 
     int16_t i16_revolutions;
     int16_t i16_distance;
+
+    int16_t i16_leftSpeed;
+    int16_t i16_rightSpeed;
 
     char sz_buf[32];
 
@@ -310,6 +310,19 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
                 motors_stop();
             }
             break;
+        case 'p':
+            printf("\nEnter left speed\n");
+            inStringEcho(sz_buf,31);
+            sscanf(sz_buf,"%i", (int16_t *) &i16_leftSpeed);
+            u8_c2 = inChar();
+            printf("\nEnter right speed\n");
+            inStringEcho(sz_buf,31);
+            sscanf(sz_buf,"%i", (int16_t *) &i16_rightSpeed);
+            u8_c2 = inChar();
+
+            set_motors_pid(i16_leftSpeed, i16_rightSpeed);
+
+            break;
         default:
             break;
     }
@@ -325,6 +338,7 @@ void navigation_serial_menu() {
     printf("   c) recalibrate all the sensor arrays\n");
     printf("   g) get line continuously and print line value\n");
     printf("   n) navigate to a box\n");
+    printf("   p) navigate to a box (pid)\n");
     printf("   m) navigate backwards to a mainline\n");
     printf("   h) turn 90 degrees\n");
     printf("   t) turn 180 degrees\n");
@@ -352,6 +366,7 @@ void double_motor_function_menu() {
     printf("   o) move by revolution\n");
     printf("   d) move by distance\n");
     printf("   s) stop\n");
+    printf("   p) set motors pid\n");
 }
 
 // Menu for all the sensor arrays
@@ -366,7 +381,6 @@ void sensor_array_menu() {
     printf("   t) the triple\n");
     printf("   h) the hi-res\n");
     printf("   p) the triple plus the hi-res\n");
-    printf("   b) back line\n");
 }
 
 // Menu for navigation queue stuff
@@ -414,9 +428,6 @@ void sensor_array_print(uint8_t u8_sensorArray) {
                 break;
             case 'p':
                 print_sensor_triple_plus_hi_res();
-                break;
-            case 'b':
-                print_sensor_back();
                 break;
         }
         doHeartbeat();
@@ -492,13 +503,13 @@ void handle_navigation_queue_command(uint8_t u8_function) {
 
 // Print the calculated line position
 void print_get_line() {
-    uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
-    uint16_t u16_position;
+    int16_t i_position;
+    uint16_t pau16_sensors[7];
+    i_position = read_line(pau16_sensors, QTR_EMITTERS_ON);
 
     while(isCharReady() == 0) {
-        read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
-        u16_position = 1000 * get_line(pau16_sensorValues);
-        printf("Line position: %u\n", u16_position);
+        i_position = read_line(pau16_sensors, QTR_EMITTERS_ON);
+        printf("Line position: %u\n", i_position);
     }
 }
 

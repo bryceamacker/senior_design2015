@@ -177,13 +177,7 @@ void read_sensor_hi_res(uint16_t* pau16_hiResSensorValues, char u8_readMode);
  *
 **/
 void read_sensor_triple_plus_hi_res(uint16_t* pau16_tripleHiResSensorValues, char u8_readMode);
-
-/**
- * @brief Read the back line
- * @param pau16_backSensorValues the values from the sensor array
- *
-**/
-void read_sensor_back(uint16_t* pau16_backSensorValues, char u8_readMode);
+int16_t read_line(uint16_t* pau16_sensor_values, char u8_readMode);
 
 ///////////////////////////////////////////////
 //
@@ -196,6 +190,5 @@ void print_all_sensor_arrays(void);
 void print_sensor_triple(void);
 void print_sensor_hi_res(void);
 void print_sensor_triple_plus_hi_res(void);
-void print_sensor_back(void);
 #endif
 #endif

@@ -39,7 +39,7 @@
 #define MOTOR_PWM_PERIOD                20000                   // desired period, in us
 
 #define RIGHT_MOTOR_ADJUSTMENT          1.0                     // Speed adjustment for the right motor
-#define LEFT_MOTOR_ADJUSTMENT           1.07                    // Speed adjustment for the left motor
+#define LEFT_MOTOR_ADJUSTMENT           1.0                     // Speed adjustment for the left motor
 
 #define RIGHT_ENCODER_ADJUSTMENT        1.0                     // Encoder adjustment for the right motor
 #define LEFT_ENCODER_ADJUSTMENT         1.0                     // Encoder adjustment for the left motor
@@ -70,6 +70,8 @@
 #define WHEEL_CIRCUMFERENCE             (WHEEL_DIAMETER * M_PI) // in milimeters
 
 #define BASE_SPEED_DEFAULT              20                      // Base speed duty cycle
+#define LEFT_MAX_SPEED                  (BASE_SPEED_DEFAULT*2)
+#define RIGHT_MAX_SPEED                 (BASE_SPEED_DEFAULT*2)
 
 #define LINE_WIDTH                      25                      // Width of the line in mm
 
@@ -344,6 +346,15 @@ void move_by_revolutions(float f_revolutions, float f_speed);
  * @param f_speed Speed to turn the robot
 **/
 void move_by_distance(float f_distance, float f_speed);
+
+
+/**
+ * @brief Set the robots speed based on PID speeds
+ *
+ * @param i_leftSpeed Speed for the left
+ * @param i_rightSpeed Speed for the right
+**/
+void set_motors_pid(int16_t i_leftSpeed, int16_t i_rightSpeed);
 
 /**
  * @brief Final movements before playing a game

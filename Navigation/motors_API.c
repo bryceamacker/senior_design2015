@@ -535,6 +535,30 @@ void move_by_distance(float f_distance, float f_speed) {
     move_left_motor_by_distance(f_distance, f_speed);
 }
 
+void set_motors_pid(int16_t i_leftSpeed, int16_t i_rightSpeed) {
+    float f_leftPercentage;
+    float f_rightPercentage;
+
+    f_leftPercentage = (i_leftSpeed*100.0/MOTOR_PWM_PERIOD);
+    f_rightPercentage = (i_rightSpeed*100.0/MOTOR_PWM_PERIOD);
+
+    if (f_leftPercentage > LEFT_MAX_SPEED ) {
+        f_leftPercentage = LEFT_MAX_SPEED;
+    }
+    if (f_rightPercentage > RIGHT_MAX_SPEED ) {
+        f_rightPercentage = RIGHT_MAX_SPEED;
+    }
+    if (f_leftPercentage < 0) {
+        f_leftPercentage = 0;
+    }
+    if (f_rightPercentage < 0) {
+        f_rightPercentage = 0;
+    }
+
+    left_motor_fwd(f_leftPercentage);
+    right_motor_fwd(f_rightPercentage);
+}
+
 ///////////////////////////////////////////////
 //
 // Motor routines

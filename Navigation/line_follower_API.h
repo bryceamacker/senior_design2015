@@ -31,6 +31,9 @@
 #ifndef _LINE_FOLLOWER_API_H_
 #define _LINE_FOLLOWER_API_H_
 
+#define KP      0.2
+#define KD      5
+
 /**
  * @brief Initialize everything it takes to follow a line using a sensor array
  */
@@ -51,6 +54,14 @@ void line_follower_init(void);
  * @param u8_expectedTurn What type of turn to expect off of main line
  */
 void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn);
+
+/**
+ * @brief Follow  line until the line sensor sees a box using a PID scheme
+ *
+ * @param f_maxSpeed the max speed the robot will move at
+ * @param u8_expectedTurn What type of turn to expect off of main line
+ */
+void follow_line_to_box_pid(float f_maxSpeed, char u8_expectedTurn);
 
 /**
  * @brief Follow in reverse until the robot gets back to wehre it branched from
@@ -81,6 +92,13 @@ void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_
  * @param pau16_sensorValues Values of the triple hi res sensor array
 **/
 void correct_line_error_reverse(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
+
+/**
+ * @brief Recenter the robot over the line while moving forward using a PID scheme
+ *
+ * @param f_maxSpeed Max speed the robot will travel
+**/
+void correct_line_error_pid(float f_maxSpeed);
 
 /**
  * @brief Determine whether or not the robot has reached a box
@@ -138,6 +156,10 @@ void handle_reverse_right_turn(uint8_t u8_curve);
  * @brief Reverse until the robot gets back on a line
 **/
 void reverse_until_line();
+
+/**
+ * @brief Reverse until the robot gets back to a branch
+**/
 void reverse_until_branch();
 
 /**

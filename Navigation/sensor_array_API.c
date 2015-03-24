@@ -419,10 +419,50 @@ void read_sensor_triple_plus_hi_res(uint16_t* pau16_tripleHiResSensorValues, cha
     }
 }
 
-//Read the back line
-void read_sensor_back(uint16_t* pau16_backSensorValues, char u8_readMode) {
-    read_sensor_array(pau16_backSensorValues, u8_readMode, BACK_LINE);
+int16_t read_line(uint16_t* pau16_sensor_values, char u8_readMode) {
+    uint8_t i;
+    uint8_t u8_onLine;
+
+    uint16_t u16_sum;
+    uint16_t u16_value;
+
+    uint32_t u32_avg;
+
+    static int16_t i_lastValue;
+
+    u8_onLine = 0;
+    u16_sum = 0;
+    u32_avg = 0;
+    i_lastValue = 0;
+
+    read_sensor_array(pau16_sensor_values, u8_readMode, 1);
+
+    for(i = 0;i < SENSOR_NUM;i++) {
+        u16_value = (1000 * pau16_sensor_values[i]);
+
+        if(u16_value > 200) {
+            u8_onLine = 1;
+        }
+
+        u32_avg += (uint32_t)(u16_value) * (i * 1000);
+        u16_sum += u16_value;
+    }
+
+    if(u8_onLine == 0) {
+        if(i_lastValue < (SENSOR_NUM-1)*1000/2) {
+            return 0;
+        } else {
+            return (SENSOR_NUM-1)*1000;
+        }
+
+    }
+
+    i_lastValue = u32_avg/u16_sum;
+
+    return i_lastValue;
 }
+
+
 
 ///////////////////////////////////////////////
 //
@@ -493,19 +533,6 @@ void print_sensor_triple_plus_hi_res() {
 
     for(i = 0; i < SENSOR_NUM*4; i++) {
         printf("%u", pau16_tripleHiResSensorValues[i]);
-    }
-    printf("\n");
-}
-
-// Print the sensor array in the back
-void print_sensor_back() {
-    uint16_t pau16_backSensorValues[SENSOR_NUM];
-    uint8_t i;
-
-    read_sensor_back(pau16_backSensorValues, QTR_EMITTERS_ON);
-
-    for(i = 0; i < SENSOR_NUM; i++) {
-        printf("%u ", pau16_backSensorValues[i]);
     }
     printf("\n");
 }
