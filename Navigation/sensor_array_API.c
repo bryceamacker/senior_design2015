@@ -419,7 +419,8 @@ void read_sensor_triple_plus_hi_res(uint16_t* pau16_tripleHiResSensorValues, cha
     }
 }
 
-int16_t read_line(uint16_t* pau16_sensor_values, char u8_readMode) {
+int16_t read_line(char u8_readMode) {
+    uint16_t pau16_sensors[PID_SENSOR_NUM];
     uint8_t i;
     uint8_t u8_onLine;
 
@@ -435,10 +436,10 @@ int16_t read_line(uint16_t* pau16_sensor_values, char u8_readMode) {
     u32_avg = 0;
     i_lastValue = 0;
 
-    read_sensor_array(pau16_sensor_values, u8_readMode, 1);
+    read_sensor_hi_res(pau16_sensors, u8_readMode);
 
-    for(i = 0;i < SENSOR_NUM;i++) {
-        u16_value = (1000 * pau16_sensor_values[i]);
+    for(i = 0;i < PID_SENSOR_NUM;i++) {
+        u16_value = (1000 * pau16_sensors[i]);
 
         if(u16_value > 200) {
             u8_onLine = 1;
@@ -449,10 +450,10 @@ int16_t read_line(uint16_t* pau16_sensor_values, char u8_readMode) {
     }
 
     if(u8_onLine == 0) {
-        if(i_lastValue < (SENSOR_NUM-1)*1000/2) {
+        if(i_lastValue < (PID_SENSOR_NUM-1)*1000/2) {
             return 0;
         } else {
-            return (SENSOR_NUM-1)*1000;
+            return (PID_SENSOR_NUM-1)*1000;
         }
 
     }

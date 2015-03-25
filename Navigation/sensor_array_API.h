@@ -40,6 +40,8 @@
 #define TRIPLE_SENSOR_NUM               SENSOR_NUM * 3
 #define TRIPLE_HI_RES_SENSOR_NUM        SENSOR_NUM * 4
 
+#define PID_SENSOR_NUM                  SENSOR_NUM * 2
+
 
 ///////////////////////////////////////////////
 //
@@ -177,7 +179,7 @@ void read_sensor_hi_res(uint16_t* pau16_hiResSensorValues, char u8_readMode);
  *
 **/
 void read_sensor_triple_plus_hi_res(uint16_t* pau16_tripleHiResSensorValues, char u8_readMode);
-int16_t read_line(uint16_t* pau16_sensor_values, char u8_readMode);
+int16_t read_line(char u8_readMode);
 
 ///////////////////////////////////////////////
 //

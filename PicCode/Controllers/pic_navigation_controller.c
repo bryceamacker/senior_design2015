@@ -45,10 +45,14 @@ void single_motor_function_menu(void);
 void double_motor_function_menu(void);
 void sensor_array_menu(void);
 void navigation_queue_menu(void);
+void pid_menu(void);
 void sensor_array_print(uint8_t u8_sensorArray);
 void print_get_line(void);
 void navigate_course(void);
 void handle_navigation_queue_command(uint8_t u8_function);
+void handle_pid_command(uint8_t u8_function);
+void follow_line_pid(float f_maxSpeed, uint8_t u8_direction);
+void print_pid_info(float f_maxSpeed);
 
 // Main loop for the navigation PIC controller using serial commands
 int main (void) {
@@ -126,14 +130,13 @@ void navigation_serial_command(uint8_t u8_command) {
             calibrate(QTR_EMITTERS_ON, 3);
             calibrate(QTR_EMITTERS_ON, 4);
             break;
-        case 'g':
-            print_get_line();
-            break;
         case 'n':
             follow_line_to_box(BASE_SPEED, 0);
             break;
         case 'p':
-            follow_line_to_box_pid(BASE_SPEED, 0);
+            pid_menu();
+            u8_function = inChar();
+            handle_pid_command(u8_function);
             break;
         case 'm':
             follow_line_back_to_main_line(BASE_SPEED);
@@ -195,7 +198,7 @@ void navigation_serial_command(uint8_t u8_command) {
             navigate_course();
             break;
         case 's':
-            printf("\nEnter distance in mm\n");
+            printf("\nEnter new base speed\n");
             inStringEcho(sz_buf,31);
             sscanf(sz_buf,"%hhu", (uint8_t *) &u8_newBase);
             u8_c2 = inChar();
@@ -320,7 +323,7 @@ void motor_control(uint8_t u8_motor, uint8_t u8_function) {
             sscanf(sz_buf,"%i", (int16_t *) &i16_rightSpeed);
             u8_c2 = inChar();
 
-            set_motors_pid(i16_leftSpeed, i16_rightSpeed);
+            set_motors_pid(i16_leftSpeed, i16_rightSpeed, FORWARD_MOVEMENT);
 
             break;
         default:
@@ -336,9 +339,8 @@ void navigation_serial_menu() {
     printf("   b) control both motors\n");
     printf("   a) print out the sensor array values\n");
     printf("   c) recalibrate all the sensor arrays\n");
-    printf("   g) get line continuously and print line value\n");
     printf("   n) navigate to a box\n");
-    printf("   p) navigate to a box (pid)\n");
+    printf("   p) pid menu\n");
     printf("   m) navigate backwards to a mainline\n");
     printf("   h) turn 90 degrees\n");
     printf("   t) turn 180 degrees\n");
@@ -398,6 +400,17 @@ void navigation_queue_menu() {
     printf("   d) load move back distance\n");
 }
 
+// Menu for pid specific stuff
+void pid_menu() {
+    printf("\nChoose pid function\n");
+    printf("   w) navigate whole course\n");
+    printf("   b) follow line to box\n");
+    printf("   r) follow line in reverse\n");
+    printf("   c) follow line continuously\n");
+    printf("   g) get line continuously\n");
+    printf("   p) set KP\n");
+    printf("   d) set KD\n");
+}
 // Print a certain line sensor array over and over
 void sensor_array_print(uint8_t u8_sensorArray) {
     while(isCharReady() == 0) {
@@ -501,14 +514,55 @@ void handle_navigation_queue_command(uint8_t u8_function) {
     }
 }
 
+void handle_pid_command(uint8_t u8_function) {
+    float f_newValue;
+    char sz_buf[32];
+
+    switch(u8_function) {
+        case 'w':
+            break;
+        case 'b':
+            follow_line_to_box_pid(BASE_SPEED, 0);
+            break;
+        case 'r':
+            follow_line_pid(BASE_SPEED, BACKWARD_MOVEMENT);
+            break;
+        case 'c':
+            follow_line_pid(BASE_SPEED, FORWARD_MOVEMENT);
+            break;
+        case 'g':
+            print_get_line();
+            break;
+        case 'i':
+            print_pid_info(BASE_SPEED);
+            break;
+        case 'p':
+            printf("\nEnter new KP\n");
+            inStringEcho(sz_buf,31);
+            sscanf(sz_buf,"%f", &f_newValue);
+            u8_c2 = inChar();
+            printf("New value: %f\n", f_newValue);
+
+            set_KP(f_newValue);
+            break;
+        case 'd':
+            printf("\nEnter new KP\n");
+            inStringEcho(sz_buf,31);
+            sscanf(sz_buf,"%f", &f_newValue);
+            u8_c2 = inChar();
+            printf("New value: %f\n", f_newValue);
+
+            set_KD(f_newValue);
+            break;
+    }
+}
+
 // Print the calculated line position
 void print_get_line() {
     int16_t i_position;
-    uint16_t pau16_sensors[7];
-    i_position = read_line(pau16_sensors, QTR_EMITTERS_ON);
 
     while(isCharReady() == 0) {
-        i_position = read_line(pau16_sensors, QTR_EMITTERS_ON);
+        i_position = read_line(QTR_EMITTERS_ON);
         printf("Line position: %u\n", i_position);
     }
 }
@@ -553,4 +607,40 @@ void navigate_course() {
 
     // Get to the finish line
     follow_line_to_box(BASE_SPEED, 0);
+}
+
+void follow_line_pid(float f_maxSpeed, uint8_t u8_direction) {
+    while(isCharReady() == 0) {
+        correct_line_error_pid(f_maxSpeed, u8_direction);
+    }
+    motors_stop();
+}
+
+void print_pid_info(float f_maxSpeed) {
+    uint16_t u16_lineCenter;
+
+    int16_t i_position;
+    int16_t i_error;
+    int16_t i_motorSpeed;
+    int16_t i_leftMotorSpeed;
+    int16_t i_rightMotorSpeed;
+
+    static int16_t i_lastError;
+
+    u16_lineCenter = 7000;
+
+    while(isCharReady() == 0) {
+        i_position = read_line(QTR_EMITTERS_ON);
+        i_error = i_position - u16_lineCenter;
+
+        i_motorSpeed = KP * i_error + KD * (i_error - i_lastError);
+        i_lastError = i_error;
+
+        i_leftMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) + i_motorSpeed;
+        i_rightMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) - i_motorSpeed;
+
+        #ifdef DEBUG_BUILD
+        printf("Position %i, Error: %i, Motor Speed: %i, Left: %i, Right %i, f_maxSpeed: %f\n", i_position, i_error, i_motorSpeed, i_leftMotorSpeed, i_rightMotorSpeed, f_maxSpeed);
+        #endif
+    }
 }

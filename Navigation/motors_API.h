@@ -39,10 +39,10 @@
 #define MOTOR_PWM_PERIOD                20000                   // desired period, in us
 
 #define RIGHT_MOTOR_ADJUSTMENT          1.0                     // Speed adjustment for the right motor
-#define LEFT_MOTOR_ADJUSTMENT           1.0                     // Speed adjustment for the left motor
+#define LEFT_MOTOR_ADJUSTMENT           1.17                    // Speed adjustment for the left motor
 
-#define RIGHT_ENCODER_ADJUSTMENT        1.0                     // Encoder adjustment for the right motor
-#define LEFT_ENCODER_ADJUSTMENT         1.0                     // Encoder adjustment for the left motor
+#define RIGHT_ENCODER_ADJUSTMENT        1.007905138             // Encoder adjustment for the right motor
+#define LEFT_ENCODER_ADJUSTMENT         1.116600791             // Encoder adjustment for the left motor
 
 #define LEFT_DIRECTION                  0                       // Boolean for left turning direction
 #define RIGHT_DIRECTION                 1                       // Boolean for left turning direction
@@ -51,8 +51,8 @@
 #define FORWARD_MOVEMENT                1                       // Forward motion
 #define BACKWARD_MOVEMENT               2                       // Backward motion
 
-#define PREPARE_90_TURN_DISTANCE        180                     // mm to travel before turning 90 degrees
-#define DEGREE_90_TURN_REVS             1.0                     // Revolutions that equal a 90 degree turn
+#define PREPARE_90_TURN_DISTANCE        163.58                  // mm to travel before turning 90 degrees
+#define DEGREE_90_TURN_REVS             0.90                    // Revolutions that equal a 90 degree turn
 
 #define PREPARE_CURVE_TURN_DISTANCE     50                      // mm to prepare for curve turns
 
@@ -353,8 +353,9 @@ void move_by_distance(float f_distance, float f_speed);
  *
  * @param i_leftSpeed Speed for the left
  * @param i_rightSpeed Speed for the right
+ * @param u8_direction Direction to move
 **/
-void set_motors_pid(int16_t i_leftSpeed, int16_t i_rightSpeed);
+void set_motors_pid(int16_t i_leftSpeed, int16_t i_rightSpeed, uint8_t u8_direction);
 
 /**
  * @brief Final movements before playing a game

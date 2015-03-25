@@ -31,21 +31,16 @@
 #ifndef _LINE_FOLLOWER_API_H_
 #define _LINE_FOLLOWER_API_H_
 
-#define KP      0.2
-#define KD      5
+#define KP_DEFAULT      0.2
+#define KD_DEFAULT      5
+
+extern float KP;
+extern float KD;
 
 /**
  * @brief Initialize everything it takes to follow a line using a sensor array
  */
 void line_follower_init(void);
-
-/**
- * @brief Gets values from the sensor array representing a line
- *
- * @param pau16_sensorValues The values of the triple hi res sensors
- * @return A floating point representation of the line
- */
- float get_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
 
 /**
  * @brief Follow  line until the line sensor sees a box
@@ -97,8 +92,9 @@ void correct_line_error_reverse(float f_maxSpeed, uint16_t pau16_sensorValues[TR
  * @brief Recenter the robot over the line while moving forward using a PID scheme
  *
  * @param f_maxSpeed Max speed the robot will travel
+ * @param u8_direction Direction to move
 **/
-void correct_line_error_pid(float f_maxSpeed);
+void correct_line_error_pid(float f_maxSpeed, uint8_t u8_direction);
 
 /**
  * @brief Determine whether or not the robot has reached a box
@@ -166,5 +162,19 @@ void reverse_until_branch();
  * @brief Check for a line, used when turning to see if we're branching from the main line
 **/
 uint8_t check_for_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
+
+/**
+ * @brief Set a new value for KP
+ *
+ * @param f_newValue The new value for KP
+**/
+void set_KP(float f_newValue);
+
+/**
+ * @brief Set a new value for KD
+ *
+ * @param f_newValue The new value for KD
+**/
+void set_KD(float f_newValue);
 
 #endif

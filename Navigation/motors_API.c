@@ -535,7 +535,7 @@ void move_by_distance(float f_distance, float f_speed) {
     move_left_motor_by_distance(f_distance, f_speed);
 }
 
-void set_motors_pid(int16_t i_leftSpeed, int16_t i_rightSpeed) {
+void set_motors_pid(int16_t i_leftSpeed, int16_t i_rightSpeed, uint8_t u8_direction) {
     float f_leftPercentage;
     float f_rightPercentage;
 
@@ -555,8 +555,13 @@ void set_motors_pid(int16_t i_leftSpeed, int16_t i_rightSpeed) {
         f_rightPercentage = 0;
     }
 
-    left_motor_fwd(f_leftPercentage);
-    right_motor_fwd(f_rightPercentage);
+    if (u8_direction == FORWARD_MOVEMENT) {
+        left_motor_fwd(f_leftPercentage);
+        right_motor_fwd(f_rightPercentage);
+    } else if (u8_direction == BACKWARD_MOVEMENT) {
+        left_motor_reverse(f_leftPercentage);
+        right_motor_reverse(f_rightPercentage);
+    }
 }
 
 ///////////////////////////////////////////////
