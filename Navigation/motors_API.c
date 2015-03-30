@@ -595,15 +595,15 @@ void prepare_for_curve_turn(float f_speed) {
 // Turn robot 90 degrees in a curve
 void turn_90_degree_curve(float f_speed, uint8_t u8_direction) {
     if (u8_direction == RIGHT_DIRECTION) {
-        move_left_motor_by_revolutions((DEGREE_90_TURN_REVS*2), f_speed);
+        move_left_motor_by_revolutions((DEGREE_90_CURVE_TURN_REVS), f_speed*1.5);
     }
     if (u8_direction == LEFT_DIRECTION) {
-        move_right_motor_by_revolutions((DEGREE_90_TURN_REVS*2), f_speed);
+        move_right_motor_by_revolutions((DEGREE_90_CURVE_TURN_REVS), f_speed*1.5);
     }
 }
 // Reverse after turning 90 degrees to compensate for the preparing movement
 void finish_90_degree_turn(float f_speed) {
-    move_by_distance((-1.0 * PREPARE_90_TURN_DISTANCE), f_speed);
+    move_by_distance((-1.0 * PREPARE_90_TURN_DISTANCE*0.8), f_speed);
 }
 
 // Prepare for a reverse 90 degree turn by moving forward
@@ -651,16 +651,19 @@ void final_game_preparations(uint8_t u8_game) {
     // Move forward different distances based on which game it is
     switch(u8_game) {
         case SIMON:
-            enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-            enqueue(&navigationMoveDistanceQueue, MOVE_INTO_SIMON_DISTANCE);
+            enqueue(&navigationRoutineQueue, PREPARE_SIMON);
+            // enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+            // enqueue(&navigationMoveDistanceQueue, MOVE_INTO_SIMON_DISTANCE);
             break;
         case RUBIKS:
-            enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-            enqueue(&navigationMoveDistanceQueue, MOVE_INTO_RUBIKS_DISTANCE);
+            enqueue(&navigationRoutineQueue, PREPARE_RUBIKS);
+            // enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+            // enqueue(&navigationMoveDistanceQueue, MOVE_INTO_RUBIKS_DISTANCE);
             break;
         case ETCH:
-            enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-            enqueue(&navigationMoveDistanceQueue, MOVE_INTO_ETCH_DISTANCE);
+            enqueue(&navigationRoutineQueue, PREPARE_ETCH);
+            // enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+            // enqueue(&navigationMoveDistanceQueue, MOVE_INTO_ETCH_DISTANCE);
             break;
         case CARD:
             break;
@@ -676,18 +679,27 @@ void prepare_to_leave_game(uint8_t u8_game) {
     // Get out of the box and turn around, different for each game
     switch(u8_game) {
         case SIMON:
+            #ifdef DEBUG_BUILD
+            printf("Leaving Simon\n");
+            #endif
             enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
             enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
             enqueue(&navigationRoutineQueue, TURN_180);
             enqueue(&navigationRoutineQueue, FINISH_180_TURN);
             break;
         case RUBIKS:
+            #ifdef DEBUG_BUILD
+            printf("Leaving Rubiks\n");
+            #endif
             enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
             enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
             enqueue(&navigationRoutineQueue, TURN_180);
             enqueue(&navigationRoutineQueue, FINISH_180_TURN);
             break;
         case ETCH:
+            #ifdef DEBUG_BUILD
+            printf("Leaving Etch\n");
+            #endif
             enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
             enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
             enqueue(&navigationRoutineQueue, TURN_180);
@@ -695,6 +707,9 @@ void prepare_to_leave_game(uint8_t u8_game) {
             enqueue(&navigationMoveDistanceQueue, FINISH_180_TURN_DISTANCE/2);
             break;
         case CARD:
+            #ifdef DEBUG_BUILD
+            printf("Leaving Card\n");
+            #endif
             enqueue(&navigationRoutineQueue, TURN_180);
             enqueue(&navigationRoutineQueue, FINISH_180_TURN);
             break;
@@ -822,6 +837,22 @@ void handle_routine(uint8_t routine) {
             printf("Routine: game pause\n");
             #endif
             break;
+        case PREPARE_SIMON:
+            #ifdef DEBUG_BUILD
+            printf("Routine: prepare for Simon\n");
+            #endif
+            move_by_distance(MOVE_INTO_SIMON_DISTANCE*1.0, BASE_SPEED);
+            break;
+        case PREPARE_ETCH:
+            #ifdef DEBUG_BUILD
+            printf("Routine: prepare for Etch\n");
+            move_by_distance(MOVE_INTO_ETCH_DISTANCE*1.0, BASE_SPEED);
+            #endif
+        case PREPARE_RUBIKS:
+            #ifdef DEBUG_BUILD
+            printf("Routine: prepare for Rubiks\n");
+            #endif
+            move_by_distance(MOVE_INTO_RUBIKS_DISTANCE*1.0, BASE_SPEED);
         default:
             break;
     }
@@ -844,6 +875,7 @@ void clear_routines() {
 
     // Clear out the nav queue
     clear_queue(&navigationRoutineQueue);
+    clear_queue(&navigationMoveDistanceQueue);
 
     // Reset targets
     u8_leftAtTarget = 1;

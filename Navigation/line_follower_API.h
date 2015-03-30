@@ -31,8 +31,8 @@
 #ifndef _LINE_FOLLOWER_API_H_
 #define _LINE_FOLLOWER_API_H_
 
-#define KP_DEFAULT      0.2
-#define KD_DEFAULT      5
+#define KP_DEFAULT      0.4 //0.2
+#define KD_DEFAULT      7   //5
 
 extern float KP;
 extern float KD;
@@ -169,6 +169,8 @@ uint8_t check_for_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
  * @param f_newValue The new value for KP
 **/
 void set_KP(float f_newValue);
+
+void turn_until_line_centered(float f_speed, uint8_t u8_direction);
 
 /**
  * @brief Set a new value for KD

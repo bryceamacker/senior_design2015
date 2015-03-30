@@ -163,11 +163,13 @@ void navigation_serial_command(uint8_t u8_command) {
             }
             else if (u8_c == 'e') {
                 printf("Turning 90 degrees right in a curve\n");
+                enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
                 enqueue(&navigationRoutineQueue, RIGHT_CURVE_TURN);
                 check_for_routine();
             }
             else if (u8_c == 'k') {
                 printf("Turning 90 degrees left in a curve\n");
+                enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
                 enqueue(&navigationRoutineQueue, LEFT_CURVE_TURN);
                 check_for_routine();
             }
@@ -522,7 +524,7 @@ void handle_pid_command(uint8_t u8_function) {
         case 'w':
             break;
         case 'b':
-            follow_line_to_box_pid(BASE_SPEED, 0);
+            follow_line_to_box(BASE_SPEED, 0);
             break;
         case 'r':
             follow_line_pid(BASE_SPEED, BACKWARD_MOVEMENT);
@@ -541,7 +543,7 @@ void handle_pid_command(uint8_t u8_function) {
             inStringEcho(sz_buf,31);
             sscanf(sz_buf,"%f", &f_newValue);
             u8_c2 = inChar();
-            printf("New value: %f\n", f_newValue);
+            // printf("New value: %f\n", (double)f_newValue);
 
             set_KP(f_newValue);
             break;
@@ -550,7 +552,7 @@ void handle_pid_command(uint8_t u8_function) {
             inStringEcho(sz_buf,31);
             sscanf(sz_buf,"%f", &f_newValue);
             u8_c2 = inChar();
-            printf("New value: %f\n", f_newValue);
+            // printf("New value: %f\n", (double)f_newValue);
 
             set_KD(f_newValue);
             break;
@@ -640,7 +642,7 @@ void print_pid_info(float f_maxSpeed) {
         i_rightMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) - i_motorSpeed;
 
         #ifdef DEBUG_BUILD
-        printf("Position %i, Error: %i, Motor Speed: %i, Left: %i, Right %i, f_maxSpeed: %f\n", i_position, i_error, i_motorSpeed, i_leftMotorSpeed, i_rightMotorSpeed, f_maxSpeed);
+        printf("Position %i, Error: %i, Motor Speed: %i, Left: %i, Right %i\n", i_position, i_error, i_motorSpeed, i_leftMotorSpeed, i_rightMotorSpeed);
         #endif
     }
 }

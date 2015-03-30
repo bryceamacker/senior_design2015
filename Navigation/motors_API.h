@@ -51,10 +51,13 @@
 #define FORWARD_MOVEMENT                1                       // Forward motion
 #define BACKWARD_MOVEMENT               2                       // Backward motion
 
-#define PREPARE_90_TURN_DISTANCE        163.58                  // mm to travel before turning 90 degrees
-#define DEGREE_90_TURN_REVS             0.90                    // Revolutions that equal a 90 degree turn
+#define ROBOT_WIDTH                     287.0
 
-#define PREPARE_CURVE_TURN_DISTANCE     50                      // mm to prepare for curve turns
+#define PREPARE_90_TURN_DISTANCE        163.58                  // mm to travel before turning 90 degrees
+#define DEGREE_90_TURN_REVS             (ROBOT_WIDTH/WHEEL_DIAMETER/4)
+
+#define PREPARE_CURVE_TURN_DISTANCE     29                      // mm to prepare for curve turns
+#define DEGREE_90_CURVE_TURN_REVS       (DEGREE_90_TURN_REVS*2) // Revolutions that equal a 90 degree turn
 
 #define FINISH_180_TURN_DISTANCE        220                     // mm to compensate for a 180 degree turn
 
@@ -66,7 +69,7 @@
 #define MOVE_INTO_ETCH_DISTANCE         120                     // Move into Etch
 
 #define M_PI                            3.14159265358979323846  // pi constant
-#define WHEEL_DIAMETER                  80.65                   // in milimeters
+#define WHEEL_DIAMETER                  80.0                    // in milimeters
 #define WHEEL_CIRCUMFERENCE             (WHEEL_DIAMETER * M_PI) // in milimeters
 
 #define BASE_SPEED_DEFAULT              20                      // Base speed duty cycle
@@ -75,7 +78,7 @@
 
 #define LINE_WIDTH                      25                      // Width of the line in mm
 
-#define START_BOX_DRIVE_DISTANCE        200                     // mm to get out of the start box before following a line
+#define START_BOX_DRIVE_DISTANCE        100                     // mm to get out of the start box before following a line
 
 extern float BASE_SPEED;
 
@@ -97,7 +100,10 @@ typedef enum {
     TURN_180 =                      15,
     RIGHT_CURVE_TURN =              16,
     LEFT_CURVE_TURN =               17,
-    PREPARE_TURN_CURVE =            18
+    PREPARE_TURN_CURVE =            18,
+    PREPARE_SIMON =                 19,
+    PREPARE_ETCH =                  20,
+    PREPARE_RUBIKS =                21
 } motorRoutines;
 
 ///////////////////////////////////////////////
