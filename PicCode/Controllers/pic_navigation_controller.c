@@ -608,7 +608,7 @@ void navigate_course() {
     }
 
     // Get to the finish line
-    follow_line_to_box(BASE_SPEED, 0);
+    follow_line_to_box(BASE_SPEED, 1);
 }
 
 void follow_line_pid(float f_maxSpeed, uint8_t u8_direction) {

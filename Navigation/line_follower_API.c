@@ -87,6 +87,9 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
             // Check for a box to stop at
             if (check_for_box(pau16_sensorValues) == 1) {
                 // If we're not branched from the mainline, check what turn we should do and flag that we have branched, flag that we hit a T (used for reverse)
+                if (u8_expectedTurn == 1) {
+                    return;
+                }
                 if (u8_branchedFromMainLine == 0) {
                     #ifdef DEBUG_BUILD
                     printf("T-intersection\n");
@@ -166,6 +169,9 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
             // At any time if we've hit a box while in a turn then we've mistaken a box as a turn
             if (check_for_box(pau16_sensorValues) == 1){
                 // If we're not branched from the mainline, check what turn we should do and flag that we have branched, flag that we hit a T (used for reverse)
+                if (u8_expectedTurn == 1) {
+                    return;
+                }
                 if ((u8_branchedFromMainLine == 0)  && (u8_handlingTIntersection == 0) && (u16_lateReadingWindow < 100)) {
                     #ifdef DEBUG_BUILD
                     printf("Wait no it's a T-intersection\n");
@@ -308,7 +314,7 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
                         enqueue(&navigationRoutineQueue, FINISH_TURN);
                         // reverse_until_branch();
                         enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*4);
+                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*2);
                         check_for_routine();
                         block_until_all_routines_done();
                     }
@@ -592,7 +598,11 @@ uint8_t check_for_box(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
 uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
     uint8_t u8_detectingSensors;
     uint8_t i;
+    uint8_t u8_continuityCheck;
+    uint8_t u8_pastZero;
 
+    u8_continuityCheck = 1;
+    u8_pastZero = 0;
     u8_detectingSensors = 0;
 
     // The left line is the leftmost 8 sensors
@@ -608,8 +618,28 @@ uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM
         }
     }
 
+    for (i=0; i<=7;i++) {
+        if (pau16_sensorValues[i] == 0) {
+            if (u8_pastZero == 1) {
+                u8_continuityCheck = 0;
+            }
+            u8_pastZero = 1;
+        }
+        u8_pastZero = 0;
+    }
+
+    for (i=9; i<=13; i+=2) {
+        if (pau16_sensorValues[i] == 0) {
+            if (u8_pastZero == 1) {
+                u8_continuityCheck = 0;
+            }
+            u8_pastZero = 1;
+        }
+        u8_pastZero = 0;
+    }
+
     // Check to see if we're detecting a turn
-    if (u8_detectingSensors >= SENSOR_NUM + 2) {
+    if ((u8_detectingSensors >= SENSOR_NUM + 2) && (u8_continuityCheck == 1)) {
         return 1;
     } else {
         return 0;
@@ -661,8 +691,12 @@ void handle_reverse_left_turn(uint8_t u8_curve) {
 // Check for a right turn
 uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
     uint8_t u8_detectingSensors;
+    uint8_t u8_continuityCheck;
+    uint8_t u8_pastZero;
     uint8_t i;
 
+    u8_pastZero = 1;
+    u8_continuityCheck = 1;
     u8_detectingSensors = 0;
 
     // The right line is the rightmost 8 sensors
@@ -676,6 +710,26 @@ uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NU
         if (pau16_sensorValues[i] == 1) {
             u8_detectingSensors++;
         }
+    }
+
+    for (i=31; i>=24;i--) {
+        if (pau16_sensorValues[i] == 0) {
+            if (u8_pastZero == 1) {
+                u8_continuityCheck = 0;
+            }
+            u8_pastZero = 1;
+        }
+        u8_pastZero = 0;
+    }
+
+    for (i=19; i<=23; i+=2) {
+        if (pau16_sensorValues[i] == 0) {
+            if (u8_pastZero == 1) {
+                u8_continuityCheck = 0;
+            }
+            u8_pastZero = 1;
+        }
+        u8_pastZero = 0;
     }
 
     // Check to see if we're detecting a turn

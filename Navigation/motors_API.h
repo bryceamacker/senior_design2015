@@ -39,7 +39,7 @@
 #define MOTOR_PWM_PERIOD                20000                   // desired period, in us
 
 #define RIGHT_MOTOR_ADJUSTMENT          1.0                     // Speed adjustment for the right motor
-#define LEFT_MOTOR_ADJUSTMENT           1.17                    // Speed adjustment for the left motor
+#define LEFT_MOTOR_ADJUSTMENT           1.12                    // Speed adjustment for the left motor
 
 #define RIGHT_ENCODER_ADJUSTMENT        1.007905138             // Encoder adjustment for the right motor
 #define LEFT_ENCODER_ADJUSTMENT         1.116600791             // Encoder adjustment for the left motor
@@ -61,7 +61,7 @@
 
 #define FINISH_180_TURN_DISTANCE        220                     // mm to compensate for a 180 degree turn
 
-#define BACK_AWAY_FROM_GAME_DISTANCE    100                     // Backing away from games distance
+#define BACK_AWAY_FROM_GAME_DISTANCE    120                     // Backing away from games distance
 #define MOVE_INTO_BOX_DISTANCE          160                     // Moving into the box distance
 
 #define MOVE_INTO_SIMON_DISTANCE        160                     // Move into Simon

@@ -195,7 +195,7 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
     }
 
     // Get to the finish line
-    follow_line_to_box(BASE_SPEED, 0);
+    follow_line_to_box(BASE_SPEED, 1);
 }
 
 void run_static_course(uint8_t pu8_gameOrder[4]) {
