@@ -23,6 +23,7 @@
 #include "game_arm_control.h"
 #include "game_player_port_mapping.h"
 #include "platform_control.h"
+#include "rubiks_code.h"
 #include "SSDisplayAPI.h"
 
 #ifndef SIMON_CODE_H_
@@ -47,6 +48,14 @@
 #define RED_PUSH        920
 #define GREEN_PUSH      900
 #define START_PUSH      YELLOW_PUSH
+
+#define YELLOW_MAX_PUSH     (YELLOW_PUSH - MAX_PUSH_INCREASE)
+#define BLUE_MAX_PUSH       (BLUE_PUSH - MAX_PUSH_INCREASE)
+#define RED_MAX_PUSH        (RED_PUSH - MAX_PUSH_INCREASE)
+#define GREEN_MAX_PUSH      (GREEN_PUSH - MAX_PUSH_INCREASE)
+#define START_MAX_PUSH      YELLOW_MAX_PUSH
+
+#define MAX_PUSH_INCREASE 400
 
 // Light thresholds
 #define YELLOW_LIGHT_THRESH_HOLD    90
@@ -186,9 +195,12 @@ void simon_retract_buttons(void);
  */
 void simon_push_and_hover_buttons(void);
 
+void increase_button_push(buttonID button);
+
 /**
  * @brief Config a timer to count to 15 seconds
  */
 void  configTimer5(void);
+
 
 #endif

@@ -73,6 +73,7 @@ uint8_t pu8_gameOrder[4];
 
 // Info for static courses
 uint8_t u8_staticCourseNumber;
+uint8_t u8_staticTurnLayoutNumber;
 char pu8_branchList[4];
 
 // Function declarations
@@ -83,6 +84,7 @@ void play_game(gameID game);
 void configure_robot(void);
 void configure_game_order();
 void configure_static_course_selection();
+void configure_static_turn_layout_selection();
 void configure_branch_order();
 void setup_start_button(void);
 void wait_for_start_button_push(void);
@@ -96,10 +98,19 @@ void print_order(uint8_t pu8_gameOrder[4]);
 
 // Main loop for the navigation PIC using I2C commands
 int main (void) {
+    uint8_t pau8_turnList[128] = {0};
     char sz_sendString[BUFFSIZE];
+    char* printstring;
+    uint8_t i;
+    uint8_t u8_staticTurnLayoutStatus;
 
     u8_gameBlock = 0;
     u8_staticCourseNumber = 0;
+    u8_staticTurnLayoutNumber = 0;
+    u8_staticTurnLayoutStatus = 0;
+
+    printstring = "NA";
+    // pau8_turnList = 0;
 
     // Configure the motor controller PIC
     configBasic(HELLO_MSG);
@@ -112,6 +123,31 @@ int main (void) {
     configure_robot();
     send_display_value("CF");
     DELAY_MS(DISPLAY_DELAY);
+
+    u8_staticTurnLayoutStatus = prepare_static_course_turn_info(u8_staticTurnLayoutNumber, pau8_turnList);
+
+    // if (u8_staticTurnLayoutStatus == 1) {
+    //     for (i=0;i<128;i++) {
+    //         if(pau8_turnList[i] == CURVE_LEFT) {
+    //             printstring = "CL";
+    //         }
+    //         else if(pau8_turnList[i] == NORMAL_LEFT) {
+    //             printstring = "NL";
+    //         }
+    //         else if(pau8_turnList[i] == CURVE_RIGHT) {
+    //             printstring = "CR";
+    //         }
+    //         else if(pau8_turnList[i] == NORMAL_RIGHT) {
+    //             printstring = "NR";
+    //         }
+    //         else {
+    //             printstring = "NA";
+    //         }
+    //         if (printstring != "NA") {
+    //             printf("Turn %i: %s(%i)\n", i+1, printstring, pau8_turnList[i]);
+    //         }
+    //     }
+    // }
 
     if (SKIP_START_BUTTON == 0) {
         #ifdef DEBUG_BUILD
@@ -339,6 +375,12 @@ void configure_robot(void) {
         pu8_branchList[2] = 'L';
         pu8_branchList[3] = 'R';
     }
+
+    if (SKIP_STATIC_TURN_LAYOUT_SELECTION == 0) {
+        send_display_value("C4");
+        DELAY_MS(DISPLAY_DELAY);
+        configure_static_turn_layout_selection();
+    }
 }
 
 void configure_game_order() {
@@ -450,6 +492,50 @@ void configure_static_course_selection() {
             // #ifdef DEBUG_BUILD
             // printf("Static course %u\n", u8_staticCourseNumber);
             // #endif
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(UP_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+    }
+    DELAY_MS(DEBOUNCE_DELAY);
+    while(SET_BUTTON_PUSHED);
+    DELAY_MS(DEBOUNCE_DELAY);
+}
+
+void configure_static_turn_layout_selection() {
+    #ifdef DEBUG_BUILD
+    printf("Selecting static turn layout\n");
+    #endif
+
+    send_display_value("00");
+
+    while (SET_BUTTON_RELEASED) {
+        if (DOWN_BUTTON_PUSHED) {
+            if (u8_staticTurnLayoutNumber == 0) {
+                u8_staticTurnLayoutNumber = 99;
+            } else {
+                u8_staticTurnLayoutNumber = u8_staticTurnLayoutNumber - 1;
+            }
+
+            send_display_number(u8_staticTurnLayoutNumber);
+
+            printf("Static course %u\n", u8_staticTurnLayoutNumber);
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(DOWN_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+        if (UP_BUTTON_PUSHED) {
+            if (u8_staticTurnLayoutNumber == 99) {
+                u8_staticTurnLayoutNumber = 0;
+            } else {
+                u8_staticTurnLayoutNumber = u8_staticTurnLayoutNumber + 1;
+            }
+
+            send_display_number(u8_staticTurnLayoutNumber);
+
+            printf("Static course %u\n", u8_staticTurnLayoutNumber);
 
             DELAY_MS(DEBOUNCE_DELAY);
             while(UP_BUTTON_PUSHED);

@@ -23,11 +23,12 @@
 #define BUFFSIZE                        64
 
 // Configurations
-#define STATIC_ORDER                    1
-#define SKIP_START_LIGHT                0
-#define SKIP_START_BUTTON               0
-#define SKIP_STATIC_COURSE_SELECTION    1
-#define SKIP_BRANCH_LIST_SETUP          0
+#define STATIC_ORDER                        1
+#define SKIP_START_LIGHT                    0
+#define SKIP_START_BUTTON                   0
+#define SKIP_STATIC_COURSE_SELECTION        1
+#define SKIP_STATIC_TURN_LAYOUT_SELECTION   0
+#define SKIP_BRANCH_LIST_SETUP              0
 
 #define SKIP_SIMON                      0
 #define SKIP_ETCH                       0

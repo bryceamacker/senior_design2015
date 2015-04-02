@@ -29,6 +29,11 @@
 #define FALSE (0)
 #define TRUE (!FALSE)
 
+#define NORMAL_LEFT         1
+#define CURVE_LEFT          2
+#define NORMAL_RIGHT        3
+#define CURVE_RIGHT         4
+
 // Game enumeration
 typedef enum {
     SIMON =     0,

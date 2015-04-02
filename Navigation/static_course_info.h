@@ -96,4 +96,249 @@ static inline uint8_t prepare_course_routines(uint8_t u8_course) {
     return u8_setCourse;
 }
 
+
+/**
+                    x
+                    |
+              ______|
+       x     |   |
+       |     |   x
+       |_____|
+             |
+             |
+             |----x
+             |
+             |
+         x---|
+             |
+             |
+         ____
+        |
+        |___
+            |
+            x
+**/
+static inline void prepare_static_course_turn_info_one(uint8_t* pau8_turnList) {
+    uint8_t u8_turnCount = 0;
+
+    // To game 1
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+
+    // Leaving game 1
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+
+    // To game 2
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // Leaving game 2
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // To game 3
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = CURVE_RIGHT;
+
+    // Leaving game 3
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+
+    // To game 4
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // Leaving game 4
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // To finish line
+    pau8_turnList[u8_turnCount++] = CURVE_LEFT;
+}
+
+/**
+                x
+                |
+                |---x
+                |
+        ________|
+        |       |
+        x       |
+                |
+                |---x
+                |
+                |
+                |_____
+           x          |
+           |__________|
+                |
+                x
+**/
+static inline void prepare_static_course_turn_info_two(uint8_t* pau8_turnList) {
+    uint8_t u8_turnCount = 0;
+
+    // To game 1
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+
+    // Leaving game 1
+
+    // To game 2
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // Leaving game 2
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // To game 3
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = CURVE_LEFT;
+
+    // Leaving game 3
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+
+    // To game 4
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // Leaving game 4
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // To finish line
+}
+
+
+/**
+                 ____x
+        x       |
+        |       |
+        |_______|     x
+                |     |
+                |_____|
+                |
+                |
+                |---x
+                |
+           x    |
+           |____|
+                |
+                x
+**/
+static inline void prepare_static_course_turn_info_three(uint8_t* pau8_turnList) {
+    uint8_t u8_turnCount = 0;
+
+    // To game 1
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // Leaving game 1
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+
+    // To game 2
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // Leaving game 2
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // To game 3
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = CURVE_LEFT;
+
+    // Leaving game 3
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // To game 4
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = CURVE_RIGHT;
+
+    // Leaving game 4
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+
+    // To finish line
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+}
+
+/**
+                x
+                |
+         _______|
+        |       |
+        |       |
+        x       |
+                |----x
+                |
+                |
+                |____
+                |    |
+                |    |
+           x----|    x
+                |
+                |
+                |
+                |
+                x
+**/
+static inline void prepare_static_course_turn_info_four(uint8_t* pau8_turnList) {
+    uint8_t u8_turnCount = 0;
+
+    // To game 1
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+
+    // Leaving game 1
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+
+    // To game 2
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // Leaving game 2
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // To game 3
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // Leaving game 3
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    // To game 4
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = CURVE_LEFT;
+
+    // Leaving game 4
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+
+    // To finish line
+}
+
+static inline uint8_t prepare_static_course_turn_info(uint8_t u8_course, uint8_t* pau8_turnList) {
+    uint8_t u8_setCourseTurns;
+
+    u8_setCourseTurns = 1;
+
+    switch (u8_course) {
+        case 1:
+            prepare_static_course_turn_info_one(pau8_turnList);
+            break;
+        case 2:
+            prepare_static_course_turn_info_two(pau8_turnList);
+            break;
+        case 3:
+            prepare_static_course_turn_info_three(pau8_turnList);
+            break;
+        case 4:
+            prepare_static_course_turn_info_four(pau8_turnList);
+            break;
+        default:
+            u8_setCourseTurns = 0;
+            break;
+    }
+    return u8_setCourseTurns;
+}
+
 #endif

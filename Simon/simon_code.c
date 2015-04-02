@@ -91,6 +91,8 @@ void play_simon() {
     DELAY_MS(PLATFORM_WAIT);
     platform_rubiks();
     DELAY_MS(PLATFORM_WAIT);
+    twist_rubiks_clock();
+    DELAY_MS(PLATFORM_WAIT);
     calibrate_sensors(); // I don't think we need calibration with the new transistors
 
     // Stop playing if we exceed 5 rounds
@@ -136,6 +138,8 @@ void play_simon() {
     }
 
     // Let go of the simon and pull the arms back
+    twist_rubiks_counter();
+    DELAY_MS(PLATFORM_WAIT);
     platform_up();
     DELAY_MS(PLATFORM_WAIT);
     simon_retract_buttons();
@@ -152,6 +156,8 @@ void play_simon_infinitely() {
     simon_hover_buttons();
     DELAY_MS(PLATFORM_WAIT);
     platform_rubiks();
+    DELAY_MS(PLATFORM_WAIT);
+    twist_rubiks_clock();
     DELAY_MS(PLATFORM_WAIT);
     calibrate_sensors(); // I don't think we need calibration with the new transistors
 
@@ -181,6 +187,8 @@ void play_simon_infinitely() {
     }
 
     // Let go of the simon and pull the arms back
+    twist_rubiks_counter();
+    DELAY_MS(PLATFORM_WAIT);
     platform_up();
     DELAY_MS(PLATFORM_WAIT);
     simon_retract_buttons();
@@ -418,7 +426,8 @@ void confirm_color(uint8_t u8_color) {
             }
 
             // Try and push harder
-            u16_currentYellowPushPulse -= PULSE_INCREASE;
+            // u16_currentYellowPushPulse -= PULSE_INCREASE;
+            increase_button_push(YELLOW_BUTTON);
             simon_push_button(YELLOW_BUTTON);
 
             // Short DELAY_MS for faster response to light.
@@ -442,7 +451,8 @@ void confirm_color(uint8_t u8_color) {
             }
 
             // Try and push harder
-            u16_currentBluePushPulse -= PULSE_INCREASE;
+            // u16_currentBluePushPulse -= PULSE_INCREASE;
+            increase_button_push(BLUE_BUTTON);
             simon_push_button(BLUE_BUTTON);
 
             // Short DELAY_MS for faster response to light.
@@ -466,7 +476,8 @@ void confirm_color(uint8_t u8_color) {
             }
 
             // Try and push harder
-            u16_currentRedPushPulse -= PULSE_INCREASE;
+            // u16_currentRedPushPulse -= PULSE_INCREASE;
+            increase_button_push(RED_BUTTON);
             simon_push_button(RED_BUTTON);
 
             // Short DELAY_MS for faster response to light.
@@ -490,7 +501,8 @@ void confirm_color(uint8_t u8_color) {
             }
 
             // Try and push harder
-            u16_currentGreenPushPulse -= PULSE_INCREASE;
+            // u16_currentGreenPushPulse -= PULSE_INCREASE;
+            increase_button_push(GREEN_BUTTON);
             simon_push_button(GREEN_BUTTON);
 
             // Short DELAY_MS for faster response to light.
@@ -688,6 +700,45 @@ void simon_push_and_hover_buttons() {
     simon_push_and_hover_button(BLUE_BUTTON);
     simon_push_and_hover_button(RED_BUTTON);
     simon_push_and_hover_button(GREEN_BUTTON);
+}
+
+void increase_button_push(buttonID button) {
+    switch (button) {
+        case YELLOW_BUTTON:
+            u16_currentYellowPushPulse -= PULSE_INCREASE;
+            if (u16_currentYellowPushPulse < YELLOW_MAX_PUSH) {
+                u16_currentYellowPushPulse = YELLOW_MAX_PUSH;
+                simon_hover_button(YELLOW_BUTTON);
+                DELAY_MS(100);
+            }
+            break;
+        case BLUE_BUTTON:
+            u16_currentBluePushPulse -= PULSE_INCREASE;
+            if (u16_currentBluePushPulse < BLUE_MAX_PUSH) {
+                u16_currentBluePushPulse = BLUE_MAX_PUSH;
+                simon_hover_button(BLUE_BUTTON);
+                DELAY_MS(100);
+            }
+            break;
+        case RED_BUTTON:
+            u16_currentRedPushPulse -= PULSE_INCREASE;
+            if (u16_currentRedPushPulse < RED_MAX_PUSH) {
+                u16_currentRedPushPulse = RED_MAX_PUSH;
+                simon_hover_button(RED_BUTTON);
+                DELAY_MS(100);
+            }
+            break;
+        case GREEN_BUTTON:
+            u16_currentGreenPushPulse -= PULSE_INCREASE;
+            if (u16_currentGreenPushPulse < GREEN_MAX_PUSH) {
+                u16_currentGreenPushPulse = GREEN_MAX_PUSH;
+                simon_hover_button(GREEN_BUTTON);
+                DELAY_MS(100);
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 // Count seconds for detrmining when to leave Simon
