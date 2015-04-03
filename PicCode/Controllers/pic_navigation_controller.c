@@ -36,6 +36,13 @@ extern queue_t navigationMoveDistanceQueue;
 extern uint8_t u8_routineBlock;
 extern uint8_t u8_currentRoutine;
 
+char pu8_branchList[4];
+
+uint8_t u8_staticTurnLayoutNumber;
+uint8_t u8_staticTurnLayoutAvailable;
+uint8_t pau8_turnList[128] = {0};
+uint8_t u8_turnLayoutNumber;
+
 // Function declarations
 void pic_navigation_init();
 void navigation_serial_command(uint8_t u8_motor);
@@ -207,6 +214,37 @@ void navigation_serial_command(uint8_t u8_command) {
 
             set_base_speed(u8_newBase*1.0);
             break;
+        case 'k':
+            printf("\nEnter which static turn layout to load\n");
+            inStringEcho(sz_buf,31);
+            sscanf(sz_buf,"%hhu", (uint8_t *) &u8_turnLayoutNumber);
+            u8_c2 = inChar();
+
+            u8_staticTurnLayoutAvailable = prepare_static_course_turn_info(u8_turnLayoutNumber, pau8_turnList);
+            load_turn_layout_to_line_follower(u8_staticTurnLayoutAvailable, pau8_turnList);
+            break;
+        case 'g':
+            printf("\nEnter direction for game 1\n");
+            u8_c2 = inChar();
+            printf("Game 1: %c\n", u8_c2);
+            pu8_branchList[0] = u8_c2;
+
+            printf("\nEnter direction for game 2\n");
+            u8_c2 = inChar();
+            printf("Game 2: %c\n", u8_c2);
+            pu8_branchList[1] = u8_c2;
+
+            printf("\nEnter direction for game 3\n");
+            u8_c2 = inChar();
+            printf("Game 3: %c\n", u8_c2);
+            pu8_branchList[2] = u8_c2;
+
+            printf("\nEnter direction for game 4\n");
+            u8_c2 = inChar();
+            printf("Game 4: %c\n", u8_c2);
+            pu8_branchList[3] = u8_c2;
+
+            break;
         default:
             printf("Invalid Choice\n");
             break;
@@ -348,6 +386,8 @@ void navigation_serial_menu() {
     printf("   t) turn 180 degrees\n");
     printf("   q) use the navigation queue\n");
     printf("   w) navigate the whole course (skips the game stuff)\n");
+    printf("   k) load up a static turn layout\n");
+    printf("   g) load branch list\n");
 }
 
 // Menu for contorlling a single motor

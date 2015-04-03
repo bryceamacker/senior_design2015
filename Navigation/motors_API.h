@@ -64,21 +64,22 @@
 #define BACK_AWAY_FROM_GAME_DISTANCE    120                     // Backing away from games distance
 #define MOVE_INTO_BOX_DISTANCE          160                     // Moving into the box distance
 
-#define MOVE_INTO_SIMON_DISTANCE        160                     // Move into Simon
-#define MOVE_INTO_RUBIKS_DISTANCE       130                     // Move into Rubiks
+#define MOVE_INTO_SIMON_DISTANCE        130                     // Move into Simon
+#define MOVE_INTO_RUBIKS_DISTANCE       100                     // Move into Rubiks
 #define MOVE_INTO_ETCH_DISTANCE         120                     // Move into Etch
 
 #define M_PI                            3.14159265358979323846  // pi constant
 #define WHEEL_DIAMETER                  80.0                    // in milimeters
 #define WHEEL_CIRCUMFERENCE             (WHEEL_DIAMETER * M_PI) // in milimeters
 
-#define BASE_SPEED_DEFAULT              20                      // Base speed duty cycle
+#define BASE_SPEED_DEFAULT              25                      // Base speed duty cycle
 #define LEFT_MAX_SPEED                  (BASE_SPEED_DEFAULT*2)
 #define RIGHT_MAX_SPEED                 (BASE_SPEED_DEFAULT*2)
 
 #define LINE_WIDTH                      25                      // Width of the line in mm
 
-#define START_BOX_DRIVE_DISTANCE        100                     // mm to get out of the start box before following a line
+#define START_BOX_DRIVE_DISTANCE        130                     // mm to get out of the start box before following a line
+#define CROSS_FINISH_LINE_DISTANCE      170
 
 extern float BASE_SPEED;
 
@@ -103,7 +104,8 @@ typedef enum {
     PREPARE_TURN_CURVE =            18,
     PREPARE_SIMON =                 19,
     PREPARE_ETCH =                  20,
-    PREPARE_RUBIKS =                21
+    PREPARE_RUBIKS =                21,
+    CROSS_FINISH_LINE =             22
 } motorRoutines;
 
 ///////////////////////////////////////////////

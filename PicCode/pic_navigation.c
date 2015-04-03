@@ -26,9 +26,9 @@
 #include "SSDisplayAPI.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #ifdef DEBUG_BUILD
-#include <stdio.h>
 #warning "Navigation: DEBUG BUILD"
 #endif
 
@@ -76,6 +76,9 @@ uint8_t u8_staticCourseNumber;
 uint8_t u8_staticTurnLayoutNumber;
 char pu8_branchList[4];
 
+// Variable for speed configuration
+uint8_t u8_newSpeed;
+
 // Function declarations
 void pic_navigation_init(void);
 void run_static_course(uint8_t pu8_gameOrder[4]);
@@ -86,6 +89,7 @@ void configure_game_order();
 void configure_static_course_selection();
 void configure_static_turn_layout_selection();
 void configure_branch_order();
+void configure_speed();
 void setup_start_button(void);
 void wait_for_start_button_push(void);
 void setup_game_buttons(void);
@@ -99,18 +103,14 @@ void print_order(uint8_t pu8_gameOrder[4]);
 // Main loop for the navigation PIC using I2C commands
 int main (void) {
     uint8_t pau8_turnList[128] = {0};
+    uint8_t u8_numberOfStaticTurns;
     char sz_sendString[BUFFSIZE];
-    char* printstring;
-    uint8_t i;
-    uint8_t u8_staticTurnLayoutStatus;
 
     u8_gameBlock = 0;
     u8_staticCourseNumber = 0;
     u8_staticTurnLayoutNumber = 0;
-    u8_staticTurnLayoutStatus = 0;
-
-    printstring = "NA";
-    // pau8_turnList = 0;
+    u8_numberOfStaticTurns = 0;
+    u8_newSpeed = BASE_SPEED;
 
     // Configure the motor controller PIC
     configBasic(HELLO_MSG);
@@ -124,30 +124,8 @@ int main (void) {
     send_display_value("CF");
     DELAY_MS(DISPLAY_DELAY);
 
-    u8_staticTurnLayoutStatus = prepare_static_course_turn_info(u8_staticTurnLayoutNumber, pau8_turnList);
-
-    // if (u8_staticTurnLayoutStatus == 1) {
-    //     for (i=0;i<128;i++) {
-    //         if(pau8_turnList[i] == CURVE_LEFT) {
-    //             printstring = "CL";
-    //         }
-    //         else if(pau8_turnList[i] == NORMAL_LEFT) {
-    //             printstring = "NL";
-    //         }
-    //         else if(pau8_turnList[i] == CURVE_RIGHT) {
-    //             printstring = "CR";
-    //         }
-    //         else if(pau8_turnList[i] == NORMAL_RIGHT) {
-    //             printstring = "NR";
-    //         }
-    //         else {
-    //             printstring = "NA";
-    //         }
-    //         if (printstring != "NA") {
-    //             printf("Turn %i: %s(%i)\n", i+1, printstring, pau8_turnList[i]);
-    //         }
-    //     }
-    // }
+    u8_numberOfStaticTurns = prepare_static_course_turn_info(u8_staticTurnLayoutNumber, pau8_turnList);
+    load_turn_layout_to_line_follower(u8_numberOfStaticTurns, pau8_turnList);
 
     if (SKIP_START_BUTTON == 0) {
         #ifdef DEBUG_BUILD
@@ -167,7 +145,7 @@ int main (void) {
     printf("Waiting for start signal\n");
     #endif
     while (strcmp((char*) sz_recieveString, "Idle.") != 0) {
-        DELAY_MS(1000);
+        DELAY_MS(500);
         readNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *) sz_recieveString, 6);
         doHeartbeat();
     }
@@ -191,6 +169,8 @@ void pic_navigation_init() {
 
     // I2C Config
     configI2C1(400);
+
+    DELAY_MS(1000);
 }
 
 // Navigate the whole course
@@ -380,6 +360,12 @@ void configure_robot(void) {
         send_display_value("C4");
         DELAY_MS(DISPLAY_DELAY);
         configure_static_turn_layout_selection();
+    }
+
+    if (SKIP_SPEED_CONFIGURATION == 0) {
+        send_display_value("C5");
+        DELAY_MS(DISPLAY_DELAY);
+        configure_speed();
     }
 }
 
@@ -620,6 +606,52 @@ void configure_branch_order() {
     while(SET_BUTTON_PUSHED);
     DELAY_MS(DEBOUNCE_DELAY);
 }
+
+void configure_speed(void) {
+    #ifdef DEBUG_BUILD
+    printf("Selecting static turn layout\n");
+    #endif
+
+    send_display_number(u8_newSpeed);
+
+    while (SET_BUTTON_RELEASED) {
+        if (DOWN_BUTTON_PUSHED) {
+            if (u8_newSpeed == 0) {
+                u8_newSpeed = 50;
+            } else {
+                u8_newSpeed = u8_newSpeed - 1;
+            }
+
+            send_display_number(u8_newSpeed);
+
+            printf("Current speed %u\n", u8_newSpeed);
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(DOWN_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+        if (UP_BUTTON_PUSHED) {
+            if (u8_newSpeed == 50) {
+                u8_newSpeed = 0;
+            } else {
+                u8_newSpeed = u8_newSpeed + 1;
+            }
+
+            send_display_number(u8_newSpeed);
+
+            printf("Current speed %u\n", u8_newSpeed);
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(UP_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+    }
+    set_base_speed(u8_newSpeed);
+    DELAY_MS(DEBOUNCE_DELAY);
+    while(SET_BUTTON_PUSHED);
+    DELAY_MS(DEBOUNCE_DELAY);
+}
+
 
 void send_display_number(uint8_t u8_number) {
     char numBuffer[2];

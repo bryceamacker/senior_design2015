@@ -20,28 +20,39 @@
 
 #include "line_follower_API.h"
 
+// Detection for turns and Ts
 uint8_t u8_leftTurnDetection = 0;
 uint8_t u8_rightTurnDetection = 0;
 uint8_t u8_TIntersection = 0;
 uint8_t u8_turnToFinish = 0;
 
+// Variables to keep up with static turn layouts
+uint8_t u8_numberOfStaticTurns = 0;
+uint8_t u8_currentTurn = 0;
+uint8_t* pua8_turnStaticList = {0};
+
+// Stack to keep up with turns off of the main line
 stack_t branchedTurnStack;
 
+// Externs from the motors statck
 extern queue_t navigationRoutineQueue;
 extern uint8_t u8_routineBlock;
 extern uint8_t u8_currentRoutine;
 
+// Values for the PID controller
 float KP = KP_DEFAULT;
 float KD = KD_DEFAULT;
-
-// Find the center of the line we are constantly trying to stay at
-int16_t i16_lineCenter = ((1000 * (TRIPLE_SENSOR_NUM - 1)) / 2);
 
 void line_follower_init() {
     sensor_array_init();
     motors_init();
 
     init_stack(&branchedTurnStack);
+}
+
+void load_turn_layout_to_line_follower(uint8_t u8_numberOfTurns, uint8_t* pua8_turnList) {
+    u8_numberOfStaticTurns = u8_numberOfTurns;
+    pua8_turnStaticList = pua8_turnList;
 }
 
 void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
@@ -62,9 +73,6 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
         read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
         if (u8_routineBlock == 0) {
             if (u8_turnRan == 1) {
-                // Center up on the line after turning
-                // turn_until_line_centered(f_maxSpeed, u8_turnToFinish);
-
                 // Get back on a line after turning
                 reverse_until_line();
 
@@ -77,10 +85,10 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                     // Keep up with our first turn away from the main line
                     push(&branchedTurnStack, u8_lastTurn);
 
-                    u8_handlingTIntersection = 0;
                     u8_branchedFromMainLine = 1;
                 }
             }
+            u8_handlingTIntersection = 0;
             u8_turnRan = 0;
             u16_lateReadingWindow = 0;
 
@@ -88,6 +96,9 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
             if (check_for_box(pau16_sensorValues) == 1) {
                 // If we're not branched from the mainline, check what turn we should do and flag that we have branched, flag that we hit a T (used for reverse)
                 if (u8_expectedTurn == 1) {
+                    enqueue(&navigationRoutineQueue, CROSS_FINISH_LINE);
+                    check_for_routine();
+                    block_until_all_routines_done();
                     return;
                 }
                 if (u8_branchedFromMainLine == 0) {
@@ -100,11 +111,15 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                         push(&branchedTurnStack, LEFT_TURN);
                         handle_left_turn(0);
                         enqueue(&navigationRoutineQueue, FINISH_TURN);
+                        enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*3);
                         block_until_all_routines_done();
                     } else {
                         push(&branchedTurnStack, RIGHT_TURN);
                         handle_right_turn(0);
                         enqueue(&navigationRoutineQueue, FINISH_TURN);
+                        enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
+                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*3);
                         block_until_all_routines_done();
                     }
                     u8_branchedFromMainLine = 1;
@@ -128,6 +143,13 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                 printf("Left turn!\n");
                 #endif
 
+                if ((u8_currentTurn > u8_numberOfStaticTurns) && (u8_expectedTurn == 1)) {
+                    enqueue(&navigationRoutineQueue, CROSS_FINISH_LINE);
+                    check_for_routine();
+                    block_until_all_routines_done();
+                    return;
+                }
+
                 // If we've branched from the mainline, keep up with the turns we make
                 if (u8_branchedFromMainLine == 1) {
                     handle_left_turn(1);
@@ -143,6 +165,13 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                 #ifdef DEBUG_BUILD
                 printf("Right turn!\n");
                 #endif
+
+                if ((u8_currentTurn > u8_numberOfStaticTurns) && (u8_expectedTurn == 1)) {
+                    enqueue(&navigationRoutineQueue, CROSS_FINISH_LINE);
+                    check_for_routine();
+                    block_until_all_routines_done();
+                    return;
+                }
 
                 // If we've branched from the mainline, keep up with the turns we make
                 if (u8_branchedFromMainLine == 1) {
@@ -170,7 +199,9 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
             if (check_for_box(pau16_sensorValues) == 1){
                 // If we're not branched from the mainline, check what turn we should do and flag that we have branched, flag that we hit a T (used for reverse)
                 if (u8_expectedTurn == 1) {
-                    return;
+                    enqueue(&navigationRoutineQueue, CROSS_FINISH_LINE);
+                    check_for_routine();
+                    block_until_all_routines_done();
                 }
                 if ((u8_branchedFromMainLine == 0)  && (u8_handlingTIntersection == 0) && (u16_lateReadingWindow < 100)) {
                     #ifdef DEBUG_BUILD
@@ -179,6 +210,7 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
 
                     // Clear out the routine queue and stop
                     clear_routines();
+                    u8_currentTurn--;
 
                     // If the expected turn is left
                     if (u8_expectedTurn == 'L') {
@@ -186,14 +218,14 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                         handle_left_turn(0);
                         enqueue(&navigationRoutineQueue, FINISH_TURN);
                         enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*2);
+                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*3);
                         block_until_all_routines_done();
                     } else {
                         push(&branchedTurnStack, RIGHT_TURN);
                         handle_right_turn(0);
                         enqueue(&navigationRoutineQueue, FINISH_TURN);
                         enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*2);
+                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*3);
                         block_until_all_routines_done();
                     }
                     u8_branchedFromMainLine = 1;
@@ -206,6 +238,7 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                     printf("Wait no, leeeet's play!\n");
                     #endif
 
+                    u8_currentTurn--;
                     // Forget the last turn since it was a mistake
                     pop(&branchedTurnStack);
 
@@ -651,24 +684,19 @@ void handle_left_turn(uint8_t u8_curve) {
     motors_stop();
     u8_turnToFinish = LEFT_TURN;
 
-    // Queue all the routines for a left turn
-    if (u8_curve == 0) {
-        enqueue(&navigationRoutineQueue, PREPARE_TURN);
-        enqueue(&navigationRoutineQueue, LEFT_TURN);
-        // enqueue(&navigationRoutineQueue, FINISH_TURN);
+    if (u8_numberOfStaticTurns != 0) {
+        handle_turn(pua8_turnStaticList[u8_currentTurn++]);
+        #ifdef DEBUG_BUILD
+        printf("On static turn %i\n", u8_currentTurn);
+        #endif
     } else {
-        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
-        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
-
-        enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
-        enqueue(&navigationMoveDistanceQueue, PREPARE_CURVE_TURN_DISTANCE);
-
-        enqueue(&navigationRoutineQueue, LEFT_CURVE_TURN);
-        enqueue(&navigationRoutineQueue, FINISH_TURN);
+        // Queue all the routines for a left turn
+        if (u8_curve == 0) {
+            handle_turn(NORMAL_LEFT);
+        } else {
+            handle_turn(CURVE_LEFT);
+        }
     }
-
-    // Initiate these routines
-    check_for_routine();
 }
 
 // Handle a reverse left turn
@@ -745,24 +773,19 @@ void handle_right_turn(uint8_t u8_curve) {
     motors_stop();
     u8_turnToFinish = RIGHT_TURN;
 
-    // Queue all the routines for a right turn
-    if (u8_curve == 0) {
-        enqueue(&navigationRoutineQueue, PREPARE_TURN);
-        enqueue(&navigationRoutineQueue, RIGHT_TURN);
-        // enqueue(&navigationRoutineQueue, FINISH_TURN);
+    if (u8_numberOfStaticTurns != 0) {
+        handle_turn(pua8_turnStaticList[u8_currentTurn++]);
+        #ifdef DEBUG_BUILD
+        printf("On static turn %i\n", u8_currentTurn);
+        #endif
     } else {
-        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
-        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
-
-        enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
-        enqueue(&navigationMoveDistanceQueue, PREPARE_CURVE_TURN_DISTANCE);
-
-        enqueue(&navigationRoutineQueue, RIGHT_CURVE_TURN);
-        enqueue(&navigationRoutineQueue, FINISH_TURN);
+        // Queue all the routines for a right turn
+        if (u8_curve == 0) {
+            handle_turn(NORMAL_RIGHT);
+        } else {
+            handle_turn(CURVE_RIGHT);
+        }
     }
-
-    // Initiate these routines
-    check_for_routine();
 }
 
 // Handle a reverse right turn
@@ -871,6 +894,39 @@ void turn_until_line_centered(float f_speed, uint8_t u8_direction) {
         }
     }
     motors_stop();
+}
+
+void handle_turn(uint8_t u8_turn) {
+    if (u8_turn == CURVE_LEFT) {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
+        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
+
+        enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+        enqueue(&navigationMoveDistanceQueue, PREPARE_CURVE_TURN_DISTANCE);
+
+        enqueue(&navigationRoutineQueue, LEFT_CURVE_TURN);
+        enqueue(&navigationRoutineQueue, FINISH_TURN);
+
+    } else if (u8_turn == NORMAL_LEFT) {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN);
+        enqueue(&navigationRoutineQueue, LEFT_TURN);
+        // enqueue(&navigationRoutineQueue, FINISH_TURN);
+
+    } else if (u8_turn == CURVE_RIGHT) {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
+        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
+
+        enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+        enqueue(&navigationMoveDistanceQueue, PREPARE_CURVE_TURN_DISTANCE);
+
+        enqueue(&navigationRoutineQueue, RIGHT_CURVE_TURN);
+        enqueue(&navigationRoutineQueue, FINISH_TURN);
+    } else if (u8_turn == NORMAL_RIGHT) {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN);
+        enqueue(&navigationRoutineQueue, RIGHT_TURN);
+        // enqueue(&navigationRoutineQueue, FINISH_TURN);
+    }
+    check_for_routine();
 }
 
 void set_KP(float f_newValue) {

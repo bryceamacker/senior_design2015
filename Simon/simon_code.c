@@ -90,7 +90,6 @@ void play_simon() {
     simon_hover_buttons();
     DELAY_MS(PLATFORM_WAIT);
     platform_rubiks();
-    DELAY_MS(PLATFORM_WAIT);
     twist_rubiks_clock();
     DELAY_MS(PLATFORM_WAIT);
     calibrate_sensors(); // I don't think we need calibration with the new transistors
@@ -124,7 +123,6 @@ void play_simon() {
             #ifdef DEBUG_BUILD
             printf("Stopping Simon Time\n");
             #endif
-            T5CONbits.TON = 0;     // Turn off the timer
             u8_simonFinished = 0;
             u16_milliSeconds = 0;
             u8_roundNum = 1;
@@ -138,8 +136,9 @@ void play_simon() {
     }
 
     // Let go of the simon and pull the arms back
+    T5CONbits.TON = 0;     // Turn off the timer
     twist_rubiks_counter();
-    DELAY_MS(PLATFORM_WAIT);
+    // DELAY_MS(PLATFORM_WAIT);
     platform_up();
     DELAY_MS(PLATFORM_WAIT);
     simon_retract_buttons();
@@ -156,7 +155,6 @@ void play_simon_infinitely() {
     simon_hover_buttons();
     DELAY_MS(PLATFORM_WAIT);
     platform_rubiks();
-    DELAY_MS(PLATFORM_WAIT);
     twist_rubiks_clock();
     DELAY_MS(PLATFORM_WAIT);
     calibrate_sensors(); // I don't think we need calibration with the new transistors
@@ -208,7 +206,7 @@ void calibrate_sensors() {
     int16_t i16_tempGreenValue = read_photo_cell(GREEN_LIGHT);
 
     // Find the lowest value for each sensor over a short period of time
-    for (i = 0; i < 100; i++) {
+    for (i = 0; i < 50; i++) {
         i16_tempYellowValue = read_photo_cell(YELLOW_TRANS);
         i16_tempBlueValue = read_photo_cell(BLUE_TRANS);
         i16_tempRedValue = read_photo_cell(RED_TRANS);

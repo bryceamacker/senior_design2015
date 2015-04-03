@@ -118,7 +118,7 @@ static inline uint8_t prepare_course_routines(uint8_t u8_course) {
             |
             x
 **/
-static inline void prepare_static_course_turn_info_one(uint8_t* pau8_turnList) {
+static inline uint8_t prepare_static_course_turn_info_one(uint8_t* pau8_turnList) {
     uint8_t u8_turnCount = 0;
 
     // To game 1
@@ -154,6 +154,8 @@ static inline void prepare_static_course_turn_info_one(uint8_t* pau8_turnList) {
 
     // To finish line
     pau8_turnList[u8_turnCount++] = CURVE_LEFT;
+
+    return u8_turnCount;
 }
 
 /**
@@ -174,7 +176,7 @@ static inline void prepare_static_course_turn_info_one(uint8_t* pau8_turnList) {
                 |
                 x
 **/
-static inline void prepare_static_course_turn_info_two(uint8_t* pau8_turnList) {
+static inline uint8_t prepare_static_course_turn_info_two(uint8_t* pau8_turnList) {
     uint8_t u8_turnCount = 0;
 
     // To game 1
@@ -193,7 +195,7 @@ static inline void prepare_static_course_turn_info_two(uint8_t* pau8_turnList) {
 
     // To game 3
     pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = CURVE_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
 
     // Leaving game 3
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
@@ -206,6 +208,8 @@ static inline void prepare_static_course_turn_info_two(uint8_t* pau8_turnList) {
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
 
     // To finish line
+
+    return u8_turnCount;
 }
 
 
@@ -225,7 +229,7 @@ static inline void prepare_static_course_turn_info_two(uint8_t* pau8_turnList) {
                 |
                 x
 **/
-static inline void prepare_static_course_turn_info_three(uint8_t* pau8_turnList) {
+static inline uint8_t prepare_static_course_turn_info_three(uint8_t* pau8_turnList) {
     uint8_t u8_turnCount = 0;
 
     // To game 1
@@ -260,6 +264,8 @@ static inline void prepare_static_course_turn_info_three(uint8_t* pau8_turnList)
 
     // To finish line
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+
+    return u8_turnCount;
 }
 
 /**
@@ -282,7 +288,7 @@ static inline void prepare_static_course_turn_info_three(uint8_t* pau8_turnList)
                 |
                 x
 **/
-static inline void prepare_static_course_turn_info_four(uint8_t* pau8_turnList) {
+static inline uint8_t prepare_static_course_turn_info_four(uint8_t* pau8_turnList) {
     uint8_t u8_turnCount = 0;
 
     // To game 1
@@ -314,31 +320,51 @@ static inline void prepare_static_course_turn_info_four(uint8_t* pau8_turnList) 
     pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
 
     // To finish line
+
+    return u8_turnCount;
 }
 
 static inline uint8_t prepare_static_course_turn_info(uint8_t u8_course, uint8_t* pau8_turnList) {
-    uint8_t u8_setCourseTurns;
-
-    u8_setCourseTurns = 1;
+    uint8_t u8_numberOfTurns;
 
     switch (u8_course) {
         case 1:
-            prepare_static_course_turn_info_one(pau8_turnList);
+            #ifdef DEBUG_BUILD
+            printf("Turn layout 1 loaded\n");
+            #endif
+
+            u8_numberOfTurns = prepare_static_course_turn_info_one(pau8_turnList);
             break;
         case 2:
-            prepare_static_course_turn_info_two(pau8_turnList);
+            #ifdef DEBUG_BUILD
+            printf("Turn layout 2 loaded\n");
+            #endif
+
+            u8_numberOfTurns = prepare_static_course_turn_info_two(pau8_turnList);
             break;
         case 3:
-            prepare_static_course_turn_info_three(pau8_turnList);
+            #ifdef DEBUG_BUILD
+            printf("Turn layout 3 loaded\n");
+            #endif
+
+            u8_numberOfTurns = prepare_static_course_turn_info_three(pau8_turnList);
             break;
         case 4:
-            prepare_static_course_turn_info_four(pau8_turnList);
+            #ifdef DEBUG_BUILD
+            printf("Turn layout 4 loaded\n");
+            #endif
+
+            u8_numberOfTurns = prepare_static_course_turn_info_four(pau8_turnList);
             break;
         default:
-            u8_setCourseTurns = 0;
+            #ifdef DEBUG_BUILD
+            printf("Invalid turn layout selection\n");
+            #endif
+
+            u8_numberOfTurns = 0;
             break;
     }
-    return u8_setCourseTurns;
+    return u8_numberOfTurns;
 }
 
 #endif

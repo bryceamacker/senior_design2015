@@ -652,18 +652,12 @@ void final_game_preparations(uint8_t u8_game) {
     switch(u8_game) {
         case SIMON:
             enqueue(&navigationRoutineQueue, PREPARE_SIMON);
-            // enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-            // enqueue(&navigationMoveDistanceQueue, MOVE_INTO_SIMON_DISTANCE);
             break;
         case RUBIKS:
             enqueue(&navigationRoutineQueue, PREPARE_RUBIKS);
-            // enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-            // enqueue(&navigationMoveDistanceQueue, MOVE_INTO_RUBIKS_DISTANCE);
             break;
         case ETCH:
             enqueue(&navigationRoutineQueue, PREPARE_ETCH);
-            // enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-            // enqueue(&navigationMoveDistanceQueue, MOVE_INTO_ETCH_DISTANCE);
             break;
         case CARD:
             break;
@@ -848,11 +842,19 @@ void handle_routine(uint8_t routine) {
             printf("Routine: prepare for Etch\n");
             move_by_distance(MOVE_INTO_ETCH_DISTANCE*1.0, BASE_SPEED);
             #endif
+            break;
         case PREPARE_RUBIKS:
             #ifdef DEBUG_BUILD
             printf("Routine: prepare for Rubiks\n");
             #endif
             move_by_distance(MOVE_INTO_RUBIKS_DISTANCE*1.0, BASE_SPEED);
+            break;
+        case CROSS_FINISH_LINE:
+            #ifdef DEBUG_BUILD
+            printf("Routine: crossing finish line\n");
+            #endif
+            move_by_distance(CROSS_FINISH_LINE_DISTANCE*1.0, BASE_SPEED);
+            break;
         default:
             break;
     }

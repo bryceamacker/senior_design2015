@@ -43,6 +43,14 @@ extern float KD;
 void line_follower_init(void);
 
 /**
+ * @brief Load the data for static turn layouts in to local variables
+ *
+ * @param u8_status Whether or not we have a list of turns
+ * @param pua8_turnList The list of static turns
+ */
+void load_turn_layout_to_line_follower(uint8_t u8_status, uint8_t* pua8_turnList);
+
+/**
  * @brief Follow  line until the line sensor sees a box
  *
  * @param f_maxSpeed the max speed the robot will move at
@@ -157,6 +165,13 @@ void reverse_until_line();
  * @brief Reverse until the robot gets back to a branch
 **/
 void reverse_until_branch();
+
+/**
+ * @brief Wrapper to handle any turn
+ *
+ * @param u8_turn Turn to handle: curve left, normal left, curve right, normal right
+**/
+void handle_turn(uint8_t u8_turn);
 
 /**
  * @brief Check for a line, used when turning to see if we're branching from the main line
