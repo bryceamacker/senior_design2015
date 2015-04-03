@@ -41,6 +41,10 @@ void platform_up() {
     turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_UP_PULSE);
 }
 
+void platform_down() {
+    turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_RUBIK_PULSE);
+}
+
 void platform_rubiks() {
     turn_servo_by_pulse(RUBIKS_PLATFORM, PLATFORM_RUBIK_PULSE);
     DELAY_MS(PLATFORM_WAIT);

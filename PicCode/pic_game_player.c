@@ -61,7 +61,6 @@ volatile uint16_t u16_index;
 volatile picGamePlayerState e_picState;
 volatile I2C_STATE e_mystate = STATE_WAIT_FOR_ADDR;
 
-
 // Function declarations
 void pic_game_player_init(void);
 void I2C_check_command(volatile char *psz_s1);
@@ -77,12 +76,14 @@ int main(void) {
     configBasic(HELLO_MSG);
     pic_game_player_init();
 
+    // Show that we've booted up
     display_draw_number(00);
 
     #ifdef DEBUG_BUILD
     printf("Waiting for configuration\n");
     #endif
 
+    // Wait until configuration is done
     while(e_picState == CONF) {
         doHeartbeat();
     }
@@ -91,8 +92,8 @@ int main(void) {
     printf("Finished configuration\n");
     #endif
 
+    // Wait for the start light
     if (SKIP_START_LIGHT == 0) {
-        // Move to the idle state, letting the motor controller know that it's time to move
         strncpy((char *) sz_currentStateString, sz_waitString, BUFFSIZE);
         e_picState = WAIT;
 
@@ -136,12 +137,16 @@ int main(void) {
                     DELAY_MS(2000);
                 }
             }
+
+            // Go back to the idle state after playing a game
             e_picState = IDLE;
             strncpy((char *) sz_currentStateString, sz_idleString, BUFFSIZE);
             #ifdef DEBUG_BUILD
             printf("Waiting for a new game command\n");
             #endif
         }
+
+        // Static number while navigating
         display_draw_number(NAVIGATING_NUMBER);
         doHeartbeat();
     }

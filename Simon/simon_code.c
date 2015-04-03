@@ -89,7 +89,7 @@ void play_simon() {
     game_arm_pull_simon();
     simon_hover_buttons();
     DELAY_MS(PLATFORM_WAIT);
-    platform_rubiks();
+    platform_down();
     twist_rubiks_clock();
     DELAY_MS(PLATFORM_WAIT);
     calibrate_sensors(); // I don't think we need calibration with the new transistors
@@ -136,9 +136,8 @@ void play_simon() {
     }
 
     // Let go of the simon and pull the arms back
-    T5CONbits.TON = 0;     // Turn off the timer
+    T5CONbits.TON = 0;
     twist_rubiks_counter();
-    // DELAY_MS(PLATFORM_WAIT);
     platform_up();
     DELAY_MS(PLATFORM_WAIT);
     simon_retract_buttons();

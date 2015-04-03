@@ -174,6 +174,8 @@ for key, value in ARGLIST:
       # Add the controllers to be built if this is a debug build
       UserAppSources.append("PicCode/Controllers/pic_game_player_controller.c");
       UserAppSources.append("PicCode/Controllers/pic_navigation_controller.c");
+      UserAppSources.append("PicCode/Controllers/pic_navigation_constant_test.c");
+
 
 if debugBuild:
   print

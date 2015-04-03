@@ -48,9 +48,15 @@ void platform_init(void);
 // Platform usage
 //
 ///////////////////////////////////////////////
-/** * @brief Raise the platform to it's intial position
- */
+/**
+ * @brief Raise the platform to it's intial position
+**/
 void platform_up(void);
+
+/**
+ * @brief Raise the platform to it's down position
+**/
+void platform_down(void);
 
 /**
  * @brief Lower the platform to twist the cube

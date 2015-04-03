@@ -96,16 +96,21 @@ void setup_game_buttons(void);
 void send_display_number(uint8_t u8_number);
 void send_display_value(char sz_displayValueString[2]);
 void send_I2C_message(char sz_message[BUFFSIZE]);
+
 #ifdef DEBUG_BUILD
 void print_order(uint8_t pu8_gameOrder[4]);
 #endif
 
 // Main loop for the navigation PIC using I2C commands
 int main (void) {
+    // Static turn layout Info
     uint8_t pau8_turnList[128] = {0};
     uint8_t u8_numberOfStaticTurns;
+
+    // I2C send buffer
     char sz_sendString[BUFFSIZE];
 
+    // Status flags
     u8_gameBlock = 0;
     u8_staticCourseNumber = 0;
     u8_staticTurnLayoutNumber = 0;
@@ -118,15 +123,20 @@ int main (void) {
     setup_start_button();
     setup_game_buttons();
 
+    // Start configuring
     send_display_value("CC");
     DELAY_MS(DISPLAY_DELAY);
     configure_robot();
+
+    // Finished configuring
     send_display_value("CF");
     DELAY_MS(DISPLAY_DELAY);
 
+    // Load up the turn layout, the return value will tell us if we have a turn layout for that course
     u8_numberOfStaticTurns = prepare_static_course_turn_info(u8_staticTurnLayoutNumber, pau8_turnList);
     load_turn_layout_to_line_follower(u8_numberOfStaticTurns, pau8_turnList);
 
+    // Wait for the start button to be pushed
     if (SKIP_START_BUTTON == 0) {
         #ifdef DEBUG_BUILD
         printf("Waiting for start button\n");
@@ -135,9 +145,11 @@ int main (void) {
         wait_for_start_button_push();
     }
 
+    // Tell the game player to wait on the start light
     strncpy(sz_sendString, sz_waitString, BUFFSIZE);
     writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_sendString, 6);
 
+    // Calibrate the sensor arrays
     calibrateAllSensorArrays();
 
     // Wait for the game player PIC to detect the start light to turn off
@@ -150,11 +162,13 @@ int main (void) {
         doHeartbeat();
     }
 
+    // Check to see if we're using a static course configuration
     if (prepare_course_routines(u8_staticCourseNumber) == 1) {
-        // Navigate the whole course
+        // Run static routines
         run_static_course(pu8_gameOrder);
     }
     else {
+        // Navigate the whole course
         navigate_course(pu8_gameOrder);
     }
 
@@ -170,20 +184,21 @@ void pic_navigation_init() {
     // I2C Config
     configI2C1(400);
 
+    // Wait just a bit for the game player to boot up
     DELAY_MS(1000);
 }
 
 // Navigate the whole course
 void navigate_course(uint8_t pu8_gameOrder[4]) {
-    // Game counter
+    // Game counter at 0
     uint8_t u8_currentGame;
-
     u8_currentGame = 0;
 
+    // Get past our start box
     enqueue(&navigationRoutineQueue, MOVE_PAST_START_BOX);
     check_for_routine();
 
-    // Play Rubiks, Etch, and Simon then stop
+    // Play Simon, Rubiks, Etch, and Card then stop
     while(u8_currentGame <= 3) {
         // Find a box
         follow_line_to_box(BASE_SPEED, pu8_branchList[u8_currentGame]);
@@ -215,7 +230,7 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
 }
 
 void run_static_course(uint8_t pu8_gameOrder[4]) {
-    // Game counter
+    // Game counter at 0
     uint8_t u8_currentGame;
     u8_currentGame = 0;
 
@@ -227,6 +242,7 @@ void run_static_course(uint8_t pu8_gameOrder[4]) {
     #endif
 
     while(u8_currentGame <= 3) {
+        // If we're at a game play it otherwise keep navigating
         if (u8_currentRoutine == PLAY_GAME_PAUSE) {
             play_game(pu8_gameOrder[u8_currentGame]);
             u8_gameBlock = 0;
@@ -327,11 +343,13 @@ void configure_robot(void) {
     printf("Configuring robot\n");
     #endif
 
+    // Configure the game order
     if (STATIC_ORDER == 0) {
         send_display_value("C1");
         DELAY_MS(DISPLAY_DELAY);
         configure_game_order();
     }
+    // Default order of games
     else {
         pu8_gameOrder[0] = SIMON;
         pu8_gameOrder[1] = RUBIKS;
@@ -339,29 +357,35 @@ void configure_robot(void) {
         pu8_gameOrder[3] = CARD;
     }
 
+    // Configure a static course
     if (SKIP_STATIC_COURSE_SELECTION == 0) {
         send_display_value("C2");
         DELAY_MS(DISPLAY_DELAY);
         configure_static_course_selection();
     }
 
+    // Configure the branch list
     if (SKIP_BRANCH_LIST_SETUP == 0) {
         send_display_value("C3");
         DELAY_MS(DISPLAY_DELAY);
         configure_branch_order();
-    } else {
+    }
+    // Default branch list
+    else {
         pu8_branchList[0] = 'L';
         pu8_branchList[1] = 'R';
         pu8_branchList[2] = 'L';
         pu8_branchList[3] = 'R';
     }
 
+    // Configure which static turn layout to use
     if (SKIP_STATIC_TURN_LAYOUT_SELECTION == 0) {
         send_display_value("C4");
         DELAY_MS(DISPLAY_DELAY);
         configure_static_turn_layout_selection();
     }
 
+    // Configure the speed
     if (SKIP_SPEED_CONFIGURATION == 0) {
         send_display_value("C5");
         DELAY_MS(DISPLAY_DELAY);
@@ -387,6 +411,7 @@ void configure_game_order() {
     printf("Waiting for game order\n");
     #endif
 
+    // Keep waiting until all games are set
     while ((u8_simonSet == 0) || (u8_cardSet == 0) || (u8_etchSet == 0) || (u8_rubiksSet == 0)) {
         if (SIMON_BUTTON_PUSHED && (u8_simonSet == 0)) {
             #ifdef DEBUG_BUILD
@@ -448,6 +473,7 @@ void configure_static_course_selection() {
 
     send_display_value("00");
 
+    // Keep displaying the value and changing until the set button is pressed
     while (SET_BUTTON_RELEASED) {
         if (DOWN_BUTTON_PUSHED) {
             if (u8_staticCourseNumber == 0) {
@@ -458,9 +484,9 @@ void configure_static_course_selection() {
 
             send_display_number(u8_staticCourseNumber);
 
-            // #ifdef DEBUG_BUILD
-            // printf("Static course %u\n", u8_staticCourseNumber);
-            // #endif
+            #ifdef DEBUG_BUILD
+            printf("Static course %u\n", u8_staticCourseNumber);
+            #endif
 
             DELAY_MS(DEBOUNCE_DELAY);
             while(DOWN_BUTTON_PUSHED);
@@ -475,9 +501,9 @@ void configure_static_course_selection() {
 
             send_display_number(u8_staticCourseNumber);
 
-            // #ifdef DEBUG_BUILD
-            // printf("Static course %u\n", u8_staticCourseNumber);
-            // #endif
+            #ifdef DEBUG_BUILD
+            printf("Static course %u\n", u8_staticCourseNumber);
+            #endif
 
             DELAY_MS(DEBOUNCE_DELAY);
             while(UP_BUTTON_PUSHED);
@@ -496,6 +522,7 @@ void configure_static_turn_layout_selection() {
 
     send_display_value("00");
 
+    // Keep displaying the value and changing until the set button is pressed
     while (SET_BUTTON_RELEASED) {
         if (DOWN_BUTTON_PUSHED) {
             if (u8_staticTurnLayoutNumber == 0) {
@@ -506,7 +533,7 @@ void configure_static_turn_layout_selection() {
 
             send_display_number(u8_staticTurnLayoutNumber);
 
-            printf("Static course %u\n", u8_staticTurnLayoutNumber);
+            printf("Turn layout %u\n", u8_staticTurnLayoutNumber);
 
             DELAY_MS(DEBOUNCE_DELAY);
             while(DOWN_BUTTON_PUSHED);
@@ -521,7 +548,7 @@ void configure_static_turn_layout_selection() {
 
             send_display_number(u8_staticTurnLayoutNumber);
 
-            printf("Static course %u\n", u8_staticTurnLayoutNumber);
+            printf("Turn layout %u\n", u8_staticTurnLayoutNumber);
 
             DELAY_MS(DEBOUNCE_DELAY);
             while(UP_BUTTON_PUSHED);
@@ -547,7 +574,9 @@ void configure_branch_order() {
     printf("Selecting branch order\n");
     #endif
 
+    // Wait until all four branches have been set
     while (u8_branchCount <= 3) {
+        // Down button is a left
         if (DOWN_BUTTON_PUSHED) {
             currentDirection = 'L';
 
@@ -564,6 +593,8 @@ void configure_branch_order() {
             while(DOWN_BUTTON_PUSHED);
             DELAY_MS(DEBOUNCE_DELAY);
         }
+
+        // Up button is a right
         if (UP_BUTTON_PUSHED) {
             currentDirection = 'R';
 
@@ -580,6 +611,8 @@ void configure_branch_order() {
             while(UP_BUTTON_PUSHED);
             DELAY_MS(DEBOUNCE_DELAY);
         }
+
+        // Set the turn to whatever is currently displayed
         if (SET_BUTTON_PUSHED) {
             pu8_branchList[u8_branchCount] = currentDirection;
 
@@ -614,6 +647,7 @@ void configure_speed(void) {
 
     send_display_number(u8_newSpeed);
 
+    // Keep displaying the value and changing until the set button is pressed
     while (SET_BUTTON_RELEASED) {
         if (DOWN_BUTTON_PUSHED) {
             if (u8_newSpeed == 0) {
@@ -652,7 +686,7 @@ void configure_speed(void) {
     DELAY_MS(DEBOUNCE_DELAY);
 }
 
-
+// Send a number to the display
 void send_display_number(uint8_t u8_number) {
     char numBuffer[2];
 
@@ -666,6 +700,7 @@ void send_display_number(uint8_t u8_number) {
     send_display_value(numBuffer);
 }
 
+// Send any two character string to the display
 void send_display_value(char sz_displayValueString[2]) {
     char sz_sendString[BUFFSIZE];
     char tempBuffer[BUFFSIZE];
@@ -688,7 +723,6 @@ void send_I2C_message(char sz_message[BUFFSIZE]) {
 }
 
 #ifdef DEBUG_BUILD
-// Helper to print out the inputted game order
 void print_order(uint8_t pu8_order[4]) {
     uint8_t u8_i;
     uint8_t game;

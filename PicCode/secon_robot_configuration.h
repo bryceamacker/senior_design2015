@@ -23,14 +23,15 @@
 #define BUFFSIZE                        64
 
 // Configurations
-#define STATIC_ORDER                        1
-#define SKIP_START_LIGHT                    0
-#define SKIP_START_BUTTON                   0
-#define SKIP_STATIC_COURSE_SELECTION        1
-#define SKIP_STATIC_TURN_LAYOUT_SELECTION   0
-#define SKIP_BRANCH_LIST_SETUP              0
-#define SKIP_SPEED_CONFIGURATION            0
+#define STATIC_ORDER                        1       // Game order configuration
+#define SKIP_START_LIGHT                    0       // Skip the start light
+#define SKIP_START_BUTTON                   0       // Skip the start button
+#define SKIP_STATIC_COURSE_SELECTION        1       // Skip static course selection
+#define SKIP_STATIC_TURN_LAYOUT_SELECTION   0       // Skip static turn layout selection
+#define SKIP_BRANCH_LIST_SETUP              0       // Skip branch selection
+#define SKIP_SPEED_CONFIGURATION            0       // Skip speed adjustment
 
+// Skip various games
 #define SKIP_SIMON                      0
 #define SKIP_ETCH                       0
 #define SKIP_RUBIKS                     0

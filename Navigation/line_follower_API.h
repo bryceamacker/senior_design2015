@@ -72,14 +72,6 @@ void follow_line_to_box_pid(float f_maxSpeed, char u8_expectedTurn);
  * @param f_maxSpeed the max speed the robot will move at
  */
 void follow_line_back_to_main_line(float f_maxSpeed);
-
-/**
- * @brief Follow in until the robot gets back to wehre it branched from
- *
- * @param f_maxSpeed the max speed the robot will move at
- */
-void follow_line_back_to_main_line_reverse(float f_maxSpeed);
-
 /**
  * @brief Recenter the robot over the line while moving forward
  *
@@ -87,14 +79,6 @@ void follow_line_back_to_main_line_reverse(float f_maxSpeed);
  * @param pau16_sensorValues Values of the triple hi res sensor array
 **/
 void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
-
-/**
- * @brief Recenter the robot over the line while moving reverse
- *
- * @param f_maxSpeed Max speed the robot will travel
- * @param pau16_sensorValues Values of the triple hi res sensor array
-**/
-void correct_line_error_reverse(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
 
 /**
  * @brief Recenter the robot over the line while moving forward using a PID scheme
@@ -128,13 +112,6 @@ uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM
 void handle_left_turn(uint8_t u8_curve);
 
 /**
- * @brief Handle a reverse right angle left turn
- *
- * @param u8_curve Whether or not to use a curved turn
-**/
-void handle_reverse_left_turn(uint8_t u8_curve);
-
-/**
 * @brief Determine whether or not the robot has reached a right turn
 *
 * @param pau16_sensorValues The values of the triple hi res sensors
@@ -150,21 +127,22 @@ uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NU
 void handle_right_turn(uint8_t u8_curve);
 
 /**
- * @brief Handle a reverse right angle right turn
- *
- * @param u8_curve Whether or not to use a curved turn
-**/
-void handle_reverse_right_turn(uint8_t u8_curve);
-
-/**
  * @brief Reverse until the robot gets back on a line
 **/
-void reverse_until_line();
+void reverse_until_line(void);
 
 /**
  * @brief Reverse until the robot gets back to a branch
 **/
-void reverse_until_branch();
+void reverse_until_branch(void);
+
+/**
+ * @brief Continue turning until the line is back in the center
+ *
+ * @param f_speed Speed to move at
+ * @param u8_direction Direction to turn
+**/
+void turn_until_line_centered(float f_speed, uint8_t u8_direction);
 
 /**
  * @brief Wrapper to handle any turn
@@ -184,8 +162,6 @@ uint8_t check_for_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
  * @param f_newValue The new value for KP
 **/
 void set_KP(float f_newValue);
-
-void turn_until_line_centered(float f_speed, uint8_t u8_direction);
 
 /**
  * @brief Set a new value for KD
