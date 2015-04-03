@@ -237,14 +237,9 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                     printf("Wait no it's a T-intersection\n");
                     #endif
 
-                    //////// SOMEHTING MAY BE WRONG HERE ///////////////////
-                    // I think we need to do a clear branchStack, pretty sure something may have ben pushed incorrectly
-
                     // Clear out the routine queue and stop
                     clear_routines();
                     u8_currentTurn--;
-
-                    //////// SOMEHTING MAY BE WRONG HERE ///////////////////
 
                     // If the expected turn is left
                     if (u8_expectedTurn == 'L') {

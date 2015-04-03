@@ -308,7 +308,7 @@ void play_game(gameID game) {
 // Set up the start button
 void setup_start_button() {
     CONFIG_RG15_AS_DIG_INPUT();
-    // ENABLE_RG15_PULLUP();
+    // ENABLE_RG15_PULLUP();   /// THIS PIN CAN"T BE INTERNALL PULLED UP, NEEDS AN EXTERNAL ONE
     DELAY_US(1);
 }
 
