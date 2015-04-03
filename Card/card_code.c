@@ -25,6 +25,7 @@
 //
 ///////////////////////////////////////////////
 void play_card() {
+    int8_t i;
     display_draw_number(CARD_NUMBER);
     #ifdef DEBUG_BUILD
     printf("\n*** Grabbing Card ***\n");
@@ -34,10 +35,21 @@ void play_card() {
     game_arm_slide_forward();
 
     // Put arm down
-    game_arm_lower();
+    game_arm_pivot(25);
+    DELAY_MS(500);
+    for (i = 25;i >= 0;i-=4) {
+        game_arm_pivot((uint8_t)i);
+        DELAY_US(100);
+    }
+    game_arm_pivot(0);
 
     // Pull arm up
-    game_arm_raise();
+    for (i = 0;i <= 25; i+=4) {
+        game_arm_pivot((uint8_t)i);
+        DELAY_US(100);
+    }
+    game_arm_pivot(100);
+    DELAY_MS(500);
 
     // Slide arm back
     game_arm_slide_back();

@@ -28,6 +28,7 @@
 
 #define ARM_POSITION_UP             1500
 #define ARM_POSITION_DOWN           550
+#define ARM_POSITION_DIFFERENCE     (ARM_POSITION_UP - ARM_POSITION_DOWN)
 
 // Left arm constants
 #define ARM_SLIDE_LEFT_BACK         1450
@@ -94,6 +95,13 @@ void game_arm_lower(void);
 void game_arm_raise(void);
 
 /**
+ * @brief Lower the arm to a certain percentage, 100 is up 0 is down
+ *
+ * @param u8_percentage Percentage to move to
+**/
+void game_arm_pivot(uint8_t u8_percentage);
+
+/**
  * @brief Slide game arm all the way forward
  */
 void game_arm_slide_forward(void);
@@ -104,10 +112,30 @@ void game_arm_slide_forward(void);
 void game_arm_slide_back(void);
 
 /**
+ * @brief Slide the right side of the game arm to a certain position
+ * @param i8_percentage Percentage of the arm's length to move the arm
+**/
+void game_arm_slide_right(int8_t i8_percentage);
+
+/**
+ * @brief Slide the left side of the game arm to a certain position
+ * @param i8_percentage Percentage of the arm's length to move the arm
+**/
+void game_arm_slide_left(int8_t i8_percentage);
+
+/**
  * @brief Slide the game arm to a certain position
  * @param u8_percentage Percentage of the arm's length to move the arm
 **/
 void game_arm_slide(uint8_t u8_percentage);
 
+/**
+ * @brief Moves the arm assymmetrically
+ *
+ * @param i8_startPosition Start position
+ * @param i8_endPosition Final position
+ * @param i8_numPositions Number of positions to move through
+**/
+void game_arm_shimmy(int8_t i8_startPosition, int8_t i8_endPosition, int8_t i8_numPositions);
 
 #endif

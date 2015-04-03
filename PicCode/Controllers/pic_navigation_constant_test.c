@@ -44,7 +44,7 @@ int main (void) {
 
     // Wait for the start button to be pushed then move a meter
     while(1) {
-        if (SKIP_START_BUTTON == 0) {
+        if (SET_BUTTON_PUSHED == 1) {
             move_by_distance(1000, BASE_SPEED);
 
             DELAY_MS(DEBOUNCE_DELAY);

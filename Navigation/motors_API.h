@@ -39,10 +39,10 @@
 #define MOTOR_PWM_PERIOD                20000                   // desired period, in us
 
 #define RIGHT_MOTOR_ADJUSTMENT          1.0                     // Speed adjustment for the right motor
-#define LEFT_MOTOR_ADJUSTMENT           1.12                    // Speed adjustment for the left motor
+#define LEFT_MOTOR_ADJUSTMENT           1.08                     // Speed adjustment for the left motor
 
-#define RIGHT_ENCODER_ADJUSTMENT        1.007905138             // Encoder adjustment for the right motor
-#define LEFT_ENCODER_ADJUSTMENT         1.116600791             // Encoder adjustment for the left motor
+#define RIGHT_ENCODER_ADJUSTMENT        1.0 //1.007905138             // Encoder adjustment for the right motor
+#define LEFT_ENCODER_ADJUSTMENT         1.025641026 //1.116600791             // Encoder adjustment for the left motor
 
 #define LEFT_DIRECTION                  0                       // Boolean for left turning direction
 #define RIGHT_DIRECTION                 1                       // Boolean for left turning direction

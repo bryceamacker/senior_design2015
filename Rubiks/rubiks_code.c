@@ -39,6 +39,7 @@ void play_rubiks() {
     // Pull in Rubiks
     game_arm_pull_rubiks();
 
+
     // Lower platform
     platform_rubiks();
 

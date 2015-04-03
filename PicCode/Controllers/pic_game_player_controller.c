@@ -32,6 +32,7 @@
 
 // Varibles for input and to hold the current status of the robot
 char u8_c;
+char u8_c2;
 uint8_t u8_platformPos;
 uint8_t u8_twistPos;
 uint8_t u8_platformFlipped;
@@ -124,7 +125,7 @@ void game_player_serial_command(uint8_t u8_c) {
             if (u8_c == 's') {
                 play_simon();
             } else if (u8_c == 'i') {
-                play_simon_infinitely();                
+                play_simon_infinitely();
             }
             break;
         case 'd':
@@ -292,6 +293,38 @@ void game_player_serial_command(uint8_t u8_c) {
             sscanf(sz_buf,"%hhu",(uint8_t *) &u8_percentage);
 
             game_arm_slide(u8_percentage);
+            break;
+        case '/':
+            printf("\nShimmy (c)ube or (e)tch\n");
+            u8_c2= inChar();
+
+            if (u8_c2 == 'c') {
+                // Slide forward
+                game_arm_slide_forward();
+
+                // Put the arm down
+                game_arm_lower();
+
+                // Shimmy in cube
+                game_arm_shimmy(100, 0, 5);
+
+                // Let go
+                game_arm_release();
+            }
+            else if (u8_c2 == 'e') {
+                // Slide forward
+                game_arm_slide_forward();
+
+                // Put the arm down
+                game_arm_lower();
+
+                // Shimmy in etch
+                game_arm_shimmy(100, 60, 3);
+
+                // Let go
+                game_arm_release();
+            }
+            break;
         case 'z':
             while (isCharReady() == 0) {
                 photo_trans_print();
@@ -350,6 +383,7 @@ void game_player_serial_menu(void) {
         printf("   o) raise arm\n");
     }
     printf("   y) slide the arm by a percentage\n");
+    printf("   /) to shimmy the arm\n");
     printf("   z) read photo transistors\n");
     printf("   l) read start light resistor\n");
     printf("   w) block until start light off\n");
