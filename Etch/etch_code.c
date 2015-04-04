@@ -143,15 +143,15 @@ void draw_E_character_from_top() {
 void draw_IEEE() {
     display_draw_number(ETCH_I_NUMBER);
     draw_I_character();
-    turn_servo_horizontal_etch_distance(2.5);
+    turn_servo_horizontal_etch_distance(0.568*ETCH_UNIT);
 
     display_draw_number(ETCH_E1_NUMBER);
     draw_E_character_from_bottom();
-    turn_servo_horizontal_etch_distance(2.5);
+    turn_servo_horizontal_etch_distance(0.568*ETCH_UNIT);
 
     display_draw_number(ETCH_E2_NUMBER);
     draw_E_character_from_top();
-    turn_servo_horizontal_etch_distance(2.5);
+    turn_servo_horizontal_etch_distance(0.568*ETCH_UNIT);
 
     display_draw_number(ETCH_E3_NUMBER);
     draw_E_character_from_bottom();

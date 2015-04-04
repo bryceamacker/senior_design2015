@@ -33,7 +33,7 @@
 
 #define FULL_ROTATION_HORIZ_DIST    18.5039     // in mm
 #define FULL_ROTATION_VERT_DIST     19.3421     // in mm
-#define ETCH_UNIT                   4.4         // 4.4 mm unit for simplicity of code
+#define ETCH_UNIT                   2.2         // 4.4 mm unit for simplicity of code
 #define VERTICAL_ADJUSTMENT         1.0         // Vertical adjustment factor
 #define HORIZ_ADJUSTMENT            1.0         // Horizontal adjustment factor
 
