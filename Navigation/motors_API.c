@@ -840,8 +840,8 @@ void handle_routine(uint8_t routine) {
         case PREPARE_ETCH:
             #ifdef DEBUG_BUILD
             printf("Routine: prepare for Etch\n");
-            move_by_distance(MOVE_INTO_ETCH_DISTANCE*1.0, BASE_SPEED);
             #endif
+            move_by_distance(MOVE_INTO_ETCH_DISTANCE*1.0, BASE_SPEED);
             break;
         case PREPARE_RUBIKS:
             #ifdef DEBUG_BUILD
@@ -861,12 +861,20 @@ void handle_routine(uint8_t routine) {
 }
 
 uint8_t check_for_routine() {
+    static uint8_t u8_sent99;
+
     if (queue_is_empty(navigationRoutineQueue)) {
+        if (u8_sent99 != 1) {
+            send_display_number(NAVIGATING_NUMBER);
+            u8_sent99 = 1;
+        }
         return 0;
     } else {
+        u8_sent99 = 0;
         u8_routineBlock = 1;
         u8_currentRoutine = dequeue(&navigationRoutineQueue);
         handle_routine(u8_currentRoutine);
+        send_navigation_routine_number(u8_currentRoutine);
         return u8_currentRoutine;
     }
 }

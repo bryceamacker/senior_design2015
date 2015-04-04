@@ -20,6 +20,7 @@
 #include "pic24_all.h"
 #include <stdbool.h>
 #include "navigation_port_mapping.h"
+#include "SSDisplayAPI.h"
 
 #ifdef DEBUG_BUILD
 #include <stdio.h>

@@ -93,9 +93,6 @@ void configure_speed();
 void setup_start_button(void);
 void wait_for_start_button_push(void);
 void setup_game_buttons(void);
-void send_display_number(uint8_t u8_number);
-void send_display_value(char sz_displayValueString[2]);
-void send_I2C_message(char sz_message[BUFFSIZE]);
 
 #ifdef DEBUG_BUILD
 void print_order(uint8_t pu8_gameOrder[4]);
@@ -684,42 +681,6 @@ void configure_speed(void) {
     DELAY_MS(DEBOUNCE_DELAY);
     while(SET_BUTTON_PUSHED);
     DELAY_MS(DEBOUNCE_DELAY);
-}
-
-// Send a number to the display
-void send_display_number(uint8_t u8_number) {
-    char numBuffer[2];
-
-    itoa(numBuffer, u8_number, 10);
-
-    if (u8_number < 10) {
-        numBuffer[1] = numBuffer[0];
-        numBuffer[0] = '0';
-    }
-
-    send_display_value(numBuffer);
-}
-
-// Send any two character string to the display
-void send_display_value(char sz_displayValueString[2]) {
-    char sz_sendString[BUFFSIZE];
-    char tempBuffer[BUFFSIZE];
-
-    strncpy(tempBuffer, sz_dispString, 4);
-    strcat(tempBuffer, sz_displayValueString);
-    strncpy(sz_sendString, tempBuffer, BUFFSIZE);
-
-    #ifdef DEBUG_BUILD
-    printf("Sending display string %s\n", sz_sendString);
-    #endif
-
-    send_I2C_message(sz_sendString);
-
-    DELAY_MS(DEBOUNCE_DELAY);
-}
-
-void send_I2C_message(char sz_message[BUFFSIZE]) {
-    writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_message, 6);
 }
 
 #ifdef DEBUG_BUILD

@@ -18,9 +18,8 @@
 * Steven Calhoun        3/5/2014                SECON 2015
 *********************************************************************/
 
-// I2C Constants
-#define PIC_GAME_PLAYER_ADDR            0x20
-#define BUFFSIZE                        64
+#ifndef SECON_ROBOT_CONFIGURATION_H_
+#define SECON_ROBOT_CONFIGURATION_H_
 
 // Configurations
 #define STATIC_ORDER                        1       // Game order configuration
@@ -45,4 +44,5 @@ char sz_playEtchString[BUFFSIZE] =      "Etch.";
 char sz_idleString[BUFFSIZE] =          "Idle.";
 char sz_waitString[BUFFSIZE] =          "Wait.";
 char sz_confString[BUFFSIZE] =          "Conf.";
-char sz_dispString[BUFFSIZE] =          "Dis";
+
+#endif

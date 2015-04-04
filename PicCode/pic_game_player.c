@@ -30,6 +30,8 @@
 #include "secon_robot_configuration.h"
 #include <string.h>
 
+extern char sz_dispString[BUFFSIZE];
+
 #ifdef DEBUG_BUILD
 #include <stdio.h>
 #warning "Game Player: DEBUG BUILD"
@@ -147,7 +149,6 @@ int main(void) {
         }
 
         // Static number while navigating
-        display_draw_number(NAVIGATING_NUMBER);
         doHeartbeat();
     }
 }

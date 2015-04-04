@@ -34,6 +34,11 @@
 #define NORMAL_RIGHT        3
 #define CURVE_RIGHT         4
 
+// I2C Constants
+#define PIC_GAME_PLAYER_ADDR            0x20
+#define BUFFSIZE                        64
+
+
 // Game enumeration
 typedef enum {
     SIMON =     0,
@@ -41,6 +46,13 @@ typedef enum {
     ETCH =      2,
     CARD =      3
 } gameID;
+
+
+// I2C write
+static inline void send_I2C_message(char sz_message[BUFFSIZE]) {
+    writeNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *)sz_message, 6);
+}
+
 
 ///////////////////////////////////////////////
 //

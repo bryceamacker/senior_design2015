@@ -20,6 +20,9 @@
 #include "pic24_all.h"
 #include "game_player_port_mapping.h"
 
+#include <string.h>
+#include <stdlib.h>
+
 #ifdef DEBUG_BUILD
 #include <stdio.h>
 #endif
@@ -41,6 +44,30 @@
 #define ETCH_E3_NUMBER          34
 
 #define CARD_NUMBER             40
+
+#define RIGHT_TURN_DISPLAY_NUMBER                       1 + 50
+#define LEFT_TURN_DISPLAY_NUMBER                        2 + 50
+#define PREPARE_TURN_DISPLAY_NUMBER                     3 + 50
+#define FINISH_TURN_DISPLAY_NUMBER                      4 + 50
+#define FINISH_REVERSE_TURN_DISPLAY_NUMBER              5 + 50
+#define BACK_AWAY_FROM_BOX_DISPLAY_NUMBER               6 + 50
+#define MOVE_PAST_START_BOX_DISPLAY_NUMBER              7 + 50
+#define MOVE_PAST_BRANCH_DISPLAY_NUMBER                 8 + 50
+#define PREPARE_REVERSE_TURN_DISPLAY_NUMBER             9 + 50
+#define MOVE_FORWARD_DISTANCE_DISPLAY_NUMBER            10 + 50
+#define MOVE_REVERSE_DISTANCE_DISPLAY_NUMBER            11 + 50
+#define PLAY_GAME_PAUSE_DISPLAY_NUMBER                  12 + 50
+#define FINISH_180_TURN_DISPLAY_NUMBER                  13 + 50
+#define MOVE_INTO_BOX_DISPLAY_NUMBER                    14 + 50
+#define TURN_180_DISPLAY_NUMBER                         15 + 50
+#define RIGHT_CURVE_TURN_DISPLAY_NUMBER                 16 + 50
+#define LEFT_CURVE_TURN_DISPLAY_NUMBER                  17 + 50
+#define PREPARE_TURN_CURVE_DISPLAY_NUMBER               18 + 50
+#define PREPARE_SIMON_DISPLAY_NUMBER                    19 + 50
+#define PREPARE_ETCH_DISPLAY_NUMBER                     20 + 50
+#define PREPARE_RUBIKS_DISPLAY_NUMBER                   21 + 50
+#define CROSS_FINISH_LINE_DISPLAY_NUMBER                22 + 50
+
 #define NAVIGATING_NUMBER       99
 
 #define ON_VALUE  1
@@ -242,6 +269,27 @@ void display_draw_number(uint8_t u8_number);
  * @param buffer[2] Two characters to draw, 0 on 2 and 1 on 1
 */
 void display_draw_buffer(char buffer[2]);
+
+/**
+ * @brief Send a display number from the navigation pic to game player pic
+ *
+ * @param u8_number Number to display
+**/
+void send_display_number(uint8_t u8_number);
+
+/**
+* @brief Send any two characters from the navigation pic to game player pic to display
+*
+* @param sz_displayValueString The two character string
+**/
+void send_display_value(char sz_displayValueString[2]);
+
+/**
+ * @brief Send a routine number to the display, offsets it by 50
+ *
+ * @param u8_routineNumber Number of the routine
+**/
+void send_navigation_routine_number(uint8_t u8_routineNumber);
 
 #ifdef DEBUG_BUILD
 /**

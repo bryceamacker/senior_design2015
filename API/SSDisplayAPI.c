@@ -19,6 +19,8 @@
 
 #include "SSDisplayAPI.h"
 
+char sz_dispString[BUFFSIZE] =          "Dis";
+
 ///////////////////////////////////////////////
 //
 // SSD config
@@ -819,6 +821,42 @@ void display_draw_buffer(char buffer[2]) {
         u8_number = buffer[1] - '0';
         display1_draw_number(u8_number);
     }
+}
+
+// Send a number to the display
+void send_display_number(uint8_t u8_number) {
+    char numBuffer[2];
+
+    itoa(numBuffer, u8_number, 10);
+
+    if (u8_number < 10) {
+        numBuffer[1] = numBuffer[0];
+        numBuffer[0] = '0';
+    }
+
+    send_display_value(numBuffer);
+}
+
+// Send any two character string to the display
+void send_display_value(char sz_displayValueString[2]) {
+    char sz_sendString[BUFFSIZE];
+    char tempBuffer[BUFFSIZE];
+
+    strncpy(tempBuffer, sz_dispString, 4);
+    strcat(tempBuffer, sz_displayValueString);
+    strncpy(sz_sendString, tempBuffer, BUFFSIZE);
+
+    #ifdef DEBUG_BUILD
+    printf("Sending display string %s\n", sz_sendString);
+    #endif
+
+    send_I2C_message(sz_sendString);
+
+    DELAY_MS(10);
+}
+
+void send_navigation_routine_number(uint8_t u8_routineNumber) {
+    send_display_number(u8_routineNumber + 50);
 }
 
 #ifdef DEBUG_BUILD
