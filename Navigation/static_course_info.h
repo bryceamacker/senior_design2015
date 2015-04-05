@@ -122,38 +122,38 @@ static inline uint8_t prepare_static_course_turn_info_one(uint8_t* pau8_turnList
     uint8_t u8_turnCount = 0;
 
     // To game 1
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // Leaving game 1
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // To game 2
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // Leaving game 2
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // To game 3
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = CURVE_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = CURVE_RIGHT_DEFAULT;
 
     // Leaving game 3
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // To game 4
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // Leaving game 4
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // To finish line
-    pau8_turnList[u8_turnCount++] = CURVE_LEFT;
+    pau8_turnList[u8_turnCount++] = CURVE_LEFT_DEFAULT;
 
     return u8_turnCount;
 }
@@ -180,32 +180,32 @@ static inline uint8_t prepare_static_course_turn_info_two(uint8_t* pau8_turnList
     uint8_t u8_turnCount = 0;
 
     // To game 1
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // Leaving game 1
 
     // To game 2
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // Leaving game 2
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // To game 3
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // Leaving game 3
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // To game 4
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // Leaving game 4
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // To finish line
 
@@ -233,37 +233,37 @@ static inline uint8_t prepare_static_course_turn_info_three(uint8_t* pau8_turnLi
     uint8_t u8_turnCount = 0;
 
     // To game 1
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // Leaving game 1
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // To game 2
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // Leaving game 2
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // To game 3
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
-    pau8_turnList[u8_turnCount++] = CURVE_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // Leaving game 3
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // To game 4
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = CURVE_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // Leaving game 4
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // To finish line
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     return u8_turnCount;
 }
@@ -292,32 +292,32 @@ static inline uint8_t prepare_static_course_turn_info_four(uint8_t* pau8_turnLis
     uint8_t u8_turnCount = 0;
 
     // To game 1
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // Leaving game 1
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // To game 2
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // Leaving game 2
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // To game 3
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // Leaving game 3
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // To game 4
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
-    pau8_turnList[u8_turnCount++] = CURVE_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = CURVE_LEFT_DEFAULT;
 
     // Leaving game 4
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT;
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // To finish line
 

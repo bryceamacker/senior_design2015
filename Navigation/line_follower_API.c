@@ -247,7 +247,7 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                         handle_left_turn(0);
                         enqueue(&navigationRoutineQueue, FINISH_TURN);
                         enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*3);
+                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*2);
                         block_until_all_routines_done();
                     }
                     // If the expected turn is right
@@ -256,7 +256,7 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                         handle_right_turn(0);
                         enqueue(&navigationRoutineQueue, FINISH_TURN);
                         enqueue(&navigationRoutineQueue, MOVE_FORWARD_DISTANCE);
-                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*3);
+                        enqueue(&navigationMoveDistanceQueue, LINE_WIDTH*2);
                         block_until_all_routines_done();
                     }
 
@@ -553,9 +553,9 @@ void handle_left_turn(uint8_t u8_curve) {
     } else {
         // Queue all the routines for a left turn
         if (u8_curve == 0) {
-            handle_turn(NORMAL_LEFT);
+            handle_turn(NORMAL_LEFT_DEFAULT);
         } else {
-            handle_turn(CURVE_LEFT);
+            handle_turn(CURVE_LEFT_DEFAULT);
         }
     }
 }
@@ -627,9 +627,9 @@ void handle_right_turn(uint8_t u8_curve) {
     } else {
         // Queue all the routines for a right turn
         if (u8_curve == 0) {
-            handle_turn(NORMAL_RIGHT);
+            handle_turn(NORMAL_RIGHT_DEFAULT);
         } else {
-            handle_turn(CURVE_RIGHT);
+            handle_turn(CURVE_RIGHT_DEFAULT);
         }
     }
 }
@@ -728,7 +728,8 @@ uint8_t check_for_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]) {
 }
 
 void handle_turn(uint8_t u8_turn) {
-    if (u8_turn == CURVE_LEFT) {
+    // Curve left with back up
+    if ((u8_turn == CURVE_LEFT_DEFAULT) || (u8_turn == CURVE_LEFT_BACK_UP)) {
         enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
         enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
 
@@ -737,11 +738,34 @@ void handle_turn(uint8_t u8_turn) {
 
         enqueue(&navigationRoutineQueue, LEFT_CURVE_TURN);
         enqueue(&navigationRoutineQueue, FINISH_TURN);
+    }
 
-    } else if (u8_turn == NORMAL_LEFT) {
+    // Curve left with no back up
+    else if (u8_turn == CURVE_LEFT_NO_BACK) {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
+        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
+
+        enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+        enqueue(&navigationMoveDistanceQueue, PREPARE_CURVE_TURN_DISTANCE);
+
+        enqueue(&navigationRoutineQueue, LEFT_CURVE_TURN);
+    }
+
+    // Normal left with no back up
+    else if ((u8_turn == NORMAL_LEFT_DEFAULT) || (u8_turn == NORMAL_LEFT_NO_BACK)) {
         enqueue(&navigationRoutineQueue, PREPARE_TURN);
         enqueue(&navigationRoutineQueue, LEFT_TURN);
-    } else if (u8_turn == CURVE_RIGHT) {
+    }
+
+    // Normal left with back up
+    else if (u8_turn == NORMAL_LEFT_BACK_UP) {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN);
+        enqueue(&navigationRoutineQueue, LEFT_TURN);
+        enqueue(&navigationRoutineQueue, FINISH_TURN);
+    }
+
+    // Curve right with back up
+    else if ((u8_turn == CURVE_RIGHT_DEFAULT) || (u8_turn == CURVE_RIGHT_BACK_UP)) {
         enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
         enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
 
@@ -750,10 +774,32 @@ void handle_turn(uint8_t u8_turn) {
 
         enqueue(&navigationRoutineQueue, RIGHT_CURVE_TURN);
         enqueue(&navigationRoutineQueue, FINISH_TURN);
-    } else if (u8_turn == NORMAL_RIGHT) {
+    }
+
+    // Curve right with no back up
+    else if (u8_turn == CURVE_RIGHT_NO_BACK) {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
+        enqueue(&navigationRoutineQueue, PREPARE_TURN_CURVE);
+
+        enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+        enqueue(&navigationMoveDistanceQueue, PREPARE_CURVE_TURN_DISTANCE);
+
+        enqueue(&navigationRoutineQueue, RIGHT_CURVE_TURN);
+    }
+
+    // Normal right with no back up
+    else if ((u8_turn == NORMAL_RIGHT_DEFAULT) || (u8_turn == NORMAL_RIGHT_NO_BACK)) {
         enqueue(&navigationRoutineQueue, PREPARE_TURN);
         enqueue(&navigationRoutineQueue, RIGHT_TURN);
     }
+
+    // Normal right with back up
+    else if (u8_turn == NORMAL_RIGHT_BACK_UP) {
+        enqueue(&navigationRoutineQueue, PREPARE_TURN);
+        enqueue(&navigationRoutineQueue, RIGHT_TURN);
+        enqueue(&navigationRoutineQueue, FINISH_TURN);
+    }
+
     check_for_routine();
 }
 

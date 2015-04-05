@@ -29,10 +29,23 @@
 #define FALSE (0)
 #define TRUE (!FALSE)
 
-#define NORMAL_LEFT         1
-#define CURVE_LEFT          2
-#define NORMAL_RIGHT        3
-#define CURVE_RIGHT         4
+typedef enum {
+  NORMAL_LEFT_DEFAULT = 1,
+  NORMAL_LEFT_BACK_UP = 2,
+  NORMAL_LEFT_NO_BACK = 3,
+
+  CURVE_LEFT_DEFAULT = 4,
+  CURVE_LEFT_BACK_UP = 5,
+  CURVE_LEFT_NO_BACK = 6,
+
+  NORMAL_RIGHT_DEFAULT = 7,
+  NORMAL_RIGHT_BACK_UP = 8,
+  NORMAL_RIGHT_NO_BACK = 9,
+
+  CURVE_RIGHT_DEFAULT = 10,
+  CURVE_RIGHT_BACK_UP = 11,
+  CURVE_RIGHT_NO_BACK = 12
+} turnTypes;
 
 // I2C Constants
 #define PIC_GAME_PLAYER_ADDR            0x20
