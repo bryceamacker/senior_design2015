@@ -106,7 +106,7 @@ void game_arm_pull_etch() {
     game_arm_lower();
 
     // Grab Etch
-    game_arm_shimmy(100, 60, 3);
+    game_arm_shimmy(100, 70, 3);
 
     // Let go
     game_arm_release();

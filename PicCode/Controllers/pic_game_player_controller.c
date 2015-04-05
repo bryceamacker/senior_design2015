@@ -299,30 +299,10 @@ void game_player_serial_command(uint8_t u8_c) {
             u8_c2= inChar();
 
             if (u8_c2 == 'c') {
-                // Slide forward
-                game_arm_slide_forward();
-
-                // Put the arm down
-                game_arm_lower();
-
-                // Shimmy in cube
-                game_arm_shimmy(100, 0, 5);
-
-                // Let go
-                game_arm_release();
+                game_arm_pull_rubiks();
             }
             else if (u8_c2 == 'e') {
-                // Slide forward
-                game_arm_slide_forward();
-
-                // Put the arm down
-                game_arm_lower();
-
-                // Shimmy in etch
-                game_arm_shimmy(100, 60, 3);
-
-                // Let go
-                game_arm_release();
+                game_arm_pull_etch();
             }
             break;
         case 'z':
