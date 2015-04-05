@@ -31,20 +31,20 @@
 
 // Retract pulse width constants
 #define YELLOW_RETRACT  2520
-#define BLUE_RETRACT    2450
+#define BLUE_RETRACT    2330 // 2450
 #define RED_RETRACT     2000
 #define GREEN_RETRACT   1630
 
 // Hover pulse width constants
 #define YELLOW_HOVER    900
-#define BLUE_HOVER      1020
+#define BLUE_HOVER      900 // 1020
 #define RED_HOVER       970
 #define GREEN_HOVER     910
 #define START_HOVER     YELLOW_HOVER
 
 // Push pulse width constants
 #define YELLOW_PUSH     800
-#define BLUE_PUSH       990
+#define BLUE_PUSH       870 // 990
 #define RED_PUSH        920
 #define GREEN_PUSH      900
 #define START_PUSH      YELLOW_PUSH

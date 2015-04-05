@@ -533,7 +533,7 @@ uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM
     }
 
     // Check to see if we're detecting a turn and if there is continuity
-    if ((u8_detectingSensors >= SENSOR_NUM + 2) && (u8_continuityCheck == 1)) {
+    if ((u8_detectingSensors >= REQUIRED_DETECTING_SENSORS_FOR_TURNS) && (u8_continuityCheck == 1)) {
         return 1;
     } else {
         return 0;
@@ -607,7 +607,7 @@ uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NU
     }
 
     // Check to see if we're detecting a turn and if there is continuity
-    if ((u8_detectingSensors >= SENSOR_NUM + 2) && (u8_continuityCheck == 1)) {
+    if ((u8_detectingSensors >= REQUIRED_DETECTING_SENSORS_FOR_TURNS) && (u8_continuityCheck == 1)) {
         return 1;
     } else {
         return 0;

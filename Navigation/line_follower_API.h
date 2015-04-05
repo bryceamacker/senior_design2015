@@ -34,6 +34,8 @@
 #define KP_DEFAULT      0.4 //0.2
 #define KD_DEFAULT      7   //5
 
+#define REQUIRED_DETECTING_SENSORS_FOR_TURNS    (SENSOR_NUM + 1)
+
 extern float KP;
 extern float KD;
 
