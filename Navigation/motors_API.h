@@ -69,6 +69,10 @@
 #define MOVE_INTO_RUBIKS_DISTANCE       100                     // Move into Rubiks
 #define MOVE_INTO_ETCH_DISTANCE         120                     // Move into Etch
 
+#define FINAL_LEAVING_SIMON             (97.16 - (LINE_WIDTH*2))
+#define FINAL_LEAVING_RUBIKS            (127.16 - (LINE_WIDTH*2))
+#define FINAL_LEAVING_ETCH              (107.16 - (LINE_WIDTH*2))
+
 #define M_PI                            3.14159265358979323846  // pi constant
 #define WHEEL_DIAMETER                  80.0                    // in milimeters
 #define WHEEL_CIRCUMFERENCE             (WHEEL_DIAMETER * M_PI) // in milimeters

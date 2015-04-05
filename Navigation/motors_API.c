@@ -680,6 +680,8 @@ void prepare_to_leave_game(uint8_t u8_game) {
             enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
             enqueue(&navigationRoutineQueue, TURN_180);
             enqueue(&navigationRoutineQueue, FINISH_180_TURN);
+            enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+            enqueue(&navigationMoveDistanceQueue, FINAL_LEAVING_SIMON);
             break;
         case RUBIKS:
             #ifdef DEBUG_BUILD
@@ -689,6 +691,8 @@ void prepare_to_leave_game(uint8_t u8_game) {
             enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
             enqueue(&navigationRoutineQueue, TURN_180);
             enqueue(&navigationRoutineQueue, FINISH_180_TURN);
+            enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+            enqueue(&navigationMoveDistanceQueue, FINAL_LEAVING_RUBIKS);
             break;
         case ETCH:
             #ifdef DEBUG_BUILD
@@ -698,6 +702,8 @@ void prepare_to_leave_game(uint8_t u8_game) {
             enqueue(&navigationMoveDistanceQueue, BACK_AWAY_FROM_GAME_DISTANCE);
             enqueue(&navigationRoutineQueue, TURN_180);
             enqueue(&navigationRoutineQueue, FINISH_180_TURN);
+            enqueue(&navigationRoutineQueue, MOVE_REVERSE_DISTANCE);
+            enqueue(&navigationMoveDistanceQueue, FINAL_LEAVING_ETCH);
             break;
         case CARD:
             #ifdef DEBUG_BUILD
