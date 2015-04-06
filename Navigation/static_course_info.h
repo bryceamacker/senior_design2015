@@ -324,6 +324,90 @@ static inline uint8_t prepare_static_course_turn_info_four(uint8_t* pau8_turnLis
     return u8_turnCount;
 }
 
+/**
+
+**/
+static inline uint8_t prepare_static_course_turn_info_five(uint8_t* pau8_turnList) {
+    uint8_t u8_turnCount = 0;
+
+    pau8_turnList[0] = 0; // DELETE THIS WHEN THE LIST BECOMES POPULATED
+
+    // To game 1
+
+    // Leaving game 1
+
+    // To game 2
+
+    // Leaving game 2
+
+    // To game 3
+
+    // Leaving game 3
+
+    // To game 4
+
+    // Leaving game 4
+
+    // To finish line
+
+    return u8_turnCount;
+}
+
+/**
+
+**/
+static inline uint8_t prepare_static_course_turn_info_six(uint8_t* pau8_turnList) {
+    uint8_t u8_turnCount = 0;
+
+    pau8_turnList[0] = 0; // DELETE THIS WHEN THE LIST BECOMES POPULATED
+
+    // To game 1
+
+    // Leaving game 1
+
+    // To game 2
+
+    // Leaving game 2
+
+    // To game 3
+
+    // Leaving game 3
+
+    // To game 4
+
+    // Leaving game 4
+
+    // To finish line
+
+    return u8_turnCount;
+}
+
+/**
+
+**/
+static inline uint8_t prepare_static_course_turn_info_seven(uint8_t* pau8_turnList) {
+    uint8_t u8_turnCount = 0;
+
+    pau8_turnList[0] = 0; // DELETE THIS WHEN THE LIST BECOMES POPULATED
+
+    // To game 1
+
+    // Leaving game 1
+
+    // Leaving game 2
+
+    // To game 3
+
+    // To game 4
+
+    // Leaving game 4
+
+    // To finish line
+
+    return u8_turnCount;
+}
+
+
 static inline uint8_t prepare_static_course_turn_info(uint8_t u8_course, uint8_t* pau8_turnList) {
     uint8_t u8_numberOfTurns;
 
@@ -355,6 +439,27 @@ static inline uint8_t prepare_static_course_turn_info(uint8_t u8_course, uint8_t
             #endif
 
             u8_numberOfTurns = prepare_static_course_turn_info_four(pau8_turnList);
+            break;
+        case 5:
+            #ifdef DEBUG_BUILD
+            printf("Turn layout 5 loaded\n");
+            #endif
+
+            u8_numberOfTurns = prepare_static_course_turn_info_five(pau8_turnList);
+            break;
+        case 6:
+            #ifdef DEBUG_BUILD
+            printf("Turn layout 6 loaded\n");
+            #endif
+
+            u8_numberOfTurns = prepare_static_course_turn_info_six(pau8_turnList);
+            break;
+        case 7:
+            #ifdef DEBUG_BUILD
+            printf("Turn layout 7 loaded\n");
+            #endif
+
+            u8_numberOfTurns = prepare_static_course_turn_info_seven(pau8_turnList);
             break;
         default:
             #ifdef DEBUG_BUILD
