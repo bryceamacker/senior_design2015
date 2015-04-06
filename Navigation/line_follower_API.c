@@ -519,7 +519,9 @@ uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM
             }
             u8_pastZero = 1;
         }
-        u8_pastZero = 0;
+        else {
+            u8_pastZero = 0;
+        }
     }
 
     for (i=9; i<=13; i+=2) {
@@ -529,7 +531,9 @@ uint8_t check_for_left_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM
             }
             u8_pastZero = 1;
         }
-        u8_pastZero = 0;
+        else {
+            u8_pastZero = 0;
+        }
     }
 
     // Check to see if we're detecting a turn and if there is continuity
@@ -593,7 +597,9 @@ uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NU
             }
             u8_pastZero = 1;
         }
-        u8_pastZero = 0;
+        else {
+            u8_pastZero = 0;
+        }
     }
 
     for (i=19; i<=23; i+=2) {
@@ -603,7 +609,9 @@ uint8_t check_for_right_turn(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NU
             }
             u8_pastZero = 1;
         }
-        u8_pastZero = 0;
+        else {
+            u8_pastZero = 0;
+        }
     }
 
     // Check to see if we're detecting a turn and if there is continuity

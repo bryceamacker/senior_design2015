@@ -34,20 +34,27 @@ void play_card() {
     // Slide arm forward
     game_arm_slide_forward();
 
-    // Put arm down
-    game_arm_pivot(25);
+    // Put arm down to a lower position
+    game_arm_pivot(15);
+
+    // Slowly put the arm down
     DELAY_MS(500);
-    for (i = 25;i >= 0;i-=4) {
+    for (i = 15;i >= 0;i-=4) {
         game_arm_pivot((uint8_t)i);
         DELAY_US(100);
     }
     game_arm_pivot(0);
 
-    // Pull arm up
-    for (i = 0;i <= 25; i+=4) {
+    // Pull it slowly up for a bit
+    for (i = 0;i <= 15; i+=4) {
         game_arm_pivot((uint8_t)i);
         DELAY_US(100);
     }
+
+    // Let any other card that got stuck on fall off
+    DELAY_MS(1000);
+
+    // Pull it all the way back
     game_arm_pivot(100);
     DELAY_MS(500);
 
