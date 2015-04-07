@@ -18,10 +18,10 @@
 import time
 import math
 
-ROBOT_NAME = "Clyde"
+ROBOT_NAME = "Bonnie"
 
 MAX_TIME =          300
-MAX_POINTS =        890
+MAX_POINTS =        590
 
 START_POINTS =      100
 TO_GAME_POINTS =    10
@@ -125,14 +125,14 @@ if __name__ == "__main__":
     # Follow line to game
     totalFollowTime += followToGame()
 
-    # Play Etch-a-Sketch
-    etchTime = playEtchASketch()
+    # Play Rubik's Cube
+    rubikTime = playRubik()
 
     # Follow line to game
     totalFollowTime += followToGame()
 
-    # Play Rubik's Cube
-    rubikTime = playRubik()
+    # Play Etch-a-Sketch
+    etchTime = playEtchASketch()
 
     # Follow line to game
     totalFollowTime += followToGame()
@@ -145,11 +145,10 @@ if __name__ == "__main__":
 
     # Time points
     elapsedTime = totalFollowTime + goToFinishTime + simonTime + etchTime + rubikTime + cardTime
-    totalPoints += MAX_TIME - elapsedTime
 
+    print("Simon time: " + str(simonTime))
+    print("Rubiks time: " + str(rubikTime))
+    print("Etch time: " + str(etchTime))
+    print("Card time: " + str(cardTime))
     print("Total run time: " + str(elapsedTime) + "/" + str(MAX_TIME))
     print("Total points: " + str(math.trunc(totalPoints)) + "/" + str(MAX_POINTS))
-
-
-
-

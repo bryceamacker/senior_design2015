@@ -144,6 +144,7 @@ void draw_IEEE() {
     display_draw_number(ETCH_I_NUMBER);
     draw_I_character();
     turn_servo_horizontal_etch_distance(0.568*ETCH_UNIT);
+    turn_servo_horizontal_etch_distance(0.568*ETCH_UNIT); /// THIS IS BAD BAD BAD, SHOULDN'T BE HERE, BUT I'M TRYING TO FIX THE KNOBS SLIPPING WITH SOFTWARE, IT SHOULD BE FIXED BY ADDING MORE ERASER
 
     display_draw_number(ETCH_E1_NUMBER);
     draw_E_character_from_bottom();
