@@ -28,10 +28,12 @@ html {
   height: 100%;
   -webkit-font-smoothing: antialiased;
   padding: 0px 30px 20px 30px;
+  margin: 0px;
 }
 body {
   @include span-columns(10);
   background-color: $background-color;
+  margin: 0px;
 }
 ul {
   padding: 0;

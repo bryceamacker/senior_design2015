@@ -31,8 +31,8 @@
 #ifndef _LINE_FOLLOWER_API_H_
 #define _LINE_FOLLOWER_API_H_
 
-#define KP_DEFAULT      0.4 //0.2
-#define KD_DEFAULT      7   //5
+#define KP_DEFAULT      0.7 //0.2
+#define KD_DEFAULT      9   //5
 
 #define REQUIRED_DETECTING_SENSORS_FOR_TURNS    (SENSOR_NUM + 1)
 

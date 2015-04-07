@@ -106,7 +106,7 @@ void game_arm_pull_etch() {
     game_arm_lower();
 
     // Grab Etch
-    game_arm_shimmy(100, 70, 3);
+    game_arm_slide(70);
 
     // Let go
     game_arm_release();
@@ -124,7 +124,7 @@ void game_arm_hold_etch() {
     game_arm_lower();
 
     // Hold the etch
-    game_arm_slide(80);
+    game_arm_slide(70);
 }
 
 void game_arm_lower() {
@@ -218,7 +218,7 @@ void game_arm_shimmy(int8_t i8_startPosition, int8_t i8_endPosition, int8_t i8_n
     printf("Shimmying the arm %i positions from %i to %i with steps of %i\n", i8_numPositions, i8_startPosition, i8_endPosition, i8_step);
     #endif
 
-    for(i = 0;i <= i8_numPositions;i++) {
+    for(i = 0;i < i8_numPositions;i++) {
         if (i % 2 == 0) {
             game_arm_slide_left(i8_startPosition - (i8_step*i));
             game_arm_slide_right(i8_startPosition - (i8_step*(i + 1)));
@@ -227,7 +227,7 @@ void game_arm_shimmy(int8_t i8_startPosition, int8_t i8_endPosition, int8_t i8_n
             game_arm_slide_left(i8_startPosition - (i8_step*(i + 1)));
             game_arm_slide_right(i8_startPosition - (i8_step*i));
         }
-        DELAY_MS(ARM_WAIT);
+        DELAY_MS(ARM_WAIT/2);
     }
     game_arm_slide(i8_endPosition);
 }

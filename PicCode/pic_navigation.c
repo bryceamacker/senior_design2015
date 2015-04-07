@@ -154,7 +154,7 @@ int main (void) {
     printf("Waiting for start signal\n");
     #endif
     while (strcmp((char*) sz_recieveString, "Idle.") != 0) {
-        DELAY_MS(500);
+        DELAY_MS(250);
         readNI2C1(PIC_GAME_PLAYER_ADDR, (uint8_t *) sz_recieveString, 6);
         doHeartbeat();
     }

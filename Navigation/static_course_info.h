@@ -126,20 +126,20 @@ static inline uint8_t prepare_static_course_turn_info_one(uint8_t* pau8_turnList
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
     pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_BACK_UP;
 
     // Leaving game 1
     pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // To game 2
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_BACK_UP;
 
     // Leaving game 2
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // To game 3
     pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
-    pau8_turnList[u8_turnCount++] = CURVE_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = CURVE_RIGHT_BACK_UP;
 
     // Leaving game 3
     pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
@@ -147,7 +147,7 @@ static inline uint8_t prepare_static_course_turn_info_one(uint8_t* pau8_turnList
 
     // To game 4
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_BACK_UP;
 
     // Leaving game 4
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
@@ -188,21 +188,21 @@ static inline uint8_t prepare_static_course_turn_info_two(uint8_t* pau8_turnList
     pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
     pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_BACK_UP;
 
     // Leaving game 2
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
 
     // To game 3
     pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
-    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_LEFT_BACK_UP;
 
     // Leaving game 3
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
     pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
 
     // To game 4
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_BACK_UP;
 
     // Leaving game 4
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;

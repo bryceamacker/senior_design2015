@@ -601,11 +601,11 @@ void handle_pid_command(uint8_t u8_function) {
 
 // Print the calculated line position
 void print_get_line() {
-    int16_t i_position;
+    int16_t i16_position;
 
     while(isCharReady() == 0) {
-        i_position = read_line(QTR_EMITTERS_ON);
-        printf("Line position: %u\n", i_position);
+        i16_position = read_line(QTR_EMITTERS_ON);
+        printf("Line position: %u\n", i16_position);
     }
 }
 
@@ -659,30 +659,30 @@ void follow_line_pid(float f_maxSpeed, uint8_t u8_direction) {
 }
 
 void print_pid_info(float f_maxSpeed) {
-    uint16_t u16_lineCenter;
+    int16_t i16_lineCenter;
 
-    int16_t i_position;
-    int16_t i_error;
-    int16_t i_motorSpeed;
-    int16_t i_leftMotorSpeed;
-    int16_t i_rightMotorSpeed;
+    int16_t i16_position;
+    int16_t i16_error;
+    int16_t i16_motorSpeed;
+    int16_t i16_leftMotorSpeed;
+    int16_t i16_rightMotorSpeed;
 
-    static int16_t i_lastError;
+    static int16_t i16_lastError;
 
-    u16_lineCenter = 7000;
+    i16_lineCenter = 7000;
 
     while(isCharReady() == 0) {
-        i_position = read_line(QTR_EMITTERS_ON);
-        i_error = i_position - u16_lineCenter;
+        i16_position = read_line(QTR_EMITTERS_ON);
+        i16_error = i16_position - i16_lineCenter;
 
-        i_motorSpeed = KP * i_error + KD * (i_error - i_lastError);
-        i_lastError = i_error;
+        i16_motorSpeed = KP * i16_error + KD * (i16_error - i16_lastError);
+        i16_lastError = i16_error;
 
-        i_leftMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) + i_motorSpeed;
-        i_rightMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) - i_motorSpeed;
+        i16_leftMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) + i16_motorSpeed;
+        i16_rightMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) - i16_motorSpeed;
 
         #ifdef DEBUG_BUILD
-        printf("Position %i, Error: %i, Motor Speed: %i, Left: %i, Right %i\n", i_position, i_error, i_motorSpeed, i_leftMotorSpeed, i_rightMotorSpeed);
+        printf("Position %i, Error: %i, Motor Speed: %i, Left: %i, Right %i\n", i16_position, i16_error, i16_motorSpeed, i16_leftMotorSpeed, i16_rightMotorSpeed);
         #endif
     }
 }

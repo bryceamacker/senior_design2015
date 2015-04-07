@@ -429,12 +429,12 @@ int16_t read_line(char u8_readMode) {
 
     uint32_t u32_avg;
 
-    static int16_t i_lastValue;
+    static int16_t i16_lastValue;
 
     u8_onLine = 0;
     u16_sum = 0;
     u32_avg = 0;
-    i_lastValue = 0;
+    i16_lastValue = 0;
 
     read_sensor_hi_res(pau16_sensors, u8_readMode);
 
@@ -450,7 +450,7 @@ int16_t read_line(char u8_readMode) {
     }
 
     if(u8_onLine == 0) {
-        if(i_lastValue < (PID_SENSOR_NUM-1)*1000/2) {
+        if(i16_lastValue < (PID_SENSOR_NUM-1)*1000/2) {
             return 0;
         } else {
             return (PID_SENSOR_NUM-1)*1000;
@@ -458,9 +458,9 @@ int16_t read_line(char u8_readMode) {
 
     }
 
-    i_lastValue = u32_avg/u16_sum;
+    i16_lastValue = u32_avg/u16_sum;
 
-    return i_lastValue;
+    return i16_lastValue;
 }
 
 

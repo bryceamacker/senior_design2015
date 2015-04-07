@@ -41,7 +41,8 @@ extern uint8_t u8_currentRoutine;
 // Values for the PID controller
 float KP = KP_DEFAULT;
 float KD = KD_DEFAULT;
-uint16_t u16_lineCenter = 7000;
+int16_t i16_lineCenter = 7000;
+int16_t i16_lastLinePosition;
 
 
 void line_follower_init() {
@@ -144,13 +145,23 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
 
                 // If we are branched from the mainline, play a game
                 else {
-                    #ifdef DEBUG_BUILD
-                    printf("Leeeet's play!\n");
-                    #endif
+                    // Check to see if we were centered over the line when we came in
+                    if (i16_lastLinePosition == i16_lineCenter) {
+                        #ifdef DEBUG_BUILD
+                        printf("Leeeet's play!\n");
+                        #endif
 
-                    // Leeeet's play
-                    motors_stop();
-                    return;
+                        // Leeeet's play
+                        motors_stop();
+                        return;
+                    }
+
+                    // If not then back up so that it can try and recenter over the line
+                    else {
+                        enqueue(&navigationRoutineQueue, FINISH_TURN);
+                        check_for_routine();
+                        block_until_all_routines_done();
+                    }
                 }
             }
             // Check for a left turn
@@ -268,10 +279,6 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
 
                 // If we are branched from the mainline and not currently handling a T-intersection, play a game
                 if ((u8_handlingTIntersection == 0) && (u8_branchedFromMainLine == 1)) {
-                    #ifdef DEBUG_BUILD
-                    printf("Wait no, leeeet's play!\n");
-                    #endif
-
                     // Forget the last turn since it was a mistake
                     pop(&branchedTurnStack);
                     u8_currentTurn--;
@@ -279,8 +286,22 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                     // Clear out the routine queue and stop
                     clear_routines();
 
-                    // Leeeet's play
-                    return;
+                    // Check to see if we were centered over the line when we came in
+                    if (i16_lastLinePosition == i16_lineCenter) {
+                        #ifdef DEBUG_BUILD
+                        printf("Wait no, leeeet's play!\n");
+                        #endif
+
+                        // Leeeet's play
+                        return;
+                    }
+
+                    // If not then back up so that it can try and recenter over the line
+                    else {
+                        enqueue(&navigationRoutineQueue, FINISH_TURN);
+                        check_for_routine();
+                        block_until_all_routines_done();
+                    }
                 }
             }
 
@@ -408,39 +429,40 @@ void follow_line_back_to_main_line(float f_maxSpeed) {
 } // follow_line_back_to_main_line
 
 void correct_line_error_pid(float f_maxSpeed, uint8_t u8_direction) {
-    int16_t i_position;
-    int16_t i_error;
-    int16_t i_motorSpeed;
-    int16_t i_leftMotorSpeed;
-    int16_t i_rightMotorSpeed;
+    int16_t i16_position;
+    int16_t i16_error;
+    int16_t i16_motorSpeed;
+    int16_t i16_leftMotorSpeed;
+    int16_t i16_rightMotorSpeed;
 
-    static int16_t i_lastError;
+    static int16_t i16_lastError;
 
     // New motor speeds
-    i_leftMotorSpeed = 0;
-    i_rightMotorSpeed = 0;
+    i16_leftMotorSpeed = 0;
+    i16_rightMotorSpeed = 0;
 
     // Get the normalized position of the line from the center and hires arrays
-    i_position = read_line(QTR_EMITTERS_ON);
+    i16_position = read_line(QTR_EMITTERS_ON);
+    i16_lastLinePosition = i16_position;
 
     // Calculate the error and the motorspeed offset using KP and KD
-    i_error = i_position - u16_lineCenter;
-    i_motorSpeed = KP * i_error + KD * (i_error - i_lastError);
+    i16_error = i16_position - i16_lineCenter;
+    i16_motorSpeed = KP * i16_error + KD * (i16_error - i16_lastError);
 
     // Keep up with the previous error
-    i_lastError = i_error;
+    i16_lastError = i16_error;
 
     // Calculate the left and right mtor speeds
     if (u8_direction == FORWARD_MOVEMENT) {
-        i_leftMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) + i_motorSpeed;
-        i_rightMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) - i_motorSpeed;
+        i16_leftMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) + i16_motorSpeed;
+        i16_rightMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) - i16_motorSpeed;
     } else if (u8_direction == BACKWARD_MOVEMENT) {
-        i_leftMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) - i_motorSpeed;
-        i_rightMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) + i_motorSpeed;
+        i16_leftMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) - i16_motorSpeed;
+        i16_rightMotorSpeed = ((f_maxSpeed/100)*MOTOR_PWM_PERIOD) + i16_motorSpeed;
     }
 
     // Set the new motor speed
-    set_motors_pid(i_leftMotorSpeed, i_rightMotorSpeed, u8_direction);
+    set_motors_pid(i16_leftMotorSpeed, i16_rightMotorSpeed, u8_direction);
 }
 
 // Check for a box

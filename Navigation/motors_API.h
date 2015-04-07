@@ -71,7 +71,7 @@
 
 #define FINAL_LEAVING_SIMON             (97.16 - (LINE_WIDTH*2))
 #define FINAL_LEAVING_RUBIKS            (127.16 - (LINE_WIDTH*2))
-#define FINAL_LEAVING_ETCH              (107.16 - (LINE_WIDTH*2))
+#define FINAL_LEAVING_ETCH              (100.16 - (LINE_WIDTH*2))
 
 #define M_PI                            3.14159265358979323846  // pi constant
 #define WHEEL_DIAMETER                  80.0                    // in milimeters
@@ -364,11 +364,11 @@ void move_by_distance(float f_distance, float f_speed);
 /**
  * @brief Set the robots speed based on PID speeds
  *
- * @param i_leftSpeed Speed for the left
- * @param i_rightSpeed Speed for the right
+ * @param i16_leftSpeed Speed for the left
+ * @param i16_rightSpeed Speed for the right
  * @param u8_direction Direction to move
 **/
-void set_motors_pid(int16_t i_leftSpeed, int16_t i_rightSpeed, uint8_t u8_direction);
+void set_motors_pid(int16_t i16_leftSpeed, int16_t i16_rightSpeed, uint8_t u8_direction);
 
 /**
  * @brief Final movements before playing a game
