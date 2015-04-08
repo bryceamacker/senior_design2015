@@ -29,7 +29,7 @@
 #define SKIP_STATIC_TURN_LAYOUT_SELECTION   0       // Skip static turn layout selection
 #define SKIP_BRANCH_LIST_SETUP              0       // Skip branch selection
 #define SKIP_SPEED_CONFIGURATION            0       // Skip speed adjustment
-
+#define SKIP_RECENTER_CONFIGURATION         0       // Skip the selection for recentering
 // Skip various games
 #define SKIP_SIMON                      0
 #define SKIP_ETCH                       0

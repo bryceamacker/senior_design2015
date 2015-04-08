@@ -138,7 +138,7 @@ void navigation_serial_command(uint8_t u8_command) {
             calibrate(QTR_EMITTERS_ON, 4);
             break;
         case 'n':
-            follow_line_to_box(BASE_SPEED, 0);
+            follow_line_to_box(BASE_SPEED, 0, 0);
             break;
         case 'p':
             pid_menu();
@@ -564,7 +564,7 @@ void handle_pid_command(uint8_t u8_function) {
         case 'w':
             break;
         case 'b':
-            follow_line_to_box(BASE_SPEED, 0);
+            follow_line_to_box(BASE_SPEED, 0, 0);
             break;
         case 'r':
             follow_line_pid(BASE_SPEED, BACKWARD_MOVEMENT);
@@ -622,7 +622,7 @@ void navigate_course() {
     // Play Rubiks, Etch, and Simon then stop
     while(u8_currentGame <= 3) {
         // Find a box
-        follow_line_to_box(BASE_SPEED, pu8_branchList[u8_currentGame]);
+        follow_line_to_box(BASE_SPEED, pu8_branchList[u8_currentGame], 1);
 
         // Make our final preperations
         final_game_preparations(pu8_gameOrder[u8_currentGame]);
@@ -648,7 +648,7 @@ void navigate_course() {
     }
 
     // Get to the finish line
-    follow_line_to_box(BASE_SPEED, 1);
+    follow_line_to_box(BASE_SPEED, 1, 0);
 }
 
 void follow_line_pid(float f_maxSpeed, uint8_t u8_direction) {

@@ -75,6 +75,7 @@ uint8_t pu8_gameOrder[4];
 uint8_t u8_staticCourseNumber;
 uint8_t u8_staticTurnLayoutNumber;
 char pu8_branchList[4];
+uint8_t pu8_recenterList[4];
 
 // Variable for speed configuration
 uint8_t u8_newSpeed;
@@ -85,11 +86,12 @@ void run_static_course(uint8_t pu8_gameOrder[4]);
 void navigate_course(uint8_t pu8_gameOrder[4]);
 void play_game(gameID game);
 void configure_robot(void);
-void configure_game_order();
-void configure_static_course_selection();
-void configure_static_turn_layout_selection();
-void configure_branch_order();
-void configure_speed();
+void configure_game_order(void);
+void configure_static_course_selection(void);
+void configure_static_turn_layout_selection(void);
+void configure_branch_order(void);
+void configure_speed(void);
+void configure_recenter_options(void);
 void setup_start_button(void);
 void wait_for_start_button_push(void);
 void setup_game_buttons(void);
@@ -198,7 +200,7 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
     // Play Simon, Rubiks, Etch, and Card then stop
     while(u8_currentGame <= 3) {
         // Find a box
-        follow_line_to_box(BASE_SPEED, pu8_branchList[u8_currentGame]);
+        follow_line_to_box(BASE_SPEED, pu8_branchList[u8_currentGame], pu8_recenterList[u8_currentGame]);
 
         // Make our final preperations
         final_game_preparations(pu8_gameOrder[u8_currentGame]);
@@ -223,7 +225,7 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
     }
 
     // Get to the finish line
-    follow_line_to_box(BASE_SPEED, 1);
+    follow_line_to_box(BASE_SPEED, 1, 0);
 }
 
 void run_static_course(uint8_t pu8_gameOrder[4]) {
@@ -387,6 +389,13 @@ void configure_robot(void) {
         send_display_value("C5");
         DELAY_MS(DISPLAY_DELAY);
         configure_speed();
+    }
+
+    // Configure recentering option
+    if (SKIP_RECENTER_CONFIGURATION == 0) {
+        send_display_value("C6");
+        DELAY_MS(DISPLAY_DELAY);
+        configure_recenter_options();
     }
 }
 
@@ -639,7 +648,7 @@ void configure_branch_order() {
 
 void configure_speed(void) {
     #ifdef DEBUG_BUILD
-    printf("Selecting static turn layout\n");
+    printf("Selecting speed\n");
     #endif
 
     send_display_number(u8_newSpeed);
@@ -678,6 +687,82 @@ void configure_speed(void) {
         }
     }
     set_base_speed(u8_newSpeed);
+    DELAY_MS(DEBOUNCE_DELAY);
+    while(SET_BUTTON_PUSHED);
+    DELAY_MS(DEBOUNCE_DELAY);
+}
+
+void configure_recenter_options() {
+    char dispBuffer[2];
+    uint8_t u8_currentSetting;
+    uint8_t u8_gameCount;
+
+    send_display_value("11");
+
+    u8_gameCount = 0;
+    u8_currentSetting = 1;
+
+    #ifdef DEBUG_BUILD
+    printf("Selecting recenter enable\n");
+    #endif
+
+    // Wait until all four branches have been set
+    while (u8_gameCount <= 3) {
+        // Down button is a left
+        if (DOWN_BUTTON_PUSHED) {
+            u8_currentSetting = 0;
+
+            dispBuffer[0] = (char)(((int)'0') + u8_gameCount + 1);
+            dispBuffer[1] = (char)(((int)'0') + u8_currentSetting);
+
+            send_display_value(dispBuffer);
+
+            #ifdef DEBUG_BUILD
+            printf("Game %u: off\n", u8_gameCount+1);
+            #endif
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(DOWN_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+
+        // Up button is a right
+        if (UP_BUTTON_PUSHED) {
+            u8_currentSetting = 1;
+
+            dispBuffer[0] = (char)(((int)'0') + u8_gameCount + 1);
+            dispBuffer[1] = (char)(((int)'0') + u8_currentSetting);
+
+            send_display_value(dispBuffer);
+
+            #ifdef DEBUG_BUILD
+            printf("Branch %u: on\n", u8_gameCount+1);
+            #endif
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(UP_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+
+        // Set the turn to whatever is currently displayed
+        if (SET_BUTTON_PUSHED) {
+            pu8_recenterList[u8_gameCount] = u8_currentSetting;
+
+            dispBuffer[0] = (char)(((int)'0') + u8_gameCount + 1 + 1);
+            dispBuffer[1] = (char)(((int)'0') + u8_currentSetting);
+
+            if (u8_gameCount < 3) {
+                send_display_value(dispBuffer);
+            }
+
+            u8_gameCount++;
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(SET_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+    }
+
     DELAY_MS(DEBOUNCE_DELAY);
     while(SET_BUTTON_PUSHED);
     DELAY_MS(DEBOUNCE_DELAY);

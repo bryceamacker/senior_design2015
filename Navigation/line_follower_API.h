@@ -57,8 +57,9 @@ void load_turn_layout_to_line_follower(uint8_t u8_status, uint8_t* pua8_turnList
  *
  * @param f_maxSpeed the max speed the robot will move at
  * @param u8_expectedTurn What type of turn to expect off of main line
+ * @param u8_recenterEnable Whether or not to try and recenter in the box
  */
-void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn);
+void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn, uint8_t u8_recenterEnable);
 
 /**
  * @brief Follow  line until the line sensor sees a box using a PID scheme

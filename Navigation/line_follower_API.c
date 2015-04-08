@@ -58,12 +58,13 @@ void load_turn_layout_to_line_follower(uint8_t u8_numberOfTurns, uint8_t* pua8_t
     pua8_turnStaticList = pua8_turnList;
 }
 
-void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
+void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn, uint8_t u8_recenterEnable) {
     uint8_t u8_lineContinuationDetected = 0;
     uint8_t u8_turnRan = 0;
     uint8_t u8_branchedFromMainLine = 0;
     uint8_t u8_lastTurn = 0;
     uint8_t u8_handlingTIntersection = 0;
+    uint8_t u8_recenterCount = 0;
 
     uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
     uint16_t u16_lateReadingWindow = 0;
@@ -146,7 +147,7 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                 // If we are branched from the mainline, play a game
                 else {
                     // Check to see if we were centered over the line when we came in
-                    if (i16_lastLinePosition == i16_lineCenter) {
+                    if ((i16_lastLinePosition == i16_lineCenter) || (u8_recenterCount >= 5) || (u8_recenterEnable == 0)) {
                         #ifdef DEBUG_BUILD
                         printf("Leeeet's play!\n");
                         #endif
@@ -158,6 +159,12 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
 
                     // If not then back up so that it can try and recenter over the line
                     else {
+                        #ifdef DEBUG_BUILD
+                        printf("Recentering\n");
+                        #endif
+
+                        u8_recenterCount++;
+
                         enqueue(&navigationRoutineQueue, FINISH_TURN);
                         check_for_routine();
                         block_until_all_routines_done();
@@ -287,7 +294,7 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
                     clear_routines();
 
                     // Check to see if we were centered over the line when we came in
-                    if (i16_lastLinePosition == i16_lineCenter) {
+                    if ((i16_lastLinePosition == i16_lineCenter) || (u8_recenterCount >= 5) || (u8_recenterEnable == 0)) {
                         #ifdef DEBUG_BUILD
                         printf("Wait no, leeeet's play!\n");
                         #endif
@@ -298,6 +305,12 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn) {
 
                     // If not then back up so that it can try and recenter over the line
                     else {
+                        #ifdef DEBUG_BUILD
+                        printf("Wait no, recentering\n");
+                        #endif
+
+                        u8_recenterCount++;
+
                         enqueue(&navigationRoutineQueue, FINISH_TURN);
                         check_for_routine();
                         block_until_all_routines_done();
