@@ -20,7 +20,11 @@
 
 #include "pic24_all.h"
 #include "line_follower_API.h"
+#include "navigation_port_mapping.h"
+#include "secon_robot_configuration.h"
+#include "SSDisplayAPI.h"
 #include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 
 // Variable to hold user input
@@ -35,8 +39,6 @@ extern queue_t navigationRoutineQueue;
 extern queue_t navigationMoveDistanceQueue;
 extern uint8_t u8_routineBlock;
 extern uint8_t u8_currentRoutine;
-
-char pu8_branchList[4];
 
 uint8_t u8_staticTurnLayoutNumber;
 uint8_t u8_staticTurnLayoutAvailable;
@@ -65,28 +67,31 @@ void print_pid_info(float f_maxSpeed);
 int main (void) {
     // Initialize pic and print out serial menu
     configBasic(HELLO_MSG);
-    pic_navigation_init();
+    while(1) {
+        doHeartbeat();
+    }
+    // pic_navigation_init();
 
-    pu8_gameOrder[0] = SIMON;
-    pu8_gameOrder[1] = RUBIKS;
-    pu8_gameOrder[2] = ETCH;
-    pu8_gameOrder[3] = CARD;
+    // pu8_gameOrder[0] = SIMON;
+    // pu8_gameOrder[1] = RUBIKS;
+    // pu8_gameOrder[2] = ETCH;
+    // pu8_gameOrder[3] = CARD;
+    //
+    // pu8_branchList[0] = 'L';
+    // pu8_branchList[1] = 'R';
+    // pu8_branchList[2] = 'L';
+    // pu8_branchList[3] = 'R';
 
-    pu8_branchList[0] = 'L';
-    pu8_branchList[1] = 'R';
-    pu8_branchList[2] = 'L';
-    pu8_branchList[3] = 'R';
-
-    navigation_serial_menu();
+    // navigation_serial_menu();
 
     // Game playing loop to check serial commands and I2C commands
     while(1) {
-        if(isCharReady()) {
-            // Handle serial command
-            u8_c = inChar();
-            navigation_serial_command(u8_c);
-            navigation_serial_menu();
-        }
+        // if(isCharReady()) {
+        //     // Handle serial command
+        //     u8_c = inChar();
+        //     navigation_serial_command(u8_c);
+        //     navigation_serial_menu();
+        // }
         doHeartbeat();
     }
 }
@@ -602,9 +607,21 @@ void handle_pid_command(uint8_t u8_function) {
 // Print the calculated line position
 void print_get_line() {
     int16_t i16_position;
+    uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
 
     while(isCharReady() == 0) {
+        read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
         i16_position = read_line(QTR_EMITTERS_ON);
+
+        if (i16_position == 0) {
+            if (check_left_for_line(pau16_sensorValues) == 1) {
+                i16_position = 0;
+            }
+            else if (check_right_for_line(pau16_sensorValues) == 1) {
+                i16_position = 15000;
+            }
+        }
+
         printf("Line position: %u\n", i16_position);
     }
 }
@@ -652,8 +669,11 @@ void navigate_course() {
 }
 
 void follow_line_pid(float f_maxSpeed, uint8_t u8_direction) {
+    uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
+
     while(isCharReady() == 0) {
-        correct_line_error_pid(f_maxSpeed, u8_direction);
+        read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
+        correct_line_error_pid(f_maxSpeed, u8_direction, pau16_sensorValues);
     }
     motors_stop();
 }

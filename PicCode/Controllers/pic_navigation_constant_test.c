@@ -40,6 +40,8 @@ void pic_navigation_init(void);
 void setup_start_button(void);
 
 int main (void) {
+    uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
+
     // Configure the motor controller PIC
     configBasic(HELLO_MSG);
     pic_navigation_init();
@@ -60,7 +62,8 @@ int main (void) {
             DELAY_MS(DEBOUNCE_DELAY);
 
             while (PID_BUTTON_RELEASED == 1) {
-                correct_line_error_pid(BASE_SPEED_DEFAULT, FORWARD_MOVEMENT);
+                read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
+                correct_line_error_pid(BASE_SPEED, FORWARD_MOVEMENT, pau16_sensorValues);
             }
             motors_stop();
 
