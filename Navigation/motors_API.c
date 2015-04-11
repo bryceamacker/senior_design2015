@@ -860,6 +860,24 @@ void handle_routine(uint8_t routine) {
             #endif
             move_by_distance(CROSS_FINISH_LINE_DISTANCE*1.0, BASE_SPEED);
             break;
+        case SHORT_BACKUP:
+            #ifdef DEBUG_BUILD
+            printf("Routine: moving back short\n");
+            #endif
+            move_by_distance(SHORT_BACKUP_DISTANCE*-1.0, BASE_SPEED);
+            break;
+        case MEDIUM_BACKUP:
+            #ifdef DEBUG_BUILD
+            printf("Routine: moving back medium\n");
+            #endif
+            move_by_distance(MEDIUM_BACKUP_DISTANCE*-1.0, BASE_SPEED);
+            break;
+        case LONG_BACKUP:
+            #ifdef DEBUG_BUILD
+            printf("Routine: moving back long\n");
+            #endif
+            move_by_distance(LONG_BACKUP_DISTANCE*-1.0, BASE_SPEED);
+            break;
         default:
             break;
     }

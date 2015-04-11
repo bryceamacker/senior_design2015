@@ -247,7 +247,7 @@ void wait_for_start_signal(void) {
 
     // Wait until the start light turns off
     u16_tempLedvalue = read_photo_cell(START_CELL);
-    while(u16_tempLedvalue >= (i16_ledMinOnvalue - i16_ledThreshold)) {
+    while(u16_tempLedvalue >= (i16_ledMinOnvalue - 10)) {
         u16_tempLedvalue = read_photo_cell(START_CELL);
         doHeartbeat();
     }

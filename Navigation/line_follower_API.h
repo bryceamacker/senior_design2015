@@ -36,6 +36,9 @@
 
 #define REQUIRED_DETECTING_SENSORS_FOR_TURNS    (SENSOR_NUM + 1)
 
+#define NUM_RECENTER_ATTEMPTS 3
+#define SKIP_ALL_CURVE_TURNS 1
+
 extern float KP;
 extern float KD;
 
@@ -89,7 +92,7 @@ void correct_line_error(float f_maxSpeed, uint16_t pau16_sensorValues[TRIPLE_HI_
  * @param f_maxSpeed Max speed the robot will travel
  * @param u8_direction Direction to move
 **/
-void correct_line_error_pid(float f_maxSpeed, uint8_t u8_direction);
+void correct_line_error_pid(float f_maxSpeed, uint8_t u8_direction, uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
 
 /**
  * @brief Determine whether or not the robot has reached a box
@@ -158,6 +161,20 @@ void handle_turn(uint8_t u8_turn);
  * @brief Check for a line, used when turning to see if we're branching from the main line
 **/
 uint8_t check_for_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
+
+/**
+* @brief Check left array for a line
+*
+* @param All of the line array data
+**/
+uint8_t check_left_for_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
+
+/**
+* @brief Check right array for a line
+*
+* @param All of the line array data
+**/
+uint8_t check_right_for_line(uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM]);
 
 /**
  * @brief Set a new value for KP

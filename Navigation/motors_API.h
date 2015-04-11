@@ -40,10 +40,10 @@
 #define MOTOR_PWM_PERIOD                20000                   // desired period, in us
 
 #define RIGHT_MOTOR_ADJUSTMENT          1.0                     // Speed adjustment for the right motor
-#define LEFT_MOTOR_ADJUSTMENT           1.08                     // Speed adjustment for the left motor
+#define LEFT_MOTOR_ADJUSTMENT           1.03                     // Speed adjustment for the left motor
 
-#define RIGHT_ENCODER_ADJUSTMENT        1.0 //1.007905138             // Encoder adjustment for the right motor
-#define LEFT_ENCODER_ADJUSTMENT         1.025641026 //1.116600791             // Encoder adjustment for the left motor
+#define RIGHT_ENCODER_ADJUSTMENT        0.995767986 // 1.025641026 // 1.0 //1.007905138             // Encoder adjustment for the right motor
+#define LEFT_ENCODER_ADJUSTMENT         1.046705984 // 1.051939514 // 1.025641026 //1.116600791             // Encoder adjustment for the left motor
 
 #define LEFT_DIRECTION                  0                       // Boolean for left turning direction
 #define RIGHT_DIRECTION                 1                       // Boolean for left turning direction
@@ -71,7 +71,7 @@
 
 #define FINAL_LEAVING_SIMON             (97.16 - (LINE_WIDTH*2))
 #define FINAL_LEAVING_RUBIKS            (127.16 - (LINE_WIDTH*2))
-#define FINAL_LEAVING_ETCH              (100.16 - (LINE_WIDTH*2))
+#define FINAL_LEAVING_ETCH              (95.16 - (LINE_WIDTH*2))
 
 #define M_PI                            3.14159265358979323846  // pi constant
 #define WHEEL_DIAMETER                  80.0                    // in milimeters
@@ -84,7 +84,11 @@
 #define LINE_WIDTH                      25                      // Width of the line in mm
 
 #define START_BOX_DRIVE_DISTANCE        130                     // mm to get out of the start box before following a line
-#define CROSS_FINISH_LINE_DISTANCE      170
+#define CROSS_FINISH_LINE_DISTANCE      190
+
+#define SHORT_BACKUP_DISTANCE           100
+#define MEDIUM_BACKUP_DISTANCE          163.58
+#define LONG_BACKUP_DISTANCE            200
 
 extern float BASE_SPEED;
 
@@ -110,7 +114,10 @@ typedef enum {
     PREPARE_SIMON =                 19,
     PREPARE_ETCH =                  20,
     PREPARE_RUBIKS =                21,
-    CROSS_FINISH_LINE =             22
+    CROSS_FINISH_LINE =             22,
+    SHORT_BACKUP =                  23,
+    MEDIUM_BACKUP =                 24,
+    LONG_BACKUP =                   25
 } motorRoutines;
 
 ///////////////////////////////////////////////

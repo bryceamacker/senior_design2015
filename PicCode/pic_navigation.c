@@ -215,7 +215,7 @@ void navigate_course(uint8_t pu8_gameOrder[4]) {
         prepare_to_leave_game(pu8_gameOrder[u8_currentGame]);
 
         // Get back on the line after spining around
-        reverse_until_line();
+        // reverse_until_line();
 
         // Get back to the main line
         follow_line_back_to_main_line(BASE_SPEED);
@@ -710,7 +710,12 @@ void configure_recenter_options() {
     while (u8_gameCount <= 3) {
         // Down button is a left
         if (DOWN_BUTTON_PUSHED) {
-            u8_currentSetting = 0;
+            if (u8_currentSetting == 0) {
+                u8_currentSetting = 3;
+            }
+            else {
+                u8_currentSetting--;
+            }
 
             dispBuffer[0] = (char)(((int)'0') + u8_gameCount + 1);
             dispBuffer[1] = (char)(((int)'0') + u8_currentSetting);
@@ -728,7 +733,12 @@ void configure_recenter_options() {
 
         // Up button is a right
         if (UP_BUTTON_PUSHED) {
-            u8_currentSetting = 1;
+            if (u8_currentSetting == 3) {
+                u8_currentSetting = 0;
+            }
+            else {
+                u8_currentSetting++;
+            }
 
             dispBuffer[0] = (char)(((int)'0') + u8_gameCount + 1);
             dispBuffer[1] = (char)(((int)'0') + u8_currentSetting);

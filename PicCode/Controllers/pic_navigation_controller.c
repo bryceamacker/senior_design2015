@@ -578,24 +578,24 @@ void handle_pid_command(uint8_t u8_function) {
         case 'i':
             print_pid_info(BASE_SPEED);
             break;
-        case 'p':
-            printf("\nEnter new KP\n");
-            inStringEcho(sz_buf,31);
-            sscanf(sz_buf,"%f", &f_newValue);
-            u8_c2 = inChar();
-            // printf("New value: %f\n", (double)f_newValue);
-
-            set_KP(f_newValue);
-            break;
-        case 'd':
-            printf("\nEnter new KP\n");
-            inStringEcho(sz_buf,31);
-            sscanf(sz_buf,"%f", &f_newValue);
-            u8_c2 = inChar();
-            // printf("New value: %f\n", (double)f_newValue);
-
-            set_KD(f_newValue);
-            break;
+    //     case 'p':
+    //         printf("\nEnter new KP\n");
+    //         inStringEcho(sz_buf,31);
+    //         sscanf(sz_buf,"%f", &f_newValue);
+    //         u8_c2 = inChar();
+    //         // printf("New value: %f\n", (double)f_newValue);
+    //
+    //         set_KP(f_newValue);
+    //         break;
+    //     case 'd':
+    //         printf("\nEnter new KP\n");
+    //         inStringEcho(sz_buf,31);
+    //         sscanf(sz_buf,"%f", &f_newValue);
+    //         u8_c2 = inChar();
+    //         // printf("New value: %f\n", (double)f_newValue);
+    //
+    //         set_KD(f_newValue);
+    //         break;
     }
 }
 
@@ -652,8 +652,11 @@ void navigate_course() {
 }
 
 void follow_line_pid(float f_maxSpeed, uint8_t u8_direction) {
+    uint16_t pau16_sensorValues[TRIPLE_HI_RES_SENSOR_NUM];
+
     while(isCharReady() == 0) {
-        correct_line_error_pid(f_maxSpeed, u8_direction);
+        read_sensor_triple_plus_hi_res(pau16_sensorValues, QTR_EMITTERS_ON);
+        correct_line_error_pid(f_maxSpeed, u8_direction, pau16_sensorValues);
     }
     motors_stop();
 }
