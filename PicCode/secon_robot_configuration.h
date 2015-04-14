@@ -26,10 +26,10 @@
 #define SKIP_START_LIGHT                    0       // Skip the start light
 #define SKIP_START_BUTTON                   0       // Skip the start button
 #define SKIP_STATIC_COURSE_SELECTION        1       // Skip static course selection
-#define SKIP_STATIC_TURN_LAYOUT_SELECTION   0       // Skip static turn layout selection
-#define SKIP_BRANCH_LIST_SETUP              0       // Skip branch selection
-#define SKIP_SPEED_CONFIGURATION            0       // Skip speed adjustment
-#define SKIP_RECENTER_CONFIGURATION         0       // Skip the selection for recentering
+#define SKIP_STATIC_TURN_LAYOUT_SELECTION   1       // Skip static turn layout selection
+#define SKIP_BRANCH_LIST_SETUP              1       // Skip branch selection
+#define SKIP_SPEED_CONFIGURATION            1       // Skip speed adjustment
+#define SKIP_RECENTER_CONFIGURATION         1       // Skip the selection for recentering
 // Skip various games
 #define SKIP_SIMON                      0
 #define SKIP_ETCH                       0

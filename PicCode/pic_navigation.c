@@ -59,6 +59,8 @@
 #define DEBOUNCE_DELAY          10
 #define DISPLAY_DELAY           1500
 
+#define OPEN_HOUSE_COURSE       2
+
 // I2C buffer
 char sz_recieveString[BUFFSIZE];
 
@@ -122,17 +124,21 @@ int main (void) {
     setup_start_button();
     setup_game_buttons();
 
+    /*
     // Start configuring
     send_display_value("CC");
     DELAY_MS(DISPLAY_DELAY);
+    */
     configure_robot();
 
     // Finished configuring
+    /**
     send_display_value("CF");
     DELAY_MS(DISPLAY_DELAY);
+    **/
 
     // Load up the turn layout, the return value will tell us if we have a turn layout for that course
-    u8_numberOfStaticTurns = prepare_static_course_turn_info(u8_staticTurnLayoutNumber, pau8_turnList);
+    u8_numberOfStaticTurns = prepare_static_course_turn_info(OPEN_HOUSE_COURSE, pau8_turnList);
     load_turn_layout_to_line_follower(u8_numberOfStaticTurns, pau8_turnList);
 
     // Wait for the start button to be pushed
@@ -184,7 +190,7 @@ void pic_navigation_init() {
     configI2C1(400);
 
     // Wait just a bit for the game player to boot up
-    DELAY_MS(1000);
+    DELAY_MS(2000);
 }
 
 // Navigate the whole course
@@ -396,6 +402,12 @@ void configure_robot(void) {
         send_display_value("C6");
         DELAY_MS(DISPLAY_DELAY);
         configure_recenter_options();
+    }
+    else {
+        pu8_recenterList[0] = 2;
+        pu8_recenterList[1] = 2;
+        pu8_recenterList[2] = 2;
+        pu8_recenterList[3] = 2;
     }
 }
 
