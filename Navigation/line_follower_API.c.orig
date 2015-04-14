@@ -46,11 +46,21 @@ int16_t i16_lastLinePosition;
 
 
 void line_follower_init() {
-    sensor_array_init();
-    motors_init();
+    #ifdef DEBUG_BUILD
+    printf("Sensor init\n");
+    #endif
+    // sensor_array_init();
 
+    #ifdef DEBUG_BUILD
+    printf("Motor init\n");
+    #endif
+    // motors_init();
+
+    #ifdef DEBUG_BUILD
+    printf("Stack init\n");
+    #endif
     // Initialize the turn stack
-    init_stack(&branchedTurnStack);
+    // init_stack(&branchedTurnStack);
 }
 
 void load_turn_layout_to_line_follower(uint8_t u8_numberOfTurns, uint8_t* pua8_turnList) {
@@ -166,6 +176,7 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn, uint8_t u8_recen
                         u8_recenterCount++;
 
                         if (u8_recenterEnable == 1) {
+<<<<<<< HEAD
                             enqueue(&navigationRoutineQueue, SHORT_BACKUP);
                             check_for_routine();
                             block_until_all_routines_done();
@@ -180,6 +191,22 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn, uint8_t u8_recen
                             check_for_routine();
                             block_until_all_routines_done();
                         }
+=======
+                             enqueue(&navigationRoutineQueue, SHORT_BACKUP);
+                             check_for_routine();
+                             block_until_all_routines_done();
+                         }
+                         else if (u8_recenterEnable == 2) {
+                             enqueue(&navigationRoutineQueue, MEDIUM_BACKUP);
+                             check_for_routine();
+                             block_until_all_routines_done();
+                         }
+                         else if (u8_recenterEnable == 3) {
+                             enqueue(&navigationRoutineQueue, LONG_BACKUP);
+                             check_for_routine();
+                             block_until_all_routines_done();
+                         }
+>>>>>>> game_time
                     }
                 }
             }
@@ -324,6 +351,7 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn, uint8_t u8_recen
                         u8_recenterCount++;
 
                         if (u8_recenterEnable == 1) {
+<<<<<<< HEAD
                             enqueue(&navigationRoutineQueue, SHORT_BACKUP);
                             check_for_routine();
                             block_until_all_routines_done();
@@ -338,6 +366,22 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn, uint8_t u8_recen
                             check_for_routine();
                             block_until_all_routines_done();
                         }
+=======
+                             enqueue(&navigationRoutineQueue, SHORT_BACKUP);
+                             check_for_routine();
+                             block_until_all_routines_done();
+                         }
+                         else if (u8_recenterEnable == 2) {
+                             enqueue(&navigationRoutineQueue, MEDIUM_BACKUP);
+                             check_for_routine();
+                             block_until_all_routines_done();
+                         }
+                         else if (u8_recenterEnable == 3) {
+                             enqueue(&navigationRoutineQueue, LONG_BACKUP);
+                             check_for_routine();
+                             block_until_all_routines_done();
+                         }
+>>>>>>> game_time
                     }
                 }
             }

@@ -58,9 +58,15 @@
 #define MAX_PUSH_INCREASE 400
 
 // Light thresholds
+<<<<<<< HEAD
+#define YELLOW_LIGHT_THRESH_HOLD    55 // 90
+#define BLUE_LIGHT_THRESH_HOLD      90
+#define RED_LIGHT_THRESH_HOLD       90
+=======
 #define YELLOW_LIGHT_THRESH_HOLD    55
 #define BLUE_LIGHT_THRESH_HOLD      90 // 125
 #define RED_LIGHT_THRESH_HOLD       90 // 125
+>>>>>>> game_time
 #define GREEN_LIGHT_THRESH_HOLD     90
 #define OFF_THRESH_HOLD             20
 

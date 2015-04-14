@@ -583,24 +583,24 @@ void handle_pid_command(uint8_t u8_function) {
         case 'i':
             print_pid_info(BASE_SPEED);
             break;
-        case 'p':
-            printf("\nEnter new KP\n");
-            inStringEcho(sz_buf,31);
-            sscanf(sz_buf,"%f", &f_newValue);
-            u8_c2 = inChar();
-            // printf("New value: %f\n", (double)f_newValue);
-
-            set_KP(f_newValue);
-            break;
-        case 'd':
-            printf("\nEnter new KP\n");
-            inStringEcho(sz_buf,31);
-            sscanf(sz_buf,"%f", &f_newValue);
-            u8_c2 = inChar();
-            // printf("New value: %f\n", (double)f_newValue);
-
-            set_KD(f_newValue);
-            break;
+    //     case 'p':
+    //         printf("\nEnter new KP\n");
+    //         inStringEcho(sz_buf,31);
+    //         sscanf(sz_buf,"%f", &f_newValue);
+    //         u8_c2 = inChar();
+    //         // printf("New value: %f\n", (double)f_newValue);
+    //
+    //         set_KP(f_newValue);
+    //         break;
+    //     case 'd':
+    //         printf("\nEnter new KP\n");
+    //         inStringEcho(sz_buf,31);
+    //         sscanf(sz_buf,"%f", &f_newValue);
+    //         u8_c2 = inChar();
+    //         // printf("New value: %f\n", (double)f_newValue);
+    //
+    //         set_KD(f_newValue);
+    //         break;
     }
 }
 
