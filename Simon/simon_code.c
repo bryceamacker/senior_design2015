@@ -58,6 +58,7 @@ uint16_t u16_currentStartPushPulse = 0;
 uint8_t au8_buttonArray[50];
 uint8_t u8_roundNum = 1;
 uint8_t u8_button;
+uint8_t u8_started = 0;
 
 volatile uint8_t u8_simonFinished = 0;
 volatile uint16_t u16_milliSeconds = 0;
@@ -103,8 +104,22 @@ void play_simon() {
         // If it's the first round, hit the start button
         if (u8_roundNum == 1) {
             // Push the start button and record the colors
+            u8_started = 1;
             simon_push_button(START_SIMON_BUTTON);
             record_colors(u8_roundNum);
+            u8_started = 0;
+
+            if (u8_simonFinished == 1) {
+                #ifdef DEBUG_BUILD
+                printf("Giving up\n");
+                #endif
+
+                twist_rubiks_counter();
+                platform_up();
+                DELAY_MS(PLATFORM_WAIT);
+                simon_retract_buttons();
+                return;
+            }
 
             #ifdef DEBUG_BUILD
             printf("Starting Simon time\n");
@@ -302,6 +317,8 @@ void play_buttons(uint8_t u8_numRounds) {
 void record_colors(uint8_t u8_numberOfButtons) {
     // Record colors, adding the button to our array of buttons we'll push later
     uint8_t u8_detectedButtons;
+    uint8_t u16_giveUpCounter = 0;
+
     #ifdef DEBUG_BUILD
     uint8_t i;
     #endif
@@ -310,8 +327,18 @@ void record_colors(uint8_t u8_numberOfButtons) {
     // Keep looking for lights until we've seen enough
     while(u8_detectedButtons < u8_numberOfButtons) {
         // If we've surpassed 15 seconds, leave Simon
-        if (u8_simonFinished)
+        if (u8_simonFinished) {
             return;
+        }
+
+        if (u8_started == 1) {
+            u16_giveUpCounter++;
+
+            if (u16_giveUpCounter >= 30) {
+                u8_simonFinished = 1;
+                return;
+            }
+        }
 
         // For each light, get the transistor value, and compare it to the light threshold
         i16_currentYellowValue = read_photo_cell(YELLOW_TRANS);
