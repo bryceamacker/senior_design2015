@@ -1,8 +1,0 @@
-prefix=/home/dexter/senior_design2015/hydro_ws/devel
-
-Name: rosserial_client
-Description: Description of rosserial_client
-Version: 0.6.2
-Cflags: 
-Libs: -L/home/dexter/senior_design2015/hydro_ws/devel/lib 
-Requires: 

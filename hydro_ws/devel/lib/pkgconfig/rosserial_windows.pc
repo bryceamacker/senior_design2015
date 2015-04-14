@@ -1,8 +1,0 @@
-prefix=/home/dexter/senior_design2015/hydro_ws/devel
-
-Name: rosserial_windows
-Description: Description of rosserial_windows
-Version: 0.6.2
-Cflags: 
-Libs: -L/home/dexter/senior_design2015/hydro_ws/devel/lib 
-Requires: 

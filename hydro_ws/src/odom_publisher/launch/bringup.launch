@@ -1,4 +1,0 @@
-<launch>
-	<rosparam file="$(find odom_publisher)/param/config.yaml" command="load"/>
-	<node pkg="odom_publisher" name="odom_pub" type="odom_pub.py" output="screen"/>
-</launch>
