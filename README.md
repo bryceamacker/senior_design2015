@@ -1,18 +1,38 @@
 senior_design2015
 =================
 
-### capture.c
-I was playing with the idea of using image recognition for Simon button detection, lining up with the toys, etc. 
+### API
+API files for all the different hardware used on the bot. This includes photo cells, servos, and seven-segment-displays. See each individual file for more detail. The servo API includes functionality for almost any use of servos.
 
-This is a file that will take video from a usb web cam (this is the one I used: http://www.logitech.com/en-us/product/hd-webcam-c310). I've modified it to add support for the MJPG codec standard, which is what the c310 webcam uses. 
+### Card
+Functionality to pick up the card using the game arm.
 
-This is very early work I haven't expanded on, but might be useful in the future. Check out webcam_config.txt for more instructions on how its used. ffmpeg is used to get us an actual video. If we wanted to start image recongition, we'd want to just grab a single image. 
+### Etch
+Functionality to draw 'IEEE' using to continuous rotation servos attached to the platform.
+
+### GameArm
+Functionality for various movements with the game arm.
+
+### lib
+All the PIC24 library files provided by the MSU ECE department.
+
+### Navigation
+Includes API files for using QTR-8RC sensor arrays and using Pololu 37D motors with encoders. This folder also includes a robust line following system using both sensor arrays and the motors with encoders. Uses a PID to follow straight lines and enters static routines with 'hard' right angles are encountered. This code is specifically tailored to SECON 2015 but can be modified to other uses.
+
+### PicCode
+This is the code that is actually compiled into hex files that will then be put on PICs. There is a couple of files that are used together for running SECON 2015 along with a few controller files used for testing.
+
+### Platform
+Functionality for various movements with the platform that holds the Etch-a-Sketch servos and the Rubiks servos.
+
+### Rubiks
+Functionality to twist the Rubiks Cube using the game arm and the platform.
+
+### secon_site
+The entire MSU SECON 2015 website. Built upon Playbook.
 
 ### Simon
-This is the work done so far for playing Simon says. 
+Functionality to record Simon lights using photo transistors, then to hit the buttons using servos. This code uses a timer to stop Simon play after 15 seconds.
 
-Currently, we can detect all 4 buttons with the same webcam, using their different audio tones.
-
-### serial_monitor.py
-
-This is a small proof of concept of how we could communicate with an Arduino over the serial ports of the Beaglebone. This isn't up to date, and will be modified later. 
+### Strategy
+Simple little timer to add up points for a given run.
