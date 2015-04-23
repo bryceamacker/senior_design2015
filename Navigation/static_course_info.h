@@ -188,7 +188,7 @@ static inline uint8_t prepare_static_course_turn_info_two(uint8_t* pau8_turnList
     pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
     pau8_turnList[u8_turnCount++] = NORMAL_LEFT_DEFAULT;
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;
-    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_BACK_UP;
+    pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_NO_BACK;
 
     // Leaving game 2
     pau8_turnList[u8_turnCount++] = NORMAL_RIGHT_DEFAULT;

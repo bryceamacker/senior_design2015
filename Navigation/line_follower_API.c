@@ -107,9 +107,10 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn, uint8_t u8_recen
                 // If our expected turn is a "1" then we're at the finish line
                 if (u8_expectedTurn == 1) {
                     // Cross the finish line at we're done
-                    enqueue(&navigationRoutineQueue, CROSS_FINISH_LINE);
-                    check_for_routine();
-                    block_until_all_routines_done();
+                    // enqueue(&navigationRoutineQueue, CROSS_FINISH_LINE);
+                    // check_for_routine();
+                    // block_until_all_routines_done();
+                    motors_stop();
                     return;
                 }
 
@@ -197,9 +198,10 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn, uint8_t u8_recen
                 // When running a static turn layout if we've exceeded the number of turns then we're at the finish line
                 if ((u8_currentTurn > u8_numberOfStaticTurns) && (u8_expectedTurn == 1)) {
                     // Cross the finish line at we're done
-                    enqueue(&navigationRoutineQueue, CROSS_FINISH_LINE);
-                    check_for_routine();
-                    block_until_all_routines_done();
+                    // enqueue(&navigationRoutineQueue, CROSS_FINISH_LINE);
+                    // check_for_routine();
+                    // block_until_all_routines_done();
+                    motors_stop();
                     return;
                 }
 
@@ -223,9 +225,10 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn, uint8_t u8_recen
                 // When running a static turn layout if we've exceeded the number of turns then we're at the finish line
                 if ((u8_currentTurn > u8_numberOfStaticTurns) && (u8_expectedTurn == 1)) {
                     // Cross the finish line at we're done
-                    enqueue(&navigationRoutineQueue, CROSS_FINISH_LINE);
-                    check_for_routine();
-                    block_until_all_routines_done();
+                    // enqueue(&navigationRoutineQueue, CROSS_FINISH_LINE);
+                    // check_for_routine();
+                    // block_until_all_routines_done();
+                    motors_stop();
                     return;
                 }
 
@@ -261,9 +264,11 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn, uint8_t u8_recen
                 // If our expected turn is a "1" then we're at the finish line
                 if (u8_expectedTurn == 1) {
                     // Cross the finish line at we're done
-                    enqueue(&navigationRoutineQueue, CROSS_FINISH_LINE);
-                    check_for_routine();
-                    block_until_all_routines_done();
+                    // enqueue(&navigationRoutineQueue, CROSS_FINISH_LINE);
+                    // check_for_routine();
+                    // block_until_all_routines_done();
+                    motors_stop();
+                    return;
                 }
 
                 // If we're not branched from the mainline, check what turn we should do and flag that we have branched, flag that we hit a T (used for reverse)

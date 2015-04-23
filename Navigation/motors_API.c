@@ -618,12 +618,12 @@ void finish_reverse_90_degree_turn(float f_speed) {
 
 void turn_180_degrees(float f_speed, uint8_t u8_direction) {
     if (u8_direction == RIGHT_DIRECTION) {
-        move_right_motor_by_revolutions((-2.0 * DEGREE_90_TURN_REVS), f_speed);
-        move_left_motor_by_revolutions((2.0 * DEGREE_90_TURN_REVS), f_speed);
+        move_right_motor_by_revolutions((-2.08 * DEGREE_90_TURN_REVS), f_speed);
+        move_left_motor_by_revolutions((2.08 * DEGREE_90_TURN_REVS), f_speed);
     }
     if (u8_direction == LEFT_DIRECTION) {
-        move_right_motor_by_revolutions((2.0 * DEGREE_90_TURN_REVS), f_speed);
-        move_left_motor_by_revolutions((-2.0 * DEGREE_90_TURN_REVS), f_speed);
+        move_right_motor_by_revolutions((2.08 * DEGREE_90_TURN_REVS), f_speed);
+        move_left_motor_by_revolutions((-2.08 * DEGREE_90_TURN_REVS), f_speed);
     }
 }
 

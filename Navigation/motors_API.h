@@ -57,7 +57,7 @@
 
 #define ROBOT_WIDTH                     287.0
 
-#define PREPARE_90_TURN_DISTANCE        163.58                  // mm to travel before turning 90 degrees
+#define PREPARE_90_TURN_DISTANCE        160.58                  // mm to travel before turning 90 degrees
 #define DEGREE_90_TURN_REVS             (ROBOT_WIDTH/WHEEL_DIAMETER/4)
 
 #define PREPARE_CURVE_TURN_DISTANCE     29                      // mm to prepare for curve turns
@@ -86,7 +86,7 @@
 
 #define LINE_WIDTH                      25                      // Width of the line in mm
 
-#define START_BOX_DRIVE_DISTANCE        130                     // mm to get out of the start box before following a line
+#define START_BOX_DRIVE_DISTANCE        140                     // mm to get out of the start box before following a line
 #define CROSS_FINISH_LINE_DISTANCE      190
 
 #define SHORT_BACKUP_DISTANCE           100

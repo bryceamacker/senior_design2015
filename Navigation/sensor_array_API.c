@@ -419,6 +419,22 @@ void read_sensor_triple_plus_hi_res(uint16_t* pau16_tripleHiResSensorValues, cha
     }
 }
 
+void read_sensor_array_correct(uint16_t* pau16_sensorValues, char u8_readMode, uint8_t u8_line) {
+    uint16_t i;
+    read(pau16_sensorValues, u8_readMode, u8_line);
+
+    for(i = SENSOR_NUM - 1; i >= 0; i--)  {
+        if(pau16_sensorValues[i] < get_line_max_value(u8_line) - 1) {
+            pau16_sensorValues[i] = 1;
+        }
+        else {
+            pau16_sensorValues[i] = 0;
+        }
+    }
+}
+
+
+
 int16_t read_line(char u8_readMode) {
     uint16_t pau16_sensors[PID_SENSOR_NUM];
     uint8_t i;
@@ -437,7 +453,7 @@ int16_t read_line(char u8_readMode) {
     i16_lastValue = 0;
 
     read_sensor_hi_res(pau16_sensors, u8_readMode);
-
+    
     for(i = 0;i < PID_SENSOR_NUM;i++) {
         u16_value = (1000 * pau16_sensors[i]);
 
