@@ -245,7 +245,7 @@ void _ISRFAST _INT1Interrupt (void) {
 
 // Left motor primitive movements
 void left_motor_reverse (float f_speed) {
-    float f_duty = (f_speed/100.0) * LEFT_MOTOR_ADJUSTMENT;
+    float f_duty = (f_speed/100.0) * LEFT_MOTOR_REVERSE_ADJUSTMENT;
 
     LIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits));
     LIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T2CONbits)) * (1-f_duty);
@@ -271,7 +271,7 @@ void left_motor_stop() {
 
 // Right motor primitive movements
 void right_motor_reverse (float f_speed) {
-    float f_duty = (f_speed/100.0) * RIGHT_MOTOR_ADJUSTMENT;
+    float f_duty = (f_speed/100.0) * RIGHT_MOTOR_REVERSE_ADJUSTMENT;
 
     RIN1_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits));
     RIN2_PULSE = usToU16Ticks(MOTOR_PWM_PERIOD, getTimerPrescale(T3CONbits)) * (1-f_duty);
@@ -582,8 +582,8 @@ void turn_90_degrees(float f_speed, uint8_t u8_direction) {
         move_left_motor_by_revolutions(DEGREE_90_TURN_REVS, f_speed);
     }
     if (u8_direction == LEFT_DIRECTION) {
-        move_right_motor_by_revolutions(DEGREE_90_TURN_REVS, f_speed);
-        move_left_motor_by_revolutions((-1.0 * DEGREE_90_TURN_REVS), f_speed);
+        move_right_motor_by_revolutions(DEGREE_90_TURN_REVS * 1.04, f_speed);
+        move_left_motor_by_revolutions((-1.04 * DEGREE_90_TURN_REVS), f_speed);
     }
 }
 
@@ -877,6 +877,30 @@ void handle_routine(uint8_t routine) {
             printf("Routine: moving back long\n");
             #endif
             move_by_distance(LONG_BACKUP_DISTANCE*-1.0, BASE_SPEED);
+            break;
+        case SIMON_BACKUP:
+            #ifdef DEBUG_BUILD
+            printf("Routine: moving back simon\n");
+            #endif
+            move_by_distance(130*-1.0, BASE_SPEED);
+            break;
+        case CUBE_BACKUP:
+            #ifdef DEBUG_BUILD
+            printf("Routine: moving back cube\n");
+            #endif
+            move_by_distance(150*-1.0, BASE_SPEED);
+            break;
+        case ETCH_BACKUP:
+            #ifdef DEBUG_BUILD
+            printf("Routine: moving back etch\n");
+            #endif
+            move_by_distance(155*-1.0, BASE_SPEED);
+            break;
+        case CARD_BACKUP:
+            #ifdef DEBUG_BUILD
+            printf("Routine: moving back card\n");
+            #endif
+            move_by_distance(130*-1.0, BASE_SPEED);
             break;
         default:
             break;

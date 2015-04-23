@@ -27,11 +27,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define METER_BUTTON_PUSHED     (_RG9 == 0)
-#define METER_BUTTON_RELEASED   (_RG9 == 1)
+#define PID_BUTTON_PUSHED       (_RG9 == 0)  // Start
+#define PID_BUTTON_RELEASED     (_RG9 == 1)
 
-#define PID_BUTTON_PUSHED       (_RG6 == 0)
-#define PID_BUTTON_RELEASED     (_RG6 == 1)
+#define METER_BUTTON_PUSHED     (_RG7 == 0) // Up
+#define METER_BUTTON_RELEASED   (_RG7 == 1)
+
+#define METER_BACK_BUTTON_PUSHED        (_RG6 == 0) // Down
+#define METER_BACK_BUTTON_RELEASED      (_RG6 == 1)
 
 #define DEBOUNCE_DELAY          10
 
@@ -54,6 +57,13 @@ int main (void) {
 
             DELAY_MS(DEBOUNCE_DELAY);
             while(METER_BUTTON_PUSHED);
+            DELAY_MS(DEBOUNCE_DELAY);
+        }
+        if (METER_BACK_BUTTON_PUSHED == 1) {
+            move_by_distance(-1000, BASE_SPEED);
+
+            DELAY_MS(DEBOUNCE_DELAY);
+            while(METER_BACK_BUTTON_PUSHED);
             DELAY_MS(DEBOUNCE_DELAY);
         }
         if (PID_BUTTON_PUSHED == 1) {
@@ -85,6 +95,10 @@ void pic_navigation_init() {
 void setup_start_button() {
     CONFIG_RG9_AS_DIG_INPUT();
     ENABLE_RG9_PULLUP();
+    DELAY_US(1);
+
+    CONFIG_RG7_AS_DIG_INPUT();
+    ENABLE_RG7_PULLUP();
     DELAY_US(1);
 
     CONFIG_RG6_AS_DIG_INPUT();

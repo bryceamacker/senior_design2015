@@ -166,17 +166,22 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn, uint8_t u8_recen
                         u8_recenterCount++;
 
                         if (u8_recenterEnable == 1) {
-                            enqueue(&navigationRoutineQueue, SHORT_BACKUP);
+                            enqueue(&navigationRoutineQueue, SIMON_BACKUP);
                             check_for_routine();
                             block_until_all_routines_done();
                         }
                         else if (u8_recenterEnable == 2) {
-                            enqueue(&navigationRoutineQueue, MEDIUM_BACKUP);
+                            enqueue(&navigationRoutineQueue, CUBE_BACKUP);
                             check_for_routine();
                             block_until_all_routines_done();
                         }
                         else if (u8_recenterEnable == 3) {
-                            enqueue(&navigationRoutineQueue, LONG_BACKUP);
+                            enqueue(&navigationRoutineQueue, ETCH_BACKUP);
+                            check_for_routine();
+                            block_until_all_routines_done();
+                        }
+                        else if (u8_recenterEnable == 4) {
+                            enqueue(&navigationRoutineQueue, CARD_BACKUP);
                             check_for_routine();
                             block_until_all_routines_done();
                         }
@@ -324,17 +329,22 @@ void follow_line_to_box(float f_maxSpeed, char u8_expectedTurn, uint8_t u8_recen
                         u8_recenterCount++;
 
                         if (u8_recenterEnable == 1) {
-                            enqueue(&navigationRoutineQueue, SHORT_BACKUP);
+                            enqueue(&navigationRoutineQueue, SIMON_BACKUP);
                             check_for_routine();
                             block_until_all_routines_done();
                         }
                         else if (u8_recenterEnable == 2) {
-                            enqueue(&navigationRoutineQueue, MEDIUM_BACKUP);
+                            enqueue(&navigationRoutineQueue, CUBE_BACKUP);
                             check_for_routine();
                             block_until_all_routines_done();
                         }
                         else if (u8_recenterEnable == 3) {
-                            enqueue(&navigationRoutineQueue, LONG_BACKUP);
+                            enqueue(&navigationRoutineQueue, ETCH_BACKUP);
+                            check_for_routine();
+                            block_until_all_routines_done();
+                        }
+                        else if (u8_recenterEnable == 4) {
+                            enqueue(&navigationRoutineQueue, CARD_BACKUP);
                             check_for_routine();
                             block_until_all_routines_done();
                         }

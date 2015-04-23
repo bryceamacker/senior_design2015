@@ -40,7 +40,10 @@
 #define MOTOR_PWM_PERIOD                20000                   // desired period, in us
 
 #define RIGHT_MOTOR_ADJUSTMENT          1.0                     // Speed adjustment for the right motor
-#define LEFT_MOTOR_ADJUSTMENT           1.03 // 1.08                     // Speed adjustment for the left motor
+#define LEFT_MOTOR_ADJUSTMENT           1.0 // 1.08                     // Speed adjustment for the left motor
+
+#define RIGHT_MOTOR_REVERSE_ADJUSTMENT  1.0
+#define LEFT_MOTOR_REVERSE_ADJUSTMENT   1.08
 
 #define RIGHT_ENCODER_ADJUSTMENT        0.995767986 // 1.025641026 // 1.0 //1.007905138             // Encoder adjustment for the right motor
 #define LEFT_ENCODER_ADJUSTMENT         1.046705984 // 1.051939514 // 1.025641026 //1.116600791             // Encoder adjustment for the left motor
@@ -77,7 +80,7 @@
 #define WHEEL_DIAMETER                  80.0                    // in milimeters
 #define WHEEL_CIRCUMFERENCE             (WHEEL_DIAMETER * M_PI) // in milimeters
 
-#define BASE_SPEED_DEFAULT              25                      // Base speed duty cycle
+#define BASE_SPEED_DEFAULT              27                      // Base speed duty cycle
 #define LEFT_MAX_SPEED                  (BASE_SPEED_DEFAULT*2)
 #define RIGHT_MAX_SPEED                 (BASE_SPEED_DEFAULT*2)
 
@@ -117,7 +120,11 @@ typedef enum {
     CROSS_FINISH_LINE =             22,
     SHORT_BACKUP =                  23,
     MEDIUM_BACKUP =                 24,
-    LONG_BACKUP =                   25
+    LONG_BACKUP =                   25,
+    SIMON_BACKUP =                  26,
+    CUBE_BACKUP =                   27,
+    ETCH_BACKUP =                   28,
+    CARD_BACKUP =                   29
 } motorRoutines;
 
 ///////////////////////////////////////////////

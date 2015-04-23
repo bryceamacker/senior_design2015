@@ -67,10 +67,7 @@ void print_pid_info(float f_maxSpeed);
 int main (void) {
     // Initialize pic and print out serial menu
     configBasic(HELLO_MSG);
-    while(1) {
-        doHeartbeat();
-    }
-    // pic_navigation_init();
+    pic_navigation_init();
 
     // pu8_gameOrder[0] = SIMON;
     // pu8_gameOrder[1] = RUBIKS;
@@ -82,16 +79,16 @@ int main (void) {
     // pu8_branchList[2] = 'L';
     // pu8_branchList[3] = 'R';
 
-    // navigation_serial_menu();
+    navigation_serial_menu();
 
     // Game playing loop to check serial commands and I2C commands
     while(1) {
-        // if(isCharReady()) {
-        //     // Handle serial command
-        //     u8_c = inChar();
-        //     navigation_serial_command(u8_c);
-        //     navigation_serial_menu();
-        // }
+        if(isCharReady()) {
+            // Handle serial command
+            u8_c = inChar();
+            navigation_serial_command(u8_c);
+            navigation_serial_menu();
+        }
         doHeartbeat();
     }
 }

@@ -32,11 +32,11 @@
 #define _LINE_FOLLOWER_API_H_
 
 #define KP_DEFAULT      0.7 //0.2
-#define KD_DEFAULT      9   //5
+#define KD_DEFAULT      18   //5
 
 #define REQUIRED_DETECTING_SENSORS_FOR_TURNS    (SENSOR_NUM + 1)
 
-#define NUM_RECENTER_ATTEMPTS 3
+#define NUM_RECENTER_ATTEMPTS 5
 #define SKIP_ALL_CURVE_TURNS 1
 
 extern float KP;

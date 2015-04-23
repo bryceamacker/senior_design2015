@@ -404,10 +404,10 @@ void configure_robot(void) {
         configure_recenter_options();
     }
     else {
-        pu8_recenterList[0] = 2;
+        pu8_recenterList[0] = 1;
         pu8_recenterList[1] = 2;
-        pu8_recenterList[2] = 2;
-        pu8_recenterList[3] = 2;
+        pu8_recenterList[2] = 3;
+        pu8_recenterList[3] = 4;
     }
 }
 
